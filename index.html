@@ -1392,8 +1392,8 @@ const SHEETS = {
   inside: { name: 'Booklet inside', short: 'Inside', w: 120.65, h: 120.65, size: '4.75 × 4.75 in', note: 'The back of the booklet. You see it when the case is open.' },
   tray: { name: 'Tray card', short: 'Tray card', w: 150, h: 117.5, spine: 6.35, size: '5.906 × 4.625 in', note: 'Wraps the back of the case. The two 0.25 in strips fold into the spines.' },
   trayIn: { name: 'Under the tray', short: 'Under tray', w: 137.3, h: 117.5, size: '5.406 × 4.625 in', note: 'The inside of the tray card. It shows through the clear tray when the disc is out. Hidden by a black tray.' },
-  spineL: { name: 'Left spine', short: 'Left spine', w: 117.5, h: 6.35, strip: 'L', size: '4.625 × 0.25 in', note: 'The left 0.25 in strip of the tray card. It reads top to bottom on the case. Set the background to None to let the tray card art wrap around.' },
-  spineR: { name: 'Right spine', short: 'Right spine', w: 117.5, h: 6.35, strip: 'R', size: '4.625 × 0.25 in', note: 'The right 0.25 in strip of the tray card. It reads top to bottom on the case. Set the background to None to let the tray card art wrap around.' },
+  spineL: { name: 'Left spine', short: 'Left spine', w: 117.5, h: 6.35, strip: 'L', size: '4.625 × 0.25 in', note: 'The left 0.25 in strip of the tray card. The tops of the letters face the front cover on the case. Set the background to None to let the tray card art wrap around.' },
+  spineR: { name: 'Right spine', short: 'Right spine', w: 117.5, h: 6.35, strip: 'R', size: '4.625 × 0.25 in', note: 'The right 0.25 in strip of the tray card. Like the left spine, the tops of the letters face the front cover on the case. Set the background to None to let the tray card art wrap around.' },
   disc: { name: 'Disc face', short: 'Disc', w: 120, h: 120, disc: true, size: '120 mm', note: 'Printed from the 23 mm hub ring out to 118 mm. The center hole is 15 mm.' }
 };
 /* ---------- fonts for CD text: system faces, Google Fonts loaded on demand, and the user's own uploads ---------- */
@@ -1485,6 +1485,9 @@ const sheetKeys = () => S.cd.caseType === 'slim' ? ['front', 'inside', 'disc'] :
 const printKeys = () => sheetKeys().filter(k => !SHEETS[k].strip);
 /* a spine strip's right edge on the tray card, in tray trim mm */
 const stripEdge = side => side === 'L' ? SHEETS.tray.spine : SHEETS.tray.w;
+/* the two spines are printed turned opposite ways on the tray card, so on the case the tops of the letters face the front cover on both sides */
+function trayToStrip(side, tx, ty) { const ex = stripEdge(side); return side === 'R' ? [ty, ex - tx] : [SHEETS.tray.h - ty, tx - (ex - SHEETS.tray.spine)]; }
+function stripXform(x, side, p) { const ex = stripEdge(side); if (side === 'R') { x.translate(ex * p, 0); x.rotate(Math.PI / 2); } else { x.translate((ex - SHEETS.tray.spine) * p, SHEETS.tray.h * p); x.rotate(-Math.PI / 2); } }
 const toHex = c => { if (!c) return '#111111'; if (c[0] === '#') return c.length === 7 ? c : '#111111'; const m = c.match(/\d+(\.\d+)?/g); return m ? '#' + m.slice(0, 3).map(n => Math.round(+n).toString(16).padStart(2, '0')).join('') : '#111111'; };
 const shade = (hex, k) => '#' + [1, 3, 5].map(i => Math.min(255, Math.round(parseInt(hex.slice(i, i + 2), 16) * k)).toString(16).padStart(2, '0')).join('');
 function cdCol() { const ok = x => x && !isFolder(x) ? x : null; const c = ok(UI.cdForce && col(UI.cdForce)) || ok(S.view === 'collection' && col(S.colId)) || ok(col(S.cd.colId)) || S.cols.find(x => !isFolder(x)); if (c) S.cd.colId = c.id; return c; }
@@ -1576,7 +1579,7 @@ function paintSheet(x, key, sd, p, D) {
   if (busy.length) { x.save(); x.beginPath(); const sp = SHEETS.tray.spine, l0 = busy.includes('L') ? sp : -BLEED, r0 = busy.includes('R') ? sh.w - sp : sh.w + BLEED; x.rect(l0 * p, -BLEED * p, (r0 - l0) * p, (sh.h + 2 * BLEED) * p); x.clip(); }
   sd.layers.forEach(L => drawLayer(x, sh.strip && L.type === 'text' && L.fit == null ? { ...L, fit: true } : L, p)); if (busy.length) x.restore();
   if (key === 'tray' && D) ['L', 'R'].forEach(side => { const ss = D['spine' + side]; if (!ss) return; const sp = SHEETS.tray.spine, ex = stripEdge(side);
-    x.save(); x.beginPath(); x.rect((ex - sp) * p, -BLEED * p, sp * p, (sh.h + 2 * BLEED) * p); x.clip(); x.translate(ex * p, 0); x.rotate(Math.PI / 2);
+    x.save(); x.beginPath(); x.rect((ex - sp) * p, -BLEED * p, sp * p, (sh.h + 2 * BLEED) * p); x.clip(); stripXform(x, side, p);
     const st = SHEETS['spine' + side]; if (ss.bg !== 'none') paintBg(x, ss.bg, (st.w + 2 * BLEED) * p, (st.h + 2 * BLEED) * p, -BLEED * p); else if (busy.includes(side)) paintBg(x, sd.bg, (st.w + 2 * BLEED) * p, (st.h + 2 * BLEED) * p, -BLEED * p);
     ss.layers.forEach(L => drawLayer(x, L.type === 'text' && L.fit == null ? { ...L, fit: true } : L, p)); x.restore(); });
   x.restore();
@@ -1613,8 +1616,8 @@ function paintSel(x, L, p) {
 
 /* a layer on a spine can be edited from the tray card; these map between the two */
 const onTraySpine = (view, sheet) => view === 'tray' && (sheet === 'spineL' || sheet === 'spineR');
-function toSheet(view, sheet, mx, my) { return onTraySpine(view, sheet) ? [my, stripEdge(sheet === 'spineL' ? 'L' : 'R') - mx] : [mx, my]; }
-function spineXform(x, sheet, p) { x.translate((stripEdge(sheet === 'spineL' ? 'L' : 'R') + BLEED) * p, BLEED * p); x.rotate(Math.PI / 2); x.translate(-BLEED * p, -BLEED * p); }
+function toSheet(view, sheet, mx, my) { return onTraySpine(view, sheet) ? trayToStrip(sheet === 'spineL' ? 'L' : 'R', mx, my) : [mx, my]; }
+function spineXform(x, sheet, p) { x.translate(BLEED * p, BLEED * p); stripXform(x, sheet === 'spineL' ? 'L' : 'R', p); x.translate(-BLEED * p, -BLEED * p); }
 
 /* 2D print sheet */
 function draw2D() {
@@ -1725,7 +1728,7 @@ function pick(e) {
   if (!hit || !hit.uv || !hit.object.userData.sheet) return null;
   const u = hit.object.userData, sh = SHEETS[u.strip ? 'tray' : u.sheet], TW = sh.w + 2 * BLEED, TH = sh.h + 2 * BLEED;
   const x = hit.uv.x * TW - BLEED, y = (1 - hit.uv.y) * TH - BLEED;
-  return u.strip ? { sheet: u.sheet, x: y, y: stripEdge(u.strip) - x } : { sheet: u.sheet, x, y };
+  if (u.strip) { const [sx, sy] = trayToStrip(u.strip, x, y); return { sheet: u.sheet, x: sx, y: sy }; } return { sheet: u.sheet, x, y };
 }
 function buildCase() {
   const T3 = THREE, root = C3.root; while (root.children.length) root.remove(root.children[0]);

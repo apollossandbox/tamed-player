@@ -1,8 +1,8 @@
 {
-  "version": "1.2.3",
+  "version": "1.2.4",
   "file": "TamedPlayer-Setup.exe",
-  "size": 82386762,
-  "sha256": "df934e31d3fd84b6ce1555e1f2377a045bd1d2223752ad420a7743cd1baa94a3",
-  "notes": "The CD viewer and 3D export show artwork in the exact colours from the editor (no more washed-out art), and art that finishes loading while the viewer is open now appears.",
+  "size": 82386943,
+  "sha256": "377a2bcb44682e3fa01e66bad12213f0816805db11341472c55f73271903fbe6",
+  "notes": "CD spines: the left spine is turned around so both spines read with the tops of the letters toward the front cover, like a real jewel case.",
   "date": "2026-11-09"
 }
