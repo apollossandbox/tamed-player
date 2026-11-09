@@ -1,8 +1,8 @@
 {
-  "version": "1.2.2",
+  "version": "1.2.3",
   "file": "TamedPlayer-Setup.exe",
-  "size": 82386722,
-  "sha256": "4909e22c972cb58743b4effc7f2b83cfba4b562f0bd58a3bb0caa4b89e45b85e",
-  "notes": "Credits updated: sxteen ways, trulytamed and all of KGB.",
+  "size": 82386762,
+  "sha256": "df934e31d3fd84b6ce1555e1f2377a045bd1d2223752ad420a7743cd1baa94a3",
+  "notes": "The CD viewer and 3D export show artwork in the exact colours from the editor (no more washed-out art), and art that finishes loading while the viewer is open now appears.",
   "date": "2026-11-09"
 }

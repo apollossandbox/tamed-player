@@ -1731,13 +1731,13 @@ function buildCase() {
   const T3 = THREE, root = C3.root; while (root.children.length) root.remove(root.children[0]);
   const slim = S.cd.caseType === 'slim', T = slim ? .52 : 1.04, W = 14.2, H = 12.5;
   const lightUI = !UI.vw && (() => { const m = getComputedStyle(document.body).backgroundColor.match(/\d+/g); return m && (+m[0] + +m[1] + +m[2]) > 450; })();
-  const clear = new T3.MeshPhysicalMaterial({ color: lightUI ? 0xc9d2dc : 0xf2f7ff, metalness: 0, roughness: .04, transparent: true, opacity: lightUI ? .24 : .13, clearcoat: 1, clearcoatRoughness: .03, envMapIntensity: 2, side: T3.DoubleSide, depthWrite: false });
+  const clear = new T3.MeshPhysicalMaterial({ color: lightUI ? 0xc9d2dc : 0xf2f7ff, metalness: 0, roughness: .04, transparent: true, opacity: lightUI ? .1 : .06, clearcoat: 1, clearcoatRoughness: .03, envMapIntensity: 1.1, side: T3.DoubleSide, depthWrite: false });
   const edgeM = new T3.LineBasicMaterial({ color: lightUI ? 0x2a2a2e : 0xffffff, transparent: true, opacity: lightUI ? .4 : .5 });
   const black = S.cd.tray === 'black';
   const trayM = black ? new T3.MeshStandardMaterial({ color: 0x0d0d0e, roughness: .38, metalness: .1 }) : new T3.MeshPhysicalMaterial({ color: 0xffffff, roughness: .06, transparent: true, opacity: .2, clearcoat: 1, side: T3.DoubleSide, depthWrite: false, envMapIntensity: 1.6 });
   const add = (geo, m, x, y, z, parent, edges) => { const me = new T3.Mesh(geo, m); me.position.set(x, y, z); parent.add(me); if (edges) { const e = new T3.LineSegments(new T3.EdgesGeometry(geo, 25), edgeM); me.add(e); } return me; };
   const box = (w, h, d, m, x, y, z, parent = root, edges = true) => add(new T3.BoxGeometry(w, h, d), m, x, y, z, parent, edges);
-  const printM = (k, extra = {}) => new T3.MeshStandardMaterial({ map: C3.tex[k].tex, roughness: .62, metalness: 0, ...extra });
+  const printM = (k, extra = {}) => new T3.MeshBasicMaterial({ map: C3.tex[k].tex, toneMapped: false, transparent: !!extra.transparent, side: extra.side || T3.FrontSide });
   const sub = (k, a, b) => { const sh = SHEETS[k], TW = sh.w + 2 * BLEED, TH = sh.h + 2 * BLEED; return [(BLEED + a) / TW, (BLEED + b) / TW, BLEED / TH, (BLEED + sh.h) / TH]; };
   C3.print = []; C3.occ = [];
   // base shell
@@ -1812,6 +1812,7 @@ function openViewer(mode = 'case') {
   C3.tx = 0; C3.ty = 0; C3.tz = mode === 'disc' ? 34 : 42; C3.rx = 0; C3.ry = 0;
   const v = $('#viewer'); $('#vwstage').appendChild(g.r.domElement); C3.w = 0; buildCase();
   v.inert = false; v.classList.add('open'); renderViewerBar();
+  { const d = design(c), ls = Object.values(d).flatMap(sd => (sd && sd.layers) || []); ls.filter(l => l.type === 'img').forEach(l => getImg(l.src)); waitFonts(ls).then(() => { if (UI.vw) cdPaintTex(); }); }
   $('#vwtitle').innerHTML = `${logo(28)}<span><b>${esc(c.name)}</b><small>${esc(projArtist(c))} · ${S.cd.caseType === 'slim' ? 'Slim jewel case' : 'Jewel case'}, ${S.cd.tray} tray</small></span>`;
   if (!g.running) { g.running = true; requestAnimationFrame(loop3D); }
 }
@@ -1830,7 +1831,7 @@ function renderViewerBar() {
   applySlides();
 }
 let cdQueued = false;
-function cdDirty() { if (cdQueued) return; cdQueued = true; requestAnimationFrame(() => { cdQueued = false; if (!cdActive()) return; cdPaintTex(); if (S.cd.view === '2d') draw2D(); }); }
+function cdDirty() { if (cdQueued) return; cdQueued = true; requestAnimationFrame(() => { cdQueued = false; if (!cdActive() && !UI.vw) return; cdPaintTex(); if (S.cd.view === '2d' && cdActive()) draw2D(); }); }
 
 /* page */
 const cdInProject = () => S.view === 'collection' && S.projTab === 'cd';
