@@ -1,8 +1,8 @@
 {
-  "version": "1.0.5",
+  "version": "1.0.6",
   "file": "TamedPlayer-Setup.exe",
-  "size": 82348974,
-  "sha256": "b3521a6c924c3ac9bee863a3f5bd6b6667dc9c8007f98f5ed80e1b6dd0161074",
-  "notes": "Drag images straight onto the CD: drop on the front, back, spines or disc of the 3D case, or on the print sheet. Audio drops are ignored in the editor. Duplicate Project and Make Sequel. The disc only spins in the viewer.",
+  "size": 82352010,
+  "sha256": "42a1c0ca2302b46eea03216bdb5e3a033f90c8c3824eff176f70241d7244bd8f",
+  "notes": "New Settings page: theme, playback, default project type, backup and restore, erase data, shortcuts. Artwork under the CD tray. The disc moves fully clear of the case. Your artist name shows everywhere instead of 'Artist Name'.",
   "date": "2026-11-09"
 }

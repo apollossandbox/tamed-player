@@ -610,6 +610,19 @@ body.cx-on .bar { transform: none; }
 .app > .main { position: relative; z-index: 1; }
 @media (max-width: 760px) { .pwash { left: 0; } .covcol { width: 100%; } }
 
+/* settings */
+.settings { display: flex; flex-direction: column; gap: 16px; max-width: 820px; }
+.set-card { padding: 6px 20px; border-radius: 14px; } .set-card h2 { font-size: 15px; font-weight: 800; margin: 14px 0 4px; }
+.set-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 14px 0; border-top: 1px solid var(--line); }
+.set-card h2 + .set-row { border-top: 0; }
+.set-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; } .set-txt b { font-size: 14px; } .set-txt span { font-size: 12.5px; color: var(--ink2); max-width: 52ch; }
+.set-ctl { flex: none; display: flex; align-items: center; gap: 8px; } .set-ctl .field { width: 240px; } .set-ctl .sel { height: 38px; }
+.set-card.danger h2 { color: #e5484d; }
+.keys { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 8px 16px; margin: 4px 0 16px; font-size: 13px; }
+.keys dt { font-weight: 700; font-variant-numeric: tabular-nums; } .keys dd { margin: 0; color: var(--ink2); }
+body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-delay: 0s !important; }
+@media (max-width: 640px) { .set-row { flex-direction: column; align-items: flex-start; } .set-ctl .field { width: 100%; } .set-ctl { width: 100%; } .keys { grid-template-columns: 1fr; } }
+
 /* image drop hint in the editor */
 .ps-drophint { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); z-index: 4; padding: 7px 14px; border-radius: 99px; background: var(--ink); color: var(--onink); font-weight: 700; font-size: 12.5px; pointer-events: none; box-shadow: 0 10px 30px -10px var(--shadow); }
 .psg-h.drophot { box-shadow: inset 0 0 0 2px var(--ink); }
@@ -829,6 +842,7 @@ body.cx-on .bar { transform: none; }
 <input type="file" id="file" accept="audio/*" multiple hidden>
 <input type="file" id="art" accept="image/*" hidden>
 <input type="file" id="mcoverfile" accept="image/*" hidden>
+<input type="file" id="restorefile" accept=".zip,application/zip" hidden>
 <input type="file" id="verfile" accept="audio/*" hidden>
 <input type="file" id="cdimg" accept="image/*" hidden>
 <input type="file" id="cdfont" accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2" hidden>
@@ -901,7 +915,17 @@ const pcolors = c => { const cv = coverObj(c); return cv && cv.colors && artOf(c
 const pgrad = c => { const k = pcolors(c); return `linear-gradient(135deg, ${k.join(', ')})`; };
 const feats = t => (t.features || []).map(s => s.trim()).filter(Boolean);
 const dispTitle = t => t.title + (t.featInTitle && feats(t).length ? ` (feat. ${andList(feats(t))})` : '');
-const artistOf = () => (S.concept.artist || '').trim() || 'Artist Name';
+const artistOf = () => {
+  const typed = (S.concept.artist || '').trim(); if (typed && typed !== 'Artist Name') return typed;
+  const tally = {}; S.cols.forEach(c => (c.artists || []).filter(Boolean).forEach((a, i) => { tally[a] = (tally[a] || 0) + (i === 0 ? 2 : 1); }));
+  const best = Object.entries(tally).sort((a, b) => b[1] - a[1])[0]; return best ? best[0] : 'Artist Name';
+};
+/* swap an old artist name for a new one in a project's CD text (also the upper-case spine version) */
+function cdRenameArtist(cid, from, to) {
+  const D = S.cd.designs && S.cd.designs[cid]; if (!D || !from || !to || from === to) return false; let hit = false;
+  Object.values(D).forEach(sd => (sd.layers || []).forEach(l => { if (l.type !== 'text') return; const t0 = l.text; l.text = l.text.split(from).join(to).split(from.toUpperCase()).join(to.toUpperCase()); if (l.text !== t0) hit = true; }));
+  return hit;
+}
 const projOf = t => S.cols.find(c => c.tracks.includes(t.id));
 const projArtists = c => (c && Array.isArray(c.artists) && c.artists.filter(Boolean).length ? c.artists.filter(Boolean) : [artistOf()]);
 const projArtist = c => projArtists(c).join(', ');
@@ -933,11 +957,12 @@ function normalize() {
   if (S.tl && Array.isArray(S.tl.items)) S.tl.items.forEach(i => { const c = i.kind === 'release' && col(i.colId); if (c && i.date && !c.targetDate) c.targetDate = i.date; });
   delete S.tl;
   S.eq = { on: false, preset: 'flat', g: [0, 0, 0, 0, 0], ...(S.eq || {}) };
+  S.prefs = { theme: 'system', reduceMotion: false, autoNext: true, clickToPlay: true, wash: true, defType: 'album', ...(S.prefs || {}) };
   S.cd = { colId: null, view: '3d', sheet: 'front', caseType: 'jewel', tray: 'clear', mode: 'orbit', open: false, discOut: false, designs: {}, ...(S.cd || {}) };
   delete S.cd.style; delete S.cd.label; delete S.cd.skip;
   S.tracks.forEach(t => { if (t.artist === 'Artist Name') t.artist = ''; });
   S.cx = { open: false, page: 'album', colId: null, ...(S.cx || {}), open: false };
-  if (!['library', 'collection', 'cd', 'concept'].includes(S.view)) S.view = 'library';
+  if (!['library', 'collection', 'cd', 'concept', 'settings'].includes(S.view)) S.view = 'library';
   if (!['projects', 'tracks'].includes(S.libTab)) S.libTab = 'projects';
   if (!['tracks', 'cd'].includes(S.projTab)) S.projTab = 'tracks';
   if (S.filter !== 'all' && !ST[S.filter]) S.filter = 'all';
@@ -1001,7 +1026,7 @@ function step(d) {
   let i = q.indexOf(S.cur); if (i < 0) i = 0;
   playTrack(q[(i + d + q.length) % q.length]);
 }
-function onEnd() { if (S.rep) { Engine.seek(0); Engine.play(); } else step(1); }
+function onEnd() { if (S.rep) { Engine.seek(0); Engine.play(); } else if (S.prefs.autoNext !== false) step(1); else { S.playing = false; refresh(); } }
 function tick() {
   if (!S.cur) return;
   const p = Engine.pos(), d = Engine.dur() || 1, pct = Math.min(100, p / d * 100);
@@ -1059,7 +1084,7 @@ function settlePick(el, k) { const p = el.closest('.pick'); if (!p) return; $$('
 function toast(msg) { const e = $('#toast'); e.textContent = msg; e.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove('show'), 2600); }
 
 function renderSide() {
-  const nav = [['library', 'grid', 'Library', S.cols.length], ['cd', 'disc', 'CD creator'], ['concept', 'phone', 'Concept player']];
+  const nav = [['library', 'grid', 'Library', S.cols.length], ['cd', 'disc', 'CD creator'], ['concept', 'phone', 'Concept player'], ['settings', 'gear', 'Settings']];
   $('#side').innerHTML = `
   <div class="brand">${logo(26)}<span>Tamed Player</span></div>
   <nav class="snav" data-slide="nav"><i class="thumb"></i>${nav.map(([v, i, l, n]) => `<button class="navbtn ${S.view === v ? 'on' : ''}" data-act="nav" data-view="${v}">${ico(i)}<span>${l}</span>${n !== undefined ? `<em>${n}</em>` : ''}</button>`).join('')}</nav>
@@ -1113,9 +1138,10 @@ function renderMain() {
   if (S.view === 'library') renderLibrary(m);
   else if (S.view === 'collection') renderProject(m);
   else if (S.view === 'cd') renderCD(m);
+  else if (S.view === 'settings') renderSettings(m);
   else renderConcept(m);
   renderList();
-  if (enter && S.view === 'collection') { const c = col(S.colId), w = $('#pwash'); if (c && w) { const k = pcolors(c); w.style.setProperty('--w1', k[0]); w.style.setProperty('--w2', k[1] || k[0]); w.classList.remove('fade'); w.classList.add('show'); void w.offsetWidth; clearTimeout(renderMain.w); renderMain.w = setTimeout(() => w.classList.add('fade'), 3000); } }
+  if (enter && S.view === 'collection' && S.prefs.wash !== false) { const c = col(S.colId), w = $('#pwash'); if (c && w) { const k = pcolors(c); w.style.setProperty('--w1', k[0]); w.style.setProperty('--w2', k[1] || k[0]); w.classList.remove('fade'); w.classList.add('show'); void w.offsetWidth; clearTimeout(renderMain.w); renderMain.w = setTimeout(() => w.classList.add('fade'), 3000); } }
   else if (enter) { const w = $('#pwash'); if (w) w.classList.remove('show', 'fade'); }
   if (enter) { m.scrollTop = 0; clearTimeout(renderMain.t); renderMain.t = setTimeout(() => m.classList.remove('enter'), 800); }
 }
@@ -1203,7 +1229,7 @@ function saveDetails() {
   const list = k => $$(`#modal [data-m="${k}"]`).map(i => i.value.trim()).filter(Boolean);
   if (M.kind === 'proj') {
     const c = col(M.id); if (!c) return closeModal();
-    c.name = v('m-pname') || c.name; c.artists = list('partist'); c.type = v('m-ptype') || c.type; c.targetDate = v('m-pdate') || null;
+    const oldA = projArtist(c); c.name = v('m-pname') || c.name; c.artists = list('partist'); cdRenameArtist(c.id, oldA, projArtist(c)); c.type = v('m-ptype') || c.type; c.targetDate = v('m-pdate') || null;
     if (UI.mCover && UI.mCover.file) { const f = UI.mCover.file; addCover(c, f).then(() => { refresh(); }); }
     else if (UI.mCover === false && c.cover) c.cover = null;
     toast('Saved ' + c.name);
@@ -1284,6 +1310,7 @@ const SHEETS = {
   front: { name: 'Booklet front', short: 'Front', w: 120.65, h: 120.65, size: '4.75 × 4.75 in', note: 'Sits under the clear lid. Keep text 3 mm inside the trim.' },
   inside: { name: 'Booklet inside', short: 'Inside', w: 120.65, h: 120.65, size: '4.75 × 4.75 in', note: 'The back of the booklet. You see it when the case is open.' },
   tray: { name: 'Tray card', short: 'Tray card', w: 150, h: 117.5, spine: 6.35, size: '5.906 × 4.625 in', note: 'Wraps the back of the case. The two 0.25 in strips fold into the spines.' },
+  trayIn: { name: 'Under the tray', short: 'Under tray', w: 137.3, h: 117.5, size: '5.406 × 4.625 in', note: 'The inside of the tray card. It shows through the clear tray when the disc is out. Hidden by a black tray.' },
   spineL: { name: 'Left spine', short: 'Left spine', w: 117.5, h: 6.35, strip: 'L', size: '4.625 × 0.25 in', note: 'The left 0.25 in strip of the tray card. It reads top to bottom on the case. Set the background to None to let the tray card art wrap around.' },
   spineR: { name: 'Right spine', short: 'Right spine', w: 117.5, h: 6.35, strip: 'R', size: '4.625 × 0.25 in', note: 'The right 0.25 in strip of the tray card. It reads top to bottom on the case. Set the background to None to let the tray card art wrap around.' },
   disc: { name: 'Disc face', short: 'Disc', w: 120, h: 120, disc: true, size: '120 mm', note: 'Printed from the 23 mm hub ring out to 118 mm. The center hole is 15 mm.' }
@@ -1358,7 +1385,7 @@ function fontListHTML() {
     || `<p class="faint small" style="padding:8px">${cat === 'Yours' ? 'Upload a .ttf, .otf, .woff or .woff2 file to use your own font.' : 'No fonts match.'}</p>`;
 }
 function openFontList() { [...FONT_LIB, ...[]].forEach(linkFont); const l = $('#fontlist'); if (l) l.innerHTML = fontListHTML(); }
-const sheetKeys = () => S.cd.caseType === 'slim' ? ['front', 'inside', 'disc'] : ['front', 'inside', 'tray', 'spineL', 'spineR', 'disc'];
+const sheetKeys = () => S.cd.caseType === 'slim' ? ['front', 'inside', 'disc'] : ['front', 'inside', 'tray', 'trayIn', 'spineL', 'spineR', 'disc'];
 const printKeys = () => sheetKeys().filter(k => !SHEETS[k].strip);
 /* a spine strip's right edge on the tray card, in tray trim mm */
 const stripEdge = side => side === 'L' ? SHEETS.tray.spine : SHEETS.tray.w;
@@ -1368,6 +1395,8 @@ function cdCol() { const c = (S.view === 'collection' && col(S.colId)) || col(S.
 function design(c) {
   if (!S.cd.designs) S.cd.designs = {};
   const D = S.cd.designs[c.id] || (S.cd.designs[c.id] = autoDesign(c));
+  if (!D.trayIn) D.trayIn = { bg: '#f4f4f2', layers: [] };
+  if (projArtist(c) !== 'Artist Name') cdRenameArtist(c.id, 'Artist Name', projArtist(c));
   if (D.tray && !D.spineL) {
     const sp = SHEETS.tray.spine, tw = SHEETS.tray.w; D.spineL = { bg: 'none', layers: [] }; D.spineR = { bg: 'none', layers: [] };
     D.tray.layers = D.tray.layers.filter(L => {
@@ -1389,6 +1418,7 @@ function autoDesign(c) {
     front: { bg: dark, layers: cov ? [L({ type: 'img', src: cov, name: 'Project cover', ar: 1, x: fw / 2, y: fw / 2, w: fw + 6 })] : [T(c.name, { size: 10, weight: 700, x: fw / 2, y: fw / 2 - 6, w: fw - 16 }), T(A, { size: 5, x: fw / 2, y: fw / 2 + 8, w: fw - 16 })] },
     inside: { bg: '#f4f4f2', layers: [T(c.name, { size: 5.5, weight: 700, color: '#111111', x: fw / 2, y: 16, w: fw - 20 }), T(creditLines + `\n\nAll songs by ${A}\n© ${yearOf(c)} ${A}`, { size: 3, color: '#222222', align: 'left', x: fw / 2, y: fw / 2 + 12, w: fw - 24 })] },
     tray: { bg: dark, layers: [T(c.name.toUpperCase(), { size: 5, weight: 800, ls: .08, x: tw / 2, y: 16, w: tw - 2 * sp - 20 }), T(lines, { size: 3.3, align: 'left', x: tw / 2, y: th / 2 + 6, w: tw - 2 * sp - 30 })] },
+    trayIn: { bg: '#f4f4f2', layers: [] },
     spineL: { bg: 'none', layers: [T(spineTxt, { size: 3, weight: 700, x: th / 2, y: sp / 2, w: th - 12 })] },
     spineR: { bg: 'none', layers: [T(spineTxt, { size: 3, weight: 700, x: th / 2, y: sp / 2, w: th - 12 })] },
     disc: { bg: 'silver', layers: cov ? [L({ type: 'img', src: cov, name: 'Project cover', ar: 1, x: 60, y: 60, w: 120 })] : [T(c.name, { font: 'Permanent Marker', size: 7, color: '#111111', x: 60, y: 30, w: 90, rot: -6 }), T(A, { font: 'Permanent Marker', size: 4.5, color: '#111111', x: 60, y: 40, w: 90, rot: -6 })] }
@@ -1602,7 +1632,7 @@ function buildCase() {
   if (!slim) {
     const sh = SHEETS.tray, sp = sh.spine, bw = (sh.w - 2 * sp) / 10, th = sh.h / 10, sd = sp / 10;
     const back = add(uvRemap(new T3.PlaneGeometry(bw, th), ...sub('tray', sp, sh.w - sp)), printM('tray'), 0, 0, .104, root); back.rotation.y = Math.PI;
-    add(new T3.PlaneGeometry(bw, th), new T3.MeshStandardMaterial({ color: 0xebebe6, roughness: .9 }), 0, 0, .108, root);
+    const tin = add(uvRemap(new T3.PlaneGeometry(bw, th), ...sub('trayIn', 0, SHEETS.trayIn.w)), printM('trayIn'), 0, 0, .108, root); tin.userData.sheet = 'trayIn'; C3.print.push(tin);
     const ls = add(uvRemap(new T3.PlaneGeometry(sd, th), ...sub('tray', 0, sp)), printM('tray'), W / 2 - .11, 0, .104 + sd / 2, root); ls.rotation.y = Math.PI / 2;
     const rs = add(uvRemap(new T3.PlaneGeometry(sd, th), ...sub('tray', sh.w - sp, sh.w)), printM('tray'), -W / 2 + .11, 0, .104 + sd / 2, root); rs.rotation.y = -Math.PI / 2;
     back.userData.sheet = 'tray'; ls.userData.sheet = 'spineL'; rs.userData.sheet = 'spineR'; ls.userData.strip = 'L'; rs.userData.strip = 'R'; C3.print.push(back, ls, rs);
@@ -1646,13 +1676,15 @@ function loop3D() {
   const V = UI.vw, discOnly = V && V.mode === 'disc';
   if (V && V.auto) C3.ty += .004;
   C3.root.rotation.set(C3.rx, C3.ry, 0);
-  if (V) { C3.cam.position.set(0, 2.4, C3.z * (w < 520 ? 1.5 : 1)); C3.cam.lookAt(0, -.6, 0); } else { C3.cam.position.set(0, 0, C3.z * (w < 520 ? 1.35 : 1)); C3.cam.lookAt(0, 0, 0); }
+  /* when the disc is out, pull back and pan right so the case and the disc both fit */
+  const dOut = discOnly ? 0 : ease(Math.min(1, Math.max(0, C3.discA))), lOut = discOnly ? 0 : ease(Math.min(1, Math.max(0, C3.lidA))), pan = dOut * 6.5 - lOut * 2.5, back = dOut * 16 + lOut * 8;
+  if (V) { C3.cam.position.set(pan, 2.4, (C3.z + back) * (w < 520 ? 1.5 : 1)); C3.cam.lookAt(pan, -.6, 0); } else { C3.cam.position.set(pan, 0, (C3.z + back) * (w < 520 ? 1.35 : 1)); C3.cam.lookAt(pan, 0, 0); }
   C3.studio.visible = !!V; C3.scene.background = V ? C3.bgTex : null;
   C3.root.children.forEach(o => { o.visible = !discOnly || o === C3.disc; });
   C3.lidA += ((S.cd.open || S.cd.discOut ? 1 : 0) - C3.lidA) * .09; C3.lid.rotation.y = -1.95 * ease(Math.min(1, Math.max(0, C3.lidA)));
   C3.discA += ((S.cd.discOut && C3.lidA > .6 ? 1 : 0) - C3.discA) * .08; const da = ease(Math.min(1, Math.max(0, C3.discA)));
-  if (discOnly) C3.disc.position.set(0, 0, 0); else C3.disc.position.set(da * 9.5, 0, C3.discZ + Math.sin(da * Math.PI) * 2.2 + da * .4);
-  C3.shadow.scale.set(discOnly ? .55 : S.cd.discOut && !discOnly ? 1.45 : 1, 1, discOnly ? .6 : 1); C3.shadow.position.x = discOnly ? 0 : da * 4;
+  if (discOnly) C3.disc.position.set(0, 0, 0); else C3.disc.position.set(da * 15, 0, C3.discZ + Math.sin(da * Math.PI) * 2.6 + da * .4);
+  C3.shadow.scale.set(discOnly ? .55 : S.cd.discOut && !discOnly ? 1.9 : 1, 1, discOnly ? .6 : 1); C3.shadow.position.x = discOnly ? 0 : da * 6;
   const c = col(S.cd.colId), syncing = V && V.spin !== false && S.playing && c && c.tracks.includes(S.cur);
   if (syncing) C3.disc.rotation.z -= .04; else if (!V) C3.disc.rotation.z = 0;
   C3.r.render(C3.scene, C3.cam);
@@ -1665,7 +1697,7 @@ function openViewer(mode = 'case') {
   C3.tx = -.12; C3.ty = .6; C3.tz = mode === 'disc' ? 34 : 46; C3.rx = C3.tx;
   const v = $('#viewer'); $('#vwstage').appendChild(g.r.domElement); C3.w = 0; buildCase();
   v.inert = false; v.classList.add('open'); renderViewerBar();
-  $('#vwtitle').innerHTML = `${logo(28)}<span><b>${esc(c.name)}</b><small>${esc(artistOf())} · ${S.cd.caseType === 'slim' ? 'Slim jewel case' : 'Jewel case'}, ${S.cd.tray} tray</small></span>`;
+  $('#vwtitle').innerHTML = `${logo(28)}<span><b>${esc(c.name)}</b><small>${esc(projArtist(c))} · ${S.cd.caseType === 'slim' ? 'Slim jewel case' : 'Jewel case'}, ${S.cd.tray} tray</small></span>`;
   if (!g.running) { g.running = true; requestAnimationFrame(loop3D); }
 }
 function closeViewer() {
@@ -1939,7 +1971,7 @@ function cdAct(a, el) {
     case 'cd-down': if (L) { const i = sd.layers.indexOf(L); if (i > 0) { [sd.layers[i], sd.layers[i - 1]] = [sd.layers[i - 1], sd.layers[i]]; renderCdPanel(); cdDirty(); save(); } } break;
     case 'cd-open': S.cd.open = !S.cd.open; if (!S.cd.open) S.cd.discOut = false; renderPsOpts(); save(); break;
     case 'cd-disc': S.cd.discOut = !S.cd.discOut; renderPsOpts(); save(); break;
-    case 'cd-sheet': UI.fontOpen = false; S.cd.sheet = k; UI.cdSel = { sheet: k, id: null }; if (S.cd.view === '3d') { if (k === 'inside') S.cd.open = true; const face = { spineL: [-.15, -1.45], spineR: [-.15, 1.45], front: [-.3, .55], inside: [-.25, -.4], tray: [-.25, 2.75], disc: [-.5, .2] }[k]; if (C3 && face) { C3.tx = face[0]; C3.ty = face[1] + Math.round((C3.ry - face[1]) / (Math.PI * 2)) * Math.PI * 2; } if (k === 'disc') S.cd.discOut = true; } refresh(); break;
+    case 'cd-sheet': UI.fontOpen = false; S.cd.sheet = k; UI.cdSel = { sheet: k, id: null }; if (S.cd.view === '3d') { if (k === 'inside') S.cd.open = true; if (k === 'trayIn') { S.cd.open = true; S.cd.discOut = true; } const face = { trayIn: [-.3, .35], spineL: [-.15, -1.45], spineR: [-.15, 1.45], front: [-.3, .55], inside: [-.25, -.4], tray: [-.25, 2.75], disc: [-.5, .2] }[k]; if (C3 && face) { C3.tx = face[0]; C3.ty = face[1] + Math.round((C3.ry - face[1]) / (Math.PI * 2)) * Math.PI * 2; } if (k === 'disc') S.cd.discOut = true; } refresh(); break;
     case 'cd-case': S.cd.caseType = k; if (C3) buildCase(); refresh(); break;
     case 'cd-tray': S.cd.tray = k; if (C3) buildCase(); refresh(); break;
     case 'cd-bg': sd.bg = k; renderCdPanel(); cdDirty(); save(); break;
@@ -1977,7 +2009,7 @@ async function cdPrint() {
     paintSheet(cv.getContext('2d'), k, d[k], PRINTMM, d);
     z.file(`${i + 1} ${sh.name}.png`, await new Promise(r => cv.toBlob(r, 'image/png')));
   }
-  z.file('specs.txt', `${c.name} by ${artistOf()}\n${S.cd.caseType === 'slim' ? 'Slim jewel case' : 'Jewel case'}, ${S.cd.tray} tray\n\nEvery file is 300 dpi with 3 mm (0.125 in) bleed on each edge.\nBooklet front and inside: 4.75 x 4.75 in trim.\n${S.cd.caseType === 'jewel' ? 'Tray card: 5.906 x 4.625 in trim, 0.25 in spines at each end.\n' : ''}Disc: 120 mm, printable from 23 mm to 118 mm, 15 mm hole.\nKeep text 3 mm inside the trim. Check your printer's template before ordering.\n`);
+  z.file('specs.txt', `${c.name} by ${projArtist(c)}\n${S.cd.caseType === 'slim' ? 'Slim jewel case' : 'Jewel case'}, ${S.cd.tray} tray\n\nEvery file is 300 dpi with 3 mm (0.125 in) bleed on each edge.\nBooklet front and inside: 4.75 x 4.75 in trim.\n${S.cd.caseType === 'jewel' ? 'Tray card: 5.906 x 4.625 in trim, 0.25 in spines at each end. Under the tray (inside of the tray card): 5.406 x 4.625 in.\n' : ''}Disc: 120 mm, printable from 23 mm to 118 mm, 15 mm hole.\nKeep text 3 mm inside the trim. Check your printer's template before ordering.\n`);
   const blob = await z.generateAsync({ type: 'blob' });
   try { await dl.save({ filename: slug(c.name) + '-cd-print-files.zip', data: blob }); toast('Print files ready'); } catch (e) { if (e && e.code !== 'declined') toast('The print files could not be saved'); }
 }
@@ -1987,6 +2019,84 @@ async function cdSnap() {
   try { await dl.save({ filename: slug(cdCol().name) + '-cd-3d.png', data: blob }); toast('Image saved'); } catch (e) { if (e && e.code !== 'declined') toast('The image could not be saved'); }
 }
 
+/* ---------- settings ---------- */
+Object.assign(IC, { gear: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z' });
+function applyPrefs() {
+  const P = S.prefs || {}, r = document.documentElement;
+  if (P.theme === 'light' || P.theme === 'dark') r.setAttribute('data-theme', P.theme); else r.removeAttribute('data-theme');
+  document.body.classList.toggle('reduce-motion', !!P.reduceMotion);
+}
+const sw = (k, on, label) => `<button class="switch" role="switch" aria-checked="${!!on}" aria-label="${esc(label)}" data-act="pref-tog" data-k="${k}"></button>`;
+const setRow = (title, desc, control) => `<div class="set-row"><div class="set-txt"><b>${title}</b>${desc ? `<span>${desc}</span>` : ''}</div><div class="set-ctl">${control}</div></div>`;
+function renderSettings(m) {
+  const P = S.prefs;
+  m.innerHTML = `<header class="head"><div><h1>Settings</h1><p class="faint">How Tamed Player looks, plays and keeps your work.</p></div></header>
+  <div class="settings">
+    <section class="set-card box"><h2>Profile</h2>
+      ${setRow('Main artist name', 'Used for the artist page and for projects without their own artists.', `<input class="field" id="set-artist" data-cc="artist" value="${esc(S.concept.artist === 'Artist Name' ? '' : S.concept.artist || '')}" placeholder="${esc(artistOf())}" autocomplete="off">`)}
+      ${setRow('Verified badge', 'Shows a check next to your name in the concept player.', `<label class="check"><input type="checkbox" data-cc="verified" ${S.concept.verified ? 'checked' : ''}><span>Verified artist</span></label>`)}
+    </section>
+    <section class="set-card box"><h2>Appearance</h2>
+      ${setRow('Theme', 'System follows your computer\'s light or dark setting.', seg('settheme', [['system', 'System'], ['light', 'Light'], ['dark', 'Dark']], P.theme, 'pref-theme'))}
+      ${setRow('Reduce animations', 'Turns off sliding, fading and spinning effects.', sw('reduceMotion', P.reduceMotion, 'Reduce animations'))}
+      ${setRow('Project colour wash', 'Tints the page with the cover\'s colours for a few seconds when you open a project.', sw('wash', P.wash, 'Project colour wash'))}
+    </section>
+    <section class="set-card box"><h2>Playback</h2>
+      ${setRow('Play the next track automatically', 'When a song ends, the next one in the list starts.', sw('autoNext', P.autoNext, 'Play the next track automatically'))}
+      ${setRow('Click a track to play it', 'Clicking anywhere on a song row plays or pauses it.', sw('clickToPlay', P.clickToPlay, 'Click a track to play it'))}
+      ${setRow('Equalizer', S.eq.on ? 'On: ' + (EQP[S.eq.preset] ? EQP[S.eq.preset][0] : 'Custom') : 'Off', `<button class="btn sm" data-act="eq">${ico('eq', 14)} Open equalizer</button>`)}
+    </section>
+    <section class="set-card box"><h2>New projects</h2>
+      ${setRow('Default type', 'New projects start as this type. You can change it on the project page.', `<div class="sel box"><select id="set-deftype" aria-label="Default project type">${Object.entries(KINDS).map(([k, l]) => `<option value="${k}" ${P.defType === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div>`)}
+    </section>
+    <section class="set-card box"><h2>Backup &amp; storage</h2>
+      ${setRow('Saved on this device', '<span id="set-usage">Checking…</span>', '')}
+      ${setRow('Back up everything', 'One zip with every project, song, cover, CD design and font. Keep it somewhere safe.', `<button class="btn sm" data-act="backup">${ico('save', 14)} Back up</button>`)}
+      ${setRow('Restore from a backup', 'Replaces everything here with the backup\'s contents.', `<button class="btn sm" data-act="restore">${ico('upload', 14)} Restore…</button>`)}
+    </section>
+    ${window.tpDesktop ? `<section class="set-card box"><h2>Desktop app</h2>${setRow('Version ' + esc(tpDesktop.version), 'New versions come from the tamed-player repository on GitHub and install over this one. Your projects are kept.', `<button class="btn sm" data-act="desk-update">${ico('repeat', 14)} Check for updates</button>`)}</section>` : ''}
+    <section class="set-card box"><h2>Keyboard shortcuts</h2>
+      <dl class="keys"><dt>Space</dt><dd>Play or pause</dd><dt>Esc</dt><dd>Close panels and menus</dd>
+      <dt>V / R / T / I</dt><dd>CD editor: move, rotate case, type, place image</dd><dt>${MOD}Z / ${MOD}Shift+Z</dt><dd>Undo / redo</dd>
+      <dt>${MOD}J</dt><dd>Duplicate layer</dd><dt>${MOD}C / X / V</dt><dd>Copy, cut, paste layer</dd><dt>${MOD}] / ${MOD}[</dt><dd>Bring forward / send backward (add Shift for front / back)</dd>
+      <dt>${MOD}/</dt><dd>Lock or unlock layer</dd><dt>${MOD},</dt><dd>Hide or show layer</dd><dt>Arrows</dt><dd>Nudge layer (Shift for 5 mm)</dd><dt>${MOD}0 / = / -</dt><dd>Fit, zoom in, zoom out</dd></dl>
+    </section>
+    <section class="set-card box"><h2>About</h2>
+      ${setRow('Tamed Player', 'Made by dris, trulytamed and all of KGB.', `<button class="btn sm" data-act="credits">${ico('star', 14)} Credits</button>`)}
+    </section>
+    <section class="set-card box danger"><h2>Erase all data</h2>
+      ${setRow('Delete everything on this device', 'Removes every project, song, cover and setting. Back up first if you might want them.', `<button class="btn sm" data-act="wipe">${ico('trash', 14)} Erase everything</button>`)}
+    </section>
+  </div>`;
+  if (navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(e => { const u = $('#set-usage'); if (u) u.textContent = `${(e.usage / 1048576).toFixed(1)} MB used · ${S.cols.length} projects · ${S.tracks.length} songs`; }).catch(() => { const u = $('#set-usage'); if (u) u.textContent = `${S.cols.length} projects · ${S.tracks.length} songs`; });
+  else { const u = $('#set-usage'); if (u) u.textContent = `${S.cols.length} projects · ${S.tracks.length} songs`; }
+}
+async function backupAll() {
+  if (!window.JSZip) return toast('Zip support did not load, so backups are unavailable');
+  let dl = null; try { dl = await claude.use('downloads'); } catch (e) { } if (!dl) return toast('Saving files is not available in this view');
+  toast('Packing your backup…');
+  const z = new JSZip(), keys = new Set();
+  S.tracks.forEach(t => { keys.add(t.id); (t.versions || []).forEach(v => keys.add(v.id)); });
+  S.cols.forEach(c => (c.covers || []).forEach(cv => keys.add('art:' + cv.id)));
+  Object.values(S.cd.designs || {}).forEach(d => Object.values(d).forEach(sd => (sd.layers || []).forEach(l => { if (l.src && l.src.startsWith('cdimg:')) keys.add(l.src); })));
+  (S.cd.fonts || []).forEach(f => keys.add('cdfont:' + f.id));
+  const files = {}; let i = 0;
+  for (const k of keys) { const b = await DB.get(k); if (b) { const n = 'files/' + (++i) + '-' + k.replace(/[^\w.-]+/g, '_'); z.file(n, b); files[k] = { n, type: b.type || '' }; } }
+  z.file('tamed-player-backup.json', JSON.stringify({ app: 'Tamed Player', kind: 'backup', format: 1, date: new Date().toISOString(), state: { ...S, playing: false, q: '', editId: null, cx: { ...S.cx, open: false } }, files }));
+  const blob = await z.generateAsync({ type: 'blob' });
+  try { await dl.save({ filename: `tamed-player-backup-${today()}.zip`, data: blob }); toast('Backup ready'); } catch (e) { if (e && e.code === 'too_large') toast('The backup is too large to save here'); else if (e && e.code !== 'declined') toast('The backup could not be saved'); }
+}
+async function restoreAll(file) {
+  if (!window.JSZip) return toast('Zip support did not load, so backups are unavailable');
+  try {
+    const z = await JSZip.loadAsync(file), j = z.file('tamed-player-backup.json');
+    if (!j) return toast('That zip is not a Tamed Player backup. To import music, drop it in the Library.');
+    const meta = JSON.parse(await j.async('string')); toast('Restoring…');
+    for (const [k, f] of Object.entries(meta.files || {})) { const e = z.file(f.n); if (e) { const b = await e.async('blob'); await DB.put(k, f.type ? new Blob([b], { type: f.type }) : b); } }
+    localStorage.setItem(KEY, JSON.stringify(meta.state)); location.reload();
+  } catch (e) { toast('That backup could not be read'); }
+}
+
 /* ---------- concept settings ---------- */
 function renderConcept(m) {
   const C = S.concept, ord = orderedProjects();
@@ -1994,12 +2104,12 @@ function renderConcept(m) {
   <div class="cwrap">
     <section class="cpanel box">
       <label class="lab">Style</label>${seg('skin', [['sp', 'Spotify-style'], ['am', 'Apple Music-style']], C.skin, 'skin', 'full')}
-      <label class="lab" for="c-artist">Artist name</label><input class="field" id="c-artist" data-cc="artist" value="${esc(C.artist)}">
+      <label class="lab" for="c-artist">Artist name</label><input class="field" id="c-artist" data-cc="artist" value="${esc(S.concept.artist === 'Artist Name' ? '' : S.concept.artist || '')}" placeholder="${esc(artistOf())}">
       <label class="check"><input type="checkbox" id="c-verified" data-cc="verified" ${C.verified ? 'checked' : ''}><span>Verified artist</span></label>
       <p class="faint small">A visual mockup. It is not connected to any streaming service. The artist page lists projects by target release date, then oldest first.</p>
     </section>
     <section>
-      <button class="artist-card glass" data-act="cx-artist"><span class="av" style="${ord[0] ? pcov(ord[0]) : cover(3, 9)}"></span><span class="meta"><b style="font-size:17px">${esc(C.artist)}</b><span>Open the artist page · ${S.cols.length} projects</span></span>${ico('chevR', 18)}</button>
+      <button class="artist-card glass" data-act="cx-artist"><span class="av" style="${ord[0] ? pcov(ord[0]) : cover(3, 9)}"></span><span class="meta"><b style="font-size:17px">${esc(artistOf())}</b><span>Open the artist page · ${S.cols.length} projects</span></span>${ico('chevR', 18)}</button>
       ${S.cols.length ? `<div class="launch">${ord.map((c, n) => `<button class="lcard" data-act="to-concept" data-id="${c.id}" style="--n:${n};--g:${pgrad(c)};--glow:${pcolors(c)[0]}"><span class="pc-ring"><span class="pc-art fit" style="${pcovFit(c)}"></span></span><b>${esc(c.name)}</b><span>${KINDS[c.type]} · ${total(colTracks(c))}</span></button>`).join('')}</div>`
       : '<div class="empty"><p><b>No projects yet</b></p><p class="faint">Create an album, EP or mixtape to preview it here.</p><div class="crow"><button class="btn primary" data-act="newcol">New project</button></div></div>'}
     </section></div>`;
@@ -2028,7 +2138,7 @@ function spHTML() {
   const hc = X.page === 'artist' ? (ord[0] ? pcolors(ord[0])[0] : '#535353') : X.page === 'lyrics' && t ? pcolors(ownerCol(t) || c || { h1: 0, h2: 0 })[0] : c ? pcolors(c)[0] : '#535353';
   let body;
   if (X.page === 'artist') {
-    body = `<div class="sp-hero"><span class="cv round" style="${ord[0] ? pcov(ord[0]) : cover(3, 9)}"></span><div class="ht"><small>${C.verified ? vbadge(22) + ' Verified Artist' : 'Artist'}</small><h2>${esc(C.artist)}</h2><span class="sp-by"><span>${S.cols.length} projects · ${total(S.tracks)}</span></span></div></div>
+    body = `<div class="sp-hero"><span class="cv round" style="${ord[0] ? pcov(ord[0]) : cover(3, 9)}"></span><div class="ht"><small>${C.verified ? vbadge(22) + ' Verified Artist' : 'Artist'}</small><h2>${esc(artistOf())}</h2><span class="sp-by"><span>${S.cols.length} projects · ${total(S.tracks)}</span></span></div></div>
     <div class="sp-body"><div class="sp-actions"><button class="sp-big" data-act="cx-playall" data-id="${ord[0] ? ord[0].id : ''}" aria-label="Play">${ico(S.playing ? 'pause' : 'play', 24)}</button></div>
       ${ord.length ? `<h3 class="sp-sec">Latest release</h3><button class="sp-li" data-act="cx-album" data-id="${ord[ord.length - 1].id}" style="max-width:420px"><span class="cv" style="width:96px;height:96px;${pcov(ord[ord.length - 1])}"></span><span class="meta"><b style="font-weight:700">${esc(ord[ord.length - 1].name)}</b><span>${yearOf(ord[ord.length - 1])} · ${KINDS[ord[ord.length - 1].type]}</span></span></button>` : ''}
       <h3 class="sp-sec">Discography</h3><div class="sp-disco">${ord.map(p => `<button class="sp-card" data-act="cx-album" data-id="${p.id}"><span class="cv" style="${pcov(p)}"></span><b>${esc(p.name)}</b><span>${yearOf(p)} · ${KINDS[p.type]}</span></button>`).join('')}</div></div>`;
@@ -2040,12 +2150,12 @@ function spHTML() {
       <div class="sp-body"><div class="sp-actions"><button class="sp-big" data-act="cx-playall" data-id="${c.id}" aria-label="Play">${ico(playingHere ? 'pause' : 'play', 24)}</button><button class="ghost" data-act="noop" aria-label="Save">${ico('heart', 28)}</button><button class="ghost" data-act="noop" aria-label="More">${ico('dots', 28)}</button></div>
       <div class="sp-table"><div class="sp-th"><span style="text-align:right">#</span><span>Title</span><span style="text-align:right">${ico('time', 16)}</span></div>
       ${ts.map((x, i) => `<button class="sp-tr ${x.id === S.cur ? 'on' : ''}" data-act="cx-track" data-id="${x.id}"><span class="n">${x.id === S.cur && S.playing ? '<i class="eqi" style="justify-content:flex-end"><b></b><b></b><b></b></i>' : i + 1}</span><span class="meta"><b>${esc(dispTitle(x))}</b><span>${esc(dispArtist(x))}</span></span><span class="d">${fmt(verDur(x))}</span></button>`).join('')}</div>
-      <div class="sp-foot"><span>${fdate(relDate(c) || new Date(c.created).toISOString().slice(0, 10))}</span><span>${c.desc ? esc(c.desc) : '© ' + yearOf(c) + ' ' + esc(C.artist)}</span></div></div>`;
+      <div class="sp-foot"><span>${fdate(relDate(c) || new Date(c.created).toISOString().slice(0, 10))}</span><span>${c.desc ? esc(c.desc) : '© ' + yearOf(c) + ' ' + esc(projArtist(c))}</span></div></div>`;
   } else body = `<div class="sp-body" style="padding-top:40px"><h2>No projects yet</h2></div>`;
   return `<div class="cx-sp">
     <aside class="sp-lib"><h4>${ico('lib', 22)} Your Library</h4><div class="chipset"><span>Albums</span><span>Artists</span></div>
-      <button class="sp-li ${X.page === 'artist' ? 'on' : ''}" data-act="cx-artist"><span class="cv round" style="${ord[0] ? pcov(ord[0]) : cover(3, 9)}"></span><span class="meta"><b>${esc(C.artist)}</b><span>Artist</span></span></button>
-      ${ord.map(p => `<button class="sp-li ${X.page === 'album' && c && p.id === c.id ? 'on' : ''}" data-act="cx-album" data-id="${p.id}"><span class="cv" style="${pcov(p)}"></span><span class="meta"><b>${esc(p.name)}</b><span>${KINDS[p.type]} • ${esc(C.artist)}</span></span></button>`).join('')}</aside>
+      <button class="sp-li ${X.page === 'artist' ? 'on' : ''}" data-act="cx-artist"><span class="cv round" style="${ord[0] ? pcov(ord[0]) : cover(3, 9)}"></span><span class="meta"><b>${esc(artistOf())}</b><span>Artist</span></span></button>
+      ${ord.map(p => `<button class="sp-li ${X.page === 'album' && c && p.id === c.id ? 'on' : ''}" data-act="cx-album" data-id="${p.id}"><span class="cv" style="${pcov(p)}"></span><span class="meta"><b>${esc(p.name)}</b><span>${KINDS[p.type]} • ${esc(projArtist(p))}</span></span></button>`).join('')}</aside>
     <main class="sp-main" style="--hc:${hc}"><div class="sp-top"><button class="circ" data-act="cx-back" aria-label="Back">${ico('chevL', 18)}</button><span class="grow"></span><button class="exit" data-act="cx-exit">${ico('x', 14)} Exit concept</button></div>${body}</main>
     <footer class="sp-bar">
       <div class="now">${t ? `<span class="cv" style="${tcov(t)}"></span><span class="meta"><b>${esc(dispTitle(t))}</b><span>${esc(dispArtist(t))}</span></span><button class="hide-s" data-act="noop" style="color:#b3b3b3" aria-label="Save">${ico('heart', 16)}</button>` : ''}</div>
@@ -2059,7 +2169,7 @@ function amHTML() {
   let body;
   if (X.page === 'artist') {
     const latest = ord[ord.length - 1];
-    body = `<div class="am-artist" style="${latest ? pcov(latest) : cover(3, 9)}"><h2>${esc(C.artist)}${C.verified ? vbadge(26) : ''}</h2></div>
+    body = `<div class="am-artist" style="${latest ? pcov(latest) : cover(3, 9)}"><h2>${esc(artistOf())}${C.verified ? vbadge(26) : ''}</h2></div>
     <div class="am-btns" style="margin-top:0"><button data-act="cx-playall" data-id="${ord[0] ? ord[0].id : ''}">${ico(S.playing ? 'pause' : 'play', 14)} ${S.playing ? 'Pause' : 'Play'}</button></div>
     <p class="am-foot">${S.cols.length} projects · ${total(S.tracks)}</p>
     ${latest ? `<h3 class="am-sec">Latest Release</h3><button class="am-card" data-act="cx-album" data-id="${latest.id}" style="max-width:220px"><span class="cv" style="${pcov(latest)}"></span><b>${esc(latest.name)}</b><span>${yearOf(latest)}</span></button>` : ''}
@@ -2077,7 +2187,7 @@ function amHTML() {
     <aside class="am-side"><div class="am-search">${ico('search', 14)} Search</div>
       <button class="am-si" data-act="noop"><span class="ac">${ico('home', 16)}</span><span>Home</span></button><button class="am-si" data-act="noop"><span class="ac">${ico('grid', 16)}</span><span>New</span></button>
       <p class="am-h">Library</p><button class="am-si ${X.page === 'artist' ? 'on' : ''}" data-act="cx-artist"><span class="ac">${ico('user', 16)}</span><span>Artists</span></button><button class="am-si" data-act="noop"><span class="ac">${ico('disc', 16)}</span><span>Albums</span></button>
-      <p class="am-h">${esc(C.artist)}</p>${ord.map(p => `<button class="am-si ${X.page === 'album' && c && p.id === c.id ? 'on' : ''}" data-act="cx-album" data-id="${p.id}"><span class="cv" style="${pcov(p)}"></span><span>${esc(p.name)}</span></button>`).join('')}</aside>
+      <p class="am-h">${esc(artistOf())}</p>${ord.map(p => `<button class="am-si ${X.page === 'album' && c && p.id === c.id ? 'on' : ''}" data-act="cx-album" data-id="${p.id}"><span class="cv" style="${pcov(p)}"></span><span>${esc(p.name)}</span></button>`).join('')}</aside>
     <header class="am-top"><div class="am-tc"><button class="" data-act="cx-shuffle" aria-label="Shuffle">${ico('shuffle', 16)}</button><button data-act="prev" aria-label="Previous">${ico('prev', 20)}</button><button data-act="toggle" aria-label="Play or pause">${ico(S.playing ? 'pause' : 'play', 24)}</button><button data-act="next" aria-label="Next">${ico('next', 20)}</button><button class="${S.rep ? 'lit' : ''}" data-act="rep" aria-label="Repeat">${ico('repeat', 16)}</button></div>
       <div class="am-lcd">${t ? `<span class="cv" style="${tcov(t)}"></span><span class="meta"><b>${esc(dispTitle(t))}</b><span>${esc(dispArtist(t))} — ${esc((ownerCol(t) || c || { name: '' }).name)}</span></span>` : `<span class="cv" style="background:#e3e3e6"></span><span class="meta"><b style="color:#8a8a8e">Not playing</b></span>`}<div class="seek" data-seek><div class="rail"><div class="fill js-fill"></div></div></div></div>
       <div class="am-tr"><button class="${X.page === 'lyrics' ? 'lit' : ''}" data-act="cx-lyrics" aria-label="Lyrics">${ico('quote', 18)}</button><input type="range" min="0" max="1" step="0.01" value="${S.vol}" data-vol aria-label="Volume"><button class="exit" data-act="cx-exit">${ico('x', 14)} Exit</button></div></header>
@@ -2214,7 +2324,7 @@ function makeSequel(id) {
 }
 function newProject(name) {
   const h = Math.floor(Math.random() * 360);
-  return { id: uid(), name: name || 'Untitled project', type: 'album', desc: '', h1: h, h2: (h + 70) % 360, tracks: [], vis: 'private', covers: [], cover: null, tags: [], era: '', viz: 'bars', created: Date.now() };
+  return { id: uid(), name: name || 'Untitled project', type: KINDS[S.prefs && S.prefs.defType] ? S.prefs.defType : 'album', desc: '', h1: h, h2: (h + 70) % 360, tracks: [], vis: 'private', covers: [], cover: null, tags: [], era: '', viz: 'bars', created: Date.now() };
 }
 async function addCover(c, blob) {
   const id = uid(); await DB.put('art:' + id, blob); srcs['art:' + id] = URL.createObjectURL(blob);
@@ -2329,7 +2439,7 @@ async function downloadProject(c) {
   let dl = null; try { dl = await claude.use('downloads'); } catch (e) { }
   if (!dl) return toast('Saving files is not available in this view');
   toast('Packing ' + c.name + '…');
-  const z = new JSZip(), root = z.folder(safeName(c.name)), ts = colTracks(c), meta = { app: 'Tamed Player', format: 1, artist: S.concept.artist, project: { ...c, covers: [] }, tracks: [] };
+  const z = new JSZip(), root = z.folder(safeName(c.name)), ts = colTracks(c), meta = { app: 'Tamed Player', format: 1, artist: projArtist(c), project: { ...c, covers: [] }, tracks: [] };
   for (const [i, t] of ts.entries()) {
     const n = String(i + 1).padStart(2, '0') + ' ' + safeName(dispTitle(t)), b = await DB.get(t.id), mt = { ...t, versions: [] };
     if (b) { const f = n + '.' + (t.ext || extOf(b)); root.file(f, b); mt.file = f; } else mt.file = null;
@@ -2379,6 +2489,11 @@ function act(a, el, e) {
   }
   if (el.dataset.confirm && !el.dataset.armed) { el.dataset.armed = '1'; el.querySelector('span').textContent = el.dataset.confirm; return; }
   switch (a) {
+    case 'pref-theme': S.prefs.theme = k; applyPrefs(); if (C3) buildCase(); refresh(); break;
+    case 'pref-tog': S.prefs[k] = !S.prefs[k]; el.setAttribute('aria-checked', !!S.prefs[k]); applyPrefs(); save(); break;
+    case 'backup': backupAll(); break;
+    case 'restore': if (!confirmBtn(el, 'Click again, then choose the backup')) break; $('#restorefile').click(); break;
+    case 'wipe': if (!confirmBtn(el, 'Click again to erase everything')) break; try { localStorage.removeItem(KEY); } catch (e) { } try { indexedDB.deleteDatabase('glassroom'); } catch (e) { } setTimeout(() => location.reload(), 300); break;
     case 'proj-edit': UI.mCover = null; openModal('proj', id); break;
     case 'ctx-dupcol': duplicateProject(id); break;
     case 'ctx-sequel': makeSequel(id); break;
@@ -2457,7 +2572,7 @@ function act(a, el, e) {
   }
 }
 document.addEventListener('click', e => {
-  { const r = e.target.closest && e.target.closest('#list .row'); if (r && !e.target.closest('button, input, a, select, textarea, [data-act]')) { const id = r.dataset.id; if (S.cur === id) toggle(); else playTrack(id, curListIds.length ? curListIds : null); return; } }
+  { const r = e.target.closest && e.target.closest('#list .row'); if (r && S.prefs.clickToPlay !== false && !e.target.closest('button, input, a, select, textarea, [data-act]')) { const id = r.dataset.id; if (S.cur === id) toggle(); else playTrack(id, curListIds.length ? curListIds : null); return; } }
   { const m = $('#ctx'); if (m) { const it = e.target.closest('.ctx-i'); if (!it || !(it.dataset.confirm && !it.dataset.armed)) setTimeout(closeCtx, 0); } }
   if (UI.fontOpen && !e.target.closest('#psfontdrop, [data-act="cd-fontpick"]')) { UI.fontOpen = false; renderFontDrop(); }
   const el = e.target.closest('[data-act]');
@@ -2490,6 +2605,8 @@ document.addEventListener('change', e => {
   else if (t.id === 'file') { handleFiles(t.files); t.value = ''; }
   else if (t.id === 'zipfile') { importFiles(t.files); t.value = ''; }
   else if (t.id === 'art') { const f = t.files[0], c = col(UI.coverFor || S.colId); UI.coverFor = null; if (f && c) addCover(c, f).then(() => { refresh(); toast('Cover changed for ' + c.name); }); t.value = ''; }
+  else if (t.id === 'restorefile') { const f = t.files[0]; t.value = ''; if (f) restoreAll(f); }
+  else if (t.id === 'set-deftype') { S.prefs.defType = t.value; save(); }
   else if (t.id === 'mcoverfile') { const f = t.files[0]; t.value = ''; if (f) setModalCover(f); }
   else if (t.id === 'verfile') { const f = t.files[0], tr = trk(S.editId); if (f && tr) (async () => { const id = uid(), url = URL.createObjectURL(f); const v = { id, name: 'Version ' + (tr.versions.length + 2), dur: await probeDur(url), added: Date.now() }; srcs[id] = url; await DB.put(id, f); tr.versions.push(v); tr.ver = id; if (S.cur === tr.id) { Engine.load(tr); if (S.playing) Engine.play(); } $('#d-vers').innerHTML = versHTML(tr); renderList(); save(); toast('Version added'); })(); t.value = ''; }
   else if (t.id === 'd-featin') { const tr = trk(S.editId); tr.featInTitle = t.checked; updPreview(tr); renderList(); renderBar(); save(); }
@@ -2750,7 +2867,7 @@ addEventListener('blur', closeCtx); addEventListener('resize', closeCtx);
   if (S.cur && !trk(S.cur)) S.cur = null;
   if (S.cur) Engine.load(trk(S.cur));
   if (S.view === 'collection' && !col(S.colId)) S.view = 'library';
-  refresh(); renderEq();
+  applyPrefs(); refresh(); renderEq();
   setInterval(tick, 250);
 })();
 </script>
