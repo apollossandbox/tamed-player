@@ -2704,7 +2704,7 @@ Install
 5. In Tamed Player: Audio Doctor > Send to FL Studio > Set up > pick the port > Test.
    FL Studio's hint bar says "Tamed Player is connected".
 
-Made by dris, trulytamed and all of KGB.
+Made by sxteen ways, trulytamed and all of KGB.
 `;
 async function flDownload() {
   if (!window.JSZip) return toast('Zip support did not load');
@@ -2815,7 +2815,7 @@ function renderSettings(m) {
       <dt>${MOD}/</dt><dd>Lock or unlock layer</dd><dt>${MOD},</dt><dd>Hide or show layer</dd><dt>Arrows</dt><dd>Nudge layer (Shift for 5 mm)</dd><dt>${MOD}0 / = / -</dt><dd>Fit, zoom in, zoom out</dd></dl>
     </section>
     <section class="set-card box"><h2>About</h2>
-      ${setRow('Tamed Player', 'Made by dris, trulytamed and all of KGB.', `<button class="btn sm" data-act="credits">${ico('star', 14)} Credits</button>`)}
+      ${setRow('Tamed Player', 'Made by sxteen ways, trulytamed and all of KGB.', `<button class="btn sm" data-act="credits">${ico('star', 14)} Credits</button>`)}
     </section>
     <section class="set-card box danger"><h2>Erase all data</h2>
       ${setRow('Delete everything on this device', 'Removes every project, song, cover and setting. Back up first if you might want them.', `<button class="btn sm" data-act="wipe">${ico('trash', 14)} Erase everything</button>`)}
@@ -3009,7 +3009,7 @@ const updPreview = t => { const p = $('#d-prev'); if (p) p.innerHTML = `<b>${esc
 let crRun = false;
 function openCredits() {
   const el = $('#credits');
-  $('#crinner').innerHTML = `<div class="cr-logo">${logo(132)}</div><p class="cr-line cr-k" style="--d:0">Tamed Player was made by</p><p class="cr-line cr-name" style="--d:1">dris</p><p class="cr-line cr-name" style="--d:2">trulytamed</p><p class="cr-line cr-name sm" style="--d:3">&amp; all of KGB</p>`;
+  $('#crinner').innerHTML = `<div class="cr-logo">${logo(132)}</div><p class="cr-line cr-k" style="--d:0">Tamed Player was made by</p><p class="cr-line cr-name" style="--d:1">sxteen ways</p><p class="cr-line cr-name" style="--d:2">trulytamed</p><p class="cr-line cr-name sm" style="--d:3">&amp; all of KGB</p>`;
   el.inert = false; el.classList.add('open'); crRun = true; crLoop();
 }
 function closeCredits() { const el = $('#credits'); el.classList.remove('open'); el.inert = true; crRun = false; }

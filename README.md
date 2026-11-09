@@ -39,4 +39,4 @@ The desktop app reads `latest.json` from GitHub when it starts (and from the upd
 then offers to download and install anything newer. That check needs this repository to be public.
 Building on Linux needs Wine (64- and 32-bit).
 
-Made by dris, trulytamed and all of KGB.
+Made by sxteen ways, trulytamed and all of KGB.

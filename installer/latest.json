@@ -1,8 +1,8 @@
 {
-  "version": "1.2.1",
+  "version": "1.2.2",
   "file": "TamedPlayer-Setup.exe",
-  "size": 82386627,
-  "sha256": "6792d2eaa38da3fec82c96b346c1d9879c337587192288f20981487f164ef918",
-  "notes": "Readability: stronger contrast for grey text and labels, no tiny text anywhere, clearer viewer and editor text.",
+  "size": 82386722,
+  "sha256": "4909e22c972cb58743b4effc7f2b83cfba4b562f0bd58a3bb0caa4b89e45b85e",
+  "notes": "Credits updated: sxteen ways, trulytamed and all of KGB.",
   "date": "2026-11-09"
 }
