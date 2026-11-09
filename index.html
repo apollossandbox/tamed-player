@@ -907,6 +907,8 @@ body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after 
 <input type="file" id="file" accept="audio/*" multiple hidden>
 <input type="file" id="art" accept="image/*" hidden>
 <input type="file" id="mcoverfile" accept="image/*" hidden>
+<input type="file" id="replaudio" accept="audio/*,.mp3,.wav,.flac,.m4a,.ogg,.opus,.aif,.aiff" hidden>
+<input type="file" id="replimg" accept="image/*" hidden>
 <input type="file" id="docfile" accept="audio/*,.mp3,.wav,.flac,.m4a,.ogg,.opus,.aif,.aiff" multiple hidden>
 <input type="file" id="restorefile" accept=".zip,application/zip" hidden>
 <input type="file" id="verfile" accept="audio/*" hidden>
@@ -1462,7 +1464,7 @@ const printKeys = () => sheetKeys().filter(k => !SHEETS[k].strip);
 const stripEdge = side => side === 'L' ? SHEETS.tray.spine : SHEETS.tray.w;
 const toHex = c => { if (!c) return '#111111'; if (c[0] === '#') return c.length === 7 ? c : '#111111'; const m = c.match(/\d+(\.\d+)?/g); return m ? '#' + m.slice(0, 3).map(n => Math.round(+n).toString(16).padStart(2, '0')).join('') : '#111111'; };
 const shade = (hex, k) => '#' + [1, 3, 5].map(i => Math.min(255, Math.round(parseInt(hex.slice(i, i + 2), 16) * k)).toString(16).padStart(2, '0')).join('');
-function cdCol() { const ok = x => x && !isFolder(x) ? x : null; const c = ok(S.view === 'collection' && col(S.colId)) || ok(col(S.cd.colId)) || S.cols.find(x => !isFolder(x)); if (c) S.cd.colId = c.id; return c; }
+function cdCol() { const ok = x => x && !isFolder(x) ? x : null; const c = ok(UI.cdForce && col(UI.cdForce)) || ok(S.view === 'collection' && col(S.colId)) || ok(col(S.cd.colId)) || S.cols.find(x => !isFolder(x)); if (c) S.cd.colId = c.id; return c; }
 function design(c) {
   if (!S.cd.designs) S.cd.designs = {};
   const D = S.cd.designs[c.id] || (S.cd.designs[c.id] = autoDesign(c));
@@ -1894,7 +1896,7 @@ function renderPsOpts() {
   } else {
     mid = `<span class="pso-label">${sh.name}</span><span class="pso-hint">${sh.size} trim · ${t === 'text' ? 'Click the sheet to add text there.' : 'Drag art to move it, a corner to resize (hold Shift to stretch freely), the round handle to rotate.'}</span>`;
   }
-  const hist = `<button class="pso-ib" data-act="cd-undo" title="Undo (${MOD}Z)" aria-label="Undo" ${H.stack.length ? '' : 'disabled'}>${ico('undo', 15)}</button><button class="pso-ib" data-act="cd-redo" title="Redo (${MOD}Shift+Z)" aria-label="Redo" ${H.redo.length ? '' : 'disabled'}>${ico('redo', 15)}</button>${sep}`;
+  const hist = `<button class="pso-ib" data-act="save-now" title="Save (${MOD}S)" aria-label="Save">${ico('save', 15)}</button><button class="pso-ib" data-act="cd-undo" title="Undo (${MOD}Z)" aria-label="Undo" ${H.stack.length ? '' : 'disabled'}>${ico('undo', 15)}</button><button class="pso-ib" data-act="cd-redo" title="Redo (${MOD}Shift+Z)" aria-label="Redo" ${H.redo.length ? '' : 'disabled'}>${ico('redo', 15)}</button>${sep}`;
   const lockNote = L && L.locked ? `<button class="pso-btn on" data-act="cd-lockl" data-id="${L.id}" title="Unlock layer (${MOD}/)">${ico('lock', 13)} Locked</button>${sep}` : '';
   const viewCtl = three ? `<button class="pso-btn ${S.cd.open ? 'on' : ''}" data-act="cd-open">${S.cd.open ? 'Close case' : 'Open case'}</button><button class="pso-btn ${S.cd.discOut ? 'on' : ''}" data-act="cd-disc">${S.cd.discOut ? 'Put disc back' : 'Take disc out'}</button><button class="pso-btn" data-act="cd-resetview">Reset view</button>${sep}` : '';
   el.innerHTML = `<span class="pso-tool" title="Current tool">${ico(t === 'orbit' ? 'orbit' : t === 'text' ? 'type' : 'move', 16)}</span>${sep}${hist}${lockNote}<fieldset class="pso-fs" ${L && L.locked ? 'disabled' : ''}>${mid}</fieldset><span class="grow"></span>${viewCtl}`
@@ -2067,6 +2069,7 @@ function cdAct(a, el) {
     case 'cd-bg': sd.bg = k; renderCdPanel(); cdDirty(); save(); break;
     case 'cd-sel': if (UI.cdSel && UI.cdSel.id === id && UI.cdSel.sheet === key) break; UI.fontOpen = false; UI.cdSel = { sheet: key, id }; renderCdPanel(); cdDirty(); break;
     case 'cd-up': { const i = sd.layers.findIndex(l => l.id === (id || (L && L.id))); if (i < sd.layers.length - 1) { [sd.layers[i], sd.layers[i + 1]] = [sd.layers[i + 1], sd.layers[i]]; renderCdPanel(); cdDirty(); save(); } break; }
+    case 'cd-replimg': UI.replImg = id || (selLayer() || {}).id; $('#replimg').click(); return true;
     case 'cd-del': if (!id) break; { const f = findLayer(id); if (f && f.L.locked) { lockedToast(); break; } } sd.layers = sd.layers.filter(l => l.id !== id); if (UI.cdSel && UI.cdSel.id === id) UI.cdSel.id = null; renderCdPanel(); cdDirty(); save(); break;
     case 'cd-addimg': $('#cdimg').click(); break;
     case 'cd-addcover': { const src = 'art:' + c.cover; imgAR(srcs[src]).then(ar => addLayer({ type: 'img', src, name: 'Project cover', ar, w: Math.max(sh.w + 6, (sh.h + 6) * ar) })); break; }
@@ -2114,8 +2117,16 @@ async function exportCD3D(cid) {
   if (cid) S.cd.colId = cid; const c = cdCol(); if (!c) return toast('Make a project first');
   if (!window.JSZip) return toast('Zip support did not load, so the export is unavailable');
   let dl = null; try { dl = await claude.use('downloads'); } catch (e) { } if (!dl) return toast('Saving files is not available in this view');
-  const g = init3D(); if (!g) return toast("3D isn't available in this browser");
-  if (!(await loadGLTFExporter())) return toast('The 3D exporter could not load. Check your internet connection and try again.');
+  const z = new JSZip(); if (!(await addCD3D(c, z.folder(safeName(c.name) + ' - 3D CD')))) return;
+  const blob = await z.generateAsync({ type: 'blob' });
+  try { await dl.save({ filename: `${slug(c.name)}-3d-cd.zip`, data: blob }); toast('3D CD exported'); }
+  catch (e) { if (e && e.code === 'too_large') toast('The export is too large to save here'); else if (e && e.code !== 'declined') toast('The export could not be saved'); }
+}
+/* writes the GLB (art baked in), the 300 dpi print sheets, a preview and a README into a zip folder */
+async function addCD3D(c, root) { UI.cdForce = c.id; try { return await addCD3Dx(c, root); } finally { UI.cdForce = null; if (C3 && C3.r.domElement.isConnected) buildCase(); } }
+async function addCD3Dx(c, root) {
+  const g = init3D(); if (!g) { toast("3D isn't available in this browser"); return false; }
+  if (!(await loadGLTFExporter())) { toast('The 3D exporter could not load. Check your internet connection and try again.'); return false; }
   toast('Building the 3D model…');
   const d = design(c), layers = Object.values(d).flatMap(sd => sd.layers || []);
   await waitFonts(layers);
@@ -2133,8 +2144,8 @@ async function exportCD3D(cid) {
   try { glb = await new Promise((res, rej) => { try { new THREE.GLTFExporter().parse(R, res, { binary: true, onlyVisible: true, animations: clips, maxTextureSize: 4096 }); } catch (e) { rej(e); } }); }
   catch (e) { toast('The 3D model could not be built'); }
   finally { R.rotation.copy(keep.rot); C3.lid.rotation.y = keep.lid; C3.disc.position.copy(keep.dpos); C3.disc.rotation.z = keep.drot; R.children.forEach((o, i) => o.visible = keep.vis[i]); }
-  if (!glb) return;
-  const base = safeName(c.name), z = new JSZip(), root = z.folder(base + ' - 3D CD');
+  if (!glb) return false;
+  const base = safeName(c.name);
   root.file(`${base} CD.glb`, glb);
   for (const [i, k] of printKeys().entries()) {
     const sh = SHEETS[k], cv = document.createElement('canvas'); cv.width = Math.round((sh.w + 2 * BLEED) * PRINTMM); cv.height = Math.round((sh.h + 2 * BLEED) * PRINTMM);
@@ -2152,9 +2163,34 @@ ${base} CD.glb
 print/
   The 300 dpi print files for each panel, with 3 mm bleed.
 `);
-  const blob = await z.generateAsync({ type: 'blob' });
-  try { await dl.save({ filename: `${slug(c.name)}-3d-cd.zip`, data: blob }); toast('3D CD exported'); }
-  catch (e) { if (e && e.code === 'too_large') toast('The export is too large to save here'); else if (e && e.code !== 'declined') toast('The export could not be saved'); }
+  return true;
+}
+/* one zip with everything for the release: "<Project> - disc.zip" */
+async function exportDisc(cid) {
+  const c = col(cid); if (!c) return;
+  if (!window.JSZip) return toast('Zip support did not load, so the export is unavailable');
+  let dl = null; try { dl = await claude.use('downloads'); } catch (e) { } if (!dl) return toast('Saving files is not available in this view');
+  toast('Packing ' + c.name + '…');
+  const base = safeName(c.name), z = new JSZip(), root = z.folder(base + ' - disc'), ts = colTracks(c);
+  // artwork: every cover, the one in use first
+  const covs = [...c.covers].sort((a, b) => (b.id === c.cover) - (a.id === c.cover));
+  for (const [i, cv] of covs.entries()) { const b = await DB.get('art:' + cv.id); if (b) root.file(`Artwork/${i === 0 ? 'Cover' : 'Cover ' + (i + 1)}.${extOf(b, 'jpg')}`, b); }
+  // tracks: the version you're using for each song, numbered in order
+  const lines = [];
+  for (const [i, t] of ts.entries()) {
+    const n = String(i + 1).padStart(2, '0'), k = keyOf(t), b = await DB.get(k), an = S.an && S.an[k], v = k !== t.id ? t.versions.find(x => x.id === k) : null, dur = v ? v.dur : t.dur;
+    if (b) root.file(`Tracks/${n} ${safeName(dispTitle(t))}.${extOf(b)}`, b);
+    const bits = [dispArtist(t) !== projArtist(c) ? dispArtist(t) : '', t.bpm ? t.bpm + ' BPM' : '', t.key || ''].filter(Boolean);
+    lines.push(`${n}. ${dispTitle(t)}  ${fmt(dur || 0)}${bits.length ? '  (' + bits.join(', ') + ')' : ''}${t.meta && t.meta.isrc ? '  ISRC ' + t.meta.isrc : ''}`);
+    (t.credits || []).forEach(cr => lines.push(`      ${cr.role}: ${cr.name}`));
+  }
+  const rel = isFolder(c) || !c.targetDate ? '' : (c.released ? 'Released ' : 'Target release ') + fdate(c.targetDate);
+  root.file('Tracklist.txt', `${c.name}\n${projArtist(c)} · ${KINDS[c.type]}${rel ? ' · ' + rel : ''}\n\n${lines.join('\n')}\n\n${ts.length} ${ts.length === 1 ? 'song' : 'songs'} · ${total(ts)}\n\nMade with Tamed Player\n`.replace(/\n/g, '\r\n'));
+  // the 3D CD with the art built in, and the print files
+  if (!isFolder(c)) { toast('Building the 3D CD…'); const ok = await addCD3D(c, root.folder('3D CD')); if (!ok) toast('The 3D CD was left out; the rest is still packed'); }
+  const blob = await z.generateAsync({ type: 'blob', compression: 'STORE' });
+  try { await dl.save({ filename: `${base} - disc.zip`, data: blob }); toast('Saved ' + base + ' - disc.zip'); }
+  catch (e) { if (e && e.code === 'too_large') toast('This project is too large to save here'); else if (e && e.code !== 'declined') toast('The export could not be saved'); }
 }
 async function cdSnap() {
   if (!C3) return; let dl = null; try { dl = await claude.use('downloads'); } catch (e) { } if (!dl) return toast('Saving files is not available in this view');
@@ -3161,6 +3197,11 @@ function act(a, el, e) {
     case 'm-cover': $('#mcoverfile').click(); break;
     case 'm-cover-clear': if (UI.mCover && UI.mCover.url) URL.revokeObjectURL(UI.mCover.url); UI.mCover = false; refreshCoverPick(); break;
     case 'ctx-cover': UI.coverFor = id; $('#art').click(); break;
+    case 'save-now': saveNow(); break;
+    case 'ctx-disc': exportDisc(id); break;
+    case 'ctx-replaudio': UI.replFor = id; $('#replaudio').click(); break;
+    case 'ctx-addver': S.editId = id; $('#verfile').click(); break;
+    case 'ctx-dlaudio': { const t = trk(id); if (t) (async () => { const k = keyOf(t), b = await DB.get(k); if (!b) return toast('The audio file is missing'); const ext = ((b.name || '').match(/\.[a-z0-9]+$/i) || [''])[0] || ({ 'audio/mpeg': '.mp3', 'audio/wav': '.wav', 'audio/x-wav': '.wav', 'audio/flac': '.flac', 'audio/mp4': '.m4a', 'audio/ogg': '.ogg' }[b.type] || '.mp3'); await saveBlob(safeName(dispTitle(t)) + ext, b); })(); break; }
     case 'ctx-usecover': { const c = col(id); if (c) { c.cover = k; refresh(); toast('Cover changed'); } break; }
     case 'ctx-rmcover': { const c = col(id); if (c && c.cover) { DB.del('art:' + c.cover); delete srcs['art:' + c.cover]; c.covers = c.covers.filter(x => x.id !== c.cover); c.cover = c.covers.length ? c.covers[c.covers.length - 1].id : null; refresh(); toast('Cover removed'); } break; }
     case 'meta-open': openModal('meta', id); break;
@@ -3282,7 +3323,16 @@ document.addEventListener('change', e => {
   else if (t.id === 'restorefile') { const f = t.files[0]; t.value = ''; if (f) restoreAll(f); }
   else if (t.id === 'set-deftype') { S.prefs.defType = t.value; save(); }
   else if (t.id === 'mcoverfile') { const f = t.files[0]; t.value = ''; if (f) setModalCover(f); }
-  else if (t.id === 'verfile') { const f = t.files[0], tr = trk(S.editId); if (f && tr) (async () => { const id = uid(), url = URL.createObjectURL(f); const v = { id, name: f.name.replace(/\.[^.]+$/, '').replace(/[_]+/g, ' ').trim() || 'Version ' + (tr.versions.length + 2), dur: await probeDur(url), added: Date.now() }; srcs[id] = url; await DB.put(id, f); tr.versions.push(v); tr.ver = id; queueAnalysis([id]); if (S.cur === tr.id) { Engine.load(tr); if (S.playing) Engine.play(); } $('#d-vers').innerHTML = versHTML(tr); renderList(); save(); toast('Version added'); })(); t.value = ''; }
+  else if (t.id === 'replaudio') { const f = t.files[0], tr = trk(UI.replFor); t.value = ''; if (f && tr) (async () => {
+      const k = keyOf(tr), url = URL.createObjectURL(f), dur = await probeDur(url); await DB.put(k, f); if (srcs[k]) URL.revokeObjectURL(srcs[k]); srcs[k] = url;
+      if (k === tr.id) tr.dur = dur; else { const v = tr.versions.find(x => x.id === k); if (v) v.dur = dur; }
+      delete S.an[k]; queueAnalysis([k]); if (S.cur === tr.id) { const pl = S.playing; Engine.load(tr); if (pl) Engine.play(); }
+      save(); refresh(); toast('Replaced the audio for ' + dispTitle(tr)); })(); }
+  else if (t.id === 'replimg') { const f = t.files[0]; t.value = ''; const fl = f && findLayer(UI.replImg); if (fl && fl.L.type === 'img') (async () => {
+      const id = 'cdimg:' + uid(); await DB.put(id, f); srcs[id] = URL.createObjectURL(f); const ar = await imgAR(srcs[id]);
+      const L = fl.L, h = layerH(L); L.src = id; L.ar = ar; L.name = (f.name || 'Image').replace(/\.[^.]+$/, ''); L.w = Math.max(3, h * ar / (L.sy || 1)); // keep the height, follow the new shape
+      save(); renderCdPanel(); cdDirty(); toast('Replaced the image'); })(); }
+  else if (t.id === 'verfile') { const f = t.files[0], tr = trk(S.editId); if (f && tr) (async () => { const id = uid(), url = URL.createObjectURL(f); const v = { id, name: f.name.replace(/\.[^.]+$/, '').replace(/[_]+/g, ' ').trim() || 'Version ' + (tr.versions.length + 2), dur: await probeDur(url), added: Date.now() }; srcs[id] = url; await DB.put(id, f); tr.versions.push(v); tr.ver = id; queueAnalysis([id]); if (S.cur === tr.id) { Engine.load(tr); if (S.playing) Engine.play(); } { const dv = $('#d-vers'); if (dv) dv.innerHTML = versHTML(tr); } renderList(); save(); toast('Version added: ' + v.name); })(); t.value = ''; }
   else if (t.id === 'd-featin') { const tr = trk(S.editId); tr.featInTitle = t.checked; updPreview(tr); renderList(); renderBar(); save(); }
   else if (t.dataset.incol) { const c = col(t.dataset.incol), id = S.editId; c.tracks = c.tracks.filter(x => x !== id); if (t.checked) c.tracks.push(id); refresh(); }
   else if (t.id === 'p-target') { const c = col(S.colId); c.targetDate = t.value || null; refresh(); }
@@ -3293,7 +3343,9 @@ document.addEventListener('change', e => {
   else if (t.id === 'cdfont') { const f = t.files[0]; t.value = ''; if (f) addCustomFont(f).then(n => { const L = selLayer(); if (n && L) { L.font = n; L.weight = 400; UI.fontCat = 'Yours'; UI.fontOpen = false; renderCdPanel(); cdDirty(); save(); toast('Added ' + n); } }); }
   else if (t.dataset.cc) { if (t.type === 'checkbox') { S.concept[t.dataset.cc] = t.checked; refresh(); } else { S.concept[t.dataset.cc] = t.value; save(); } }
 });
+function saveNow() { save(); toast('Saved'); const b = $('[data-act="save-now"]'); if (b) { b.classList.add('saved'); setTimeout(() => b.classList.remove('saved'), 900); } }
 document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === 's' || e.key === 'S')) { e.preventDefault(); saveNow(); return; }
   if ((e.key === 'Enter' || e.key === ' ') && e.target.getAttribute && e.target.getAttribute('role') === 'button' && e.target.dataset.act) { e.preventDefault(); e.target.click(); return; }
   if (UI.modal && (UI.modal.kind === 'proj' || UI.modal.kind === 'meta') && e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'checkbox') { e.preventDefault(); saveDetails(); return; }
   if (e.target.id === 'm-name' && e.key === 'Enter') { e.preventDefault(); closeModal({ name: e.target.value.trim() || e.target.placeholder, cover: UI.mCover }); return; }
@@ -3492,7 +3544,7 @@ function layerMenu(L) {
     { label: lk ? 'Unlock Layer' : 'Lock Layer', act: 'cd-lockl', id: L.id, icon: lk ? 'unlock' : 'lock', kbd: MOD + '/' },
     { label: L.hidden ? 'Show Layer' : 'Hide Layer', act: 'cd-eye', id: L.id, icon: 'eye', kbd: MOD + ',' },
     { label: 'Rename Layer…', act: 'cd-rename', id: L.id, icon: 'edit' },
-    ...(L.type === 'text' ? [{ label: 'Edit Text', act: 'cd-edittext', icon: 'type', disabled: lk }] : []), { sep: 1 },
+    ...(L.type === 'text' ? [{ label: 'Edit Text', act: 'cd-edittext', icon: 'type', disabled: lk }] : [{ label: 'Replace Image…', act: 'cd-replimg', id: L.id, icon: 'image', disabled: lk }]), { sep: 1 },
     { label: 'Bring to Front', act: 'cd-front', icon: 'front', kbd: MOD + 'Shift+]' }, { label: 'Bring Forward', act: 'cd-up', id: L.id, icon: 'up', kbd: MOD + ']' },
     { label: 'Send Backward', act: 'cd-down', icon: 'down', kbd: MOD + '[' }, { label: 'Send to Back', act: 'cd-back', icon: 'back', kbd: MOD + 'Shift+[' }, { sep: 1 },
     { label: 'Center on Panel', act: 'cd-center', icon: 'move', disabled: lk }, { label: 'Fill Panel', act: 'cd-fill', icon: 'expand', disabled: lk },
@@ -3520,6 +3572,7 @@ function trackMenu(t, inCol) {
   const on = S.cur === t.id && S.playing;
   return [{ head: dispTitle(t) }, { label: on ? 'Pause' : 'Play', act: 'play', id: t.id, icon: on ? 'pause' : 'play' }, { sep: 1 },
     { label: 'Rename…', act: 'meta-open', id: t.id, icon: 'type' }, { label: 'Metadata & Credits…', act: 'meta-open', id: t.id, icon: 'list' }, { label: 'Edit Track…', act: 'edit', id: t.id, icon: 'edit' }, { sep: 1 },
+    { label: 'Replace Audio…', act: 'ctx-replaudio', id: t.id, icon: 'upload' }, { label: 'Add a Version…', act: 'ctx-addver', id: t.id, icon: 'plus' }, { label: 'Download Audio', act: 'ctx-dlaudio', id: t.id, icon: 'save' }, { sep: 1 },
     ...Object.entries(ST).map(([k, l]) => ({ label: 'Mark as ' + l, act: 'set-st', id: t.id, k, icon: t.status === k ? 'check' : null })), { sep: 1 },
     ...(inCol ? [{ label: 'Change Project Cover…', act: 'ctx-cover', id: S.colId, icon: 'image' }, { label: 'Remove from Project', act: 'rm', id: t.id, icon: 'x' }] : []),
     { label: 'Delete Track', act: 'ctx-deltrack', id: t.id, icon: 'trash', danger: 1, confirm: 'Click again to delete' }];
@@ -3532,7 +3585,7 @@ function projectMenu(c) {
     ...(c.covers.length > 1 ? c.covers.map((cv, i) => ({ label: (cv.id === c.cover ? 'Using cover ' : 'Use cover ') + (i + 1), act: 'ctx-usecover', id: c.id, k: cv.id, icon: cv.id === c.cover ? 'check' : null, disabled: cv.id === c.cover })) : []),
     ...(c.cover ? [{ label: 'Remove This Cover', act: 'ctx-rmcover', id: c.id, icon: 'x' }] : []), { sep: 1 },
     ...(isFolder(c) ? [] : [{ label: 'Concept Player', act: 'to-concept', id: c.id, icon: 'phone' }, { label: 'View CD', act: 'ctx-viewcd', id: c.id, icon: 'disc' }, { label: 'Edit CD', act: 'ctx-editcd', id: c.id, icon: 'edit' }, { label: 'Export 3D CD…', act: 'ctx-export3d', id: c.id, icon: 'cube' }]),
-    { label: 'Download Project', act: 'ctx-dlproj', id: c.id, icon: 'save' }, { sep: 1 },
+    { label: isFolder(c) ? 'Export Folder (Art, Tracks, Tracklist)…' : 'Export Disc (Art, 3D, Tracks, Tracklist)…', act: 'ctx-disc', id: c.id, icon: 'save' }, { label: 'Download Project', act: 'ctx-dlproj', id: c.id, icon: 'save' }, { sep: 1 },
     { label: 'Delete Project', act: 'ctx-delcol', id: c.id, icon: 'trash', danger: 1, confirm: 'Click again to delete' }];
 }
 function onContext(e) {
