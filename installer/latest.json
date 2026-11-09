@@ -1,8 +1,8 @@
 {
-  "version": "1.0.3",
+  "version": "1.0.4",
   "file": "TamedPlayer-Setup.exe",
-  "size": 82347607,
-  "sha256": "9a560f588c3f60c7c9c93a8e0f34cc09fb5249672b82be4c092ab5dd7d8012a2",
-  "notes": "Cleaner project page: concept player under the cover, bigger upload button, share and download at the top, tempo and key on hover, click a track to play it, project colour wash. Library shows whole covers.",
+  "size": 82348436,
+  "sha256": "f472a204e17ec3f71cab79a80f2da7dae131a81d844b9a663270e14cebfa6ccd",
+  "notes": "Duplicate Project and Make Sequel in the project right-click menu. The disc only spins in the viewer while that project is playing.",
   "date": "2026-11-09"
 }

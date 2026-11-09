@@ -624,7 +624,8 @@ body.cx-on .bar { transform: none; }
 .mtable th { text-align: left; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); font-weight: 700; padding: 0 8px 0 2px; white-space: nowrap; }
 .mtable td { padding: 0 4px 0 0; } .mtable .field { padding: 8px 10px; } .mtable td.rmc { width: 34px; }
 .mtable.mcredits td:first-child { width: 42%; } .mtable.details td { width: 40%; }
-.partists { margin: -4px 0 0; } .partists button { font-size: 15px; font-weight: 700; color: var(--ink2); padding: 0; } .partists button:hover { color: var(--ink); text-decoration: underline; }
+.partists { margin: -4px 0 0; display: flex; gap: 14px; flex-wrap: wrap; align-items: baseline; } .seqof { font-size: 12.5px; color: var(--ink3); } .partists .seqof button { font-size: 12.5px; font-weight: 700; color: var(--ink2); text-decoration: underline; }
+.partists-x { margin: 0; } .partists button { font-size: 15px; font-weight: 700; color: var(--ink2); padding: 0; } .partists button:hover { color: var(--ink); text-decoration: underline; }
 @media (max-width: 640px) { .mgrid { grid-template-columns: 1fr; } .mtable.details tr { display: grid; grid-template-columns: 80px 1fr; } }
 
 /* context menu */
@@ -1149,7 +1150,7 @@ function renderProject(m) {
           <p class="faint small">Sample link. Nothing is published.</p></div>
       </div>
       <div class="trow"><input class="title-in" id="p-name" data-cf="name" value="${esc(c.name)}" aria-label="Project name"></div>
-      <p class="partists"><button data-act="proj-edit" data-id="${c.id}" title="Edit artists">${esc(projArtist(c))}</button></p>
+      <p class="partists"><button data-act="proj-edit" data-id="${c.id}" title="Edit artists">${esc(projArtist(c))}</button>${c.sequelOf && col(c.sequelOf) ? `<span class="seqof">Sequel to <button data-act="col" data-id="${c.sequelOf}">${esc(col(c.sequelOf).name)}</button></span>` : ''}${S.cols.filter(x => x.sequelOf === c.id).map(x => `<span class="seqof">Followed by <button data-act="col" data-id="${x.id}">${esc(x.name)}</button></span>`).join('')}</p>
       <p class="stat"><span><i class="pill st-final"></i>${nF} complete</span><span><i class="pill st-demo"></i>${nD} ${nD === 1 ? 'demo' : 'demos'}</span>${nU ? `<span><i class="pill st-unmixed"></i>${nU} unmixed</span>` : ''}</p>
       <p class="faint small">${ts.length} ${ts.length === 1 ? 'track' : 'tracks'}${ts.length ? ' · ' + total(ts) : ''}</p>
       <div class="target"><label class="lab" for="p-target">Target release</label><input type="date" id="p-target" value="${esc(c.targetDate || '')}">${c.targetDate ? `<span class="tcount">${until(c.targetDate)}</span><button class="ico" data-act="target-clear" aria-label="Clear the target release date" title="Clear">${ico('x', 14)}</button>` : '<span class="faint small">Optional</span>'}</div>
@@ -1224,8 +1225,8 @@ function openModal(kind, id, x = {}) {
   } else if (kind === 'proj') {
     const c = col(id); const arts = Array.isArray(c.artists) && c.artists.length ? c.artists : [''];
     UI.mCoverDef = artOf(c) || ''; UI.mCoverHint = c.covers.length > 1 ? 'Changing it adds a new cover version. Older versions stay on the project page.' : 'Click to choose an image, or drop one here.';
-    h = `<h2>${x.isNew ? 'New project' : 'Project details'}</h2>
-    <label class="lab" for="m-pname">Project name</label><input class="field" id="m-pname" value="${esc(x.isNew ? '' : c.name)}" placeholder="${esc(x.isNew ? 'Name your project' : c.name)}" autocomplete="off">
+    h = `<h2>${x.seqName ? 'New sequel' : x.isNew ? 'New project' : 'Project details'}</h2>${x.seqName && c.sequelOf && col(c.sequelOf) ? `<p class="faint small" style="margin:0">Follows ${esc(col(c.sequelOf).name)}. Artists and type are carried over.</p>` : ''}
+    <label class="lab" for="m-pname">Project name</label><input class="field" id="m-pname" value="${esc(x.seqName || (x.isNew ? '' : c.name))}" placeholder="${esc(x.isNew ? 'Name your project' : c.name)}" autocomplete="off">
     ${coverPickHTML(UI.mCoverDef, UI.mCoverHint)}
     <label class="lab">Artists</label><p class="faint small" style="margin:0">Add one or more. Leave empty to use ${esc(artistOf())}.</p>
     <table class="mtable"><tbody data-list="partist">${arts.map(a => metaRow('partist', a)).join('')}</tbody></table>
@@ -1648,7 +1649,8 @@ function loop3D() {
   C3.discA += ((S.cd.discOut && C3.lidA > .6 ? 1 : 0) - C3.discA) * .08; const da = ease(Math.min(1, Math.max(0, C3.discA)));
   if (discOnly) C3.disc.position.set(0, 0, 0); else C3.disc.position.set(da * 9.5, 0, C3.discZ + Math.sin(da * Math.PI) * 2.2 + da * .4);
   C3.shadow.scale.set(discOnly ? .55 : S.cd.discOut && !discOnly ? 1.45 : 1, 1, discOnly ? .6 : 1); C3.shadow.position.x = discOnly ? 0 : da * 4;
-  const c = col(S.cd.colId); if ((discOnly && V.spin) || (S.playing && c && c.tracks.includes(S.cur))) C3.disc.rotation.z -= discOnly ? .025 : .05;
+  const c = col(S.cd.colId), syncing = V && V.spin !== false && S.playing && c && c.tracks.includes(S.cur);
+  if (syncing) C3.disc.rotation.z -= .04; else if (!V) C3.disc.rotation.z = 0;
   C3.r.render(C3.scene, C3.cam);
 }
 /* ---------- CD viewer: the package in its own studio ---------- */
@@ -1672,7 +1674,7 @@ function renderViewerBar() {
   const b = $('#vwbar'), V = UI.vw; if (!b || !V) return;
   b.innerHTML = `${seg('vwmode', [['case', 'Case'], ['disc', 'Disc only']], V.mode, 'vw-mode')}<span class="vw-sep"></span>
     ${V.mode === 'case' ? `<button class="vw-b ${S.cd.open ? 'on' : ''}" data-act="vw-open">${S.cd.open ? 'Close case' : 'Open case'}</button><button class="vw-b ${S.cd.discOut ? 'on' : ''}" data-act="vw-disc">${S.cd.discOut ? 'Put disc back' : 'Remove disc'}</button>`
-      : `<button class="vw-b" data-act="vw-flip">Flip disc</button><button class="vw-b ${V.spin ? 'on' : ''}" data-act="vw-spin" aria-pressed="${V.spin}">Spin</button>`}
+      : `<button class="vw-b" data-act="vw-flip">Flip disc</button><button class="vw-b ${V.spin ? 'on' : ''}" data-act="vw-spin" aria-pressed="${V.spin}" title="The disc spins while this project is playing">Spin with music</button>`}
     <span class="vw-sep"></span><button class="vw-b ${V.auto ? 'on' : ''}" data-act="vw-auto" aria-pressed="${V.auto}">Auto-rotate</button><button class="vw-b" data-act="vw-reset">Reset view</button>`;
   applySlides();
 }
@@ -2159,6 +2161,23 @@ async function handleFiles(files) {
   }
   toast(`Added ${n} track${n > 1 ? 's' : ''}${c ? ' to ' + c.name : ''}`); refresh();
 }
+async function duplicateProject(id) {
+  const src = col(id); if (!src) return;
+  const c = { ...JSON.parse(JSON.stringify(src)), id: uid(), name: src.name + ' (copy)', created: Date.now(), covers: [], cover: null, sequelOf: src.sequelOf };
+  const remap = {};
+  for (const cv of src.covers) { const b = await DB.get('art:' + cv.id); if (!b) continue; const nid = uid(); await DB.put('art:' + nid, b); srcs['art:' + nid] = URL.createObjectURL(b); c.covers.push({ ...cv, id: nid }); remap['art:' + cv.id] = 'art:' + nid; if (cv.id === src.cover) c.cover = nid; }
+  if (S.cd.designs && S.cd.designs[src.id]) { const d = JSON.parse(JSON.stringify(S.cd.designs[src.id])); Object.values(d).forEach(sd => (sd.layers || []).forEach(l => { l.id = uid(); if (remap[l.src]) l.src = remap[l.src]; })); S.cd.designs[c.id] = d; }
+  S.cols.splice(S.cols.indexOf(src) + 1, 0, c);
+  toast('Duplicated ' + src.name + '. The copy uses the same tracks.'); refresh();
+}
+function makeSequel(id) {
+  const src = col(id); if (!src) return;
+  const m = src.name.match(/^(.*?)(\s*)(\d+|II|III|IV|V)$/), roman = ['I', 'II', 'III', 'IV', 'V', 'VI'];
+  const name = m ? m[1] + (m[2] || ' ') + (/\d/.test(m[3]) ? +m[3] + 1 : roman[roman.indexOf(m[3]) + 1] || m[3] + ' 2') : src.name + ' 2';
+  const c = newProject(name); Object.assign(c, { type: src.type, artists: [...(src.artists || [])], sequelOf: src.id, h1: src.h1, h2: src.h2 });
+  S.cols.splice(S.cols.indexOf(src) + 1, 0, c); closeDrawer(); S.view = 'collection'; S.colId = c.id; refresh();
+  UI.mCover = null; openModal('proj', c.id, { isNew: true, seqName: name });
+}
 function newProject(name) {
   const h = Math.floor(Math.random() * 360);
   return { id: uid(), name: name || 'Untitled project', type: 'album', desc: '', h1: h, h2: (h + 70) % 360, tracks: [], vis: 'private', covers: [], cover: null, tags: [], era: '', viz: 'bars', created: Date.now() };
@@ -2327,6 +2346,8 @@ function act(a, el, e) {
   if (el.dataset.confirm && !el.dataset.armed) { el.dataset.armed = '1'; el.querySelector('span').textContent = el.dataset.confirm; return; }
   switch (a) {
     case 'proj-edit': UI.mCover = null; openModal('proj', id); break;
+    case 'ctx-dupcol': duplicateProject(id); break;
+    case 'ctx-sequel': makeSequel(id); break;
     case 'm-cover': $('#mcoverfile').click(); break;
     case 'm-cover-clear': if (UI.mCover && UI.mCover.url) URL.revokeObjectURL(UI.mCover.url); UI.mCover = false; refreshCoverPick(); break;
     case 'ctx-cover': UI.coverFor = id; $('#art').click(); break;
@@ -2648,6 +2669,7 @@ function trackMenu(t, inCol) {
 function projectMenu(c) {
   return [{ head: c.name + ' · ' + projArtist(c) }, { label: 'Open', act: 'col', id: c.id, icon: 'grid' }, { label: 'Play', act: 'play-col', id: c.id, icon: 'play' }, { sep: 1 },
     { label: 'Rename…', act: 'proj-edit', id: c.id, icon: 'type' }, { label: 'Edit Details & Artists…', act: 'proj-edit', id: c.id, icon: 'edit' }, { sep: 1 },
+    { label: 'Duplicate Project', act: 'ctx-dupcol', id: c.id, icon: 'copy' }, { label: 'Make Sequel…', act: 'ctx-sequel', id: c.id, icon: 'plus' }, { sep: 1 },
     { label: c.cover ? 'Change Cover Art…' : 'Add Cover Art…', act: 'ctx-cover', id: c.id, icon: 'image' },
     ...(c.covers.length > 1 ? c.covers.map((cv, i) => ({ label: (cv.id === c.cover ? 'Using cover ' : 'Use cover ') + (i + 1), act: 'ctx-usecover', id: c.id, k: cv.id, icon: cv.id === c.cover ? 'check' : null, disabled: cv.id === c.cover })) : []),
     ...(c.cover ? [{ label: 'Remove This Cover', act: 'ctx-rmcover', id: c.id, icon: 'x' }] : []), { sep: 1 }, { label: 'Concept Player', act: 'to-concept', id: c.id, icon: 'phone' },
