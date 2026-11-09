@@ -1,0 +1,39 @@
+{
+  "name": "tamed-player",
+  "productName": "Tamed Player",
+  "version": "1.0.0",
+  "description": "Music organizer with a 3D CD package creator and a concept streaming player.",
+  "author": "trulytamed",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "prepare-app": "node make-page.js",
+    "start": "npm run prepare-app && electron .",
+    "dist": "npm run prepare-app && electron-builder --win nsis --x64"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "com.trulytamed.tamedplayer",
+    "productName": "Tamed Player",
+    "copyright": "trulytamed and KGB",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["main.js", "app/**/*"],
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "build/icon.png",
+      "artifactName": "TamedPlayer-Setup-${version}.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Tamed Player",
+      "deleteAppDataOnUninstall": false
+    }
+  }
+}
