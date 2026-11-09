@@ -703,7 +703,7 @@ body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after 
 .vw-bar { position: absolute; left: 50%; bottom: calc(26px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; max-width: calc(100% - 32px); padding: 6px; border-radius: 14px; background: rgba(24,24,26,.92); border: 1px solid rgba(255,255,255,.1); box-shadow: 0 20px 50px rgba(0,0,0,.5); }
 .vw-bar .seg { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.08); } .vw-bar .seg > button { color: rgba(255,255,255,.6); } .vw-bar .seg > button.on { color: var(--ink); } .vw-bar .thumb { background: rgba(255,255,255,.18); }
 .vw-sep { width: 1px; height: 22px; background: rgba(255,255,255,.12); margin: 0 2px; }
-.vw-b { height: 34px; padding: 0 14px; border-radius: 9px; color: rgba(255,255,255,.8); font-weight: 700; font-size: 13px; transition: background .2s, color .2s; }
+.vw-b { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 14px; border-radius: 9px; color: rgba(255,255,255,.8); font-weight: 700; font-size: 13px; transition: background .2s, color .2s; }
 .vw-b:hover { background: rgba(255,255,255,.08); color: var(--ink); } .vw-b.on { background: #fff; color: #0a0a0b; }
 .vw-hint { position: absolute; left: 0; right: 0; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); margin: 0; text-align: center; font-size: 12px; color: rgba(255,255,255,.35); pointer-events: none; }
 .psd-v { align-self: center; display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 8px; margin-right: 2px; border-radius: 3px; color: var(--pt2); font-size: 11.5px; } .psd-v:hover { background: var(--p3); color: var(--ink); }
@@ -1728,7 +1728,7 @@ function renderViewerBar() {
   b.innerHTML = `${seg('vwmode', [['case', 'Case'], ['disc', 'Disc only']], V.mode, 'vw-mode')}<span class="vw-sep"></span>
     ${V.mode === 'case' ? `<button class="vw-b ${S.cd.open ? 'on' : ''}" data-act="vw-open">${S.cd.open ? 'Close case' : 'Open case'}</button><button class="vw-b ${S.cd.discOut ? 'on' : ''}" data-act="vw-disc">${S.cd.discOut ? 'Put disc back' : 'Remove disc'}</button>`
       : `<button class="vw-b" data-act="vw-flip">Flip disc</button><button class="vw-b ${V.spin ? 'on' : ''}" data-act="vw-spin" aria-pressed="${V.spin}" title="The disc spins while this project is playing">Spin with music</button>`}
-    <span class="vw-sep"></span><button class="vw-b ${V.auto ? 'on' : ''}" data-act="vw-auto" aria-pressed="${V.auto}">Auto-rotate</button><button class="vw-b" data-act="vw-reset">Reset view</button>`;
+    <span class="vw-sep"></span><button class="vw-b ${V.auto ? 'on' : ''}" data-act="vw-auto" aria-pressed="${V.auto}">Auto-rotate</button><button class="vw-b" data-act="vw-reset">Reset view</button><span class="vw-sep"></span><button class="vw-b" data-act="vw-export">${ico('cube', 14)} Export 3D</button>`;
   applySlides();
 }
 let cdQueued = false;
@@ -1825,7 +1825,7 @@ function renderPsOpts() {
   const hist = `<button class="pso-ib" data-act="cd-undo" title="Undo (${MOD}Z)" aria-label="Undo" ${H.stack.length ? '' : 'disabled'}>${ico('undo', 15)}</button><button class="pso-ib" data-act="cd-redo" title="Redo (${MOD}Shift+Z)" aria-label="Redo" ${H.redo.length ? '' : 'disabled'}>${ico('redo', 15)}</button>${sep}`;
   const lockNote = L && L.locked ? `<button class="pso-btn on" data-act="cd-lockl" data-id="${L.id}" title="Unlock layer (${MOD}/)">${ico('lock', 13)} Locked</button>${sep}` : '';
   el.innerHTML = `<span class="pso-tool" title="Current tool">${ico(t === 'orbit' ? 'orbit' : t === 'text' ? 'type' : 'move', 16)}</span>${sep}${hist}${lockNote}<fieldset class="pso-fs" ${L && L.locked ? 'disabled' : ''}>${mid}</fieldset><span class="grow"></span>`
-    + (UI.canDl ? `${three ? `<button class="pso-btn" data-act="cd-snap">${ico('image', 14)} Save view</button>` : ''}<button class="pso-btn primary" data-act="cd-print">${ico('save', 14)} Print files</button>` : '');
+    + (UI.canDl ? `${three ? `<button class="pso-btn" data-act="cd-snap">${ico('image', 14)} Save view</button>` : ''}<button class="pso-btn" data-act="cd-export3d" title="Download the case as a 3D model with all the art, plus print files">${ico('cube', 14)} Export 3D</button><button class="pso-btn primary" data-act="cd-print">${ico('save', 14)} Print files</button>` : '');
 }
 function renderPsProps() {
   const P = $('#cdpanel'), c = cdCol(); if (!P || !c) return;
@@ -2010,6 +2010,7 @@ function cdAct(a, el) {
     case 'cd-reset': if (!confirmBtn(el, 'Click again to replace all panels')) break; S.cd.designs[c.id] = autoDesign(c); UI.cdSel = null; refresh(); toast('Rebuilt the art from ' + c.name); break;
     case 'cd-print': cdPrint(); break;
     case 'cd-snap': cdSnap(); break;
+    case 'cd-export3d': exportCD3D(); break;
     default: return false;
   }
   return true;
@@ -2029,6 +2030,58 @@ async function cdPrint() {
   z.file('specs.txt', `${c.name} by ${projArtist(c)}\n${S.cd.caseType === 'slim' ? 'Slim jewel case' : 'Jewel case'}, ${S.cd.tray} tray\n\nEvery file is 300 dpi with 3 mm (0.125 in) bleed on each edge.\nBooklet front and inside: 4.75 x 4.75 in trim.\n${S.cd.caseType === 'jewel' ? 'Tray card: 5.906 x 4.625 in trim, 0.25 in spines at each end. Under the tray (inside of the tray card): 5.406 x 4.625 in.\n' : ''}Disc: 120 mm, printable from 23 mm to 118 mm, 15 mm hole.\nKeep text 3 mm inside the trim. Check your printer's template before ordering.\n`);
   const blob = await z.generateAsync({ type: 'blob' });
   try { await dl.save({ filename: slug(c.name) + '-cd-print-files.zip', data: blob }); toast('Print files ready'); } catch (e) { if (e && e.code !== 'declined') toast('The print files could not be saved'); }
+}
+/* ---------- 3D export: one zip with the case as a .glb (art built in, lid + disc animations), print files and a preview ---------- */
+const GLTF_URL = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/exporters/GLTFExporter.js';
+function loadGLTFExporter() {
+  if (window.THREE && THREE.GLTFExporter) return Promise.resolve(true);
+  return new Promise(res => { const sc = document.createElement('script'); sc.src = GLTF_URL; sc.onload = () => res(!!(window.THREE && THREE.GLTFExporter)); sc.onerror = () => res(false); document.head.appendChild(sc); });
+}
+async function exportCD3D(cid) {
+  if (cid) S.cd.colId = cid; const c = cdCol(); if (!c) return toast('Make a project first');
+  if (!window.JSZip) return toast('Zip support did not load, so the export is unavailable');
+  let dl = null; try { dl = await claude.use('downloads'); } catch (e) { } if (!dl) return toast('Saving files is not available in this view');
+  const g = init3D(); if (!g) return toast("3D isn't available in this browser");
+  if (!(await loadGLTFExporter())) return toast('The 3D exporter could not load. Check your internet connection and try again.');
+  toast('Building the 3D model…');
+  const d = design(c), layers = Object.values(d).flatMap(sd => sd.layers || []);
+  await waitFonts(layers);
+  await Promise.all(layers.filter(l => l.type === 'img' && srcs[l.src]).map(l => { getImg(l.src); const im = imgCache[l.src]; return im && im.decode ? im.decode().catch(() => { }) : null; }));
+  buildCase();
+  const R = C3.root, keep = { rot: R.rotation.clone(), lid: C3.lid.rotation.y, dpos: C3.disc.position.clone(), drot: C3.disc.rotation.z, vis: R.children.map(o => o.visible) };
+  R.rotation.set(0, 0, 0); C3.lid.rotation.y = 0; C3.disc.position.set(0, 0, C3.discZ); C3.disc.rotation.z = 0; R.children.forEach(o => o.visible = true);
+  R.name = `${c.name} CD`; C3.lid.name = 'Lid'; C3.disc.name = 'Disc';
+  const q = y => new THREE.Quaternion().setFromEuler(new THREE.Euler(0, y, 0)).toArray(), dz = C3.discZ;
+  const clips = [
+    new THREE.AnimationClip('Open case', 1.2, [new THREE.QuaternionKeyframeTrack('Lid.quaternion', [0, 1.2], [...q(0), ...q(-1.95)])]),
+    new THREE.AnimationClip('Take disc out', 2, [new THREE.QuaternionKeyframeTrack('Lid.quaternion', [0, .9], [...q(0), ...q(-1.95)]), new THREE.VectorKeyframeTrack('Disc.position', [0, .9, 1.45, 2], [0, 0, dz, 0, 0, dz, 7.5, 0, dz + 2.6, 15, 0, dz + .4])])
+  ];
+  let glb;
+  try { glb = await new Promise((res, rej) => { try { new THREE.GLTFExporter().parse(R, res, { binary: true, onlyVisible: true, animations: clips, maxTextureSize: 4096 }); } catch (e) { rej(e); } }); }
+  catch (e) { toast('The 3D model could not be built'); }
+  finally { R.rotation.copy(keep.rot); C3.lid.rotation.y = keep.lid; C3.disc.position.copy(keep.dpos); C3.disc.rotation.z = keep.drot; R.children.forEach((o, i) => o.visible = keep.vis[i]); }
+  if (!glb) return;
+  const base = safeName(c.name), z = new JSZip(), root = z.folder(base + ' - 3D CD');
+  root.file(`${base} CD.glb`, glb);
+  for (const [i, k] of printKeys().entries()) {
+    const sh = SHEETS[k], cv = document.createElement('canvas'); cv.width = Math.round((sh.w + 2 * BLEED) * PRINTMM); cv.height = Math.round((sh.h + 2 * BLEED) * PRINTMM);
+    paintSheet(cv.getContext('2d'), k, d[k], PRINTMM, d); root.file(`print/${i + 1} ${sh.name}.png`, await new Promise(r => cv.toBlob(r, 'image/png')));
+  }
+  if (C3.w && C3.r.domElement.isConnected) { C3.r.render(C3.scene, C3.cam); const pv = await new Promise(r => C3.r.domElement.toBlob(r, 'image/png')); if (pv) root.file('preview.png', pv); }
+  root.file('README.txt', `${c.name} by ${projArtist(c)} - 3D CD from Tamed Player
+
+${base} CD.glb
+  The whole package as one 3D model: a clear ${S.cd.caseType === 'slim' ? 'slim ' : ''}jewel case with the booklet, ${S.cd.caseType === 'slim' ? '' : 'tray card, spines, under-tray art, '}and the disc, with all the artwork built in.
+  Open it in Windows 3D Viewer, Blender (File > Import > glTF 2.0), or any glTF viewer.
+  Parts: "Lid" (pivots on the hinge) and "Disc". Animations: "Open case" and "Take disc out".
+  Units: 1 = 1 cm. The case is 14.2 x 12.5 x ${S.cd.caseType === 'slim' ? '0.52' : '1.04'} cm.
+
+print/
+  The 300 dpi print files for each panel, with 3 mm bleed.
+`);
+  const blob = await z.generateAsync({ type: 'blob' });
+  try { await dl.save({ filename: `${slug(c.name)}-3d-cd.zip`, data: blob }); toast('3D CD exported'); }
+  catch (e) { if (e && e.code === 'too_large') toast('The export is too large to save here'); else if (e && e.code !== 'declined') toast('The export could not be saved'); }
 }
 async function cdSnap() {
   if (!C3) return; let dl = null; try { dl = await claude.use('downloads'); } catch (e) { } if (!dl) return toast('Saving files is not available in this view');
@@ -2501,6 +2554,7 @@ function act(a, el, e) {
     else if (a === 'vw-flip') { V.auto = false; C3.ty += Math.PI; renderViewerBar(); }
     else if (a === 'vw-spin') { V.spin = !V.spin; renderViewerBar(); }
     else if (a === 'vw-auto') { V.auto = !V.auto; renderViewerBar(); }
+    else if (a === 'vw-export') exportCD3D();
     else if (a === 'vw-reset') { C3.tx = -.12; C3.ty = .6; C3.tz = V.mode === 'disc' ? 34 : 46; V.auto = true; renderViewerBar(); }
     return;
   }
@@ -2528,6 +2582,7 @@ function act(a, el, e) {
     case 'ctx-deltrack': { const t = trk(id); if (!t) break; if (S.cur === t.id) { Engine.pause(); S.cur = null; S.playing = false; } S.tracks = S.tracks.filter(x => x !== t); S.cols.forEach(c => c.tracks = c.tracks.filter(x => x !== t.id)); DB.del(t.id); (t.versions || []).forEach(v => DB.del(v.id)); if (S.editId === t.id) closeDrawer(); toast('Track deleted'); refresh(); break; }
     case 'ctx-viewcd': S.colId = id; S.cd.colId = id; openViewer('case'); break;
     case 'ctx-editcd': closeDrawer(); S.cd.colId = id; S.view = 'cd'; UI.cdSel = null; refresh(); break;
+    case 'ctx-export3d': exportCD3D(id); break;
     case 'ctx-dlproj': { const c = col(id); if (c) downloadProject(c); break; }
     case 'ctx-delcol': { const c = col(id); if (!c) break; if (S.cd.designs) delete S.cd.designs[c.id]; S.cols = S.cols.filter(x => x !== c); c.covers.forEach(x => DB.del('art:' + x.id)); if (S.colId === c.id && S.view === 'collection') S.view = 'library'; toast('Project deleted. Its tracks are still in your library.'); refresh(); break; }
     case 'nav': closeDrawer(); S.view = el.dataset.view; refresh(); break;
@@ -2849,7 +2904,7 @@ function projectMenu(c) {
     { label: c.cover ? 'Change Cover Art…' : 'Add Cover Art…', act: 'ctx-cover', id: c.id, icon: 'image' },
     ...(c.covers.length > 1 ? c.covers.map((cv, i) => ({ label: (cv.id === c.cover ? 'Using cover ' : 'Use cover ') + (i + 1), act: 'ctx-usecover', id: c.id, k: cv.id, icon: cv.id === c.cover ? 'check' : null, disabled: cv.id === c.cover })) : []),
     ...(c.cover ? [{ label: 'Remove This Cover', act: 'ctx-rmcover', id: c.id, icon: 'x' }] : []), { sep: 1 }, { label: 'Concept Player', act: 'to-concept', id: c.id, icon: 'phone' },
-    { label: 'View CD', act: 'ctx-viewcd', id: c.id, icon: 'disc' }, { label: 'Edit CD', act: 'ctx-editcd', id: c.id, icon: 'edit' }, { label: 'Download Project', act: 'ctx-dlproj', id: c.id, icon: 'save' }, { sep: 1 },
+    { label: 'View CD', act: 'ctx-viewcd', id: c.id, icon: 'disc' }, { label: 'Edit CD', act: 'ctx-editcd', id: c.id, icon: 'edit' }, { label: 'Export 3D CD…', act: 'ctx-export3d', id: c.id, icon: 'cube' }, { label: 'Download Project', act: 'ctx-dlproj', id: c.id, icon: 'save' }, { sep: 1 },
     { label: 'Delete Project', act: 'ctx-delcol', id: c.id, icon: 'trash', danger: 1, confirm: 'Click again to delete' }];
 }
 function onContext(e) {

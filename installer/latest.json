@@ -1,8 +1,8 @@
 {
-  "version": "1.0.7",
+  "version": "1.0.8",
   "file": "TamedPlayer-Setup.exe",
-  "size": 82352158,
-  "sha256": "4133b04adae819fb74e094d05b2035740a88a2c53bb082662cc5ba958390e16b",
-  "notes": "Library shows projects as an album grid like Spotify: full covers, titles that never overlap, play button on hover. Fixes covers disappearing in the desktop app.",
+  "size": 82365238,
+  "sha256": "f1beae4483b30d0bf249efdcbeef051d3ffcbc29f2f454bdec26f869f01a76fb",
+  "notes": "Export 3D CD: download the whole case as a 3D model (.glb) with all the artwork, open/close and disc-out animations, plus the print files. From the CD editor, the CD viewer, or a project's right-click menu.",
   "date": "2026-11-09"
 }

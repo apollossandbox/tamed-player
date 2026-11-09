@@ -7,6 +7,7 @@ const swap = (s, from, to) => { if (!s.includes(from)) throw new Error('Missing 
 let body = src;
 body = swap(body, '<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>', '<script src="lib/jszip.min.js"></script>');
 body = swap(body, '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>', '<script src="lib/three.min.js"></script>');
+body = swap(body, "'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/exporters/GLTFExporter.js'", "'lib/GLTFExporter.js'");
 const bridge = `<script>
 /* Desktop bridge: the web page asks for a "downloads" helper; here it hands files to the Windows save dialog. */
 window.claude = { use: async name => name === 'downloads' ? { save: async ({ filename, data }) => {
