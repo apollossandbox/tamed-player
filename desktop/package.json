@@ -1,7 +1,7 @@
 {
   "name": "tamed-player",
   "productName": "Tamed Player",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Music organizer with a 3D CD package creator and a concept streaming player.",
   "author": "trulytamed",
   "main": "main.js",

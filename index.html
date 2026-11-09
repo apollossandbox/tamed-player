@@ -610,6 +610,10 @@ body.cx-on .bar { transform: none; }
 .app > .main { position: relative; z-index: 1; }
 @media (max-width: 760px) { .pwash { left: 0; } .covcol { width: 100%; } }
 
+/* image drop hint in the editor */
+.ps-drophint { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); z-index: 4; padding: 7px 14px; border-radius: 99px; background: var(--ink); color: var(--onink); font-weight: 700; font-size: 12.5px; pointer-events: none; box-shadow: 0 10px 30px -10px var(--shadow); }
+.psg-h.drophot { box-shadow: inset 0 0 0 2px var(--ink); }
+
 /* cover picker in dialogs */
 .mcover-wrap { display: flex; gap: 16px; align-items: center; margin-top: 10px; }
 .mcover { width: 112px; height: 112px; flex: none; border-radius: 10px; display: grid; place-items: center; color: var(--ink3); background: var(--panel2) center / cover no-repeat; border: 1.5px dashed var(--line); transition: border-color .2s, transform .3s var(--ease); }
@@ -1870,6 +1874,36 @@ function addLayer(o) {
   UI.cdSel = { sheet: key, id: L.id }; renderCdPanel(); cdDirty(); save(); return L;
 }
 const imgAR = src => new Promise(res => { const i = new Image(); i.onload = () => res(i.naturalWidth / i.naturalHeight || 1); i.onerror = () => res(1); i.src = src; });
+/* drag images from the computer onto the CD: the panel under the pointer gets the image, filled to its bleed */
+const isImg = f => /^image\//.test(f.type || '') || /\.(jpe?g|png|webp|gif|bmp)$/i.test(f.name || '');
+function cdDropSheet(e) {
+  const t = e.target;
+  if (t.classList && t.classList.contains('cd3d') && C3 && !UI.vw) { const h = pick(e); return h ? h.sheet : null; }
+  const g = t.closest && t.closest('.psg-h, .psbg, [data-psl]');
+  if (g) { if (g.dataset.psl) { const f = findLayer(g.dataset.psl); return f ? f.sheet : S.cd.sheet; } const k = g.dataset.k || (g.querySelector('[data-k]') || {}).dataset?.k; return k || S.cd.sheet; }
+  return S.cd.sheet;
+}
+function cdDropHint(text) {
+  let h = $('#psdrop'); const v = $('#cdview');
+  if (!text) { if (h) h.parentNode.removeChild(h); $$('.psg-h.drophot').forEach(x => x.classList.remove('drophot')); return; }
+  if (!h && v) { h = document.createElement('div'); h.id = 'psdrop'; h.className = 'ps-drophint'; v.appendChild(h); }
+  if (h) h.textContent = text;
+}
+async function cdAddImageTo(file, sheet) {
+  const id = 'cdimg:' + uid(); await DB.put(id, file); srcs[id] = URL.createObjectURL(file);
+  const ar = await imgAR(srcs[id]), sh = SHEETS[sheet], W = sh.w + 2 * BLEED, Hh = sh.h + 2 * BLEED;
+  S.cd.sheet = sheet;
+  addLayer({ type: 'img', src: id, name: (file.name || 'Image').replace(/\.[^.]+$/, ''), ar, w: Math.max(W, Hh * ar) });
+}
+async function cdDropFiles(e) {
+  const files = [...e.dataTransfer.files], imgs = files.filter(isImg);
+  if (!imgs.length) return toast(files.some(f => AUD.test(f.name) || /^audio\//.test(f.type || '')) ? "Audio can't go on the CD. Drop songs in the Library or on a project." : 'Drop an image (JPG, PNG, WebP or GIF) to put it on the CD.');
+  if (S.cd.lock) return toast('Turn editing on to add images');
+  const sheet = cdDropSheet(e);
+  if (!sheet) return toast('Drop the image onto the case: the booklet, tray card, a spine or the disc.');
+  for (const f of imgs) await cdAddImageTo(f, sheet);
+  toast(`Added ${imgs.length > 1 ? imgs.length + ' images' : 'image'} to ${SHEETS[sheet].name}`);
+}
 async function cdAddImage(file) {
   const id = 'cdimg:' + uid(); await DB.put(id, file); srcs[id] = URL.createObjectURL(file);
   const ar = await imgAR(srcs[id]), sh = SHEETS[S.cd.sheet];
@@ -2517,6 +2551,12 @@ let dragId = null;
 document.addEventListener('dragstart', e => { const r = e.target.closest && e.target.closest('.row'); if (r) { dragId = r.dataset.id; e.dataTransfer.setData('text/plain', 'track:' + r.dataset.id); e.dataTransfer.effectAllowed = 'copyMove'; requestAnimationFrame(() => r.classList.add('dragging')); } });
 document.addEventListener('dragend', () => { dragId = null; $$('.dragging, .over').forEach(x => x.classList.remove('dragging', 'over')); });
 document.addEventListener('dragover', e => {
+  if (!UI.psDrag && e.dataTransfer && [...e.dataTransfer.types].includes('Files') && e.target.closest && e.target.closest('#ps')) {
+    e.preventDefault(); $('#drop').hidden = true;
+    if (S.cd.lock) { cdDropHint('Turn editing on to add images'); return; }
+    const sh = cdDropSheet(e); cdDropHint(sh ? 'Drop on ' + SHEETS[sh].name : 'Drop onto a panel of the case');
+    $$('.psg-h').forEach(x => x.classList.toggle('drophot', x.dataset.k === sh)); return;
+  }
   const row = e.target.closest && e.target.closest('.row[data-row="col"]');
   const d = e.target.closest && e.target.closest('[data-drop]');
   $$('.over').forEach(x => { if (x !== row) x.classList.remove('over'); }); $$('.dropping').forEach(x => { if (x !== d) x.classList.remove('dropping'); });
@@ -2525,7 +2565,7 @@ document.addEventListener('dragover', e => {
   else if (e.dataTransfer && [...e.dataTransfer.types].includes('Files') && e.target.closest && e.target.closest('.mcover-wrap')) { e.preventDefault(); $$('.mcover').forEach(x => x.classList.add('hot')); }
   else if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) { e.preventDefault(); const z = $('#m-drop'); if (z && e.target.closest('#modal')) z.classList.add('hot'); else $('#drop').hidden = false; }
 });
-document.addEventListener('dragleave', e => { if (!e.relatedTarget) { $('#drop').hidden = true; const z = $('#m-drop'); if (z) z.classList.remove('hot'); } });
+document.addEventListener('dragleave', e => { if (!e.relatedTarget || !(e.relatedTarget.closest && e.relatedTarget.closest('#ps'))) cdDropHint(''); if (!e.relatedTarget) { $('#drop').hidden = true; const z = $('#m-drop'); if (z) z.classList.remove('hot'); } });
 function flipSwap(c, a, b) {
   const before = {}; $$('#list .row').forEach(r => before[r.dataset.id] = r.getBoundingClientRect().top);
   const i = c.tracks.indexOf(a), j = c.tracks.indexOf(b); [c.tracks[i], c.tracks[j]] = [c.tracks[j], c.tracks[i]];
@@ -2536,6 +2576,7 @@ function flipSwap(c, a, b) {
 document.addEventListener('drop', e => {
   $('#drop').hidden = true; const z = $('#m-drop'); if (z) z.classList.remove('hot'); $$('.mcover.hot').forEach(x => x.classList.remove('hot'));
   if (e.target.closest && e.target.closest('.mcover-wrap') && e.dataTransfer.files && e.dataTransfer.files.length) { e.preventDefault(); return setModalCover(e.dataTransfer.files[0]); }
+  if (!UI.psDrag && e.target.closest && e.target.closest('#ps') && e.dataTransfer.files && e.dataTransfer.files.length) { e.preventDefault(); cdDropHint(''); cdDropFiles(e); return; }
   const row = e.target.closest && e.target.closest('.row[data-row="col"]'), d = e.target.closest && e.target.closest('[data-drop]'), txt = e.dataTransfer.getData('text/plain');
   $$('.dropping, .over').forEach(x => x.classList.remove('dropping', 'over'));
   if (txt.startsWith('track:') && row && S.view === 'collection') { e.preventDefault(); const c = col(S.colId), a = txt.slice(6), b = row.dataset.id; if (a !== b && c.tracks.includes(a)) flipSwap(c, a, b); else if (!c.tracks.includes(a)) { c.tracks.push(a); refresh(); } return; }

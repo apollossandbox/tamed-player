@@ -1,8 +1,8 @@
 {
-  "version": "1.0.4",
+  "version": "1.0.5",
   "file": "TamedPlayer-Setup.exe",
-  "size": 82348436,
-  "sha256": "f472a204e17ec3f71cab79a80f2da7dae131a81d844b9a663270e14cebfa6ccd",
-  "notes": "Duplicate Project and Make Sequel in the project right-click menu. The disc only spins in the viewer while that project is playing.",
+  "size": 82348974,
+  "sha256": "b3521a6c924c3ac9bee863a3f5bd6b6667dc9c8007f98f5ed80e1b6dd0161074",
+  "notes": "Drag images straight onto the CD: drop on the front, back, spines or disc of the 3D case, or on the print sheet. Audio drops are ignored in the editor. Duplicate Project and Make Sequel. The disc only spins in the viewer.",
   "date": "2026-11-09"
 }
