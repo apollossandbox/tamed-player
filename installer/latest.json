@@ -1,8 +1,8 @@
 {
-  "version": "1.0.8",
+  "version": "1.0.9",
   "file": "TamedPlayer-Setup.exe",
-  "size": 82365238,
-  "sha256": "f1beae4483b30d0bf249efdcbeef051d3ffcbc29f2f454bdec26f869f01a76fb",
-  "notes": "Export 3D CD: download the whole case as a 3D model (.glb) with all the artwork, open/close and disc-out animations, plus the print files. From the CD editor, the CD viewer, or a project's right-click menu.",
+  "size": 82365266,
+  "sha256": "2ea1148b3cddca4c5d0cd0c539170d5c7409a8d816acf09cfc2b1d29aaf94e51",
+  "notes": "Project gradient setting: the cover-colour gradient stays on the project page and can be switched on or off in Settings. The Status heading lines up with the status labels. Removed the x on song rows (remove a song with right-click).",
   "date": "2026-11-09"
 }

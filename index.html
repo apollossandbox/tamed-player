@@ -127,8 +127,8 @@ h1 { font-size: 36px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1
 .pick-opts button:hover { color: var(--ink); background: var(--hover); } .pick-opts button.on { color: var(--onink); background: var(--ink); }
 
 /* track rows */
-.colhead, .row { display: grid; grid-template-columns: 36px 44px minmax(0, 1fr) auto 100px 50px 70px; gap: 12px; align-items: center; }
-.row .hov { opacity: 0; transform: translateX(6px); transition: opacity .2s, transform .3s var(--ease); white-space: nowrap; }
+.colhead, .row { display: grid; grid-template-columns: 36px 44px minmax(0, 1fr) 104px 128px 50px 36px; gap: 12px; align-items: center; }
+.row .hov { overflow: hidden; text-overflow: ellipsis; text-align: right; opacity: 0; transform: translateX(6px); transition: opacity .2s, transform .3s var(--ease); white-space: nowrap; }
 .row:hover .hov, .row:focus-within .hov { opacity: 1; transform: none; }
 .row { cursor: pointer; }
 .colhead { padding: 6px 12px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); font-weight: 700; }
@@ -606,7 +606,7 @@ body.cx-on .bar { transform: none; }
 .pc-art.fit { background-color: #000; }
 .pwash { position: fixed; z-index: 0; top: 0; bottom: 0; left: var(--side); right: 0; pointer-events: none; opacity: 0;
   background: radial-gradient(120% 70% at 20% -10%, color-mix(in srgb, var(--w1) 38%, transparent), transparent 65%), radial-gradient(90% 60% at 95% 0%, color-mix(in srgb, var(--w2) 26%, transparent), transparent 60%); }
-.pwash.show { opacity: 1; transition: opacity .5s ease; } .pwash.show.fade { opacity: 0; transition: opacity 1.6s ease; }
+.pwash { transition: opacity .6s ease; } .pwash.show { opacity: 1; }
 .app > .main { position: relative; z-index: 1; }
 @media (max-width: 760px) { .pwash { left: 0; } .covcol { width: 100%; } }
 
@@ -973,7 +973,8 @@ function normalize() {
   if (S.tl && Array.isArray(S.tl.items)) S.tl.items.forEach(i => { const c = i.kind === 'release' && col(i.colId); if (c && i.date && !c.targetDate) c.targetDate = i.date; });
   delete S.tl;
   S.eq = { on: false, preset: 'flat', g: [0, 0, 0, 0, 0], ...(S.eq || {}) };
-  S.prefs = { theme: 'system', reduceMotion: false, autoNext: true, clickToPlay: true, wash: true, defType: 'album', ...(S.prefs || {}) };
+  S.prefs = { theme: 'system', reduceMotion: false, autoNext: true, clickToPlay: true, gradient: true, defType: 'album', ...(S.prefs || {}) };
+  if ('wash' in S.prefs) { if (!('gradientSet' in S.prefs)) S.prefs.gradient = S.prefs.wash !== false; delete S.prefs.wash; }
   S.cd = { colId: null, view: '3d', sheet: 'front', caseType: 'jewel', tray: 'clear', mode: 'orbit', open: false, discOut: false, designs: {}, ...(S.cd || {}) };
   delete S.cd.style; delete S.cd.label; delete S.cd.skip;
   S.tracks.forEach(t => { if (t.artist === 'Artist Name') t.artist = ''; });
@@ -1122,10 +1123,10 @@ function rowHTML(t, i, inCol) {
     <button class="pill st-${t.status}" data-act="cycle-st" data-id="${t.id}" title="Click to change status">${ST[t.status]}</button>
     <span class="mono hov">${[t.bpm ? t.bpm + ' BPM' : '', t.key ? esc(t.key) : ''].filter(Boolean).join(' · ')}</span>
     <span class="mono c-dur">${fmt(verDur(t))}</span>
-    <span class="acts">${inCol ? `<button class="ico rmb" data-act="rm" data-id="${t.id}" aria-label="Remove from project" title="Remove from project">${ico('x', 16)}</button>` : ''}<button class="ico" data-act="edit" data-id="${t.id}" aria-label="Edit ${esc(t.title)}">${ico('dots', 18)}</button></span>
+    <span class="acts"><button class="ico" data-act="edit" data-id="${t.id}" aria-label="Edit ${esc(t.title)}">${ico('dots', 18)}</button></span>
   </div>`;
 }
-const colhead = `<div class="colhead"><span></span><span></span><span>Title</span><span></span><span>Status</span><span class="c-dur">Time</span><span></span></div>`;
+const colhead = `<div class="colhead"><span></span><span></span><span>Title</span><span>Status</span><span></span><span class="c-dur">Time</span><span></span></div>`;
 
 function renderList() {
   const el = $('#list'); if (!el) return;
@@ -1147,6 +1148,11 @@ function projCard(c, n) {
   </div>`;
 }
 
+function projGradient() {
+  const w = $('#pwash'); if (!w) return; const c = S.view === 'collection' && S.prefs.gradient !== false ? col(S.colId) : null;
+  if (!c) { w.classList.remove('show'); return; }
+  const k = pcolors(c); w.style.setProperty('--w1', k[0]); w.style.setProperty('--w2', k[1] || k[0]); w.classList.add('show');
+}
 function renderMain() {
   const m = $('#main'); m.dataset.cd = S.view === 'cd' ? 'page' : '';
   const vkey = S.view + ':' + (S.view === 'collection' ? S.colId : S.view === 'library' ? S.libTab : '');
@@ -1158,8 +1164,7 @@ function renderMain() {
   else if (S.view === 'settings') renderSettings(m);
   else renderConcept(m);
   renderList();
-  if (enter && S.view === 'collection' && S.prefs.wash !== false) { const c = col(S.colId), w = $('#pwash'); if (c && w) { const k = pcolors(c); w.style.setProperty('--w1', k[0]); w.style.setProperty('--w2', k[1] || k[0]); w.classList.remove('fade'); w.classList.add('show'); void w.offsetWidth; clearTimeout(renderMain.w); renderMain.w = setTimeout(() => w.classList.add('fade'), 3000); } }
-  else if (enter) { const w = $('#pwash'); if (w) w.classList.remove('show', 'fade'); }
+  projGradient();
   if (enter) { m.scrollTop = 0; clearTimeout(renderMain.t); renderMain.t = setTimeout(() => m.classList.remove('enter'), 800); }
 }
 
@@ -2109,7 +2114,7 @@ function renderSettings(m) {
     <section class="set-card box"><h2>Appearance</h2>
       ${setRow('Theme', 'System follows your computer\'s light or dark setting.', seg('settheme', [['system', 'System'], ['light', 'Light'], ['dark', 'Dark']], P.theme, 'pref-theme'))}
       ${setRow('Reduce animations', 'Turns off sliding, fading and spinning effects.', sw('reduceMotion', P.reduceMotion, 'Reduce animations'))}
-      ${setRow('Project colour wash', 'Tints the page with the cover\'s colours for a few seconds when you open a project.', sw('wash', P.wash, 'Project colour wash'))}
+      ${setRow('Project gradient', 'Shows a gradient made from the cover\'s colours behind the project page.', sw('gradient', P.gradient, 'Project gradient'))}
     </section>
     <section class="set-card box"><h2>Playback</h2>
       ${setRow('Play the next track automatically', 'When a song ends, the next one in the list starts.', sw('autoNext', P.autoNext, 'Play the next track automatically'))}
@@ -2561,7 +2566,7 @@ function act(a, el, e) {
   if (el.dataset.confirm && !el.dataset.armed) { el.dataset.armed = '1'; el.querySelector('span').textContent = el.dataset.confirm; return; }
   switch (a) {
     case 'pref-theme': S.prefs.theme = k; applyPrefs(); if (C3) buildCase(); refresh(); break;
-    case 'pref-tog': S.prefs[k] = !S.prefs[k]; el.setAttribute('aria-checked', !!S.prefs[k]); applyPrefs(); save(); break;
+    case 'pref-tog': S.prefs[k] = !S.prefs[k]; el.setAttribute('aria-checked', !!S.prefs[k]); applyPrefs(); projGradient(); save(); break;
     case 'backup': backupAll(); break;
     case 'restore': if (!confirmBtn(el, 'Click again, then choose the backup')) break; $('#restorefile').click(); break;
     case 'wipe': if (!confirmBtn(el, 'Click again to erase everything')) break; try { localStorage.removeItem(KEY); } catch (e) { } try { indexedDB.deleteDatabase('glassroom'); } catch (e) { } setTimeout(() => location.reload(), 300); break;
