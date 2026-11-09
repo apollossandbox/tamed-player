@@ -1,6 +1,6 @@
 <title>Tamed Player</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Permanent+Marker&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Permanent+Marker&display=swap" media="print" onload="this.media='all'">
 <style>
 /* Layout: flat studio. Solid docked sidebar, hairline-ruled panels, docked player bar. Monochrome; color comes only from cover art. */
 :root {
@@ -73,6 +73,7 @@ body.cx-on .bar { transform: translateX(-50%) scale(.97); }
 .mini { width: 24px; height: 24px; flex: none; border-radius: 7px; background-color: var(--field); }
 .sfoot { display: flex; justify-content: flex-start; padding: 8px 2px 0; }
 .credbtn { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; color: var(--ink3); border: 1px solid var(--lo); transition: color .2s, transform .4s var(--ease), border-color .2s; }
+.sfoot { gap: 6px; align-items: center; } .sfoot .ver { font-size: 11px; color: var(--ink3); font-variant-numeric: tabular-nums; }
 .credbtn:hover { color: var(--ink); border-color: var(--edge); transform: rotate(-90deg) scale(1.08); }
 
 /* slider thumb for every segmented control and the nav */
@@ -593,6 +594,37 @@ body.cx-on .bar { transform: none; }
   .drawer { top: auto; max-height: 86%; border-left: 0; border-top: 1px solid var(--line); border-radius: 16px 16px 0 0; width: 100%; }
   h1 { font-size: 28px; }
 }
+/* details modals */
+.modal.wide { width: min(760px, calc(100% - 32px)); }
+.modal .mh { margin: 14px 0 2px; font-size: 14px; font-weight: 800; }
+.mgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; } .mgrid section { display: flex; flex-direction: column; gap: 6px; min-width: 0; } .mgrid .btn { align-self: flex-start; }
+.mtable { width: 100%; border-collapse: separate; border-spacing: 0 4px; }
+.mtable th { text-align: left; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); font-weight: 700; padding: 0 8px 0 2px; white-space: nowrap; }
+.mtable td { padding: 0 4px 0 0; } .mtable .field { padding: 8px 10px; } .mtable td.rmc { width: 34px; }
+.mtable.mcredits td:first-child { width: 42%; } .mtable.details td { width: 40%; }
+.partists { margin: -4px 0 0; } .partists button { font-size: 15px; font-weight: 700; color: var(--ink2); padding: 0; } .partists button:hover { color: var(--ink); text-decoration: underline; }
+@media (max-width: 640px) { .mgrid { grid-template-columns: 1fr; } .mtable.details tr { display: grid; grid-template-columns: 80px 1fr; } }
+
+/* context menu */
+.ctx { position: fixed; z-index: 200; min-width: 230px; max-width: 300px; padding: 5px; border-radius: 12px; background: var(--panel); color: var(--ink); border: 1px solid var(--line); box-shadow: 0 24px 60px -16px var(--shadow), 0 2px 8px rgba(0,0,0,.18); font: 13px/1.3 var(--f); animation: ctxin .14s var(--ease2) both; }
+@keyframes ctxin { from { opacity: 0; transform: scale(.97) translateY(-3px); } }
+.ctx-head { padding: 6px 10px 6px; font-size: 11px; font-weight: 700; letter-spacing: .04em; color: var(--ink3); text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ctx-i { display: flex; align-items: center; gap: 10px; width: 100%; padding: 7px 10px; border-radius: 7px; text-align: left; color: var(--ink); }
+.ctx-i span { flex: 1; } .ctx-i .ic, .ctx-ic { width: 14px; flex: none; color: var(--ink2); }
+.ctx-i kbd { font: 11px var(--f); color: var(--ink3); }
+.ctx-i:hover:not(:disabled), .ctx-i:focus-visible { background: var(--panel2); outline: 0; }
+.ctx-i:disabled { opacity: .38; cursor: default; }
+.ctx-i.danger, .ctx-i.danger .ic { color: #e5484d; } .ctx-i.danger[data-armed] { background: #e5484d; color: #fff; } .ctx-i.danger[data-armed] .ic { color: #fff; }
+.ctx-sep { height: 1px; margin: 4px 6px; background: var(--line); }
+/* lock + fieldsets */
+.pso-fs, .psp-fs { display: contents; border: 0; margin: 0; padding: 0; min-width: 0; }
+.psp-fs:disabled .psp-sec, .pso-fs:disabled > * { opacity: .45; }
+.psl { grid-template-columns: 28px minmax(0, 1fr) 26px; }
+.psl .lk { height: 100%; display: grid; place-items: center; color: var(--pt3); opacity: 0; }
+.psl:hover .lk, .psl .lk.on { opacity: 1; } .psl .lk.on { color: var(--pt); }
+.psl.psbg { grid-template-columns: 28px minmax(0, 1fr); }
+.pso-ib:disabled { opacity: .3; cursor: default; background: none; }
+
 /* View-only mode for the editor */
 .ps.locked { grid-template-columns: minmax(0, 1fr); }
 .ps.locked .ps-tools, .ps.locked .ps-dock { display: none; }
@@ -840,8 +872,13 @@ const pgrad = c => { const k = pcolors(c); return `linear-gradient(135deg, ${k.j
 const feats = t => (t.features || []).map(s => s.trim()).filter(Boolean);
 const dispTitle = t => t.title + (t.featInTitle && feats(t).length ? ` (feat. ${andList(feats(t))})` : '');
 const artistOf = () => (S.concept.artist || '').trim() || 'Artist Name';
-const dispArtist = t => [t.artist || artistOf(), ...feats(t)].filter(Boolean).join(', ');
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify({ ...S, playing: false, q: '', editId: null, cx: { ...S.cx, open: false } })); } catch (e) { } };
+const projOf = t => S.cols.find(c => c.tracks.includes(t.id));
+const projArtists = c => (c && Array.isArray(c.artists) && c.artists.filter(Boolean).length ? c.artists.filter(Boolean) : [artistOf()]);
+const projArtist = c => projArtists(c).join(', ');
+const dispArtist = t => [t.artist || projArtist(projOf(t)), ...feats(t)].filter(Boolean).join(', ');
+const ROLES = ['Producer', 'Co-producer', 'Executive producer', 'Songwriter', 'Composer', 'Lyricist', 'Vocals', 'Background vocals', 'Mixing engineer', 'Mastering engineer', 'Recording engineer', 'Guitar', 'Bass', 'Keys', 'Drums', 'Programming', 'Arranger', 'Artwork', 'Label', 'Publisher'];
+const creditLine = t => { const g = {}; (t.credits || []).forEach(c => { if (c.role && c.name) (g[c.role] = g[c.role] || []).push(c.name); }); return Object.entries(g).map(([r, n]) => `${r}: ${n.join(', ')}`).join(' · '); };
+const save = () => { if (typeof cdTrack === 'function') cdTrack(); try { localStorage.setItem(KEY, JSON.stringify({ ...S, playing: false, q: '', editId: null, cx: { ...S.cx, open: false } })); } catch (e) { } };
 
 function load() {
   try { const r = JSON.parse(localStorage.getItem(KEY)); if (r && r.tracks) S = { ...S, ...r, playing: false, concept: { ...S.concept, ...r.concept } }; } catch (e) { }
@@ -1001,7 +1038,7 @@ function renderSide() {
     <button class="colitem ${S.view === 'collection' && S.colId === c.id ? 'on' : ''}" data-act="col" data-id="${c.id}" data-drop="${c.id}">
       <span class="mini" style="${pcov(c)}"></span><span class="cn">${esc(c.name)}</span>
     </button>`).join('') || '<p class="faint pad small">No projects yet.</p>'}</div></div>
-  <div class="sfoot"><button class="credbtn" data-act="credits" aria-label="Credits" title="Credits">${ico('star', 14)}</button></div>`;
+  <div class="sfoot"><button class="credbtn" data-act="credits" aria-label="Credits" title="Credits">${ico('star', 14)}</button>${window.tpDesktop ? `<button class="credbtn upd" data-act="desk-update" aria-label="Check for updates" title="Version ${esc(tpDesktop.version)}. Check for updates">${ico('save', 14)}</button><span class="ver">v${esc(tpDesktop.version)}</span>` : ''}</div>`;
 }
 
 function rowHTML(t, i, inCol) {
@@ -1034,7 +1071,7 @@ function projCard(c, n) {
   const ts = colTracks(c), k = pcolors(c);
   return `<div class="pcard" style="--n:${n};--g:${pgrad(c)};--glow:${k[0]}">
     <button class="pc-open" data-act="col" data-id="${c.id}"><span class="pc-ring"><span class="pc-art" style="${pcov(c)}"></span></span>
-    <span class="pc-txt"><b>${esc(c.name)}</b><span>${KINDS[c.type]} · ${ts.length} ${ts.length === 1 ? 'track' : 'tracks'}${c.targetDate ? ' · ' + fdate(c.targetDate) : ''}</span></span></button>
+    <span class="pc-txt"><b>${esc(c.name)}</b><span>${esc(projArtist(c))} · ${KINDS[c.type]} · ${ts.length} ${ts.length === 1 ? 'track' : 'tracks'}${c.targetDate ? ' · ' + fdate(c.targetDate) : ''}</span></span></button>
     <button class="pc-play" data-act="play-col" data-id="${c.id}" aria-label="Play ${esc(c.name)}">${ico('play', 18)}</button>
   </div>`;
 }
@@ -1075,7 +1112,7 @@ function renderProject(m) {
     <div class="covwrap" id="covwrap"><div class="bigcov" style="${pcov(c)}"></div></div>
     <div class="cinfo">
       ${picker('ctype', 'Type', KINDS, c.type, 'ctype')}
-      <div class="trow"><input class="title-in" id="p-name" data-cf="name" value="${esc(c.name)}" aria-label="Project name">
+      <div class="trow"><input class="title-in" id="p-name" data-cf="name" value="${esc(c.name)}" aria-label="Project name"><button class="ico" data-act="proj-edit" data-id="${c.id}" title="Rename and edit artists" aria-label="Rename and edit artists">${ico('edit', 17)}</button>
         <button class="ico" data-act="share" aria-label="Share" title="Share">${ico('share', 18)}</button>
         <div class="pop glass share-pop" id="sharepop"><b>Share</b>
           ${seg('vis', [['private', 'Private'], ['link', 'Link only'], ['public', 'Public']], c.vis, 'vis', 'full')}
@@ -1083,6 +1120,7 @@ function renderProject(m) {
           ${c.source ? `<a class="btn sm" href="${esc(c.source)}" target="_blank" rel="noopener">${ico('link', 14)} Open the Untitled source</a>` : ''}
           <p class="faint small">Sample link. Nothing is published.</p></div>
       </div>
+      <p class="partists"><button data-act="proj-edit" data-id="${c.id}" title="Edit artists">${esc(projArtist(c))}</button></p>
       <p class="stat"><span><i class="pill st-final"></i>${nF} complete</span><span><i class="pill st-demo"></i>${nD} ${nD === 1 ? 'demo' : 'demos'}</span>${nU ? `<span><i class="pill st-unmixed"></i>${nU} unmixed</span>` : ''}</p>
       <p class="faint small">${ts.length} ${ts.length === 1 ? 'track' : 'tracks'}${ts.length ? ' · ' + total(ts) : ''}</p>
       <textarea class="desc-in" id="p-desc" data-cf="desc" rows="2" placeholder="Add a description" aria-label="Description">${esc(c.desc)}</textarea>
@@ -1116,12 +1154,70 @@ const fdate = s => s ? new Date(s + 'T00:00:00Z').toLocaleDateString(undefined, 
 const until = s => { const d = dnum(s) - dnum(today()); return d === 0 ? 'Today' : d > 0 ? `In ${d} day${d === 1 ? '' : 's'}` : `${-d} day${d === -1 ? '' : 's'} ago`; };
 
 /* ---------- modal forms ---------- */
+function metaRow(kind, a = '', b = '') {
+  const rm = `<td class="rmc"><button class="ico" data-act="meta-rm" aria-label="Remove row" title="Remove">${ico('x', 14)}</button></td>`;
+  if (kind === 'credit') return `<tr><td><input class="field" list="roles" data-m="role" value="${esc(a)}" placeholder="Role" aria-label="Role"></td><td><input class="field" data-m="who" value="${esc(b)}" placeholder="Name" aria-label="Name"></td>${rm}</tr>`;
+  return `<tr><td><input class="field" data-m="${kind}" value="${esc(a)}" placeholder="${kind === 'feat' ? 'Featured artist' : 'Artist name'}" aria-label="${kind === 'feat' ? 'Featured artist' : 'Artist name'}"></td>${rm}</tr>`;
+}
+function saveDetails() {
+  const M = UI.modal; if (!M) return; const v = id => { const e = $('#' + id); return e ? e.value.trim() : ''; };
+  const list = k => $$(`#modal [data-m="${k}"]`).map(i => i.value.trim()).filter(Boolean);
+  if (M.kind === 'proj') {
+    const c = col(M.id); if (!c) return closeModal();
+    c.name = v('m-pname') || c.name; c.artists = list('partist'); c.type = v('m-ptype') || c.type; c.targetDate = v('m-pdate') || null;
+    toast('Saved ' + c.name);
+  } else if (M.kind === 'meta') {
+    const t = trk(M.id); if (!t) return closeModal();
+    t.title = v('m-ttitle') || t.title; t.artist = list('artist').join(', '); t.features = list('feat'); t.featInTitle = $('#m-featin').checked;
+    const roles = $$('#modal [data-m="role"]'), whos = $$('#modal [data-m="who"]');
+    t.credits = roles.map((r, i) => ({ role: r.value.trim(), name: (whos[i].value || '').trim() })).filter(c => c.role && c.name);
+    t.bpm = +v('m-bpm') || 0; t.key = v('m-key');
+    t.meta = { genre: v('m-genre'), year: v('m-year'), isrc: v('m-isrc').toUpperCase(), label: v('m-label'), copyright: v('m-copy'), explicit: $('#m-explicit').checked };
+    toast('Saved details for ' + t.title);
+    if (S.editId === t.id) setTimeout(() => openDrawer(t.id), 0);
+  }
+  closeModal(); refresh();
+}
 function openModal(kind, id, x = {}) {
   UI.modal = { kind, id }; const md = $('#modal');
   let h = '';
   if (kind === 'name') {
     h = `<h2>Name this project</h2><p class="faint">Found ${x.count} ${x.count === 1 ? 'track' : 'tracks'}${x.from ? ' in ' + esc(x.from) : ''}.</p>
     <label class="lab" for="m-name">Project name</label><input class="field" id="m-name" value="${esc(x.def)}" placeholder="${esc(x.def)}" autocomplete="off">`;
+  } else if (kind === 'proj') {
+    const c = col(id); const arts = Array.isArray(c.artists) && c.artists.length ? c.artists : [''];
+    h = `<h2>Project details</h2>
+    <label class="lab" for="m-pname">Project name</label><input class="field" id="m-pname" value="${esc(c.name)}" autocomplete="off">
+    <label class="lab">Artists</label><p class="faint small" style="margin:0">Add one or more. Leave empty to use ${esc(artistOf())}.</p>
+    <table class="mtable"><tbody data-list="partist">${arts.map(a => metaRow('partist', a)).join('')}</tbody></table>
+    <button class="btn sm" data-act="meta-add" data-k="partist" style="align-self:flex-start">${ico('plus', 13)} Add artist</button>
+    <div class="two"><div><label class="lab" for="m-ptype">Type</label><div class="sel box wide"><select id="m-ptype">${Object.entries(KINDS).map(([k, l]) => `<option value="${k}" ${c.type === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div></div>
+      <div><label class="lab" for="m-pdate">Target release</label><input class="field" type="date" id="m-pdate" value="${esc(c.targetDate || '')}"></div></div>`;
+  } else if (kind === 'meta') {
+    const t = trk(id), m = t.meta || {}, arts = (t.artist || '').split(',').map(x => x.trim()).filter(Boolean);
+    h = `<h2>Song details</h2><p class="faint small" style="margin:0">Metadata and credits for ${esc(dispTitle(t))}.</p>
+    <label class="lab" for="m-ttitle">Title</label><input class="field" id="m-ttitle" value="${esc(t.title)}" autocomplete="off">
+    <div class="mgrid">
+      <section><h3 class="mh">Artists</h3><p class="faint small" style="margin:0">Empty uses the project artist (${esc(projArtist(projOf(t)))}).</p>
+        <table class="mtable"><tbody data-list="artist">${(arts.length ? arts : ['']).map(a => metaRow('artist', a)).join('')}</tbody></table>
+        <button class="btn sm" data-act="meta-add" data-k="artist">${ico('plus', 13)} Add artist</button></section>
+      <section><h3 class="mh">Featured artists</h3>
+        <table class="mtable"><tbody data-list="feat">${(t.features.length ? t.features : ['']).map(a => metaRow('feat', a)).join('')}</tbody></table>
+        <button class="btn sm" data-act="meta-add" data-k="feat">${ico('plus', 13)} Add feature</button>
+        <label class="check"><input type="checkbox" id="m-featin" ${t.featInTitle ? 'checked' : ''}><span>Show “feat.” in the title</span></label></section>
+    </div>
+    <h3 class="mh">Credits</h3>
+    <table class="mtable mcredits"><thead><tr><th>Role</th><th>Name</th><th></th></tr></thead><tbody data-list="credit">${((t.credits || []).length ? t.credits : [{ role: 'Producer', name: '' }]).map(c => metaRow('credit', c.role, c.name)).join('')}</tbody></table>
+    <button class="btn sm" data-act="meta-add" data-k="credit" style="align-self:flex-start">${ico('plus', 13)} Add credit</button>
+    <datalist id="roles">${ROLES.map(r => `<option value="${r}">`).join('')}</datalist>
+    <h3 class="mh">Details</h3>
+    <table class="mtable details"><tbody>
+      <tr><th>Genre</th><td><input class="field" id="m-genre" value="${esc(m.genre || '')}"></td><th>Year</th><td><input class="field" id="m-year" inputmode="numeric" value="${esc(m.year || '')}"></td></tr>
+      <tr><th>Tempo</th><td><input class="field" id="m-bpm" type="number" min="0" max="300" value="${t.bpm || ''}" placeholder="BPM"></td><th>Key</th><td><input class="field" id="m-key" value="${esc(t.key || '')}"></td></tr>
+      <tr><th>ISRC</th><td><input class="field" id="m-isrc" value="${esc(m.isrc || '')}" placeholder="US-XXX-26-00001"></td><th>Label</th><td><input class="field" id="m-label" value="${esc(m.label || '')}"></td></tr>
+      <tr><th>Copyright</th><td colspan="3"><input class="field" id="m-copy" value="${esc(m.copyright || '')}" placeholder="© ${new Date().getFullYear()} ${esc(projArtist(projOf(t)))}"></td></tr>
+      <tr><th>Explicit</th><td colspan="3"><label class="check"><input type="checkbox" id="m-explicit" ${m.explicit ? 'checked' : ''}><span>Contains explicit lyrics</span></label></td></tr>
+    </tbody></table>`;
   } else if (kind === 'import') {
     h = `<h2>Import from Untitled</h2>
     <p class="faint">Browsers can't read untitled.stream pages directly, so this takes two steps. The link is saved on the project.</p>
@@ -1131,7 +1227,8 @@ function openModal(kind, id, x = {}) {
     <div class="dropzone" id="m-drop">${ico('import', 26)}<b>Drop the .zip here</b><span class="faint small">or loose audio and image files</span><button class="btn sm primary" data-act="zip-pick">Choose files</button></div>
     <p class="faint small" id="m-status" role="status"></p>`;
   }
-  md.innerHTML = h + `<div class="crow" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-act="close-modal">${kind === 'import' ? 'Close' : 'Cancel'}</button>${kind === 'name' ? '<button class="btn primary" data-act="name-ok">Create project</button>' : ''}</div>`;
+  md.innerHTML = h + `<div class="crow" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-act="close-modal">${kind === 'import' ? 'Close' : 'Cancel'}</button>${kind === 'name' ? '<button class="btn primary" data-act="name-ok">Create project</button>' : ''}${kind === 'proj' || kind === 'meta' ? '<button class="btn primary" data-act="modal-save">Save</button>' : ''}</div>`;
+  md.classList.toggle('wide', kind === 'meta');
   md.inert = false; $('#scrim').classList.add('open'); requestAnimationFrame(() => { md.classList.add('open'); applySlides(); const f = $('input,select', md); if (f) { f.focus(); if (f.select) f.select(); } });
 }
 const askName = (def, count, from) => new Promise(res => { UI.nameResolve = res; openModal('name', null, { def, count, from }); });
@@ -1237,15 +1334,16 @@ function design(c) {
   return D;
 }
 function autoDesign(c) {
-  const ts = colTracks(c), A = artistOf(), cov = c.cover && srcs['art:' + c.cover] ? 'art:' + c.cover : null;
+  const ts = colTracks(c), A = projArtist(c), cov = c.cover && srcs['art:' + c.cover] ? 'art:' + c.cover : null;
   const dark = shade(toHex(pcolors(c)[2] || pcolors(c)[0]), .45);
   const L = o => ({ id: uid(), op: 1, rot: 0, ...o });
   const T = (text, o) => L({ type: 'text', text, size: 4, color: '#ffffff', font: 'Archivo', weight: 400, lh: 1.3, ls: 0, align: 'center', w: 100, ...o });
   const lines = ts.map((t, i) => `${String(i + 1).padStart(2, '0')}  ${dispTitle(t)}  ${fmt(verDur(t))}`).join('\n') || 'Tracklist';
+  const creditLines = ts.map((t, i) => { const cl = creditLine(t); return `${String(i + 1).padStart(2, '0')}  ${dispTitle(t)}${feats(t).length && !t.featInTitle ? ' (feat. ' + andList(feats(t)) + ')' : ''}${cl ? '\n      ' + cl : ''}`; }).join('\n') || 'Tracklist';
   const fw = SHEETS.front.w, tw = SHEETS.tray.w, th = SHEETS.tray.h, sp = SHEETS.tray.spine, spineTxt = `${A}  ·  ${c.name}`.toUpperCase();
   return {
     front: { bg: dark, layers: cov ? [L({ type: 'img', src: cov, name: 'Project cover', ar: 1, x: fw / 2, y: fw / 2, w: fw + 6 })] : [T(c.name, { size: 10, weight: 700, x: fw / 2, y: fw / 2 - 6, w: fw - 16 }), T(A, { size: 5, x: fw / 2, y: fw / 2 + 8, w: fw - 16 })] },
-    inside: { bg: '#f4f4f2', layers: [T(c.name, { size: 5.5, weight: 700, color: '#111111', x: fw / 2, y: 16, w: fw - 20 }), T(lines + `\n\nAll songs by ${A}\n© ${yearOf(c)} ${A}`, { size: 3, color: '#222222', align: 'left', x: fw / 2, y: fw / 2 + 12, w: fw - 24 })] },
+    inside: { bg: '#f4f4f2', layers: [T(c.name, { size: 5.5, weight: 700, color: '#111111', x: fw / 2, y: 16, w: fw - 20 }), T(creditLines + `\n\nAll songs by ${A}\n© ${yearOf(c)} ${A}`, { size: 3, color: '#222222', align: 'left', x: fw / 2, y: fw / 2 + 12, w: fw - 24 })] },
     tray: { bg: dark, layers: [T(c.name.toUpperCase(), { size: 5, weight: 800, ls: .08, x: tw / 2, y: 16, w: tw - 2 * sp - 20 }), T(lines, { size: 3.3, align: 'left', x: tw / 2, y: th / 2 + 6, w: tw - 2 * sp - 30 })] },
     spineL: { bg: 'none', layers: [T(spineTxt, { size: 3, weight: 700, x: th / 2, y: sp / 2, w: th - 12 })] },
     spineR: { bg: 'none', layers: [T(spineTxt, { size: 3, weight: 700, x: th / 2, y: sp / 2, w: th - 12 })] },
@@ -1270,7 +1368,7 @@ function getImg(key) {
 }
 function drawLayer(x, L, p) {
   if (L.hidden) return;
-  x.save(); x.globalAlpha = L.op ?? 1; x.translate(L.x * p, L.y * p); x.rotate(L.rot * Math.PI / 180);
+  x.save(); x.globalAlpha = L.op ?? 1; x.translate(L.x * p, L.y * p); x.rotate(L.rot * Math.PI / 180); if (L.flipX || L.flipY) x.scale(L.flipX ? -1 : 1, L.flipY ? -1 : 1);
   const w = L.w * p, h = layerH(L) * p;
   if (L.type === 'img') {
     const im = getImg(L.src);
@@ -1330,6 +1428,7 @@ function paintGuides(x, key, p) {
 }
 function paintSel(x, L, p) {
   const w = L.w * p, h = layerH(L) * p;
+  if (L.locked) { x.save(); x.translate((L.x + BLEED) * p, (L.y + BLEED) * p); x.rotate(L.rot * Math.PI / 180); x.strokeStyle = '#9a9aa2'; x.setLineDash([5, 4]); x.lineWidth = 1.2; x.strokeRect(-w / 2, -h / 2, w, h); x.restore(); return; }
   x.save(); x.translate((L.x + BLEED) * p, (L.y + BLEED) * p); x.rotate(L.rot * Math.PI / 180);
   x.strokeStyle = '#4fb3ff'; x.lineWidth = 1.5; x.strokeRect(-w / 2, -h / 2, w, h);
   x.beginPath(); x.moveTo(0, -h / 2); x.lineTo(0, -h / 2 - 22); x.stroke(); x.fillStyle = '#fff';
@@ -1351,12 +1450,13 @@ function draw2D() {
 }
 let drag2 = null;
 function start2D(e) {
-  if (S.cd.lock) return;
+  if (typeof H !== 'undefined') H.t = 0;
+  if (S.cd.lock || e.button === 2) return;
   const cv = e.target, r = cv.getBoundingClientRect(), p = UI.p2d, key = S.cd.sheet, sd = design(cdCol())[key];
   const mx = (e.clientX - r.left) / p - BLEED, my = (e.clientY - r.top) / p - BLEED, L = selLayer();
   if (S.cd.tool === 'text') { cdPlaceText(key, mx, my); return; }
   cv.setPointerCapture(e.pointerId);
-  if (L && UI.cdSel.sheet === key) {
+  if (L && !L.locked && UI.cdSel.sheet === key) {
     const a = -L.rot * Math.PI / 180, dx = (mx - L.x) * p, dy = (my - L.y) * p, lx = dx * Math.cos(a) - dy * Math.sin(a), ly = dx * Math.sin(a) + dy * Math.cos(a), w = L.w * p, h = layerH(L) * p;
     if (Math.hypot(lx, ly + h / 2 + 22) < 11) { drag2 = { kind: 'rot', L }; return; }
     if ([[-1, -1], [1, -1], [1, 1], [-1, 1]].some(([sa, sb]) => Math.abs(lx - sa * w / 2) < 10 && Math.abs(ly - sb * h / 2) < 10)) { drag2 = { kind: 'scale', L, w0: L.w, d0: Math.hypot(mx - L.x, my - L.y) || 1 }; return; }
@@ -1364,7 +1464,7 @@ function start2D(e) {
   const hit = hitLayer(sd, mx, my);
   if (!hit && key === 'tray' && (mx < SHEETS.tray.spine || mx > SHEETS.tray.w - SHEETS.tray.spine)) { cdAct('cd-sheet', { dataset: { k: mx < SHEETS.tray.spine ? 'spineL' : 'spineR' } }); return; }
   UI.cdSel = { sheet: key, id: hit ? hit.id : null }; renderCdPanel(); draw2D();
-  if (hit) drag2 = { kind: 'move', L: hit, x: mx, y: my };
+  if (hit && !hit.locked) drag2 = { kind: 'move', L: hit, x: mx, y: my };
 }
 function move2D(e) {
   if (!drag2) return; const cv = $('#cd2d'); if (!cv) return;
@@ -1404,6 +1504,7 @@ function init3D() {
     C3 = { r, scene, cam, root, tex, studio, shadow, bgTex, rx: -.3, ry: .55, tx: -.3, ty: .55, z: 44, tz: 44, lidA: 0, discA: 0, ray: new T3.Raycaster(), ndc: new T3.Vector2(), print: [], occ: [] };
     const cv = r.domElement; cv.className = 'cd3d';
     cv.addEventListener('pointerdown', e => {
+      if (e.button === 2) return;
       cv.setPointerCapture(e.pointerId);
       if (UI.vw || S.cd.lock) { C3.orbit = { x: e.clientX, y: e.clientY }; cv.style.cursor = 'grabbing'; if (UI.vw) { UI.vw.auto = false; renderViewerBar(); } return; }
       const tool = S.cd.tool || 'move';
@@ -1412,7 +1513,7 @@ function init3D() {
       if (h) {
         const L = hitLayer(design(cdCol())[h.sheet], h.x, h.y);
         S.cd.sheet = h.sheet; UI.cdSel = { sheet: h.sheet, id: L ? L.id : null }; renderCdPanel();
-        if (L) { C3.drag = { L, sheet: h.sheet, x: h.x, y: h.y }; return; }
+        if (L && !L.locked) { C3.drag = { L, sheet: h.sheet, x: h.x, y: h.y }; return; }
       }
       C3.orbit = { x: e.clientX, y: e.clientY }; cv.style.cursor = 'grabbing';
     });
@@ -1423,7 +1524,7 @@ function init3D() {
     });
     const end = () => { if (C3.drag) save(); C3.drag = C3.orbit = null; cv.style.cursor = ''; };
     cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
-    cv.addEventListener('wheel', e => { e.preventDefault(); const L = selLayer(); if (!UI.vw && !S.cd.lock && (S.cd.tool || 'move') === 'move' && L) { L.w = Math.max(3, L.w * (e.deltaY < 0 ? 1.04 : 1 / 1.04)); cdDirty(); syncProps(); save(); } else { C3.tz = Math.max(20, Math.min(80, C3.tz + e.deltaY * .03)); renderPsStatus(); } }, { passive: false });
+    cv.addEventListener('wheel', e => { e.preventDefault(); const L = selLayer(); if (!UI.vw && !S.cd.lock && (S.cd.tool || 'move') === 'move' && L && !L.locked) { L.w = Math.max(3, L.w * (e.deltaY < 0 ? 1.04 : 1 / 1.04)); cdDirty(); syncProps(); save(); } else { C3.tz = Math.max(20, Math.min(80, C3.tz + e.deltaY * .03)); renderPsStatus(); } }, { passive: false });
     buildCase(); return C3;
   } catch (e) { C3 = null; return null; }
 }
@@ -1627,7 +1728,9 @@ function renderPsOpts() {
   } else {
     mid = `<span class="pso-label">${sh.name}</span><span class="pso-hint">${sh.size} trim · ${t === 'text' ? 'Click the sheet to add text there.' : 'Drag art to move it, a corner to resize, the round handle to rotate.'}</span>`;
   }
-  el.innerHTML = `<span class="pso-tool" title="Current tool">${ico(t === 'orbit' ? 'orbit' : t === 'text' ? 'type' : 'move', 16)}</span>${sep}${mid}<span class="grow"></span>`
+  const hist = `<button class="pso-ib" data-act="cd-undo" title="Undo (${MOD}Z)" aria-label="Undo" ${H.stack.length ? '' : 'disabled'}>${ico('undo', 15)}</button><button class="pso-ib" data-act="cd-redo" title="Redo (${MOD}Shift+Z)" aria-label="Redo" ${H.redo.length ? '' : 'disabled'}>${ico('redo', 15)}</button>${sep}`;
+  const lockNote = L && L.locked ? `<button class="pso-btn on" data-act="cd-lockl" data-id="${L.id}" title="Unlock layer (${MOD}/)">${ico('lock', 13)} Locked</button>${sep}` : '';
+  el.innerHTML = `<span class="pso-tool" title="Current tool">${ico(t === 'orbit' ? 'orbit' : t === 'text' ? 'type' : 'move', 16)}</span>${sep}${hist}${lockNote}<fieldset class="pso-fs" ${L && L.locked ? 'disabled' : ''}>${mid}</fieldset><span class="grow"></span>`
     + (UI.canDl ? `${three ? `<button class="pso-btn" data-act="cd-snap">${ico('image', 14)} Save view</button>` : ''}<button class="pso-btn primary" data-act="cd-print">${ico('save', 14)} Print files</button>` : '');
 }
 function renderPsProps() {
@@ -1652,7 +1755,9 @@ function renderPsProps() {
   }
   fixText(L);
   P.innerHTML = `<div class="psp-sec"><h4>${L.type === 'text' ? ico('type', 13) + ' Type layer' : ico('image', 13) + ' Image layer'}</h4>
-      <input class="ps-in" id="cdl-name" value="${esc(L.name || '')}" placeholder="${esc(layerName({ ...L, name: '' }))}" aria-label="Layer name"></div>
+      <input class="ps-in" id="cdl-name" value="${esc(L.name || '')}" placeholder="${esc(layerName({ ...L, name: '' }))}" aria-label="Layer name">
+      <div class="psp-row"><button class="pso-btn ${L.locked ? 'on' : ''}" data-act="cd-lockl" data-id="${L.id}">${ico(L.locked ? 'lock' : 'unlock', 13)} ${L.locked ? 'Locked' : 'Lock layer'}</button><button class="pso-btn" data-act="cd-eye" data-id="${L.id}">${ico('eye', 13)} ${L.hidden ? 'Show' : 'Hide'}</button><button class="pso-ib" data-act="cd-flipx" title="Flip horizontal" aria-label="Flip horizontal" ${L.locked ? 'disabled' : ''}>${ico('flipx', 15)}</button><button class="pso-ib" data-act="cd-flipy" title="Flip vertical" aria-label="Flip vertical" ${L.locked ? 'disabled' : ''}>${ico('flipy', 15)}</button></div>
+      ${L.locked ? `<p class="psp-note">${ico('lock', 12)} This layer is locked, so it can't be moved or changed.</p>` : ''}</div><fieldset class="psp-fs" ${L.locked ? 'disabled' : ''}>
     ${L.type === 'text' ? `<div class="psp-sec"><h4>Character</h4>
       <textarea class="ps-in" id="cdl-text" data-cdl="text" rows="3" aria-label="Text">${esc(L.text)}</textarea>
       <button class="pso-font wide" data-act="cd-fontpick" data-from="props" style="font-family:${esc(fontStack(L.font))}" aria-label="Font"><span>${esc(L.font)}</span><small>${(fontEntry(L.font) || { c: '' }).c}</small>${ico('down', 12)}</button>
@@ -1664,7 +1769,7 @@ function renderPsProps() {
     <div class="psp-sec"><h4>Transform</h4>
       ${num('w', 'Width', 3, 260, .5)}${num('rot', 'Rotate', -180, 180, 1)}${num('op', 'Opacity', 0, 1, .01)}
       <div class="psp-row"><label class="pso-num"><b>X</b><input type="number" step="0.5" data-cdl="x" value="${r1(L.x)}" aria-label="X"><em>mm</em></label><label class="pso-num"><b>Y</b><input type="number" step="0.5" data-cdl="y" value="${r1(L.y)}" aria-label="Y"><em>mm</em></label></div>
-      <div class="crow"><button class="pso-btn" data-act="cd-fill">Fill panel</button><button class="pso-btn" data-act="cd-center">Center</button><button class="pso-btn" data-act="cd-rot90">Turn 90°</button></div></div>`;
+      <div class="crow"><button class="pso-btn" data-act="cd-fill">Fill panel</button><button class="pso-btn" data-act="cd-center">Center</button><button class="pso-btn" data-act="cd-rot90">Turn 90°</button></div></div></fieldset>`;
 }
 function renderPsLayers() {
   const el = $('#pslayers'), c = cdCol(); if (!el || !c) return;
@@ -1674,12 +1779,12 @@ function renderPsLayers() {
     return `<div class="psg ${open ? 'open' : ''}"><button class="psg-h ${open ? 'cur' : ''}" data-act="cd-sheet" data-k="${k}" aria-expanded="${open}"><span class="chev">${ico(open ? 'down' : 'chevR', 12)}</span>${ico('folder', 14)}<span class="nm">${SHEETS[k].name}</span><small>${sd.layers.length}</small></button>
       ${open ? `<div class="psg-b">${[...sd.layers].reverse().map(l => `<div class="psl ${sel === l.id ? 'on' : ''} ${l.hidden ? 'hid' : ''}" draggable="true" data-psl="${l.id}">
           <button class="eye" data-act="cd-eye" data-id="${l.id}" aria-label="${l.hidden ? 'Show' : 'Hide'} ${esc(layerName(l))}" title="${l.hidden ? 'Show' : 'Hide'}">${l.hidden ? '' : ico('eye', 14)}</button>
-          <button class="psl-m" data-act="cd-sel" data-id="${l.id}"><span class="th ${l.type}" style="${l.type === 'img' && srcs[l.src] ? `background-image:url(${srcs[l.src]})` : ''}">${l.type === 'text' ? 'T' : ''}</span><span class="nm" data-rename="${l.id}" title="Double-click to rename">${esc(layerName(l))}</span></button></div>`).join('')}
+          <button class="psl-m" data-act="cd-sel" data-id="${l.id}"><span class="th ${l.type}" style="${l.type === 'img' && srcs[l.src] ? `background-image:url(${srcs[l.src]})` : ''}">${l.type === 'text' ? 'T' : ''}</span><span class="nm" data-rename="${l.id}" title="Double-click to rename">${esc(layerName(l))}</span></button><button class="lk ${l.locked ? 'on' : ''}" data-act="cd-lockl" data-id="${l.id}" aria-label="${l.locked ? 'Unlock' : 'Lock'} ${esc(layerName(l))}" title="${l.locked ? 'Unlock layer' : 'Lock layer'}">${ico(l.locked ? 'lock' : 'unlock', 12)}</button></div>`).join('')}
         <div class="psl psbg ${sel ? '' : 'on'}"><span class="eye">${ico('eye', 14)}</span><button class="psl-m" data-act="cd-bgsel" data-k="${k}"><span class="th" style="background:${bgCss(sd.bg)}"></span><i class="nm">Background</i>${ico('lock', 12)}</button></div></div>` : ''}</div>`;
   }).join('');
   const has = !!sel;
   $('#pslfoot').innerHTML = `<button data-act="cd-addtext" title="New text layer" aria-label="New text layer">${ico('type', 15)}</button><button data-act="cd-addimg" title="Place image" aria-label="Place image">${ico('image', 15)}</button>${c.cover && srcs['art:' + c.cover] ? `<button data-act="cd-addcover" title="Place project cover" aria-label="Place project cover">${ico('plus', 15)}</button>` : ''}
-    <span class="grow"></span><button data-act="cd-dup" title="Duplicate layer" aria-label="Duplicate layer" ${has ? '' : 'disabled'}>${ico('copy', 15)}</button><button data-act="cd-up" data-id="${sel || ''}" title="Bring forward" aria-label="Bring forward" ${has ? '' : 'disabled'}>${ico('up', 15)}</button><button data-act="cd-down" title="Send backward" aria-label="Send backward" ${has ? '' : 'disabled'}>${ico('down', 15)}</button><button data-act="cd-del" data-id="${sel || ''}" title="Delete layer" aria-label="Delete layer" ${has ? '' : 'disabled'}>${ico('trash', 15)}</button>`;
+    <span class="grow"></span><button data-act="cd-lockl" data-id="${sel || ''}" title="Lock or unlock layer (${MOD}/)" aria-label="Lock or unlock layer" ${has ? '' : 'disabled'}>${ico(has && selLayer() && selLayer().locked ? 'lock' : 'unlock', 15)}</button><button data-act="cd-dup" title="Duplicate layer" aria-label="Duplicate layer" ${has ? '' : 'disabled'}>${ico('copy', 15)}</button><button data-act="cd-up" data-id="${sel || ''}" title="Bring forward" aria-label="Bring forward" ${has ? '' : 'disabled'}>${ico('up', 15)}</button><button data-act="cd-down" title="Send backward" aria-label="Send backward" ${has ? '' : 'disabled'}>${ico('down', 15)}</button><button data-act="cd-del" data-id="${sel || ''}" title="Delete layer" aria-label="Delete layer" ${has ? '' : 'disabled'}>${ico('trash', 15)}</button>`;
 }
 function renderPsStatus() {
   const el = $('#psstatus'), c = cdCol(); if (!el || !c) return;
@@ -1730,6 +1835,7 @@ async function cdAddImage(file) {
   addLayer({ type: 'img', src: id, name: file.name.replace(/\.[^.]+$/, ''), ar, w: Math.min(sh.w * .7, sh.h * .7 * ar) });
 }
 function cdAct(a, el) {
+  if (typeof H !== 'undefined') H.t = 0;
   const c = cdCol(), k = el.dataset.k, id = el.dataset.id, L = selLayer(), key = S.cd.sheet;
   const sd = c ? design(c)[key] : null, sh = SHEETS[key];
   switch (a) {
@@ -1737,11 +1843,24 @@ function cdAct(a, el) {
     case 'cd-tool': S.cd.tool = k; S.cd.mode = k === 'orbit' ? 'orbit' : 'move'; renderPsTools(); renderPsOpts(); save(); break;
     case 'cd-full': UI.psFull = !UI.psFull; { const ps = $('#ps'); if (ps) ps.classList.toggle('full', UI.psFull); } renderCdPanel(); { const x = $('[data-act="cd-full"]'); if (x) { x.innerHTML = ico(UI.psFull ? 'shrink' : 'expand', 14); x.title = UI.psFull ? 'Exit full screen (Esc)' : 'Full screen'; } } if (S.cd.view === '2d') requestAnimationFrame(draw2D); break;
     case 'cd-zoom': cdZoom(k); break;
+    case 'cd-undo': cdUndo(); break;
+    case 'cd-redo': cdRedo(); break;
+    case 'cd-lockl': { const f = findLayer(id || (L && L.id)); if (f) { f.L.locked = !f.L.locked; if (C3) C3.drag = null; drag2 = null; toast(f.L.locked ? 'Layer locked' : 'Layer unlocked'); renderCdPanel(); cdDirty(); save(); } break; }
+    case 'cd-copy': if (L) { UI.cdClip = { ...JSON.parse(JSON.stringify(L)), fromSheet: key }; toast('Copied ' + layerName(L)); } break;
+    case 'cd-cut': if (L) { if (L.locked) { lockedToast(); break; } UI.cdClip = { ...JSON.parse(JSON.stringify(L)), fromSheet: key }; sd.layers = sd.layers.filter(l => l !== L); UI.cdSel.id = null; renderCdPanel(); cdDirty(); save(); } break;
+    case 'cd-paste': cdPaste(); break;
+    case 'cd-pastehere': cdPaste(UI.ctxAt); break;
+    case 'cd-texthere': if (UI.ctxAt) cdPlaceText(UI.ctxAt.sheet, UI.ctxAt.x, UI.ctxAt.y); break;
+    case 'cd-front': if (L) cdArrange(L, 'front'); break;
+    case 'cd-back': if (L) cdArrange(L, 'back'); break;
+    case 'cd-flipx': case 'cd-flipy': if (L) { if (L.locked) { lockedToast(); break; } const fk = a === 'cd-flipx' ? 'flipX' : 'flipY'; L[fk] = !L[fk]; cdDirty(); save(); } break;
+    case 'cd-rename': requestAnimationFrame(() => startRename(id)); break;
+    case 'cd-edittext': { const tx = $('#cdl-text'); if (tx) { tx.focus(); tx.select(); } break; }
     case 'cd-lock': S.cd.lock = !S.cd.lock; UI.cdSel = { sheet: S.cd.sheet, id: null }; UI.fontOpen = false; drag2 = null; if (C3) C3.drag = null; toast(S.cd.lock ? 'View only: editing is off' : 'Editing is on'); refresh(); break;
     case 'cd-resetview': if (C3) { C3.tx = -.3; C3.ty = .55; C3.tz = 44; } S.cd.open = false; S.cd.discOut = false; renderCdPanel(); break;
     case 'cd-bgsel': S.cd.sheet = k; UI.cdSel = { sheet: k, id: null }; renderCdPanel(); cdDirty(); break;
-    case 'cd-eye': { const f = findLayer(id); if (f) { f.L.hidden = !f.L.hidden; renderPsLayers(); cdDirty(); save(); } break; }
-    case 'cd-dup': if (L) { const n = { ...JSON.parse(JSON.stringify(L)), id: uid(), x: L.x + 2, y: L.y + 2, name: L.name ? L.name + ' copy' : undefined }; const i = sd.layers.indexOf(L); sd.layers.splice(i + 1, 0, n); UI.cdSel = { sheet: key, id: n.id }; renderCdPanel(); cdDirty(); save(); } break;
+    case 'cd-eye': { const f = findLayer(id || (L && L.id)); if (f) { f.L.hidden = !f.L.hidden; renderPsLayers(); cdDirty(); save(); } break; }
+    case 'cd-dup': if (L) { L.locked && toast('Duplicated a locked layer; the copy is unlocked.'); const n = { ...JSON.parse(JSON.stringify(L)), id: uid(), x: L.x + 2, y: L.y + 2, locked: false, name: L.name ? L.name + ' copy' : undefined }; const i = sd.layers.indexOf(L); sd.layers.splice(i + 1, 0, n); UI.cdSel = { sheet: key, id: n.id }; renderCdPanel(); cdDirty(); save(); } break;
     case 'cd-down': if (L) { const i = sd.layers.indexOf(L); if (i > 0) { [sd.layers[i], sd.layers[i - 1]] = [sd.layers[i - 1], sd.layers[i]]; renderCdPanel(); cdDirty(); save(); } } break;
     case 'cd-open': S.cd.open = !S.cd.open; if (!S.cd.open) S.cd.discOut = false; renderPsOpts(); save(); break;
     case 'cd-disc': S.cd.discOut = !S.cd.discOut; renderPsOpts(); save(); break;
@@ -1751,19 +1870,19 @@ function cdAct(a, el) {
     case 'cd-bg': sd.bg = k; renderCdPanel(); cdDirty(); save(); break;
     case 'cd-sel': if (UI.cdSel && UI.cdSel.id === id && UI.cdSel.sheet === key) break; UI.fontOpen = false; UI.cdSel = { sheet: key, id }; renderCdPanel(); cdDirty(); break;
     case 'cd-up': { const i = sd.layers.findIndex(l => l.id === (id || (L && L.id))); if (i < sd.layers.length - 1) { [sd.layers[i], sd.layers[i + 1]] = [sd.layers[i + 1], sd.layers[i]]; renderCdPanel(); cdDirty(); save(); } break; }
-    case 'cd-del': if (!id) break; sd.layers = sd.layers.filter(l => l.id !== id); if (UI.cdSel && UI.cdSel.id === id) UI.cdSel.id = null; renderCdPanel(); cdDirty(); save(); break;
+    case 'cd-del': if (!id) break; { const f = findLayer(id); if (f && f.L.locked) { lockedToast(); break; } } sd.layers = sd.layers.filter(l => l.id !== id); if (UI.cdSel && UI.cdSel.id === id) UI.cdSel.id = null; renderCdPanel(); cdDirty(); save(); break;
     case 'cd-addimg': $('#cdimg').click(); break;
     case 'cd-addcover': { const src = 'art:' + c.cover; imgAR(srcs[src]).then(ar => addLayer({ type: 'img', src, name: 'Project cover', ar, w: Math.max(sh.w + 6, (sh.h + 6) * ar) })); break; }
     case 'cd-addtext': addLayer({ type: 'text', text: c.name, size: 6, lh: 1.3, ls: 0, italic: false, caps: false, color: sd.bg === '#ffffff' || sd.bg === 'silver' || sd.bg === '#f4f4f2' ? '#111111' : '#ffffff', font: key === 'disc' && sd.bg === 'silver' ? 'Permanent Marker' : 'Archivo', align: 'center', weight: 700, w: sh.w * .8 }); break;
     case 'cd-fontpick': UI.fontOpen = !(UI.fontOpen && UI.fontFrom === el.dataset.from); UI.fontFrom = el.dataset.from; renderFontDrop(); if (UI.fontOpen) { [...FONT_LIB].forEach(linkFont); const q = $('#font-q'); if (q) q.focus(); } break;
     case 'cd-fontcat': UI.fontCat = k; $$('.pso-cats button').forEach(b => b.classList.toggle('on', b.dataset.k === k)); openFontList(); break;
-    case 'cd-font': if (L) { fixText(L); L.font = k; const ws = fontWeights(fontEntry(k)); if (!ws.includes(L.weight)) L.weight = ws.reduce((a, b) => Math.abs(b - L.weight) < Math.abs(a - L.weight) ? b : a); UI.fontOpen = false; renderCdPanel(); cdDirty(); save(); } break;
+    case 'cd-font': if (L && L.locked) { lockedToast(); break; } if (L) { fixText(L); L.font = k; const ws = fontWeights(fontEntry(k)); if (!ws.includes(L.weight)) L.weight = ws.reduce((a, b) => Math.abs(b - L.weight) < Math.abs(a - L.weight) ? b : a); UI.fontOpen = false; renderCdPanel(); cdDirty(); save(); } break;
     case 'cd-fontup': $('#cdfont').click(); break;
-    case 'cd-tog': if (L) { L[k] = !L[k]; renderPsOpts(); renderPsProps(); cdDirty(); save(); } break;
-    case 'cd-align': if (L) { L.align = k; renderPsOpts(); renderPsProps(); cdDirty(); save(); } break;
-    case 'cd-fill': if (L) { const W = sh.w + 6, H = sh.h + 6, turned = Math.abs(Math.round(L.rot / 90)) % 2 === 1; L.x = sh.w / 2; L.y = sh.h / 2; L.w = L.type === 'img' ? (turned ? Math.max(H, W / L.ar * 1) * 1 : Math.max(W, H * L.ar)) : sh.w - 12; if (turned && L.type === 'img') L.w = Math.max(H, W * L.ar); syncProps(); cdDirty(); save(); } break;
-    case 'cd-center': if (L) { L.x = sh.w / 2; L.y = sh.h / 2; syncProps(); cdDirty(); save(); } break;
-    case 'cd-rot90': if (L) { L.rot = ((L.rot + 90 + 180) % 360) - 180; syncProps(); cdDirty(); save(); } break;
+    case 'cd-tog': if (L && L.locked) { lockedToast(); break; } if (L) { L[k] = !L[k]; renderPsOpts(); renderPsProps(); cdDirty(); save(); } break;
+    case 'cd-align': if (L && L.locked) { lockedToast(); break; } if (L) { L.align = k; renderPsOpts(); renderPsProps(); cdDirty(); save(); } break;
+    case 'cd-fill': if (L && L.locked) { lockedToast(); break; } if (L) { const W = sh.w + 6, H = sh.h + 6, turned = Math.abs(Math.round(L.rot / 90)) % 2 === 1; L.x = sh.w / 2; L.y = sh.h / 2; L.w = L.type === 'img' ? (turned ? Math.max(H, W / L.ar * 1) * 1 : Math.max(W, H * L.ar)) : sh.w - 12; if (turned && L.type === 'img') L.w = Math.max(H, W * L.ar); syncProps(); cdDirty(); save(); } break;
+    case 'cd-center': if (L && L.locked) { lockedToast(); break; } if (L) { L.x = sh.w / 2; L.y = sh.h / 2; syncProps(); cdDirty(); save(); } break;
+    case 'cd-rot90': if (L && L.locked) { lockedToast(); break; } if (L) { L.rot = ((L.rot + 90 + 180) % 360) - 180; syncProps(); cdDirty(); save(); } break;
     case 'cd-reset': if (!confirmBtn(el, 'Click again to replace all panels')) break; S.cd.designs[c.id] = autoDesign(c); UI.cdSel = null; refresh(); toast('Rebuilt the art from ' + c.name); break;
     case 'cd-print': cdPrint(); break;
     case 'cd-snap': cdSnap(); break;
@@ -1842,7 +1961,7 @@ function spHTML() {
     body = `<div class="sp-lyrics">${lyricLines(t).map(l => `<p class="js-lyr">${esc(l)}</p>`).join('')}</div>`;
   } else if (c) {
     body = `<div class="sp-hero"><span class="cv" style="${pcov(c)}"></span><div class="ht"><small>${KINDS[c.type]}</small><h2>${esc(c.name)}</h2>
-      <span class="sp-by"><span class="av" style="${ord[0] ? pcov(ord[0]) : cover(3, 9)}"></span><button data-act="cx-artist"><b>${esc(C.artist)}</b></button>${C.verified ? vbadge(16) : ''}<span>• ${yearOf(c)} • ${ts.length} ${ts.length === 1 ? 'song' : 'songs'}, ${total(ts)}</span></span></div></div>
+      <span class="sp-by"><span class="av" style="${ord[0] ? pcov(ord[0]) : cover(3, 9)}"></span><button data-act="cx-artist"><b>${esc(projArtist(c))}</b></button>${C.verified ? vbadge(16) : ''}<span>• ${yearOf(c)} • ${ts.length} ${ts.length === 1 ? 'song' : 'songs'}, ${total(ts)}</span></span></div></div>
       <div class="sp-body"><div class="sp-actions"><button class="sp-big" data-act="cx-playall" data-id="${c.id}" aria-label="Play">${ico(playingHere ? 'pause' : 'play', 24)}</button><button class="ghost" data-act="noop" aria-label="Save">${ico('heart', 28)}</button><button class="ghost" data-act="noop" aria-label="More">${ico('dots', 28)}</button></div>
       <div class="sp-table"><div class="sp-th"><span style="text-align:right">#</span><span>Title</span><span style="text-align:right">${ico('time', 16)}</span></div>
       ${ts.map((x, i) => `<button class="sp-tr ${x.id === S.cur ? 'on' : ''}" data-act="cx-track" data-id="${x.id}"><span class="n">${x.id === S.cur && S.playing ? '<i class="eqi" style="justify-content:flex-end"><b></b><b></b><b></b></i>' : i + 1}</span><span class="meta"><b>${esc(dispTitle(x))}</b><span>${esc(dispArtist(x))}</span></span><span class="d">${fmt(verDur(x))}</span></button>`).join('')}</div>
@@ -1874,7 +1993,7 @@ function amHTML() {
     body = `<div class="am-lyr">${lyricLines(t).map(l => `<p class="js-lyr">${esc(l)}</p>`).join('')}</div>`;
   } else if (c) {
     const genre = c.tags[0] || KINDS[c.type];
-    body = `<div class="am-album"><span class="cv" style="${pcov(c)}"></span><div class="ht"><h2>${esc(c.name)}</h2><button class="ar" data-act="cx-artist">${esc(C.artist)}</button><span class="sub">${esc(genre)} · ${yearOf(c)}</span>
+    body = `<div class="am-album"><span class="cv" style="${pcov(c)}"></span><div class="ht"><h2>${esc(c.name)}</h2><button class="ar" data-act="cx-artist">${esc(projArtist(c))}</button><span class="sub">${esc(genre)} · ${yearOf(c)}</span>
       ${c.desc ? `<p class="desc">${esc(c.desc)}</p>` : ''}<div class="am-btns"><button data-act="cx-playall" data-id="${c.id}">${ico(playingHere ? 'pause' : 'play', 14)} ${playingHere ? 'Pause' : 'Play'}</button><button data-act="cx-shuffle">${ico('shuffle', 14)} Shuffle</button></div></div></div>
       <div class="am-rows">${ts.map((x, i) => `<button class="am-row ${x.id === S.cur ? 'on' : ''}" data-act="cx-track" data-id="${x.id}"><span class="n">${x.id === S.cur && S.playing ? '<i class="eqi" style="color:#fa2d48"><b></b><b></b><b></b></i>' : i + 1}</span><span class="meta"><b>${esc(dispTitle(x))}</b>${feats(x).length && !x.featInTitle ? `<span>${esc(dispArtist(x))}</span>` : ''}</span><span class="d">${fmt(verDur(x))}</span></button>`).join('')}</div>
       <div class="am-foot"><span>${fdate(relDate(c) || new Date(c.created).toISOString().slice(0, 10))}</span><span>${ts.length} ${ts.length === 1 ? 'song' : 'songs'}, ${total(ts)}</span></div>`;
@@ -1926,6 +2045,7 @@ function openDrawer(id) {
   <div class="dcov" style="${tcov(t)}"></div>
   <label class="lab" for="d-title">Title</label><input class="field" id="d-title" data-f="title" value="${esc(t.title)}">
   <label class="lab" for="d-artist">Main artist</label><input class="field" id="d-artist" data-f="artist" value="${esc(t.artist)}" placeholder="${esc(artistOf())} (project artist)">
+  <button class="btn sm" data-act="meta-open" data-id="${t.id}" style="align-self:flex-start;margin-top:8px">${ico('list', 14)} Metadata & credits</button>
   <label class="lab" for="d-feat">Features</label><input class="field" id="d-feat" data-f="features" value="${esc(t.features.join(', '))}" placeholder="Separate artists with commas">
   <label class="check"><input type="checkbox" id="d-featin" ${t.featInTitle ? 'checked' : ''}><span>Add “feat. Artist” to the end of the title</span></label>
   <div class="preview" id="d-prev"><b>${esc(dispTitle(t))}</b><span>${esc(dispArtist(t))}</span></div>
@@ -2162,7 +2282,20 @@ function act(a, el, e) {
     else if (a === 'vw-reset') { C3.tx = -.12; C3.ty = .6; C3.tz = V.mode === 'disc' ? 34 : 46; V.auto = true; renderViewerBar(); }
     return;
   }
+  if (el.dataset.confirm && !el.dataset.armed) { el.dataset.armed = '1'; el.querySelector('span').textContent = el.dataset.confirm; return; }
   switch (a) {
+    case 'proj-edit': openModal('proj', id); break;
+    case 'meta-open': openModal('meta', id); break;
+    case 'modal-save': saveDetails(); break;
+    case 'meta-add': { const tb = $(`#modal [data-list="${k}"]`); if (tb) { tb.insertAdjacentHTML('beforeend', metaRow(k)); const ins = tb.querySelectorAll('tr:last-child input'); if (ins[0]) ins[0].focus(); } break; }
+    case 'meta-rm': { const tr = el.closest('tr'), tb = tr.parentElement; if (tb.children.length > 1) tr.remove(); else tr.querySelectorAll('input').forEach(i => i.value = ''); break; }
+    case 'desk-update': if (window.tpDesktop) { toast('Checking for updates…'); tpDesktop.checkForUpdates(); } break;
+    case 'set-st': { const t = trk(id); if (t) { t.status = k; refresh(); } break; }
+    case 'ctx-deltrack': { const t = trk(id); if (!t) break; if (S.cur === t.id) { Engine.pause(); S.cur = null; S.playing = false; } S.tracks = S.tracks.filter(x => x !== t); S.cols.forEach(c => c.tracks = c.tracks.filter(x => x !== t.id)); DB.del(t.id); (t.versions || []).forEach(v => DB.del(v.id)); if (S.editId === t.id) closeDrawer(); toast('Track deleted'); refresh(); break; }
+    case 'ctx-viewcd': S.colId = id; S.cd.colId = id; openViewer('case'); break;
+    case 'ctx-editcd': closeDrawer(); S.view = 'collection'; S.colId = id; S.projTab = 'cd'; refresh(); break;
+    case 'ctx-dlproj': { const c = col(id); if (c) downloadProject(c); break; }
+    case 'ctx-delcol': { const c = col(id); if (!c) break; if (S.cd.designs) delete S.cd.designs[c.id]; S.cols = S.cols.filter(x => x !== c); c.covers.forEach(x => DB.del('art:' + x.id)); if (S.colId === c.id && S.view === 'collection') S.view = 'library'; toast('Project deleted. Its tracks are still in your library.'); refresh(); break; }
     case 'nav': closeDrawer(); S.view = el.dataset.view; refresh(); break;
     case 'col': closeDrawer(); S.view = 'collection'; S.colId = id; refresh(); break;
     case 'libtab': S.libTab = k; refresh(); break;
@@ -2223,6 +2356,7 @@ function act(a, el, e) {
   }
 }
 document.addEventListener('click', e => {
+  { const m = $('#ctx'); if (m) { const it = e.target.closest('.ctx-i'); if (!it || !(it.dataset.confirm && !it.dataset.armed)) setTimeout(closeCtx, 0); } }
   if (UI.fontOpen && !e.target.closest('#psfontdrop, [data-act="cd-fontpick"]')) { UI.fontOpen = false; renderFontDrop(); }
   const el = e.target.closest('[data-act]');
   if (!e.target.closest('.pick')) $$('.pick.open').forEach(p => p.classList.remove('open'));
@@ -2244,7 +2378,7 @@ document.addEventListener('input', e => {
   else if (t.dataset.vname) { const tr = trk(S.editId), v = tr.versions.find(x => x.id === t.dataset.vname); v.name = t.value || 'Untitled version'; renderList(); save(); }
   else if (t.dataset.cf) { const c = col(S.colId); c[t.dataset.cf] = t.value; if (t.dataset.cf === 'name') renderSide(); save(); }
   else if (t.dataset.cc && t.type !== 'checkbox') { S.concept[t.dataset.cc] = t.value; save(); renderBar(); }
-  else if (t.dataset.cdl && t.tagName !== 'SELECT' && t.type !== 'checkbox') { const L = selLayer(); if (!L) return; const kk = t.dataset.cdl; L[kk] = ['text', 'color'].includes(kk) ? t.value : +t.value; if (kk === 'text' && !L.name) { const b = $('#pslayers .psl.on .nm'); if (b) b.textContent = layerName(L); } syncProps(); cdDirty(); save(); }
+  else if (t.dataset.cdl && t.tagName !== 'SELECT' && t.type !== 'checkbox') { const L = selLayer(); if (!L || L.locked) return; const kk = t.dataset.cdl; L[kk] = ['text', 'color'].includes(kk) ? t.value : +t.value; if (kk === 'text' && !L.name) { const b = $('#pslayers .psl.on .nm'); if (b) b.textContent = layerName(L); } syncProps(); cdDirty(); save(); }
   else if (t.id === 'cd-bg') { const c = cdCol(); design(c)[S.cd.sheet].bg = t.value; cdDirty(); save(); }
   else if (t.id === 'm-link') { UI.importLink = t.value.trim(); const a = $('#m-open'); if (a) a.href = /^https?:\/\//.test(UI.importLink) ? UI.importLink : 'https://untitled.stream'; }
 });
@@ -2265,8 +2399,10 @@ document.addEventListener('change', e => {
   else if (t.dataset.cc) { if (t.type === 'checkbox') { S.concept[t.dataset.cc] = t.checked; refresh(); } else { S.concept[t.dataset.cc] = t.value; save(); } }
 });
 document.addEventListener('keydown', e => {
+  if (UI.modal && (UI.modal.kind === 'proj' || UI.modal.kind === 'meta') && e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'checkbox') { e.preventDefault(); saveDetails(); return; }
   if (e.target.id === 'm-name' && e.key === 'Enter') { e.preventDefault(); closeModal(e.target.value.trim() || e.target.placeholder); return; }
   if (e.target.id === 'tag-in' && e.key === 'Enter') { const v = e.target.value.trim(); const c = col(S.colId); if (v && c && !c.tags.includes(v)) { c.tags.push(v); refresh(); const i = $('#tag-in'); if (i) i.focus(); } else e.target.value = ''; return; }
+  if (e.key === 'Escape' && $('#ctx')) { closeCtx(); return; }
   if (e.key === 'Escape') {
     if ($('#credits').classList.contains('open')) return closeCredits();
     if (UI.vw) return closeViewer();
@@ -2279,9 +2415,26 @@ document.addEventListener('keydown', e => {
     if (S.cx.open) { S.cx.open = false; return refresh(); }
   }
   if (UI.vw) { if (e.code === 'Space' && !/INPUT|TEXTAREA|SELECT|BUTTON/.test(e.target.tagName)) { e.preventDefault(); toggle(); } return; }
+  if (cdActive() && !S.cd.lock && !UI.vw && (e.ctrlKey || e.metaKey) && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) {
+    const key = e.key.toLowerCase(), L = selLayer(), go = a => { e.preventDefault(); cdAct(a, { dataset: { id: L ? L.id : '' } }); };
+    if (key === 'z' && !e.shiftKey) { e.preventDefault(); return cdUndo(); }
+    if ((key === 'z' && e.shiftKey) || key === 'y') { e.preventDefault(); return cdRedo(); }
+    if (key === 'j' && L) return go('cd-dup');
+    if (key === 'c' && L) return go('cd-copy');
+    if (key === 'x' && L) return go('cd-cut');
+    if (key === 'v') { e.preventDefault(); return cdPaste(); }
+    if (key === '/' && L) return go('cd-lockl');
+    if (key === ',' && L) return go('cd-eye');
+    if ((e.code === 'BracketRight') && L) { e.preventDefault(); return L.locked && false ? 0 : cdArrange(L, e.shiftKey ? 'front' : 'up'); }
+    if ((e.code === 'BracketLeft') && L) { e.preventDefault(); return cdArrange(L, e.shiftKey ? 'back' : 'down'); }
+    if (key === '0') { e.preventDefault(); return cdZoom('fit'); }
+    if (key === '=' || key === '+') { e.preventDefault(); return cdZoom('in'); }
+    if (key === '-') { e.preventDefault(); return cdZoom('out'); }
+  }
+  if (cdActive() && !S.cd.lock && e.key === 'Escape' && UI.cdSel && UI.cdSel.id && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) && !UI.modal && !UI.vw && !UI.fontOpen && !UI.psFull) { UI.cdSel.id = null; renderCdPanel(); cdDirty(); return; }
   if (cdActive() && S.cd.lock && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) { if (e.code === 'Space') { e.preventDefault(); toggle(); } return; }
   if (cdActive() && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) && !e.metaKey && !e.ctrlKey && !e.altKey) { const tk = { v: 'move', r: 'orbit', t: 'text' }[e.key.toLowerCase()]; if (tk && !(tk === 'orbit' && S.cd.view !== '3d')) { e.preventDefault(); return cdAct('cd-tool', { dataset: { k: tk } }); } if (e.key.toLowerCase() === 'i') { e.preventDefault(); return $('#cdimg').click(); } }
-  if (cdActive() && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) { const L = selLayer(); if (L) { const st = e.shiftKey ? 5 : .5, mv = { ArrowLeft: [-st, 0], ArrowRight: [st, 0], ArrowUp: [0, -st], ArrowDown: [0, st] }[e.key]; if (mv) { e.preventDefault(); L.x += mv[0]; L.y += mv[1]; syncProps(); cdDirty(); save(); return; } if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); const sd = design(cdCol())[UI.cdSel.sheet]; sd.layers = sd.layers.filter(l => l !== L); UI.cdSel.id = null; renderCdPanel(); cdDirty(); save(); return; } } }
+  if (cdActive() && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) && !e.ctrlKey && !e.metaKey) { const L = selLayer(); if (L && L.locked && /^Arrow|Delete|Backspace/.test(e.key)) { e.preventDefault(); return lockedToast(); } if (L) { const st = e.shiftKey ? 5 : .5, mv = { ArrowLeft: [-st, 0], ArrowRight: [st, 0], ArrowUp: [0, -st], ArrowDown: [0, st] }[e.key]; if (mv) { e.preventDefault(); L.x += mv[0]; L.y += mv[1]; syncProps(); cdDirty(); save(); return; } if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); const sd = design(cdCol())[UI.cdSel.sheet]; sd.layers = sd.layers.filter(l => l !== L); UI.cdSel.id = null; renderCdPanel(); cdDirty(); save(); return; } } }
   if (e.code === 'Space' && !/INPUT|TEXTAREA|SELECT|BUTTON/.test(e.target.tagName)) { e.preventDefault(); toggle(); }
 });
 /* scrubbing */
@@ -2337,13 +2490,138 @@ document.addEventListener('drop', e => {
 }, true);
 document.addEventListener('dragend', () => { UI.psDrag = null; $$('.psl.dropto').forEach(x => x.classList.remove('dropto')); }, true);
 document.addEventListener('dblclick', e => {
-  const n = e.target.closest('[data-rename]'); if (!n) return; const f = findLayer(n.dataset.rename); if (!f) return;
+  const n = e.target.closest('[data-rename]'); if (n) return startRename(n.dataset.rename); if (true) return; const f = null;
   const inp = document.createElement('input'); inp.className = 'ps-in rename'; inp.value = layerName(f.L); n.replaceWith(inp); inp.focus(); inp.select();
   const done = ok => { if (ok) f.L.name = inp.value.trim() || undefined; renderPsLayers(); renderPsProps(); save(); };
   inp.addEventListener('keydown', k => { k.stopPropagation(); if (k.key === 'Enter') done(true); if (k.key === 'Escape') done(false); });
   inp.addEventListener('blur', () => done(true), { once: true });
 });
 document.addEventListener('wheel', e => { if (e.target.id === 'cd2d' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); cdZoom(e.deltaY < 0 ? 'in' : 'out'); } }, { passive: false });
+
+/* ---------- editor controls: history, clipboard, lock, arrange, flip, context menus ---------- */
+Object.assign(IC, {
+  undo: 'M9 14L4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 0 11H11', redo: 'M15 14l5-5-5-5M20 9H9.5a5.5 5.5 0 0 0 0 11H13',
+  unlock: 'M6.5 11h11v9h-11zM8.5 11V8a3.5 3.5 0 0 1 6.8-1.2', flipx: 'M12 3v18M8 7l-5 5 5 5zM16 7l5 5-5 5z', flipy: 'M3 12h18M7 8l5-5 5 5zM7 16l5 5 5-5z',
+  front: 'M8 8h12v12H8zM4 4h8v2M4 4v8h2', back: 'M4 4h12v12H4zM20 8v12H8v-2', cut: 'M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8.1 7.9 20 20M8.1 16.1 20 4',
+  paste: 'M9 4h6v3H9zM7 5H5v16h14V5h-2', edit: 'M4 20l4-1 11-11-3-3L5 16zM14 6l3 3'
+});
+let H = { col: null, stack: [], redo: [], last: null, t: 0, mute: false };
+function cdTrack() {
+  if (H.mute || !cdActive()) return; const c = cdCol(); if (!c || !S.cd.designs || !S.cd.designs[c.id]) return;
+  const j = JSON.stringify(S.cd.designs[c.id]);
+  if (H.col !== c.id) { H = { col: c.id, stack: [], redo: [], last: j, t: 0, mute: false }; return; }
+  if (j === H.last) return; const now = Date.now();
+  if (now - H.t > 700 || !H.stack.length) { H.stack.push(H.last); if (H.stack.length > 120) H.stack.shift(); }
+  H.last = j; H.t = now; H.redo = [];
+}
+function cdRestore(json) {
+  S.cd.designs[H.col] = JSON.parse(json); H.last = json; H.t = 0;
+  if (UI.cdSel && UI.cdSel.id && !selLayer()) UI.cdSel.id = null;
+  H.mute = true; save(); H.mute = false; renderCdPanel(); cdDirty();
+}
+function cdUndo() { if (!H.stack.length) return toast('Nothing to undo'); H.redo.push(H.last); cdRestore(H.stack.pop()); }
+function cdRedo() { if (!H.redo.length) return toast('Nothing to redo'); H.stack.push(H.last); cdRestore(H.redo.pop()); }
+const lockedToast = () => toast('This layer is locked. Unlock it to change it.');
+function startRename(id) {
+  const n = $(`[data-rename="${id}"]`); if (!n) return; const f = findLayer(id); if (!f) return;
+  const inp = document.createElement('input'); inp.className = 'ps-in rename'; inp.value = layerName(f.L); n.replaceWith(inp); inp.focus(); inp.select();
+  let finished = false; const done = ok => { if (finished) return; finished = true; if (ok) f.L.name = inp.value.trim() || undefined; renderPsLayers(); renderPsProps(); save(); };
+  inp.addEventListener('keydown', k => { k.stopPropagation(); if (k.key === 'Enter') done(true); if (k.key === 'Escape') done(false); });
+  inp.addEventListener('blur', () => done(true), { once: true });
+}
+function cdPaste(at) {
+  const clip = UI.cdClip; if (!clip) return toast('Nothing to paste. Copy a layer first.');
+  const key = at ? at.sheet : S.cd.sheet, sh = SHEETS[key], sd = design(cdCol())[key];
+  const n = { ...JSON.parse(JSON.stringify(clip)), id: uid(), locked: false };
+  if (at) { n.x = at.x; n.y = at.y; } else if (clip.fromSheet === key) { n.x += 3; n.y += 3; } else { n.x = sh.w / 2; n.y = sh.h / 2; }
+  delete n.fromSheet; sd.layers.push(n); S.cd.sheet = key; UI.cdSel = { sheet: key, id: n.id }; renderCdPanel(); cdDirty(); save();
+}
+function cdArrange(L, how) {
+  const f = findLayer(L.id); if (!f) return; const ls = f.sd.layers, i = ls.indexOf(L); ls.splice(i, 1);
+  const j = how === 'front' ? ls.length : how === 'back' ? 0 : how === 'up' ? Math.min(ls.length, i + 1) : Math.max(0, i - 1);
+  ls.splice(j, 0, L); renderCdPanel(); cdDirty(); save();
+}
+
+/* one context menu for the whole app */
+function ctxMenu(x, y, items) {
+  closeCtx(); const m = document.createElement('div'); m.className = 'ctx'; m.id = 'ctx'; m.setAttribute('role', 'menu');
+  m.innerHTML = items.filter(Boolean).map(it => it.sep ? '<div class="ctx-sep" role="separator"></div>' : it.head ? `<div class="ctx-head">${esc(it.head)}</div>`
+    : `<button role="menuitem" class="ctx-i ${it.danger ? 'danger' : ''}" data-act="${it.act}" ${it.k != null ? `data-k="${esc(it.k)}"` : ''} ${it.id ? `data-id="${esc(it.id)}"` : ''} ${it.confirm ? `data-confirm="${esc(it.confirm)}"` : ''} ${it.disabled ? 'disabled' : ''}>${it.icon ? ico(it.icon, 14) : '<span class="ctx-ic"></span>'}<span>${esc(it.label)}</span>${it.kbd ? `<kbd>${esc(it.kbd)}</kbd>` : ''}</button>`).join('');
+  document.body.appendChild(m);
+  const r = m.getBoundingClientRect(); m.style.left = Math.max(8, Math.min(x, innerWidth - r.width - 8)) + 'px'; m.style.top = Math.max(8, Math.min(y, innerHeight - r.height - 8)) + 'px';
+  const first = m.querySelector('.ctx-i:not([disabled])'); if (first) first.focus({ preventScroll: true });
+}
+function closeCtx() { const m = $('#ctx'); if (m) m.remove(); }
+const MOD = /Mac|iPhone|iPad/.test(navigator.platform || '') ? '⌘' : 'Ctrl+';
+function layerMenu(L) {
+  const lk = !!L.locked;
+  return [{ head: layerName(L) + (lk ? ' (locked)' : '') },
+    { label: 'Undo', act: 'cd-undo', icon: 'undo', kbd: MOD + 'Z', disabled: !H.stack.length }, { label: 'Redo', act: 'cd-redo', icon: 'redo', kbd: MOD + 'Shift+Z', disabled: !H.redo.length }, { sep: 1 },
+    { label: 'Duplicate Layer', act: 'cd-dup', icon: 'copy', kbd: MOD + 'J' },
+    { label: 'Copy', act: 'cd-copy', icon: 'copy', kbd: MOD + 'C' }, { label: 'Cut', act: 'cd-cut', icon: 'cut', kbd: MOD + 'X', disabled: lk },
+    { label: 'Paste', act: 'cd-paste', icon: 'paste', kbd: MOD + 'V', disabled: !UI.cdClip }, { sep: 1 },
+    { label: lk ? 'Unlock Layer' : 'Lock Layer', act: 'cd-lockl', id: L.id, icon: lk ? 'unlock' : 'lock', kbd: MOD + '/' },
+    { label: L.hidden ? 'Show Layer' : 'Hide Layer', act: 'cd-eye', id: L.id, icon: 'eye', kbd: MOD + ',' },
+    { label: 'Rename Layer…', act: 'cd-rename', id: L.id, icon: 'edit' },
+    ...(L.type === 'text' ? [{ label: 'Edit Text', act: 'cd-edittext', icon: 'type', disabled: lk }] : []), { sep: 1 },
+    { label: 'Bring to Front', act: 'cd-front', icon: 'front', kbd: MOD + 'Shift+]' }, { label: 'Bring Forward', act: 'cd-up', id: L.id, icon: 'up', kbd: MOD + ']' },
+    { label: 'Send Backward', act: 'cd-down', icon: 'down', kbd: MOD + '[' }, { label: 'Send to Back', act: 'cd-back', icon: 'back', kbd: MOD + 'Shift+[' }, { sep: 1 },
+    { label: 'Center on Panel', act: 'cd-center', icon: 'move', disabled: lk }, { label: 'Fill Panel', act: 'cd-fill', icon: 'expand', disabled: lk },
+    { label: 'Rotate 90°', act: 'cd-rot90', icon: 'orbit', disabled: lk }, { label: 'Flip Horizontal', act: 'cd-flipx', icon: 'flipx', disabled: lk }, { label: 'Flip Vertical', act: 'cd-flipy', icon: 'flipy', disabled: lk }, { sep: 1 },
+    { label: 'Delete Layer', act: 'cd-del', id: L.id, icon: 'trash', kbd: 'Del', danger: 1, disabled: lk }];
+}
+function panelMenu(sheet, at) {
+  const three = S.cd.view === '3d';
+  UI.ctxAt = at ? { sheet, x: at.x, y: at.y } : null;
+  return [{ head: SHEETS[sheet].name },
+    { label: 'Undo', act: 'cd-undo', icon: 'undo', kbd: MOD + 'Z', disabled: !H.stack.length }, { label: 'Redo', act: 'cd-redo', icon: 'redo', kbd: MOD + 'Shift+Z', disabled: !H.redo.length }, { sep: 1 },
+    { label: at ? 'Paste Here' : 'Paste', act: at ? 'cd-pastehere' : 'cd-paste', icon: 'paste', kbd: MOD + 'V', disabled: !UI.cdClip },
+    { label: at ? 'New Text Here' : 'New Text Layer', act: at ? 'cd-texthere' : 'cd-addtext', icon: 'type' },
+    { label: 'Place Image…', act: 'cd-addimg', icon: 'image' },
+    ...(cdCol().cover && srcs['art:' + cdCol().cover] ? [{ label: 'Place Project Cover', act: 'cd-addcover', icon: 'plus' }] : []), { sep: 1 },
+    { label: 'Panel Properties', act: 'cd-bgsel', k: sheet, icon: 'folder' },
+    ...(three ? [{ sep: 1 }, { label: S.cd.open ? 'Close Case' : 'Open Case', act: 'cd-open', icon: 'cube' }, { label: S.cd.discOut ? 'Put Disc Back' : 'Remove Disc', act: 'cd-disc', icon: 'disc' }, { label: 'Reset View', act: 'cd-resetview', icon: 'repeat' }] : [{ sep: 1 }, { label: 'Fit on Screen', act: 'cd-zoom', k: 'fit', icon: 'expand', kbd: MOD + '0' }]),
+    { label: S.cd.lock ? 'Turn Editing On' : 'View Only', act: 'cd-lock', icon: 'lock' }];
+}
+function viewOnlyMenu() {
+  const three = S.cd.view === '3d';
+  return [{ head: 'View only' }, ...(three ? [{ label: S.cd.open ? 'Close Case' : 'Open Case', act: 'cd-open', icon: 'cube' }, { label: S.cd.discOut ? 'Put Disc Back' : 'Remove Disc', act: 'cd-disc', icon: 'disc' }, { label: 'Reset View', act: 'cd-resetview', icon: 'repeat' }, { label: 'Open Viewer', act: 'vw-open-case', icon: 'cube' }] : [{ label: 'Fit on Screen', act: 'cd-zoom', k: 'fit', icon: 'expand' }]), { sep: 1 }, { label: 'Turn Editing On', act: 'cd-lock', icon: 'unlock' }];
+}
+function trackMenu(t, inCol) {
+  const on = S.cur === t.id && S.playing;
+  return [{ head: dispTitle(t) }, { label: on ? 'Pause' : 'Play', act: 'play', id: t.id, icon: on ? 'pause' : 'play' }, { sep: 1 },
+    { label: 'Rename…', act: 'meta-open', id: t.id, icon: 'type' }, { label: 'Metadata & Credits…', act: 'meta-open', id: t.id, icon: 'list' }, { label: 'Edit Track…', act: 'edit', id: t.id, icon: 'edit' }, { sep: 1 },
+    ...Object.entries(ST).map(([k, l]) => ({ label: 'Mark as ' + l, act: 'set-st', id: t.id, k, icon: t.status === k ? 'check' : null })), { sep: 1 },
+    ...(inCol ? [{ label: 'Remove from Project', act: 'rm', id: t.id, icon: 'x' }] : []),
+    { label: 'Delete Track', act: 'ctx-deltrack', id: t.id, icon: 'trash', danger: 1, confirm: 'Click again to delete' }];
+}
+function projectMenu(c) {
+  return [{ head: c.name + ' · ' + projArtist(c) }, { label: 'Open', act: 'col', id: c.id, icon: 'grid' }, { label: 'Play', act: 'play-col', id: c.id, icon: 'play' }, { sep: 1 },
+    { label: 'Rename…', act: 'proj-edit', id: c.id, icon: 'type' }, { label: 'Edit Details & Artists…', act: 'proj-edit', id: c.id, icon: 'edit' }, { sep: 1 }, { label: 'Concept Player', act: 'to-concept', id: c.id, icon: 'phone' },
+    { label: 'View CD', act: 'ctx-viewcd', id: c.id, icon: 'disc' }, { label: 'Edit CD', act: 'ctx-editcd', id: c.id, icon: 'edit' }, { label: 'Download Project', act: 'ctx-dlproj', id: c.id, icon: 'save' }, { sep: 1 },
+    { label: 'Delete Project', act: 'ctx-delcol', id: c.id, icon: 'trash', danger: 1, confirm: 'Click again to delete' }];
+}
+function onContext(e) {
+  if (e.target.closest('input, textarea, select, [contenteditable]')) return;
+  const t = e.target; let menu = null;
+  if (t.id === 'cd2d') {
+    const r = t.getBoundingClientRect(), p = UI.p2d, key = S.cd.sheet, mx = (e.clientX - r.left) / p - BLEED, my = (e.clientY - r.top) / p - BLEED;
+    if (S.cd.lock) menu = viewOnlyMenu(); else { const L = hitLayer(design(cdCol())[key], mx, my); if (L) { UI.cdSel = { sheet: key, id: L.id }; renderCdPanel(); draw2D(); menu = layerMenu(L); } else menu = panelMenu(key, { x: mx, y: my }); }
+  } else if (t.classList && t.classList.contains('cd3d') && !UI.vw) {
+    if (S.cd.lock) menu = viewOnlyMenu(); else { const h = pick(e); if (h) { const L = hitLayer(design(cdCol())[h.sheet], h.x, h.y); S.cd.sheet = h.sheet; UI.cdSel = { sheet: h.sheet, id: L ? L.id : null }; renderCdPanel(); menu = L ? layerMenu(L) : panelMenu(h.sheet, h); } else menu = panelMenu(S.cd.sheet); }
+  } else if (t.closest('[data-psl]')) {
+    const f = findLayer(t.closest('[data-psl]').dataset.psl); if (f) { S.cd.sheet = f.sheet; UI.cdSel = { sheet: f.sheet, id: f.L.id }; renderCdPanel(); cdDirty(); menu = layerMenu(f.L); }
+  } else if (t.closest('.psg-h, .psbg')) { const k = (t.closest('.psg-h') || t.closest('.psbg').querySelector('[data-k]')).dataset.k; menu = panelMenu(k); }
+  else if (t.closest('.ps-canvas, .ps-scroll')) menu = S.cd.lock ? viewOnlyMenu() : panelMenu(S.cd.sheet);
+  else if (t.closest('#list .row')) { const r = t.closest('.row'), tr = trk(r.dataset.id); if (tr) menu = trackMenu(tr, r.dataset.row === 'col'); }
+  else if (t.closest('.chero') && S.view === 'collection') { const c = col(S.colId); if (c) menu = projectMenu(c); }
+  else if (t.closest('.pcard:not(.pc-new), .colitem, .lcard')) { const n = t.closest('.pcard, .colitem, .lcard'), id = (n.dataset.id || (n.querySelector('[data-id]') || {}).dataset?.id); const c = col(id); if (c) menu = projectMenu(c); }
+  if (!menu) return;
+  e.preventDefault(); ctxMenu(e.clientX, e.clientY, menu);
+}
+document.addEventListener('contextmenu', onContext);
+document.addEventListener('scroll', closeCtx, true);
+addEventListener('blur', closeCtx); addEventListener('resize', closeCtx);
 
 /* ---------- boot ---------- */
 (async function boot() {
