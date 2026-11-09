@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Builds the Windows installer and drops it in ../installer/ with latest.json,
 # so pushing the repo to GitHub updates everyone's desktop app.
-# Usage: ./build-win.sh 1.0.2 "What changed in this version"
+# Usage: ./build-win.sh 1.0.2 ["Short notes"]   (add the version to CHANGELOG in index.html first)
 # Needs Node, and Wine (64- and 32-bit) when building on Linux.
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -36,9 +36,12 @@ mkdir -p ../installer
 rm -f ../installer/TamedPlayer-Setup*.exe
 cp "dist/TamedPlayer-Setup-$VERSION.exe" ../installer/TamedPlayer-Setup.exe
 node -e '
-const fs = require("fs"), [v, notes] = process.argv.slice(1);
+const fs = require("fs"), [v, notes0] = process.argv.slice(1);
+const changelog = JSON.parse(fs.readFileSync("changelog.json", "utf8")), top = changelog.find(e => e.v === v);
+if (!top) { console.error("Add a CHANGELOG entry for " + v + " in index.html first."); process.exit(1); }
+const notes = notes0 || top.items.join(" ");
 const f = "../installer/TamedPlayer-Setup.exe", size = fs.statSync(f).size;
 const sha256 = require("crypto").createHash("sha256").update(fs.readFileSync(f)).digest("hex");
-fs.writeFileSync("../installer/latest.json", JSON.stringify({ version: v, file: "TamedPlayer-Setup.exe", size, sha256, notes, date: new Date().toISOString().slice(0, 10) }, null, 2) + "\n");
+fs.writeFileSync("../installer/latest.json", JSON.stringify({ version: v, file: "TamedPlayer-Setup.exe", size, sha256, notes, date: new Date().toISOString().slice(0, 10), changelog: changelog.slice(0, 20) }, null, 2) + "\n");
 ' "$VERSION" "$NOTES"
 echo "Built installer/TamedPlayer-Setup.exe ($VERSION). Commit and push the repo to publish it."

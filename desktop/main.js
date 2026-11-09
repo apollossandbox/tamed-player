@@ -36,15 +36,17 @@ async function checkForUpdates(manual) {
     const r = await net.fetch(FEED + '?t=' + Date.now(), { cache: 'no-store' });
     if (!r.ok) throw new Error(r.status === 404 ? 'The update file was not found. The tamed-player repository on GitHub has to be public for updates to work.' : 'GitHub answered ' + r.status + '.');
     const info = await r.json();
+    const showLog = () => { if (win) win.webContents.send('tp-changelog', { changelog: Array.isArray(info.changelog) ? info.changelog : [], since: app.getVersion() }); };
     if (!info.version || !newer(info.version, app.getVersion())) {
-      if (manual) await dialog.showMessageBox(win, { type: 'info', message: 'Tamed Player is up to date', detail: 'You have version ' + app.getVersion() + '.' });
+      if (manual) { const { response } = await dialog.showMessageBox(win, { type: 'info', buttons: ['OK', "What's new"], defaultId: 0, cancelId: 0, message: 'Tamed Player is up to date', detail: 'You have version ' + app.getVersion() + '.' }); if (response === 1) showLog(); }
       return;
     }
     const { response } = await dialog.showMessageBox(win, {
-      type: 'info', buttons: ['Download and install', 'Later'], defaultId: 0, cancelId: 1,
+      type: 'info', buttons: ['Download and install', "What's new", 'Later'], defaultId: 0, cancelId: 2,
       message: `Tamed Player ${info.version} is available`,
       detail: `You have ${app.getVersion()}.${info.notes ? '\n\n' + info.notes : ''}\n\nThe new version installs over this one. Your projects are kept.`
     });
+    if (response === 1) { showLog(); return; }
     if (response !== 0) return;
     const url = new URL(info.file || 'TamedPlayer-Setup.exe', FEED).toString();
     const dest = path.join(app.getPath('temp'), `TamedPlayer-Setup-${info.version}.exe`);

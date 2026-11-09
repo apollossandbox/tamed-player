@@ -652,6 +652,15 @@ body.cx-on .bar { transform: none; }
 .dsg { display: flex; align-items: center; gap: 8px; padding: 5px 6px; border-radius: 7px; text-align: left; color: var(--ink2); } .dsg:hover { background: var(--hover); } .dsg.on { background: var(--panel3); color: var(--ink); }
 .dsg span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; } .dsg small { font-size: 12px; color: var(--ink3); }
 .dsg-cv { width: 22px; height: 22px; border-radius: 4px; background: var(--panel2) center/cover; flex: none; display: grid; place-items: center; color: var(--ink3); }
+
+/* changelog */
+.modal.clogm { width: min(560px, calc(100vw - 32px)); }
+.clog { max-height: min(60vh, 520px); overflow: auto; margin: 10px -4px 0; padding: 0 4px; display: flex; flex-direction: column; gap: 14px; }
+.clog-v header { display: flex; align-items: baseline; gap: 8px; } .clog-v header b { font-size: 15px; } .clog-v header small { margin-left: auto; color: var(--ink3); font-size: 12px; }
+.clog-v ul { margin: 6px 0 0; padding-left: 18px; color: var(--ink2); font-size: 13.5px; line-height: 1.5; } .clog-v li + li { margin-top: 3px; }
+.clog-v.new { padding: 10px 12px; border-radius: 10px; background: var(--panel2); } .clog-v.new ul { color: var(--ink); }
+.clog-tag { font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--panel3); color: var(--ink2); } .clog-tag.up { background: var(--ink); color: var(--onink); }
+.toast.act { pointer-events: auto; display: flex; align-items: center; gap: 10px; }
 /* Audio Doctor */
 .doc-drop { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px; margin-bottom: 16px; border: 1.5px dashed var(--line); border-radius: 14px; color: var(--ink2); }
 .doc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 430px); gap: 16px; align-items: start; }
@@ -1369,6 +1378,9 @@ function openModal(kind, id, x = {}) {
       <tr><th>Copyright</th><td colspan="3"><input class="field" id="m-copy" value="${esc(m.copyright || '')}" placeholder="© ${new Date().getFullYear()} ${esc(projArtist(projOf(t)))}"></td></tr>
       <tr><th>Explicit</th><td colspan="3"><label class="check"><input type="checkbox" id="m-explicit" ${m.explicit ? 'checked' : ''}><span>Contains explicit lyrics</span></label></td></tr>
     </tbody></table>`;
+  } else if (kind === 'changelog') {
+    const C = UI.clog || { list: CHANGELOG };
+    h = `<h2>What's new</h2><p class="faint small" style="margin:0">You have version ${esc(APP_VERSION)}.</p><div class="clog">${changelogHTML(C.list, C.since)}</div>`;
   } else if (kind === 'import') {
     h = `<h2>Import from Untitled</h2>
     <p class="faint">Browsers can't read untitled.stream pages directly, so this takes two steps. The link is saved on the project.</p>
@@ -1378,8 +1390,8 @@ function openModal(kind, id, x = {}) {
     <div class="dropzone" id="m-drop">${ico('import', 26)}<b>Drop the .zip here</b><span class="faint small">or loose audio and image files</span><button class="btn sm primary" data-act="zip-pick">Choose files</button></div>
     <p class="faint small" id="m-status" role="status"></p>`;
   }
-  md.innerHTML = h + `<div class="crow" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-act="close-modal">${kind === 'import' ? 'Close' : 'Cancel'}</button>${kind === 'name' ? '<button class="btn primary" data-act="name-ok">Create project</button>' : ''}${kind === 'proj' || kind === 'meta' ? `<button class="btn primary" data-act="modal-save">${x.isNew ? 'Create project' : 'Save'}</button>` : ''}</div>`;
-  md.classList.toggle('wide', kind === 'meta');
+  md.innerHTML = h + `<div class="crow" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-act="close-modal">${kind === 'import' || kind === 'changelog' ? 'Close' : 'Cancel'}</button>${kind === 'name' ? '<button class="btn primary" data-act="name-ok">Create project</button>' : ''}${kind === 'proj' || kind === 'meta' ? `<button class="btn primary" data-act="modal-save">${x.isNew ? 'Create project' : 'Save'}</button>` : ''}</div>`;
+  md.classList.toggle('wide', kind === 'meta'); md.classList.toggle('clogm', kind === 'changelog');
   md.inert = false; $('#scrim').classList.add('open'); requestAnimationFrame(() => { md.classList.add('open'); applySlides(); const f = $('input,select', md); if (f) { f.focus(); if (f.select) f.select(); } });
 }
 const askName = (def, count, from, coverBlob) => new Promise(res => { UI.mCover = null; UI.mCoverDef = coverBlob ? URL.createObjectURL(coverBlob) : ''; UI.mCoverHint = coverBlob ? 'Found in the download. Click to use a different image.' : 'No cover found in the download. Click to add one.'; UI.nameResolve = res; openModal('name', null, { def, count, from }); });
@@ -2773,6 +2785,42 @@ async function flAct(a, t, an) {
 }
 document.addEventListener('dragstart', e => { const el = e.target && e.target.closest && e.target.closest('[data-fl]'); if (el && window.tpDesktop && tpDesktop.fl) { e.preventDefault(); tpDesktop.fl.drag(el.dataset.fl); } });
 
+/* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
+const CHANGELOG = [
+  { v: '1.2.5', d: '2026-11-09', items: ['Changelog: see what changed in every version from Settings, after an update, and when checking for updates.'] },
+  { v: '1.2.4', d: '2026-11-09', items: ['Both CD spines now face the front cover, like a real jewel case.'] },
+  { v: '1.2.3', d: '2026-11-09', items: ['The CD viewer and 3D export show artwork in the exact colours from the editor.', 'Art that finishes loading while the viewer is open now shows up.'] },
+  { v: '1.2.2', d: '2026-11-09', items: ['Credits: sxteen ways, trulytamed and all of KGB.'] },
+  { v: '1.2.1', d: '2026-11-09', items: ['Easier to read everywhere: stronger contrast for grey text, no tiny text.'] },
+  { v: '1.2.0', d: '2026-11-09', items: ['Cleaner project page: cover, title, one info line and one row of actions.', 'Folder projects for loose songs and collaborators.', 'Released or target release date.', 'Drag projects in the sidebar into any order; type shown under the name.', 'Export Disc: artwork, 3D CD, tracks and tracklist in one zip.', 'Replace audio or images and add versions from right-click menus. Double-click a song to play. Ctrl+S saves.', 'CD creator: project tabs, several designs per project linked to covers, installed fonts work without importing, Shift+drag to stretch, spines editable on the tray card.', 'CD viewer opens still and facing front. Arial throughout.'] },
+  { v: '1.1.1', d: '2026-11-09', items: ['Download the FL Studio plugin from Audio Doctor or Settings.'] },
+  { v: '1.1.0', d: '2026-11-09', items: ['Audio Doctor: reads tempo, key and first beat, converts MP3 to WAV, exports beat-aligned WAVs.', 'Send to FL Studio from the Windows app.', 'Uploaded versions keep their file name.'] },
+  { v: '1.0.9', d: '2026-11-09', items: ['Project gradient setting.', 'Status column lines up; no remove button on rows.'] },
+  { v: '1.0.8', d: '2026-11-09', items: ['Export the 3D CD as a GLB with art, animations and print files.'] },
+  { v: '1.0.7', d: '2026-11-09', items: ['Album grid like Spotify; fixed covers that collapsed in the Windows app.'] },
+  { v: '1.0.6', d: '2026-11-09', items: ['Settings page.', 'Under-the-tray artwork.', 'Artist name shows correctly.'] },
+  { v: '1.0.5', d: '2026-11-09', items: ['Drag images onto CD panels in 3D and on the print sheet.'] },
+  { v: '1.0.4', d: '2026-11-09', items: ['Duplicate project and make a sequel.', 'The disc spins only in the viewer.'] },
+  { v: '1.0.3', d: '2026-11-09', items: ['Project page cleanup; whole covers in the library.'] },
+  { v: '1.0.2', d: '2026-11-09', items: ['Change cover art from right-click and from the naming dialog.'] },
+  { v: '1.0.1', d: '2026-11-09', items: ['Editor controls, credits and in-app updates.'] },
+  { v: '1.0.0', d: '2026-11-09', items: ['First Windows release.'] }
+];
+const APP_VERSION = (window.tpDesktop && tpDesktop.version) || CHANGELOG[0].v;
+const cmpVer = (a, b) => { const x = String(a).split('.').map(Number), y = String(b).split('.').map(Number); for (let i = 0; i < 3; i++) if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) - (y[i] || 0); return 0; };
+function changelogHTML(list, since) {
+  return list.map(e => `<section class="clog-v ${since && cmpVer(e.v, since) > 0 ? 'new' : ''}"><header><b>${esc(e.v)}</b>${e.v === APP_VERSION ? '<span class="clog-tag">Installed</span>' : since && cmpVer(e.v, since) > 0 && cmpVer(e.v, APP_VERSION) > 0 ? '<span class="clog-tag up">Available</span>' : ''}<small>${e.d ? fdate(e.d) : ''}</small></header><ul>${e.items.map(i => `<li>${esc(i)}</li>`).join('')}</ul></section>`).join('');
+}
+// newer entries can arrive from the update file before they are installed
+function openChangelog(extra, since) { const seen = new Set(); const list = [...(extra || []), ...CHANGELOG].filter(e => e && e.v && !seen.has(e.v) && seen.add(e.v)).sort((a, b) => cmpVer(b.v, a.v)); UI.clog = { list, since }; openModal('changelog'); }
+// after an update, offer the changes once
+function checkWhatsNew() {
+  const last = S.lastSeenVersion || (S.cols.length || S.tracks.length ? (CHANGELOG.find(e => cmpVer(e.v, APP_VERSION) < 0) || {}).v : null); S.lastSeenVersion = APP_VERSION; save();
+  if (!last || cmpVer(APP_VERSION, last) <= 0) return;
+  const t = $('#toast'); t.innerHTML = `Updated to ${esc(APP_VERSION)} <button class="btn sm" data-act="changelog-new" data-k="${esc(last)}">What's new</button>`; t.classList.add('show', 'act'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show', 'act'), 9000);
+}
+if (window.tpDesktop && tpDesktop.onChangelog) tpDesktop.onChangelog(d => openChangelog(d && d.changelog, d && d.since));
+
 /* ---------- settings ---------- */
 Object.assign(IC, { gear: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z' });
 function applyPrefs() {
@@ -2819,7 +2867,8 @@ function renderSettings(m) {
       <dt>${MOD}/</dt><dd>Lock or unlock layer</dd><dt>${MOD},</dt><dd>Hide or show layer</dd><dt>Arrows</dt><dd>Nudge layer (Shift for 5 mm)</dd><dt>${MOD}0 / = / -</dt><dd>Fit, zoom in, zoom out</dd></dl>
     </section>
     <section class="set-card box"><h2>About</h2>
-      ${setRow('Tamed Player', 'Made by sxteen ways, trulytamed and all of KGB.', `<button class="btn sm" data-act="credits">${ico('star', 14)} Credits</button>`)}
+      ${setRow('Tamed Player ' + esc(APP_VERSION), 'Made by sxteen ways, trulytamed and all of KGB.', `<button class="btn sm" data-act="credits">${ico('star', 14)} Credits</button>`)}
+      ${setRow('Changelog', 'What changed in every version.', `<button class="btn sm" data-act="changelog">${ico('list', 14)} What's new</button>`)}
     </section>
     <section class="set-card box danger"><h2>Erase all data</h2>
       ${setRow('Delete everything on this device', 'Removes every project, song, cover and setting. Back up first if you might want them.', `<button class="btn sm" data-act="wipe">${ico('trash', 14)} Erase everything</button>`)}
@@ -3261,6 +3310,8 @@ function act(a, el, e) {
     case 'm-cover-clear': if (UI.mCover && UI.mCover.url) URL.revokeObjectURL(UI.mCover.url); UI.mCover = false; refreshCoverPick(); break;
     case 'ctx-cover': UI.coverFor = id; $('#art').click(); break;
     case 'save-now': saveNow(); break;
+    case 'changelog': openChangelog(); break;
+    case 'changelog-new': $('#toast').classList.remove('show', 'act'); openChangelog(null, k); break;
     case 'ctx-disc': exportDisc(id); break;
     case 'ctx-replaudio': UI.replFor = id; $('#replaudio').click(); break;
     case 'ctx-addver': S.editId = id; $('#verfile').click(); break;
@@ -3686,5 +3737,6 @@ addEventListener('blur', closeCtx); addEventListener('resize', closeCtx);
   if (S.view === 'collection' && !col(S.colId)) S.view = 'library';
   applyPrefs(); refresh(); renderEq();
   setInterval(tick, 250);
+  setTimeout(checkWhatsNew, 1200);
 })();
 </script>

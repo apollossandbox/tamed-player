@@ -3,6 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('tpDesktop', {
   version: ipcRenderer.sendSync('tp-version') || '',
   checkForUpdates: () => ipcRenderer.invoke('tp-check-updates'),
+  onChangelog: fn => ipcRenderer.on('tp-changelog', (e, data) => fn(data)),
   // FL Studio link: install the FL script, keep sent WAVs on disk, and drag them into FL
   fl: {
     install: () => ipcRenderer.invoke('tp-fl-install'),
