@@ -9,7 +9,7 @@
   --g1: var(--panel); --g2: var(--panel); --edge: var(--line); --hi: transparent; --lo: var(--line); --shadow: rgba(0,0,0,.55); --spec: transparent;
   --field: var(--panel2); --hover: var(--panel2); --sel: var(--panel3); --scrim: rgba(0,0,0,.62);
   --blob1: #000; --blob2: #000; --blob3: #000; --blobo: 0;
-  --f: "Archivo", Arial, Helvetica, sans-serif; --fd: "Archivo", Arial, Helvetica, sans-serif; --marker: "Permanent Marker", "Marker Felt", "Comic Sans MS", cursive;
+  --f: Arial, Helvetica, sans-serif; --fd: Arial, Helvetica, sans-serif; --marker: "Permanent Marker", "Marker Felt", "Comic Sans MS", cursive;
   --ease: cubic-bezier(.32,1.18,.46,1); --ease2: cubic-bezier(.22,.9,.3,1); --side: 220px;
   color-scheme: dark;
 }
@@ -519,7 +519,7 @@ textarea.field { resize: vertical; }
 /* ===== Flat studio theme: solid panels, hairline rules, docked sidebar and player. Overrides the old glass look. ===== */
 .bg { display: none; }
 body { background: var(--bg); font-family: var(--f); letter-spacing: -.003em; }
-h1, h2, h3, .brand, .title-in { font-family: var(--fd); font-stretch: 112%; }
+h1, h2, h3, .brand, .title-in { font-family: var(--fd);  }
 h1 { font-weight: 800; font-size: 34px; letter-spacing: -.02em; }
 .glass, .box { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
 .glass::before { display: none; }
@@ -728,11 +728,11 @@ body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after 
 .vw-stage { position: absolute; inset: 0; } .vw-stage canvas { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
 .vw-top { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: calc(16px + env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) 16px max(20px, env(safe-area-inset-left, 0px)); pointer-events: none; }
 .vw-top > * { pointer-events: auto; }
-.vw-title { display: flex; align-items: center; gap: 12px; } .vw-title span { display: flex; flex-direction: column; } .vw-title b { font-family: var(--fd); font-stretch: 112%; font-size: 20px; font-weight: 800; } .vw-title small { color: rgba(255,255,255,.55); font-size: 12.5px; }
-.vw-x { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border-radius: 99px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.14); color: var(--ink); font-weight: 700; }
+.vw-title { display: flex; align-items: center; gap: 12px; } .vw-title span { display: flex; flex-direction: column; } .vw-title b { font-family: var(--fd);  font-size: 20px; font-weight: 800; } .vw-title small { color: rgba(255,255,255,.55); font-size: 12.5px; }
+.vw-x { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border-radius: 99px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.14); color: #fff; font-weight: 700; }
 .vw-x:hover { background: rgba(255,255,255,.18); } .vw-x kbd { font: 10.5px var(--f); padding: 2px 5px; border-radius: 4px; background: rgba(255,255,255,.14); color: rgba(255,255,255,.7); }
-.vw-bar { position: absolute; left: 50%; bottom: calc(26px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; max-width: calc(100% - 32px); padding: 6px; border-radius: 14px; background: rgba(24,24,26,.92); border: 1px solid rgba(255,255,255,.1); box-shadow: 0 20px 50px rgba(0,0,0,.5); }
-.vw-bar .seg { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.08); } .vw-bar .seg > button { color: rgba(255,255,255,.6); } .vw-bar .seg > button.on { color: var(--ink); } .vw-bar .thumb { background: rgba(255,255,255,.18); }
+.vw-bar { position: absolute; left: 50%; bottom: calc(26px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; white-space: nowrap; overflow-x: auto; justify-content: center; max-width: calc(100% - 32px); padding: 6px; border-radius: 14px; background: rgba(24,24,26,.92); border: 1px solid rgba(255,255,255,.1); box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+.vw-bar .seg { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.08); } .vw-bar .seg > button { color: rgba(255,255,255,.6); } .vw-bar .seg > button.on { color: #fff; } .vw-bar .thumb { background: rgba(255,255,255,.18); }
 .vw-sep { width: 1px; height: 22px; background: rgba(255,255,255,.12); margin: 0 2px; }
 .vw-b { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 14px; border-radius: 9px; color: rgba(255,255,255,.8); font-weight: 700; font-size: 13px; transition: background .2s, color .2s; }
 .vw-b:hover { background: rgba(255,255,255,.08); color: var(--ink); } .vw-b.on { background: #fff; color: #0a0a0b; }
@@ -846,8 +846,8 @@ body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after 
 /* the editor uses the app's own look: same tokens, type and radii; layout unchanged */
 .ps { --p0: var(--line); --p1: var(--bg); --p2: var(--panel); --p3: var(--panel2); --p4: var(--panel3); --p5: var(--panel3); --pt: var(--ink); --pt2: var(--ink2); --pt3: var(--ink3); --pa: var(--ink);
   font-family: var(--f); font-size: 12.5px; color-scheme: inherit; border-radius: 14px; background: var(--panel); }
-.ps-ph { background: var(--panel); } .ps-ph b { font-family: var(--fd); font-stretch: 112%; font-weight: 800; font-size: 12.5px; }
-.psp-sec h4 { font-family: var(--fd); font-stretch: 112%; font-weight: 800; font-size: 12px; }
+.ps-ph { background: var(--panel); } .ps-ph b { font-family: var(--fd);  font-weight: 800; font-size: 12.5px; }
+.psp-sec h4 { font-family: var(--fd);  font-weight: 800; font-size: 12px; }
 .ps-docs { background: var(--panel2); } .psd { border-radius: 8px 8px 0 0; background: transparent; } .psd.on { background: var(--panel); box-shadow: inset 0 2px 0 var(--ink); }
 .pso-btn { border-radius: 8px; height: 28px; font-weight: 700; } .pso-ib { border-radius: 7px; } .pst { border-radius: 9px; width: 34px; height: 34px; }
 .ps input[type=number], .ps select, .ps .ps-in, .ps .sel select, .pso-font, .pso-search { border-radius: 8px; } .pso-font { height: 28px; }
@@ -1481,7 +1481,7 @@ function autoDesign(c) {
     disc: { bg: 'silver', layers: cov ? [L({ type: 'img', src: cov, name: 'Project cover', ar: 1, x: 60, y: 60, w: 120 })] : [T(c.name, { font: 'Permanent Marker', size: 7, color: '#111111', x: 60, y: 30, w: 90, rot: -6 }), T(A, { font: 'Permanent Marker', size: 4.5, color: '#111111', x: 60, y: 40, w: 90, rot: -6 })] }
   };
 }
-const layerH = L => L.type === 'img' ? L.w / (L.ar || 1) : Math.max(1, String(L.text).split('\n').length) * L.size * (L.lh ?? 1.3);
+const layerH = L => (L.type === 'img' ? L.w / (L.ar || 1) : Math.max(1, String(L.text).split('\n').length) * L.size * (L.lh ?? 1.3)) * (L.sy || 1);
 function selLayer() { const s = UI.cdSel, c = cdCol(); if (!s || !s.id || !c) return null; const sd = design(c)[s.sheet]; return sd ? sd.layers.find(l => l.id === s.id) || null : null; }
 function hitLayer(sd, mx, my) {
   for (let i = sd.layers.length - 1; i >= 0; i--) {
@@ -1506,11 +1506,12 @@ function drawLayer(x, L, p) {
     if (im) x.drawImage(im, -w / 2, -h / 2, w, h);
     else { x.fillStyle = 'rgba(128,128,128,.25)'; x.fillRect(-w / 2, -h / 2, w, h); x.strokeStyle = 'rgba(128,128,128,.8)'; x.setLineDash([4, 4]); x.strokeRect(-w / 2, -h / 2, w, h); }
   } else {
-    fixText(L); ensureFont(L);
+    fixText(L); ensureFont(L); if (L.sy && L.sy !== 1) x.scale(1, L.sy);
     x.fillStyle = L.color; x.font = fontSpec(L, L.size * p); x.textBaseline = 'middle';
     const lines = String(L.text).split('\n').map(t => L.caps ? t.toUpperCase() : t), lh = L.size * L.lh * p, ax = L.align === 'left' ? -w / 2 : L.align === 'right' ? w / 2 : 0, sp = L.ls * L.size * p;
     lines.forEach((ln, i) => {
       const y = (i - (lines.length - 1) / 2) * lh;
+      if (L.fit !== false) { const tw = x.measureText(ln).width + sp * Math.max(0, [...ln].length - 1); if (tw > w) { x.save(); x.scale(w / tw, 1); const k = tw / w; if (!sp) { x.textAlign = L.align; x.fillText(ln, ax * k, y); } else { const ch = [...ln], ws = ch.map(c => x.measureText(c).width); let cx = L.align === 'left' ? ax * k : L.align === 'right' ? ax * k - tw : -tw / 2; x.textAlign = 'left'; ch.forEach((c, j) => { x.fillText(c, cx, y); cx += ws[j] + sp; }); } x.restore(); return; } }
       if (!sp) { x.textAlign = L.align; x.fillText(ln, ax, y); return; }
       const ch = [...ln], ws = ch.map(c => x.measureText(c).width), tw = ws.reduce((a, b) => a + b, 0) + sp * Math.max(0, ch.length - 1);
       let cx = L.align === 'left' ? ax : L.align === 'right' ? ax - tw : -tw / 2; x.textAlign = 'left';
@@ -1531,10 +1532,14 @@ function paintSheet(x, key, sd, p, D) {
   const sh = SHEETS[key], W = (sh.w + 2 * BLEED) * p, H = (sh.h + 2 * BLEED) * p;
   x.clearRect(0, 0, W, H); x.save();
   if (sh.disc) { x.beginPath(); x.arc(W / 2, H / 2, sh.w / 2 * p, 0, Math.PI * 2); x.clip(); }
-  paintBg(x, sd.bg === 'none' && sh.strip && D ? D.tray.bg : sd.bg, W, H); x.translate(BLEED * p, BLEED * p); sd.layers.forEach(L => drawLayer(x, L, p));
+  paintBg(x, sd.bg === 'none' && sh.strip && D ? D.tray.bg : sd.bg, W, H); x.translate(BLEED * p, BLEED * p);
+  const busy = key === 'tray' && D ? ['L', 'R'].filter(sd2 => { const ss = D['spine' + sd2]; return ss && (ss.bg !== 'none' || ss.layers.some(l => !l.hidden)); }) : [];
+  if (busy.length) { x.save(); x.beginPath(); const sp = SHEETS.tray.spine, l0 = busy.includes('L') ? sp : -BLEED, r0 = busy.includes('R') ? sh.w - sp : sh.w + BLEED; x.rect(l0 * p, -BLEED * p, (r0 - l0) * p, (sh.h + 2 * BLEED) * p); x.clip(); }
+  sd.layers.forEach(L => drawLayer(x, sh.strip && L.type === 'text' && L.fit == null ? { ...L, fit: true } : L, p)); if (busy.length) x.restore();
   if (key === 'tray' && D) ['L', 'R'].forEach(side => { const ss = D['spine' + side]; if (!ss) return; const sp = SHEETS.tray.spine, ex = stripEdge(side);
     x.save(); x.beginPath(); x.rect((ex - sp) * p, -BLEED * p, sp * p, (sh.h + 2 * BLEED) * p); x.clip(); x.translate(ex * p, 0); x.rotate(Math.PI / 2);
-    const st = SHEETS['spine' + side]; if (ss.bg !== 'none') paintBg(x, ss.bg, (st.w + 2 * BLEED) * p, (st.h + 2 * BLEED) * p, -BLEED * p); ss.layers.forEach(L => drawLayer(x, L, p)); x.restore(); });
+    const st = SHEETS['spine' + side]; if (ss.bg !== 'none') paintBg(x, ss.bg, (st.w + 2 * BLEED) * p, (st.h + 2 * BLEED) * p, -BLEED * p); else if (busy.includes(side)) paintBg(x, sd.bg, (st.w + 2 * BLEED) * p, (st.h + 2 * BLEED) * p, -BLEED * p);
+    ss.layers.forEach(L => drawLayer(x, L.type === 'text' && L.fit == null ? { ...L, fit: true } : L, p)); x.restore(); });
   x.restore();
   if (sh.disc) { x.save(); x.globalCompositeOperation = 'destination-out'; x.beginPath(); x.arc(W / 2, H / 2, 11.5 * p, 0, Math.PI * 2); x.fill(); x.restore(); }
 }
@@ -1567,6 +1572,11 @@ function paintSel(x, L, p) {
   x.beginPath(); x.arc(0, -h / 2 - 22, 6, 0, Math.PI * 2); x.fill(); x.stroke(); x.restore();
 }
 
+/* a layer on a spine can be edited from the tray card; these map between the two */
+const onTraySpine = (view, sheet) => view === 'tray' && (sheet === 'spineL' || sheet === 'spineR');
+function toSheet(view, sheet, mx, my) { return onTraySpine(view, sheet) ? [my, stripEdge(sheet === 'spineL' ? 'L' : 'R') - mx] : [mx, my]; }
+function spineXform(x, sheet, p) { x.translate((stripEdge(sheet === 'spineL' ? 'L' : 'R') + BLEED) * p, BLEED * p); x.rotate(Math.PI / 2); x.translate(-BLEED * p, -BLEED * p); }
+
 /* 2D print sheet */
 function draw2D() {
   const cv = $('#cd2d'), c = cdCol(); if (!cv || !c) return;
@@ -1576,7 +1586,7 @@ function draw2D() {
   cv.style.width = TW * p + 'px'; cv.style.height = TH * p + 'px'; cv.width = Math.round(TW * p * dpr); cv.height = Math.round(TH * p * dpr);
   const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0);
   paintSheet(x, key, design(c)[key], p, design(c)); paintGuides(x, key, p);
-  const L = S.cd.lock ? null : selLayer(); if (L && UI.cdSel.sheet === key) paintSel(x, L, p);
+  const L = S.cd.lock ? null : selLayer(); if (L && UI.cdSel.sheet === key) paintSel(x, L, p); else if (L && onTraySpine(key, UI.cdSel.sheet)) { x.save(); spineXform(x, UI.cdSel.sheet, p); paintSel(x, L, p); x.restore(); }
   UI.p2d = p;
 }
 let drag2 = null;
@@ -1584,24 +1594,33 @@ function start2D(e) {
   if (typeof H !== 'undefined') H.t = 0;
   if (S.cd.lock || e.button === 2) return;
   const cv = e.target, r = cv.getBoundingClientRect(), p = UI.p2d, key = S.cd.sheet, sd = design(cdCol())[key];
-  const mx = (e.clientX - r.left) / p - BLEED, my = (e.clientY - r.top) / p - BLEED, L = selLayer();
-  if (S.cd.tool === 'text') { cdPlaceText(key, mx, my); return; }
+  const tx = (e.clientX - r.left) / p - BLEED, ty = (e.clientY - r.top) / p - BLEED, L = selLayer(), D = design(cdCol());
+  const spAt = key === 'tray' ? (tx < SHEETS.tray.spine ? 'spineL' : tx > SHEETS.tray.w - SHEETS.tray.spine ? 'spineR' : null) : null;
+  if (S.cd.tool === 'text') { if (spAt) { const [sx, sy] = toSheet(key, spAt, tx, ty); cdPlaceText(spAt, sx, SHEETS[spAt].h / 2); const nl = selLayer(); if (nl) { nl.size = 3; nl.w = SHEETS[spAt].w - 12; nl.x = Math.min(Math.max(sx, nl.w / 2), SHEETS[spAt].w - nl.w / 2); nl.fit = true; } S.cd.sheet = 'tray'; refresh(); } else cdPlaceText(key, tx, ty); return; }
   cv.setPointerCapture(e.pointerId);
-  if (L && !L.locked && UI.cdSel.sheet === key) {
+  const ls = UI.cdSel && UI.cdSel.sheet;
+  if (L && !L.locked && (ls === key || onTraySpine(key, ls))) {
+    const [mx, my] = toSheet(key, ls, tx, ty);
     const a = -L.rot * Math.PI / 180, dx = (mx - L.x) * p, dy = (my - L.y) * p, lx = dx * Math.cos(a) - dy * Math.sin(a), ly = dx * Math.sin(a) + dy * Math.cos(a), w = L.w * p, h = layerH(L) * p;
-    if (Math.hypot(lx, ly + h / 2 + 22) < 11) { drag2 = { kind: 'rot', L }; return; }
-    if ([[-1, -1], [1, -1], [1, 1], [-1, 1]].some(([sa, sb]) => Math.abs(lx - sa * w / 2) < 10 && Math.abs(ly - sb * h / 2) < 10)) { drag2 = { kind: 'scale', L, w0: L.w, d0: Math.hypot(mx - L.x, my - L.y) || 1 }; return; }
+    if (Math.hypot(lx, ly + h / 2 + 22) < 11) { drag2 = { kind: 'rot', L, sheet: ls }; return; }
+    if ([[-1, -1], [1, -1], [1, 1], [-1, 1]].some(([sa, sb]) => Math.abs(lx - sa * w / 2) < 10 && Math.abs(ly - sb * h / 2) < 10)) { drag2 = { kind: 'scale', L, sheet: ls, w0: L.w, sy0: L.sy || 1, h0: layerH(L) / (L.sy || 1), d0: Math.hypot(mx - L.x, my - L.y) || 1 }; return; }
   }
-  const hit = hitLayer(sd, mx, my);
-  if (!hit && key === 'tray' && (mx < SHEETS.tray.spine || mx > SHEETS.tray.w - SHEETS.tray.spine)) { cdAct('cd-sheet', { dataset: { k: mx < SHEETS.tray.spine ? 'spineL' : 'spineR' } }); return; }
-  UI.cdSel = { sheet: key, id: hit ? hit.id : null }; renderCdPanel(); draw2D();
-  if (hit && !hit.locked) drag2 = { kind: 'move', L: hit, x: mx, y: my };
+  // spine layers sit on top of the tray card, so they are picked first
+  let hit = null, hs = key;
+  if (spAt && D[spAt]) { const [sx, sy] = toSheet(key, spAt, tx, ty); hit = hitLayer(D[spAt], sx, sy); if (hit) hs = spAt; }
+  if (!hit) hit = hitLayer(sd, tx, ty);
+  UI.cdSel = { sheet: hs, id: hit ? hit.id : null }; renderCdPanel(); draw2D();
+  if (hit && !hit.locked) { const [mx, my] = toSheet(key, hs, tx, ty); drag2 = { kind: 'move', L: hit, sheet: hs, x: mx, y: my }; }
 }
 function move2D(e) {
   if (!drag2) return; const cv = $('#cd2d'); if (!cv) return;
-  const r = cv.getBoundingClientRect(), p = UI.p2d, mx = (e.clientX - r.left) / p - BLEED, my = (e.clientY - r.top) / p - BLEED, L = drag2.L;
+  const r = cv.getBoundingClientRect(), p = UI.p2d, [mx, my] = toSheet(S.cd.sheet, drag2.sheet || S.cd.sheet, (e.clientX - r.left) / p - BLEED, (e.clientY - r.top) / p - BLEED), L = drag2.L;
   if (drag2.kind === 'move') { L.x += mx - drag2.x; L.y += my - drag2.y; drag2.x = mx; drag2.y = my; }
-  else if (drag2.kind === 'scale') L.w = Math.max(3, drag2.w0 * Math.hypot(mx - L.x, my - L.y) / drag2.d0);
+  else if (drag2.kind === 'scale' && e.shiftKey) { // free transform: width and height change on their own
+    const a = -L.rot * Math.PI / 180, dx = mx - L.x, dy = my - L.y, lx = Math.abs(dx * Math.cos(a) - dy * Math.sin(a)), ly = Math.abs(dx * Math.sin(a) + dy * Math.cos(a));
+    L.w = Math.max(3, lx * 2); const base = layerH({ ...L, sy: 1 }); L.sy = Math.max(.05, Math.round(ly * 2 / base * 1000) / 1000); if (Math.abs(L.sy - 1) < .01) delete L.sy;
+  }
+  else if (drag2.kind === 'scale') { L.w = Math.max(3, drag2.w0 * Math.hypot(mx - L.x, my - L.y) / drag2.d0); if (drag2.sy0 !== 1) L.sy = drag2.sy0; }
   else { let a = Math.atan2(my - L.y, mx - L.x) * 180 / Math.PI + 90; if (e.shiftKey) a = Math.round(a / 15) * 15; L.rot = Math.round(((a + 540) % 360 - 180) * 10) / 10; }
   cdDirty(); syncProps();
 }
@@ -1632,7 +1651,7 @@ function init3D() {
     const rim = new T3.DirectionalLight(0xdfe8ff, .7); rim.position.set(-12, 6, -10); studio.add(rim);
     const key = new T3.SpotLight(0xffffff, .9, 0, .5, .6); key.position.set(10, 22, 18); studio.add(key);
     const tex = {}; Object.keys(SHEETS).filter(k => !SHEETS[k].strip).forEach(k => { const sh = SHEETS[k], cv = document.createElement('canvas'); cv.width = Math.round((sh.w + 2 * BLEED) * TEXMM); cv.height = Math.round((sh.h + 2 * BLEED) * TEXMM); const t = new T3.CanvasTexture(cv); t.encoding = T3.sRGBEncoding; t.anisotropy = r.capabilities.getMaxAnisotropy(); tex[k] = { cv, tex: t }; });
-    C3 = { r, scene, cam, root, tex, studio, shadow, bgTex, rx: -.3, ry: .55, tx: -.3, ty: .55, z: 44, tz: 44, lidA: 0, discA: 0, ray: new T3.Raycaster(), ndc: new T3.Vector2(), print: [], occ: [] };
+    C3 = { r, scene, cam, root, tex, studio, shadow, bgTex, rx: 0, ry: 0, tx: 0, ty: 0, z: 44, tz: 44, lidA: 0, discA: 0, ray: new T3.Raycaster(), ndc: new T3.Vector2(), print: [], occ: [] };
     const cv = r.domElement; cv.className = 'cd3d';
     cv.addEventListener('pointerdown', e => {
       if (e.button === 2) return;
@@ -1735,7 +1754,7 @@ function loop3D() {
   C3.root.rotation.set(C3.rx, C3.ry, 0);
   /* when the disc is out, pull back and pan right so the case and the disc both fit */
   const dOut = discOnly ? 0 : ease(Math.min(1, Math.max(0, C3.discA))), lOut = discOnly ? 0 : ease(Math.min(1, Math.max(0, C3.lidA))), pan = dOut * 6.5 - lOut * 2.5, back = dOut * 16 + lOut * 8;
-  if (V) { C3.cam.position.set(pan, 2.4, (C3.z + back) * (w < 520 ? 1.5 : 1)); C3.cam.lookAt(pan, -.6, 0); } else { C3.cam.position.set(pan, 0, (C3.z + back) * (w < 520 ? 1.35 : 1)); C3.cam.lookAt(pan, 0, 0); }
+  if (V) { C3.cam.position.set(pan, 0, (C3.z + back) * (w < 520 ? 1.5 : 1)); C3.cam.lookAt(pan, 0, 0); } else { C3.cam.position.set(pan, 0, (C3.z + back) * (w < 520 ? 1.35 : 1)); C3.cam.lookAt(pan, 0, 0); }
   C3.studio.visible = !!V; C3.scene.background = V ? C3.bgTex : null;
   C3.root.children.forEach(o => { o.visible = !discOnly || o === C3.disc; });
   C3.lidA += ((S.cd.open || S.cd.discOut ? 1 : 0) - C3.lidA) * .09; C3.lid.rotation.y = -1.95 * ease(Math.min(1, Math.max(0, C3.lidA)));
@@ -1750,8 +1769,8 @@ function loop3D() {
 function openViewer(mode = 'case') {
   const c = cdCol(); if (!c) return toast('Make a project first');
   design(c); const g = init3D(); if (!g) return toast("3D isn't available in this browser");
-  UI.vw = { mode, auto: true, spin: true, saved: { tx: C3.tx, ty: C3.ty, tz: C3.tz, open: S.cd.open, disc: S.cd.discOut } };
-  C3.tx = -.12; C3.ty = .6; C3.tz = mode === 'disc' ? 34 : 46; C3.rx = C3.tx;
+  UI.vw = { mode, auto: !!S.cd.vwAuto, spin: true, saved: { tx: C3.tx, ty: C3.ty, tz: C3.tz, open: S.cd.open, disc: S.cd.discOut } };
+  C3.tx = 0; C3.ty = 0; C3.tz = mode === 'disc' ? 34 : 42; C3.rx = 0; C3.ry = 0;
   const v = $('#viewer'); $('#vwstage').appendChild(g.r.domElement); C3.w = 0; buildCase();
   v.inert = false; v.classList.add('open'); renderViewerBar();
   $('#vwtitle').innerHTML = `${logo(28)}<span><b>${esc(c.name)}</b><small>${esc(projArtist(c))} · ${S.cd.caseType === 'slim' ? 'Slim jewel case' : 'Jewel case'}, ${S.cd.tray} tray</small></span>`;
@@ -1857,14 +1876,14 @@ function renderPsOpts() {
     mid = `${n('w', 'W', .5, 'mm')}${n('x', 'X', .5, 'mm')}${n('y', 'Y', .5, 'mm')}${n('rot', '∠', 1, '°', 50)}${n('op', 'Opacity', .05, '', 50)}${sep}
       <button class="pso-btn" data-act="cd-fill">Fill panel</button><button class="pso-btn" data-act="cd-center">Center</button><button class="pso-btn" data-act="cd-rot90">Turn 90°</button>`;
   } else if (three) {
-    mid = `<button class="pso-btn ${S.cd.open ? 'on' : ''}" data-act="cd-open">${S.cd.open ? 'Close case' : 'Open case'}</button><button class="pso-btn ${S.cd.discOut ? 'on' : ''}" data-act="cd-disc">${S.cd.discOut ? 'Put disc back' : 'Take disc out'}</button><button class="pso-btn" data-act="cd-resetview">Reset view</button>${sep}
-      <span class="pso-hint">${t === 'orbit' ? 'Drag to turn the case. Scroll to zoom.' : t === 'text' ? 'Click a panel on the case to add text there.' : 'Drag art on any panel. Drag empty space to turn the case.'}</span>`;
+    mid = `<span class="pso-hint">${t === 'orbit' ? 'Drag to turn the case. Scroll to zoom.' : t === 'text' ? 'Click a panel on the case to add text there.' : 'Drag art on any panel. Drag empty space to turn the case.'}</span>`;
   } else {
-    mid = `<span class="pso-label">${sh.name}</span><span class="pso-hint">${sh.size} trim · ${t === 'text' ? 'Click the sheet to add text there.' : 'Drag art to move it, a corner to resize, the round handle to rotate.'}</span>`;
+    mid = `<span class="pso-label">${sh.name}</span><span class="pso-hint">${sh.size} trim · ${t === 'text' ? 'Click the sheet to add text there.' : 'Drag art to move it, a corner to resize (hold Shift to stretch freely), the round handle to rotate.'}</span>`;
   }
   const hist = `<button class="pso-ib" data-act="cd-undo" title="Undo (${MOD}Z)" aria-label="Undo" ${H.stack.length ? '' : 'disabled'}>${ico('undo', 15)}</button><button class="pso-ib" data-act="cd-redo" title="Redo (${MOD}Shift+Z)" aria-label="Redo" ${H.redo.length ? '' : 'disabled'}>${ico('redo', 15)}</button>${sep}`;
   const lockNote = L && L.locked ? `<button class="pso-btn on" data-act="cd-lockl" data-id="${L.id}" title="Unlock layer (${MOD}/)">${ico('lock', 13)} Locked</button>${sep}` : '';
-  el.innerHTML = `<span class="pso-tool" title="Current tool">${ico(t === 'orbit' ? 'orbit' : t === 'text' ? 'type' : 'move', 16)}</span>${sep}${hist}${lockNote}<fieldset class="pso-fs" ${L && L.locked ? 'disabled' : ''}>${mid}</fieldset><span class="grow"></span>`
+  const viewCtl = three ? `<button class="pso-btn ${S.cd.open ? 'on' : ''}" data-act="cd-open">${S.cd.open ? 'Close case' : 'Open case'}</button><button class="pso-btn ${S.cd.discOut ? 'on' : ''}" data-act="cd-disc">${S.cd.discOut ? 'Put disc back' : 'Take disc out'}</button><button class="pso-btn" data-act="cd-resetview">Reset view</button>${sep}` : '';
+  el.innerHTML = `<span class="pso-tool" title="Current tool">${ico(t === 'orbit' ? 'orbit' : t === 'text' ? 'type' : 'move', 16)}</span>${sep}${hist}${lockNote}<fieldset class="pso-fs" ${L && L.locked ? 'disabled' : ''}>${mid}</fieldset><span class="grow"></span>${viewCtl}`
     + (UI.canDl ? `${three ? `<button class="pso-btn" data-act="cd-snap">${ico('image', 14)} Save view</button>` : ''}<button class="pso-btn" data-act="cd-export3d" title="Download the case as a 3D model with all the art, plus print files">${ico('cube', 14)} Export 3D</button><button class="pso-btn primary" data-act="cd-print">${ico('save', 14)} Print files</button>` : '');
 }
 function renderPsProps() {
@@ -2021,14 +2040,14 @@ function cdAct(a, el) {
     case 'cd-rename': requestAnimationFrame(() => startRename(id)); break;
     case 'cd-edittext': { const tx = $('#cdl-text'); if (tx) { tx.focus(); tx.select(); } break; }
     case 'cd-lock': S.cd.lock = !S.cd.lock; UI.cdSel = { sheet: S.cd.sheet, id: null }; UI.fontOpen = false; drag2 = null; if (C3) C3.drag = null; toast(S.cd.lock ? 'View only: editing is off' : 'Editing is on'); refresh(); break;
-    case 'cd-resetview': if (C3) { C3.tx = -.3; C3.ty = .55; C3.tz = 44; } S.cd.open = false; S.cd.discOut = false; renderCdPanel(); break;
+    case 'cd-resetview': if (C3) { C3.tx = 0; C3.ty = Math.round(C3.ry / (Math.PI * 2)) * Math.PI * 2; C3.tz = 44; } renderPsOpts(); break;
     case 'cd-bgsel': S.cd.sheet = k; UI.cdSel = { sheet: k, id: null }; renderCdPanel(); cdDirty(); break;
     case 'cd-eye': { const f = findLayer(id || (L && L.id)); if (f) { f.L.hidden = !f.L.hidden; renderPsLayers(); cdDirty(); save(); } break; }
     case 'cd-dup': if (L) { L.locked && toast('Duplicated a locked layer; the copy is unlocked.'); const n = { ...JSON.parse(JSON.stringify(L)), id: uid(), x: L.x + 2, y: L.y + 2, locked: false, name: L.name ? L.name + ' copy' : undefined }; const i = sd.layers.indexOf(L); sd.layers.splice(i + 1, 0, n); UI.cdSel = { sheet: key, id: n.id }; renderCdPanel(); cdDirty(); save(); } break;
     case 'cd-down': if (L) { const i = sd.layers.indexOf(L); if (i > 0) { [sd.layers[i], sd.layers[i - 1]] = [sd.layers[i - 1], sd.layers[i]]; renderCdPanel(); cdDirty(); save(); } } break;
     case 'cd-open': S.cd.open = !S.cd.open; if (!S.cd.open) S.cd.discOut = false; renderPsOpts(); save(); break;
     case 'cd-disc': S.cd.discOut = !S.cd.discOut; renderPsOpts(); save(); break;
-    case 'cd-sheet': UI.fontOpen = false; S.cd.sheet = k; UI.cdSel = { sheet: k, id: null }; if (S.cd.view === '3d') { if (k === 'inside') S.cd.open = true; if (k === 'trayIn') { S.cd.open = true; S.cd.discOut = true; } const face = { trayIn: [-.3, .35], spineL: [-.15, -1.45], spineR: [-.15, 1.45], front: [-.3, .55], inside: [-.25, -.4], tray: [-.25, 2.75], disc: [-.5, .2] }[k]; if (C3 && face) { C3.tx = face[0]; C3.ty = face[1] + Math.round((C3.ry - face[1]) / (Math.PI * 2)) * Math.PI * 2; } if (k === 'disc') S.cd.discOut = true; } refresh(); break;
+    case 'cd-sheet': UI.fontOpen = false; S.cd.sheet = k; UI.cdSel = { sheet: k, id: null }; if (S.cd.view === '3d') { if (k === 'inside') S.cd.open = true; if (k === 'trayIn') { S.cd.open = true; S.cd.discOut = true; } const face = { trayIn: [-.3, .35], spineL: [-.15, -1.45], spineR: [-.15, 1.45], front: [0, 0], inside: [-.25, -.4], tray: [-.25, 2.75], disc: [-.5, .2] }[k]; if (C3 && face) { C3.tx = face[0]; C3.ty = face[1] + Math.round((C3.ry - face[1]) / (Math.PI * 2)) * Math.PI * 2; } if (k === 'disc') S.cd.discOut = true; } refresh(); break;
     case 'cd-case': S.cd.caseType = k; if (C3) buildCase(); refresh(); break;
     case 'cd-tray': S.cd.tray = k; if (C3) buildCase(); refresh(); break;
     case 'cd-bg': sd.bg = k; renderCdPanel(); cdDirty(); save(); break;
@@ -3105,14 +3124,14 @@ function act(a, el, e) {
   if (a.startsWith('vw-') && UI.vw) {
     const V = UI.vw;
     if (a === 'vw-close') closeViewer();
-    else if (a === 'vw-mode') { V.mode = el.dataset.k; C3.tz = V.mode === 'disc' ? 34 : 46; C3.tx = -.12; renderViewerBar(); }
+    else if (a === 'vw-mode') { V.mode = el.dataset.k; C3.tz = V.mode === 'disc' ? 34 : 42; C3.tx = 0; renderViewerBar(); }
     else if (a === 'vw-open') { S.cd.open = !S.cd.open; if (!S.cd.open) S.cd.discOut = false; renderViewerBar(); }
     else if (a === 'vw-disc') { S.cd.discOut = !S.cd.discOut; renderViewerBar(); }
     else if (a === 'vw-flip') { V.auto = false; C3.ty += Math.PI; renderViewerBar(); }
     else if (a === 'vw-spin') { V.spin = !V.spin; renderViewerBar(); }
-    else if (a === 'vw-auto') { V.auto = !V.auto; renderViewerBar(); }
+    else if (a === 'vw-auto') { V.auto = !V.auto; S.cd.vwAuto = V.auto; save(); renderViewerBar(); }
     else if (a === 'vw-export') exportCD3D();
-    else if (a === 'vw-reset') { C3.tx = -.12; C3.ty = .6; C3.tz = V.mode === 'disc' ? 34 : 46; V.auto = true; renderViewerBar(); }
+    else if (a === 'vw-reset') { C3.tx = 0; C3.ty = Math.round(C3.ry / (Math.PI * 2)) * Math.PI * 2; C3.tz = V.mode === 'disc' ? 34 : 42; renderViewerBar(); }
     return;
   }
   if (el.dataset.confirm && !el.dataset.armed) { el.dataset.armed = '1'; el.querySelector('span').textContent = el.dataset.confirm; return; }
