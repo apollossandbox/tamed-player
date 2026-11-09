@@ -1,8 +1,8 @@
 {
-  "version": "1.0.6",
+  "version": "1.0.7",
   "file": "TamedPlayer-Setup.exe",
-  "size": 82352010,
-  "sha256": "42a1c0ca2302b46eea03216bdb5e3a033f90c8c3824eff176f70241d7244bd8f",
-  "notes": "New Settings page: theme, playback, default project type, backup and restore, erase data, shortcuts. Artwork under the CD tray. The disc moves fully clear of the case. Your artist name shows everywhere instead of 'Artist Name'.",
+  "size": 82352158,
+  "sha256": "4133b04adae819fb74e094d05b2035740a88a2c53bb082662cc5ba958390e16b",
+  "notes": "Library shows projects as an album grid like Spotify: full covers, titles that never overlap, play button on hover. Fixes covers disappearing in the desktop app.",
   "date": "2026-11-09"
 }
