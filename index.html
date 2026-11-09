@@ -63,6 +63,10 @@ body.cx-on .bar { transform: translateX(-50%) scale(.97); }
 .snav, .cols { position: relative; display: flex; flex-direction: column; gap: 2px; }
 .navbtn, .colitem { position: relative; z-index: 1; display: flex; align-items: center; gap: 9px; width: 100%; padding: 8px 9px; text-align: left; color: var(--ink2); border-radius: 13px; transition: color .25s, background .25s; }
 .navbtn span, .colitem .cn { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.colitem .cn { display: flex; flex-direction: column; gap: 1px; } .colitem .cn-t, .colitem .cn-k { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.colitem .cn-k { font-size: 11px; color: var(--ink3); } .colitem { touch-action: pan-x; }
+.colitem.dragging { z-index: 5; background: var(--panel3); box-shadow: 0 10px 24px -10px rgba(0,0,0,.5); cursor: grabbing; }
+body.side-sorting .colitem:not(.dragging) { transition: transform .22s var(--ease), color .25s, background .25s; } body.side-sorting { cursor: grabbing; user-select: none; }
 .navbtn em, .colitem em, .chip em { font-style: normal; font-size: 11px; color: var(--ink3); }
 .navbtn:hover, .colitem:hover { color: var(--ink); }
 .navbtn:not(.on):hover, .colitem:not(.on):hover { background: var(--hover); }
@@ -350,7 +354,7 @@ textarea.field { resize: vertical; }
 .lcard .pc-art::after { content: "Launch"; position: absolute; left: 50%; bottom: 10px; transform: translate(-50%, 6px); padding: 5px 12px; border-radius: 99px; background: var(--ink); color: var(--onink); font-size: 12px; font-weight: 700; opacity: 0; transition: opacity .25s, transform .4s var(--ease); }
 .lcard:hover .pc-art::after, .lcard:focus-visible .pc-art::after { opacity: 1; transform: translate(-50%, 0); }
 .lcard:hover .pc-ring { transform: translateY(-4px); }
-.lcard b { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .lcard span { font-size: 12px; color: var(--ink2); }
+.lcard { cursor: pointer; overflow: hidden; } .lcard b { display: block; max-width: 100%; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .lcard span { font-size: 12px; color: var(--ink2); }
 .artist-card { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 22px; margin-bottom: 22px; text-align: left; width: 100%; transition: transform .4s var(--ease); }
 .artist-card:hover { transform: translateY(-2px); }
 .artist-card .av { width: 54px; height: 54px; border-radius: 50%; flex: none; }
@@ -625,6 +629,20 @@ body.cx-on .bar { transform: none; }
 .acard-s { font-size: 13px; line-height: 1.35; color: var(--ink2); min-width: 0; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: anywhere; }
 .lcard .acard-art { margin-bottom: 4px; }
 @media (max-width: 760px) { .pgrid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); margin: 0 -8px; } .acard { padding: 8px; } .acard-play { opacity: 1; transform: none; width: 40px; height: 40px; } }
+
+
+/* project header, pared down */
+.eyebrow .pick-btn { height: auto; padding: 0; background: none; border: 0; gap: 4px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); }
+.eyebrow .pick-btn small { display: none; } .eyebrow .pick-btn b { font-weight: 700; } .eyebrow .pick-btn:hover { color: var(--ink); background: none; }
+.pmeta { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0; font-size: 13.5px; color: var(--ink2); }
+.pmeta > * + *::before { content: "•"; margin: 0 8px; color: var(--ink3); } .pmeta .pm-art { font-weight: 700; color: var(--ink); font-size: 13.5px; } .pmeta .pm-art:hover { text-decoration: underline; }
+.pmeta button { color: inherit; font: inherit; } .pmeta span button:hover { text-decoration: underline; }
+.cinfo .stat { font-size: 12.5px; font-weight: 600; color: var(--ink2); }
+.pact { display: flex; align-items: center; gap: 6px; margin-top: 6px; position: relative; }
+.playbig { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--onink); margin-right: 10px; transition: transform .2s var(--ease); } .playbig:hover { transform: scale(1.05); }
+.pact .pa { width: 40px; height: 40px; color: var(--ink2); } .pact .pa:hover { color: var(--ink); }
+.pa-share { position: relative; } .pa-share .share-pop { top: calc(100% + 8px); left: 0; right: auto; }
+.hide-folder { display: none; }
 
 /* Audio Doctor */
 .doc-drop { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px; margin-bottom: 16px; border: 1.5px dashed var(--line); border-radius: 14px; color: var(--ink2); }
@@ -912,7 +930,8 @@ const AUD = /\.(mp3|wav|m4a|aac|flac|ogg|opus|aif|aiff)$/i;
 const cover = (a, b) => { const l1 = 30 + (a % 45), l2 = 8 + (b % 22); return `background:linear-gradient(135deg,hsl(0 0% ${l1}%),hsl(0 0% ${l2}%))`; };
 const gray = (a, b) => [`hsl(0 0% ${30 + (a % 45)}%)`, `hsl(0 0% ${8 + (b % 22)}%)`];
 const ST = { demo: 'Demo', unmixed: 'Unmixed', final: 'Final' };
-const KINDS = { album: 'Album', ep: 'EP', mixtape: 'Mixtape', single: 'Single' };
+const KINDS = { album: 'Album', ep: 'EP', mixtape: 'Mixtape', single: 'Single', folder: 'Folder' };
+const isFolder = c => !!c && c.type === 'folder';
 const VIZ = { off: 'Off', bars: 'Bars', wave: 'Wave', orb: 'Orb', pulse: 'Pulse' };
 const EQF = [60, 230, 910, 3600, 14000], EQL = ['60', '230', '910', '3.6k', '14k'];
 const EQP = { flat: ['Flat', [0, 0, 0, 0, 0]], bass: ['Bass boost', [6, 3, 0, 0, 1]], vocal: ['Vocal', [-2, -1, 3, 4, 1]], bright: ['Bright', [-1, 0, 1, 3, 5]], night: ['Late night', [3, 1, -1, -3, -4]], car: ['Car', [5, 2, -1, 2, 3]] };
@@ -1102,9 +1121,10 @@ const colTracks = c => c ? c.tracks.map(trk).filter(Boolean) : [];
 const totalSec = a => a.reduce((s, t) => s + verDur(t), 0);
 const total = a => { const s = Math.round(totalSec(a)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? `${h} hr ${m} min` : `${m} min ${x} sec`; };
 const relDate = c => c.targetDate || null;
+const relText = c => !c.targetDate ? '' : c.released ? 'Released ' + fdate(c.targetDate) : 'Target release ' + fdate(c.targetDate) + ' · ' + until(c.targetDate).replace(/^In /, 'in ');
 function orderedProjects() {
   const has = S.cols.some(c => c.targetDate);
-  return [...S.cols].sort((a, b) => {
+  return S.cols.filter(c => !isFolder(c)).sort((a, b) => {
     if (has) { const da = relDate(a), db = relDate(b); if (da && db && da !== db) return da.localeCompare(db); if (da && !db) return -1; if (db && !da) return 1; }
     return (a.created || 0) - (b.created || 0);
   });
@@ -1142,7 +1162,7 @@ function renderSide() {
   <div class="shead"><span>Projects</span><button class="ico" data-act="newcol" aria-label="New project" title="New project">${ico('plus', 16)}</button></div>
   <div class="colswrap"><div class="cols" data-slide="cols"><i class="thumb"></i>${S.cols.map(c => `
     <button class="colitem ${S.view === 'collection' && S.colId === c.id ? 'on' : ''}" data-act="col" data-id="${c.id}" data-drop="${c.id}">
-      <span class="mini" style="${pcov(c)}"></span><span class="cn">${esc(c.name)}</span>
+      <span class="mini" style="${pcov(c)}"></span><span class="cn"><span class="cn-t">${esc(c.name)}</span><span class="cn-k">${KINDS[c.type] || ''}</span></span>
     </button>`).join('') || '<p class="faint pad small">No projects yet.</p>'}</div></div>
   <div class="sfoot"><button class="credbtn" data-act="credits" aria-label="Credits" title="Credits">${ico('star', 14)}</button>${window.tpDesktop ? `<button class="credbtn upd" data-act="desk-update" aria-label="Check for updates" title="Version ${esc(tpDesktop.version)}. Check for updates">${ico('save', 14)}</button><span class="ver">v${esc(tpDesktop.version)}</span>` : ''}</div>`;
 }
@@ -1213,7 +1233,7 @@ function renderLibrary(m) {
   <div class="tools">${seg('libtab', [['projects', 'Projects'], ['tracks', 'All tracks']], S.libTab, 'libtab')}
   ${projects ? '' : `<label class="search box">${ico('search', 16)}<input id="q" type="search" placeholder="Search title, artist, tag or key" value="${esc(S.q)}" autocomplete="off"></label>
     <label class="sel box"><span class="faint">Sort</span><select id="sort"><option value="added">Recently added</option><option value="title">Title</option><option value="status">Status</option><option value="bpm">Tempo</option></select></label>`}</div>
-  ${projects ? `<div class="pgrid">${orderedProjects().map(projCard).join('')}<div class="acard acard-new" role="button" tabindex="0" data-act="newcol" style="--n:${S.cols.length}" aria-label="New project"><div class="acard-art"><span class="acard-ph plus">${ico('plus', 34)}</span></div><div class="acard-t">New project</div><div class="acard-s">Album, EP, mixtape or single</div></div></div>`
+  ${projects ? `<div class="pgrid">${S.cols.map(projCard).join('')}<div class="acard acard-new" role="button" tabindex="0" data-act="newcol" style="--n:${S.cols.length}" aria-label="New project"><div class="acard-art"><span class="acard-ph plus">${ico('plus', 34)}</span></div><div class="acard-t">New project</div><div class="acard-s">Album, EP, mixtape or single</div></div></div>`
     : `<div class="tools"><div class="chips">${['all', ...Object.keys(ST)].map(k => `<button class="chip ${S.filter === k ? 'on' : ''}" data-act="filter" data-k="${k}">${k === 'all' ? 'All' : ST[k]} <em>${counts[k]}</em></button>`).join('')}</div></div>${colhead}<div id="list" class="list"></div>`}`;
   const so = $('#sort'); if (so) so.value = S.sort;
 }
@@ -1222,34 +1242,27 @@ function renderProject(m) {
   const c = col(S.colId); if (!c) { S.view = 'library'; return renderLibrary(m); }
   const ts = colTracks(c), link = `tamed.fm/${slug(S.concept.artist)}/${slug(c.name)}`;
   const nF = ts.filter(t => t.status === 'final').length, nD = ts.filter(t => t.status === 'demo').length, nU = ts.filter(t => t.status === 'unmixed').length;
+  const fol = isFolder(c), playing = S.playing && c.tracks.includes(S.cur);
   m.innerHTML = `<section class="chero">
-    <div class="covcol"><div class="covwrap" id="covwrap"><div class="bigcov" style="${pcov(c)}"></div></div>
-      <button class="btn covbtn" data-act="to-concept" data-id="${c.id}">${ico('phone', 16)} Concept player</button></div>
+    <div class="covcol"><div class="covwrap" id="covwrap"><div class="bigcov" style="${pcov(c)}"></div></div></div>
     <div class="cinfo">
-      <div class="hrow">${picker('ctype', 'Type', KINDS, c.type, 'ctype')}<span class="grow"></span>
-        <button class="ico" data-act="proj-edit" data-id="${c.id}" title="Rename and edit artists" aria-label="Rename and edit artists">${ico('edit', 17)}</button>
-        <button class="ico" data-act="dl-proj" title="Download project" aria-label="Download project">${ico('save', 18)}</button>
-        <button class="ico" data-act="share" aria-label="Share" title="Share">${ico('share', 18)}</button>
+      <div class="eyebrow">${picker('ctype', '', KINDS, c.type, 'ctype')}</div>
+      <div class="trow"><input class="title-in" id="p-name" data-cf="name" value="${esc(c.name)}" aria-label="Project name"></div>
+      <p class="pmeta"><button class="pm-art" data-act="proj-edit" data-id="${c.id}" title="Edit artists">${esc(projArtist(c))}</button><span>${ts.length} ${ts.length === 1 ? 'song' : 'songs'}${ts.length ? ', ' + total(ts) : ''}</span>${!fol && c.targetDate ? `<span>${esc(relText(c))}</span>` : ''}${c.sequelOf && col(c.sequelOf) ? `<span>Sequel to <button data-act="col" data-id="${c.sequelOf}">${esc(col(c.sequelOf).name)}</button></span>` : ''}</p>
+      ${ts.length && !fol ? `<p class="stat"><span><i class="pill st-final"></i>${nF} done</span><span><i class="pill st-demo"></i>${nD} ${nD === 1 ? 'demo' : 'demos'}</span>${nU ? `<span><i class="pill st-unmixed"></i>${nU} unmixed</span>` : ''}</p>` : ''}
+      <div class="pact">
+        <button class="playbig" data-act="play-col" data-id="${c.id}" aria-label="${playing ? 'Pause' : 'Play'}" title="${playing ? 'Pause' : 'Play'}">${ico(playing ? 'pause' : 'play', 22)}</button>
+        <button class="ico pa" data-act="add" title="Upload songs" aria-label="Upload songs">${ico('upload', 20)}</button>
+        <span class="pa-share"><button class="ico pa" data-act="share" aria-label="Share" title="Share">${ico('share', 20)}</button>
         <div class="pop glass share-pop" id="sharepop"><b>Share</b>
           ${seg('vis', [['private', 'Private'], ['link', 'Link only'], ['public', 'Public']], c.vis, 'vis', 'full')}
           <div class="link box ${c.vis === 'private' ? 'off' : ''}">${ico('link', 16)}<code>${esc(link)}</code><button class="btn sm" data-act="copy" data-link="${esc(link)}" ${c.vis === 'private' ? 'disabled' : ''}>${c.vis === 'private' ? 'Private' : 'Copy'}</button></div>
           ${c.source ? `<a class="btn sm" href="${esc(c.source)}" target="_blank" rel="noopener">${ico('link', 14)} Open the Untitled source</a>` : ''}
-          <p class="faint small">Sample link. Nothing is published.</p></div>
+          <p class="faint small">Sample link. Nothing is published.</p></div></span>
+        <button class="ico pa" data-act="dl-proj" title="Download project" aria-label="Download project">${ico('save', 20)}</button>
+        ${fol ? '' : `<button class="ico pa" data-act="vw-open-case" title="View CD" aria-label="View CD">${ico('disc', 20)}</button>`}
+        <button class="ico pa" data-act="proj-more" data-id="${c.id}" title="More" aria-label="More options">${ico('dots', 22)}</button>
       </div>
-      <div class="trow"><input class="title-in" id="p-name" data-cf="name" value="${esc(c.name)}" aria-label="Project name"></div>
-      <p class="partists"><button data-act="proj-edit" data-id="${c.id}" title="Edit artists">${esc(projArtist(c))}</button>${c.sequelOf && col(c.sequelOf) ? `<span class="seqof">Sequel to <button data-act="col" data-id="${c.sequelOf}">${esc(col(c.sequelOf).name)}</button></span>` : ''}${S.cols.filter(x => x.sequelOf === c.id).map(x => `<span class="seqof">Followed by <button data-act="col" data-id="${x.id}">${esc(x.name)}</button></span>`).join('')}</p>
-      <p class="stat"><span><i class="pill st-final"></i>${nF} complete</span><span><i class="pill st-demo"></i>${nD} ${nD === 1 ? 'demo' : 'demos'}</span>${nU ? `<span><i class="pill st-unmixed"></i>${nU} unmixed</span>` : ''}</p>
-      <p class="faint small">${ts.length} ${ts.length === 1 ? 'track' : 'tracks'}${ts.length ? ' · ' + total(ts) : ''}</p>
-      <div class="target"><label class="lab" for="p-target">Target release</label><input type="date" id="p-target" value="${esc(c.targetDate || '')}">${c.targetDate ? `<span class="tcount">${until(c.targetDate)}</span><button class="ico" data-act="target-clear" aria-label="Clear the target release date" title="Clear">${ico('x', 14)}</button>` : '<span class="faint small">Optional</span>'}</div>
-      <div class="crow">
-        <button class="btn primary big" data-act="play-col" data-id="${c.id}">${ico(S.playing && c.tracks.includes(S.cur) ? 'pause' : 'play', 16)} ${S.playing && c.tracks.includes(S.cur) ? 'Pause' : 'Play'}</button>
-        <button class="btn big" data-act="add">${ico('upload', 18)} Upload tracks</button>
-        <button class="btn" data-act="vw-open-case">${ico('disc', 16)} View CD</button>
-      </div>
-      <div class="ctools">
-        <div class="covers"><span class="lab">Covers</span>${c.covers.map(cv => `<button class="cthumb ${cv.id === c.cover ? 'on' : ''}" data-act="cover-pick" data-id="${cv.id}" style="${srcs['art:' + cv.id] ? `background:url(${srcs['art:' + cv.id]}) center/cover` : ''}" aria-label="Use this cover"></button>`).join('')}<button class="cthumb add" data-act="art" aria-label="Add a cover version" title="Add a cover version">${ico('plus', 16)}</button>${c.cover ? `<button class="btn sm" data-act="cover-rm">Remove this cover</button>` : ''}</div>
-      </div>
-      <div class="ctools"><button class="btn sm" data-act="delcol">${ico('trash', 14)} Delete project</button></div>
     </div></section>
     ${colhead}<div id="list" class="list"></div>`;
   S.projTab = 'tracks';
@@ -1286,7 +1299,7 @@ function saveDetails() {
   const list = k => $$(`#modal [data-m="${k}"]`).map(i => i.value.trim()).filter(Boolean);
   if (M.kind === 'proj') {
     const c = col(M.id); if (!c) return closeModal();
-    const oldA = projArtist(c); c.name = v('m-pname') || c.name; c.artists = list('partist'); cdRenameArtist(c.id, oldA, projArtist(c)); c.type = v('m-ptype') || c.type; c.targetDate = v('m-pdate') || null;
+    const oldA = projArtist(c); c.name = v('m-pname') || c.name; c.artists = list('partist'); cdRenameArtist(c.id, oldA, projArtist(c)); c.type = v('m-ptype') || c.type; c.targetDate = isFolder(c) ? null : v('m-pdate') || null; c.released = !isFolder(c) && !!$('#modal [data-act="m-rel"].on[data-k="released"]');
     if (UI.mCover && UI.mCover.file) { const f = UI.mCover.file; addCover(c, f).then(() => { refresh(); }); }
     else if (UI.mCover === false && c.cover) c.cover = null;
     toast('Saved ' + c.name);
@@ -1319,7 +1332,8 @@ function openModal(kind, id, x = {}) {
     <table class="mtable"><tbody data-list="partist">${arts.map(a => metaRow('partist', a)).join('')}</tbody></table>
     <button class="btn sm" data-act="meta-add" data-k="partist" style="align-self:flex-start">${ico('plus', 13)} Add artist</button>
     <div class="two"><div><label class="lab" for="m-ptype">Type</label><div class="sel box wide"><select id="m-ptype">${Object.entries(KINDS).map(([k, l]) => `<option value="${k}" ${c.type === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div></div>
-      <div><label class="lab" for="m-pdate">Target release</label><input class="field" type="date" id="m-pdate" value="${esc(c.targetDate || '')}"></div></div>`;
+      <div class="${c.type === 'folder' ? 'hide-folder' : ''}" id="m-relbox"><label class="lab">Release</label>${seg('mrel', [['target', 'Not out yet'], ['released', 'Released']], c.released ? 'released' : 'target', 'm-rel')}
+        <label class="lab" for="m-pdate" id="m-pdate-lab" style="margin-top:8px">${c.released ? 'Release date' : 'Target release date'}</label><input class="field" type="date" id="m-pdate" value="${esc(c.targetDate || '')}"></div></div>`;
   } else if (kind === 'meta') {
     const t = trk(id), m = t.meta || {}, arts = (t.artist || '').split(',').map(x => x.trim()).filter(Boolean);
     h = `<h2>Song details</h2><p class="faint small" style="margin:0">Metadata and credits for ${esc(dispTitle(t))}.</p>
@@ -1448,7 +1462,7 @@ const printKeys = () => sheetKeys().filter(k => !SHEETS[k].strip);
 const stripEdge = side => side === 'L' ? SHEETS.tray.spine : SHEETS.tray.w;
 const toHex = c => { if (!c) return '#111111'; if (c[0] === '#') return c.length === 7 ? c : '#111111'; const m = c.match(/\d+(\.\d+)?/g); return m ? '#' + m.slice(0, 3).map(n => Math.round(+n).toString(16).padStart(2, '0')).join('') : '#111111'; };
 const shade = (hex, k) => '#' + [1, 3, 5].map(i => Math.min(255, Math.round(parseInt(hex.slice(i, i + 2), 16) * k)).toString(16).padStart(2, '0')).join('');
-function cdCol() { const c = (S.view === 'collection' && col(S.colId)) || col(S.cd.colId) || S.cols[0]; if (c) S.cd.colId = c.id; return c; }
+function cdCol() { const ok = x => x && !isFolder(x) ? x : null; const c = ok(S.view === 'collection' && col(S.colId)) || ok(col(S.cd.colId)) || S.cols.find(x => !isFolder(x)); if (c) S.cd.colId = c.id; return c; }
 function design(c) {
   if (!S.cd.designs) S.cd.designs = {};
   const D = S.cd.designs[c.id] || (S.cd.designs[c.id] = autoDesign(c));
@@ -1897,7 +1911,7 @@ function renderPsProps() {
         <span class="psp-lab">Background</span>
         <div class="swatches">${[...new Set(bgs)].map(b => `<button class="sw ${sd.bg === b ? 'on' : ''}" style="--c:${bgCss(b)}" data-act="cd-bg" data-k="${b}" aria-label="${b === 'silver' ? 'Unprinted silver' : b === 'none' ? 'None, show the tray card' : 'Color ' + b}" title="${b === 'none' ? 'None: show the tray card art' : b === 'silver' ? 'Unprinted silver' : b}"></button>`).join('')}<label class="sw" style="--c:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);overflow:hidden" title="Custom color"><input type="color" id="cd-bg" value="${sd.bg === 'silver' || sd.bg === 'none' ? '#cccccc' : toHex(sd.bg)}" style="opacity:0;width:100%;height:100%;cursor:pointer" aria-label="Custom background color"></label></div></div>
       <div class="psp-sec"><h4>Package</h4>
-        ${cdInProject() ? '' : `<div class="sel box wide"><select id="cd-col" aria-label="Project">${S.cols.map(x => `<option value="${x.id}" ${x.id === c.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></div>`}
+        ${cdInProject() ? '' : `<div class="sel box wide"><select id="cd-col" aria-label="Project">${S.cols.filter(x => !isFolder(x)).map(x => `<option value="${x.id}" ${x.id === c.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></div>`}
         ${seg('cdcase', [['jewel', 'Jewel case'], ['slim', 'Slim jewel']], S.cd.caseType, 'cd-case', 'full')}
         ${seg('cdtray', [['clear', 'Clear tray'], ['black', 'Black tray']], S.cd.tray, 'cd-tray', 'full')}
         <div class="meter ${over ? 'over' : ''}"><p><span>${fmt(sec)} of 80:00</span><span>${over ? 'Over by ' + fmt(sec - cap) : fmt(cap - sec) + ' left'}</span></p><div class="rail"><div class="fill" style="width:${Math.min(100, sec / cap * 100)}%"></div></div></div></div>
@@ -2754,7 +2768,7 @@ function renderConcept(m) {
     </section>
     <section>
       <button class="artist-card glass" data-act="cx-artist"><span class="av" style="${ord[0] ? pcov(ord[0]) : cover(3, 9)}"></span><span class="meta"><b style="font-size:17px">${esc(artistOf())}</b><span>Open the artist page · ${S.cols.length} projects</span></span>${ico('chevR', 18)}</button>
-      ${S.cols.length ? `<div class="launch">${ord.map((c, n) => `<button class="lcard" data-act="to-concept" data-id="${c.id}" style="--n:${n};--g:${pgrad(c)};--glow:${pcolors(c)[0]}"><span class="acard-art">${albumArt(c)}</span><b>${esc(c.name)}</b><span>${KINDS[c.type]} · ${total(colTracks(c))}</span></button>`).join('')}</div>`
+      ${S.cols.length ? `<div class="launch">${ord.map((c, n) => `<div class="lcard" role="button" tabindex="0" data-act="to-concept" data-id="${c.id}" style="--n:${n};--g:${pgrad(c)};--glow:${pcolors(c)[0]}"><div class="acard-art">${albumArt(c)}</div><b title="${esc(c.name)}">${esc(c.name)}</b><span>${KINDS[c.type]} · ${total(colTracks(c))}</span></div>`).join('')}</div>`
       : '<div class="empty"><p><b>No projects yet</b></p><p class="faint">Create an album, EP or mixtape to preview it here.</p><div class="crow"><button class="btn primary" data-act="newcol">New project</button></div></div>'}
     </section></div>`;
 }
@@ -3180,7 +3194,8 @@ function act(a, el, e) {
     case 'close-drawer': closeDrawer(); break;
     case 'pick': { const p = el.closest('.pick'), o = !p.classList.contains('open'); $$('.pick.open').forEach(x => x.classList.remove('open')); p.classList.toggle('open', o); el.setAttribute('aria-expanded', o); $$('.pick-opts button', p).forEach(b => b.tabIndex = o ? 0 : -1); break; }
     case 'status': { const t = trk(S.editId); if (!t) break; t.status = k; settlePick(el, k); renderList(); save(); break; }
-    case 'ctype': { const c = col(S.colId); c.type = k; settlePick(el, k); renderSide(); save(); break; }
+    case 'ctype': { const c = col(S.colId); c.type = k; settlePick(el, k); save(); setTimeout(refresh, 180); break; }
+    case 'm-rel': { $$('[data-act="m-rel"]', el.parentElement).forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el); }); const l = $('#m-pdate-lab'); if (l) l.textContent = k === 'released' ? 'Release date' : 'Target release date'; applySlides(); break; }
     case 'cycle-st': { const t = trk(id), ks = Object.keys(ST); t.status = ks[(ks.indexOf(t.status) + 1) % ks.length]; refresh(); if (S.editId === id) openDrawer(id); break; }
     case 'deltrack': { if (!confirmBtn(el, 'Click again to delete')) break; const t = trk(S.editId); if (!t) break; if (S.cur === t.id) { Engine.pause(); S.cur = null; S.playing = false; } S.tracks = S.tracks.filter(x => x !== t); S.cols.forEach(c => c.tracks = c.tracks.filter(x => x !== t.id)); DB.del(t.id); t.versions.forEach(v => DB.del(v.id)); closeDrawer(); toast('Track deleted'); refresh(); break; }
     case 'ver-add': $('#verfile').click(); break;
@@ -3198,6 +3213,7 @@ function act(a, el, e) {
     case 'cx-playall': { const c = col(id); if (!c) break; const ids = c.tracks.filter(trk); if (S.playing && ids.includes(S.cur)) toggle(); else playQueue(ids, false); break; }
     case 'cx-shuffle': { const c = col(S.cx.colId) || orderedProjects()[0]; if (c) playQueue(c.tracks.filter(trk), true); break; }
     case 'cx-artist-play': break;
+    case 'proj-more': { const c = col(id), r = el.getBoundingClientRect(); if (c) ctxMenu(r.left, r.bottom + 6, projectMenu(c)); break; }
     case 'share': { const p = $('#sharepop'); p.classList.toggle('open'); if (p.classList.contains('open')) applySlides(); break; }
     case 'vis': { col(S.colId).vis = k; refresh(); $('#sharepop').classList.add('open'); applySlides(); break; }
     case 'copy': if (navigator.clipboard) navigator.clipboard.writeText('https://' + el.dataset.link).then(() => toast('Link copied'), () => toast('Select the link and copy it')); else toast('Select the link and copy it'); break;
@@ -3221,6 +3237,7 @@ function act(a, el, e) {
   }
 }
 document.addEventListener('click', e => {
+  if (UI.noClick && Date.now() - UI.noClick < 350) { e.preventDefault(); e.stopPropagation(); return; }
   { const r = e.target.closest && e.target.closest('#list .row'); if (r && S.prefs.clickToPlay !== false && !e.target.closest('button, input, a, select, textarea, [data-act]')) { const id = r.dataset.id; if (S.cur === id) toggle(); else playTrack(id, curListIds.length ? curListIds : null); return; } }
   { const m = $('#ctx'); if (m) { const it = e.target.closest('.ctx-i'); if (!it || !(it.dataset.confirm && !it.dataset.armed)) setTimeout(closeCtx, 0); } }
   if (UI.fontOpen && !e.target.closest('#psfontdrop, [data-act="cd-fontpick"]')) { UI.fontOpen = false; renderFontDrop(); }
@@ -3269,6 +3286,7 @@ document.addEventListener('change', e => {
   else if (t.id === 'd-featin') { const tr = trk(S.editId); tr.featInTitle = t.checked; updPreview(tr); renderList(); renderBar(); save(); }
   else if (t.dataset.incol) { const c = col(t.dataset.incol), id = S.editId; c.tracks = c.tracks.filter(x => x !== id); if (t.checked) c.tracks.push(id); refresh(); }
   else if (t.id === 'p-target') { const c = col(S.colId); c.targetDate = t.value || null; refresh(); }
+  else if (t.id === 'm-ptype') { const b = $('#m-relbox'); if (b) b.classList.toggle('hide-folder', t.value === 'folder'); }
   else if (t.id === 'cd-col') { S.cd.colId = t.value; UI.cdSel = null; refresh(); }
   else if (t.id === 'cdimg') { const f = t.files[0]; if (f) cdAddImage(f); t.value = ''; }
   else if (t.dataset.cdl && (t.tagName === 'SELECT' || t.type === 'checkbox')) { const L = selLayer(); if (L) { L[t.dataset.cdl] = t.type === 'checkbox' ? t.checked : t.dataset.cdl === 'weight' ? +t.value : t.value; cdDirty(); save(); } }
@@ -3377,7 +3395,30 @@ document.addEventListener('drop', e => {
   renderPsLayers(); cdDirty(); save();
 }, true);
 document.addEventListener('dragend', () => { UI.psDrag = null; $$('.psl.dropto').forEach(x => x.classList.remove('dropto')); }, true);
+/* sidebar: drag a project up or down to put it where you want */
+let sideDrag = null;
+document.addEventListener('pointerdown', e => { const it = e.target.closest && e.target.closest('#side .colitem'); if (!it || e.button !== 0) return; sideDrag = { it, y0: e.clientY, on: false }; });
+document.addEventListener('pointermove', e => {
+  const d = sideDrag; if (!d) return; const dy = e.clientY - d.y0;
+  if (!d.on) { if (Math.abs(dy) < 6) return; d.on = true; d.items = $$('#side .colitem'); d.rects = d.items.map(x => x.getBoundingClientRect()); d.idx = d.items.indexOf(d.it); d.to = d.idx; d.step = d.rects.length > 1 ? d.rects[1].top - d.rects[0].top : d.rects[0].height; d.it.classList.add('dragging'); document.body.classList.add('side-sorting'); }
+  d.it.style.transform = `translateY(${dy}px)`;
+  const r0 = d.rects[d.idx], cy = r0.top + r0.height / 2 + dy; let to = d.idx;
+  d.rects.forEach((r, i) => { const mid = r.top + r.height / 2; if (i < d.idx && cy < mid) to = Math.min(to, i); if (i > d.idx && cy > mid) to = Math.max(to, i); });
+  d.to = to;
+  d.items.forEach((x, i) => { if (x === d.it) return; const sh = d.idx < to && i > d.idx && i <= to ? -d.step : d.idx > to && i >= to && i < d.idx ? d.step : 0; x.style.transform = sh ? `translateY(${sh}px)` : ''; });
+});
+const endSideDrag = () => {
+  const d = sideDrag; sideDrag = null; if (!d || !d.on) return;
+  d.items.forEach(x => { x.style.transform = ''; }); d.it.classList.remove('dragging'); document.body.classList.remove('side-sorting'); UI.noClick = Date.now();
+  if (d.to !== d.idx) { const [c] = S.cols.splice(d.idx, 1); S.cols.splice(d.to, 0, c); save(); }
+  renderSide(); applySlides(); if (S.view === 'library') renderMain();
+};
+document.addEventListener('pointerup', endSideDrag); document.addEventListener('pointercancel', endSideDrag);
+
 document.addEventListener('dblclick', e => {
+  { // double-click a song anywhere to play it
+    const r = e.target.closest('#list .row, .doc-row'); if (r && !e.target.closest('input, textarea, select, [data-rename]')) { const id = r.dataset.id; if (id && trk(id)) { if (S.cur !== id || !S.playing) playTrack(id); return; } }
+  }
   const n = e.target.closest('[data-rename]'); if (n) return startRename(n.dataset.rename); if (true) return; const f = null;
   const inp = document.createElement('input'); inp.className = 'ps-in rename'; inp.value = layerName(f.L); n.replaceWith(inp); inp.focus(); inp.select();
   const done = ok => { if (ok) f.L.name = inp.value.trim() || undefined; renderPsLayers(); renderPsProps(); save(); };
@@ -3489,8 +3530,9 @@ function projectMenu(c) {
     { label: 'Duplicate Project', act: 'ctx-dupcol', id: c.id, icon: 'copy' }, { label: 'Make Sequel…', act: 'ctx-sequel', id: c.id, icon: 'plus' }, { sep: 1 },
     { label: c.cover ? 'Change Cover Art…' : 'Add Cover Art…', act: 'ctx-cover', id: c.id, icon: 'image' },
     ...(c.covers.length > 1 ? c.covers.map((cv, i) => ({ label: (cv.id === c.cover ? 'Using cover ' : 'Use cover ') + (i + 1), act: 'ctx-usecover', id: c.id, k: cv.id, icon: cv.id === c.cover ? 'check' : null, disabled: cv.id === c.cover })) : []),
-    ...(c.cover ? [{ label: 'Remove This Cover', act: 'ctx-rmcover', id: c.id, icon: 'x' }] : []), { sep: 1 }, { label: 'Concept Player', act: 'to-concept', id: c.id, icon: 'phone' },
-    { label: 'View CD', act: 'ctx-viewcd', id: c.id, icon: 'disc' }, { label: 'Edit CD', act: 'ctx-editcd', id: c.id, icon: 'edit' }, { label: 'Export 3D CD…', act: 'ctx-export3d', id: c.id, icon: 'cube' }, { label: 'Download Project', act: 'ctx-dlproj', id: c.id, icon: 'save' }, { sep: 1 },
+    ...(c.cover ? [{ label: 'Remove This Cover', act: 'ctx-rmcover', id: c.id, icon: 'x' }] : []), { sep: 1 },
+    ...(isFolder(c) ? [] : [{ label: 'Concept Player', act: 'to-concept', id: c.id, icon: 'phone' }, { label: 'View CD', act: 'ctx-viewcd', id: c.id, icon: 'disc' }, { label: 'Edit CD', act: 'ctx-editcd', id: c.id, icon: 'edit' }, { label: 'Export 3D CD…', act: 'ctx-export3d', id: c.id, icon: 'cube' }]),
+    { label: 'Download Project', act: 'ctx-dlproj', id: c.id, icon: 'save' }, { sep: 1 },
     { label: 'Delete Project', act: 'ctx-delcol', id: c.id, icon: 'trash', danger: 1, confirm: 'Click again to delete' }];
 }
 function onContext(e) {
