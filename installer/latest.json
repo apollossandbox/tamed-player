@@ -1,8 +1,8 @@
 {
-  "version": "1.0.2",
+  "version": "1.0.3",
   "file": "TamedPlayer-Setup.exe",
-  "size": 82347578,
-  "sha256": "fb8906eeb1c30b8f73baa8528a11de74e623651d687b75c2b1f08118cbb3de08",
-  "notes": "Change cover art from the right-click menu. Pick or replace the cover while naming a project, including zip imports. New projects open a details window.",
+  "size": 82347607,
+  "sha256": "9a560f588c3f60c7c9c93a8e0f34cc09fb5249672b82be4c092ab5dd7d8012a2",
+  "notes": "Cleaner project page: concept player under the cover, bigger upload button, share and download at the top, tempo and key on hover, click a track to play it, project colour wash. Library shows whole covers.",
   "date": "2026-11-09"
 }

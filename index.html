@@ -127,7 +127,10 @@ h1 { font-size: 36px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1
 .pick-opts button:hover { color: var(--ink); background: var(--hover); } .pick-opts button.on { color: var(--onink); background: var(--ink); }
 
 /* track rows */
-.colhead, .row { display: grid; grid-template-columns: 36px 44px minmax(0, 1fr) 100px 76px 54px 50px 70px; gap: 12px; align-items: center; }
+.colhead, .row { display: grid; grid-template-columns: 36px 44px minmax(0, 1fr) auto 100px 50px 70px; gap: 12px; align-items: center; }
+.row .hov { opacity: 0; transform: translateX(6px); transition: opacity .2s, transform .3s var(--ease); white-space: nowrap; }
+.row:hover .hov, .row:focus-within .hov { opacity: 1; transform: none; }
+.row { cursor: pointer; }
 .colhead { padding: 6px 12px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); font-weight: 700; }
 .list { position: relative; display: flex; flex-direction: column; gap: 4px; }
 .row { padding: 7px 12px; border-radius: 18px; border: 1px solid transparent; transition: background .25s, border-color .25s, box-shadow .25s; }
@@ -504,7 +507,7 @@ textarea.field { resize: vertical; }
   .brand { padding: 0 6px; } .brand span, .shead { display: none; } .snav, .cols { flex-direction: row; } .colswrap { overflow: visible; flex: none; }
   .navbtn, .colitem { width: auto; flex: none; white-space: nowrap; } .navbtn em, .colitem em { display: none; } .sfoot { padding: 0; }
   .main { overflow: visible; padding: 4px 0 150px; }
-  .colhead { display: none; } .row { grid-template-columns: 34px 40px minmax(0, 1fr) 44px 34px; gap: 10px; } .row .pill, .c-bpm, .c-key, .row .acts .rmb { display: none; }
+  .colhead { display: none; } .row { grid-template-columns: 34px 40px minmax(0, 1fr) 44px 34px; gap: 10px; } .row .pill, .row .hov, .row .acts .rmb { display: none; }
   .bar { grid-template-columns: minmax(0, 1fr) auto; border-radius: 28px; gap: 4px 10px; padding: 10px 14px 12px; } .now { display: none; } .volw { grid-column: 2; grid-row: 1; }
   .pgrid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 30px 18px; padding: 10px 0; }
   .sp-bar { grid-template-columns: minmax(0, 1fr) auto; height: 64px; } .sp-ctr .sp-scrub, .sp-right input, .sp-btns .hide-s { display: none; }
@@ -594,6 +597,19 @@ body.cx-on .bar { transform: none; }
   .drawer { top: auto; max-height: 86%; border-left: 0; border-top: 1px solid var(--line); border-radius: 16px 16px 0 0; width: 100%; }
   h1 { font-size: 28px; }
 }
+/* project page layout */
+.covcol { display: flex; flex-direction: column; gap: 12px; width: min(240px, 100%); flex: none; }
+.covcol .covwrap { width: 100%; } .covbtn { justify-content: center; width: 100%; }
+.hrow { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; } .hrow .grow { flex: 1; } .hrow .pick { margin-right: 8px; }
+.hrow { position: relative; } .hrow .share-pop { top: calc(100% + 8px); right: 0; }
+.btn.big { padding: 12px 22px; font-size: 15px; border-radius: 12px; }
+.pc-art.fit { background-color: #000; }
+.pwash { position: fixed; z-index: 0; top: 0; bottom: 0; left: var(--side); right: 0; pointer-events: none; opacity: 0;
+  background: radial-gradient(120% 70% at 20% -10%, color-mix(in srgb, var(--w1) 38%, transparent), transparent 65%), radial-gradient(90% 60% at 95% 0%, color-mix(in srgb, var(--w2) 26%, transparent), transparent 60%); }
+.pwash.show { opacity: 1; transition: opacity .5s ease; } .pwash.show.fade { opacity: 0; transition: opacity 1.6s ease; }
+.app > .main { position: relative; z-index: 1; }
+@media (max-width: 760px) { .pwash { left: 0; } .covcol { width: 100%; } }
+
 /* cover picker in dialogs */
 .mcover-wrap { display: flex; gap: 16px; align-items: center; margin-top: 10px; }
 .mcover { width: 112px; height: 112px; flex: none; border-radius: 10px; display: grid; place-items: center; color: var(--ink3); background: var(--panel2) center / cover no-repeat; border: 1.5px dashed var(--line); transition: border-color .2s, transform .3s var(--ease); }
@@ -788,6 +804,7 @@ body.cx-on .bar { transform: none; }
 <div class="app" id="app">
   <aside class="side glass" id="side" aria-label="Navigation"></aside>
   <main class="main" id="main"></main>
+  <div class="pwash" id="pwash" aria-hidden="true"></div>
 </div>
 <footer class="bar glass" id="bar" aria-label="Player"></footer>
 <section class="eqpop glass" id="eqpop" aria-label="Equalizer"></section>
@@ -871,6 +888,7 @@ const trk = id => S.tracks.find(t => t.id === id);
 const col = id => S.cols.find(c => c.id === id);
 const coverObj = c => c && c.covers && c.covers.find(x => x.id === c.cover);
 const artOf = c => { const cv = coverObj(c); return cv && srcs['art:' + cv.id]; };
+const pcovFit = c => artOf(c) ? `background:#000 url(${artOf(c)}) center/contain no-repeat` : cover(c.h1, c.h2);
 const pcov = c => artOf(c) ? `background:url(${artOf(c)}) center/cover` : cover(c.h1, c.h2);
 const ownerCol = t => S.cols.find(c => artOf(c) && c.tracks.includes(t.id));
 const tcov = t => { const p = ownerCol(t); return p ? pcov(p) : cover(t.h1, t.h2); };
@@ -1056,13 +1074,12 @@ function rowHTML(t, i, inCol) {
     <span class="cov" style="${tcov(t)}"></span>
     <span class="meta"><b>${esc(dispTitle(t))}${nv ? `<span class="vtag">${esc(v ? v.name : 'Original')} · ${nv + 1} versions</span>` : ''}</b><span>${esc(dispArtist(t))}${t.tags ? ' · ' + esc(t.tags) : ''}</span></span>
     <button class="pill st-${t.status}" data-act="cycle-st" data-id="${t.id}" title="Click to change status">${ST[t.status]}</button>
-    <span class="mono c-bpm">${t.bpm ? t.bpm + ' BPM' : '-'}</span>
-    <span class="mono c-key">${esc(t.key || '-')}</span>
+    <span class="mono hov">${[t.bpm ? t.bpm + ' BPM' : '', t.key ? esc(t.key) : ''].filter(Boolean).join(' · ')}</span>
     <span class="mono c-dur">${fmt(verDur(t))}</span>
     <span class="acts">${inCol ? `<button class="ico rmb" data-act="rm" data-id="${t.id}" aria-label="Remove from project" title="Remove from project">${ico('x', 16)}</button>` : ''}<button class="ico" data-act="edit" data-id="${t.id}" aria-label="Edit ${esc(t.title)}">${ico('dots', 18)}</button></span>
   </div>`;
 }
-const colhead = `<div class="colhead"><span></span><span></span><span>Title</span><span>Status</span><span class="c-bpm">Tempo</span><span class="c-key">Key</span><span class="c-dur">Time</span><span></span></div>`;
+const colhead = `<div class="colhead"><span></span><span></span><span>Title</span><span></span><span>Status</span><span class="c-dur">Time</span><span></span></div>`;
 
 function renderList() {
   const el = $('#list'); if (!el) return;
@@ -1077,7 +1094,7 @@ function renderList() {
 function projCard(c, n) {
   const ts = colTracks(c), k = pcolors(c);
   return `<div class="pcard" style="--n:${n};--g:${pgrad(c)};--glow:${k[0]}">
-    <button class="pc-open" data-act="col" data-id="${c.id}"><span class="pc-ring"><span class="pc-art" style="${pcov(c)}"></span></span>
+    <button class="pc-open" data-act="col" data-id="${c.id}"><span class="pc-ring"><span class="pc-art fit" style="${pcovFit(c)}"></span></span>
     <span class="pc-txt"><b>${esc(c.name)}</b><span>${esc(projArtist(c))} · ${KINDS[c.type]} · ${ts.length} ${ts.length === 1 ? 'track' : 'tracks'}${c.targetDate ? ' · ' + fdate(c.targetDate) : ''}</span></span></button>
     <button class="pc-play" data-act="play-col" data-id="${c.id}" aria-label="Play ${esc(c.name)}">${ico('play', 18)}</button>
   </div>`;
@@ -1093,6 +1110,8 @@ function renderMain() {
   else if (S.view === 'cd') renderCD(m);
   else renderConcept(m);
   renderList();
+  if (enter && S.view === 'collection') { const c = col(S.colId), w = $('#pwash'); if (c && w) { const k = pcolors(c); w.style.setProperty('--w1', k[0]); w.style.setProperty('--w2', k[1] || k[0]); w.classList.remove('fade'); w.classList.add('show'); void w.offsetWidth; clearTimeout(renderMain.w); renderMain.w = setTimeout(() => w.classList.add('fade'), 3000); } }
+  else if (enter) { const w = $('#pwash'); if (w) w.classList.remove('show', 'fade'); }
   if (enter) { m.scrollTop = 0; clearTimeout(renderMain.t); renderMain.t = setTimeout(() => m.classList.remove('enter'), 800); }
 }
 
@@ -1116,10 +1135,12 @@ function renderProject(m) {
   const ts = colTracks(c), link = `tamed.fm/${slug(S.concept.artist)}/${slug(c.name)}`;
   const nF = ts.filter(t => t.status === 'final').length, nD = ts.filter(t => t.status === 'demo').length, nU = ts.filter(t => t.status === 'unmixed').length;
   m.innerHTML = `<section class="chero">
-    <div class="covwrap" id="covwrap"><div class="bigcov" style="${pcov(c)}"></div></div>
+    <div class="covcol"><div class="covwrap" id="covwrap"><div class="bigcov" style="${pcov(c)}"></div></div>
+      <button class="btn covbtn" data-act="to-concept" data-id="${c.id}">${ico('phone', 16)} Concept player</button></div>
     <div class="cinfo">
-      ${picker('ctype', 'Type', KINDS, c.type, 'ctype')}
-      <div class="trow"><input class="title-in" id="p-name" data-cf="name" value="${esc(c.name)}" aria-label="Project name"><button class="ico" data-act="proj-edit" data-id="${c.id}" title="Rename and edit artists" aria-label="Rename and edit artists">${ico('edit', 17)}</button>
+      <div class="hrow">${picker('ctype', 'Type', KINDS, c.type, 'ctype')}<span class="grow"></span>
+        <button class="ico" data-act="proj-edit" data-id="${c.id}" title="Rename and edit artists" aria-label="Rename and edit artists">${ico('edit', 17)}</button>
+        <button class="ico" data-act="dl-proj" title="Download project" aria-label="Download project">${ico('save', 18)}</button>
         <button class="ico" data-act="share" aria-label="Share" title="Share">${ico('share', 18)}</button>
         <div class="pop glass share-pop" id="sharepop"><b>Share</b>
           ${seg('vis', [['private', 'Private'], ['link', 'Link only'], ['public', 'Public']], c.vis, 'vis', 'full')}
@@ -1127,30 +1148,23 @@ function renderProject(m) {
           ${c.source ? `<a class="btn sm" href="${esc(c.source)}" target="_blank" rel="noopener">${ico('link', 14)} Open the Untitled source</a>` : ''}
           <p class="faint small">Sample link. Nothing is published.</p></div>
       </div>
+      <div class="trow"><input class="title-in" id="p-name" data-cf="name" value="${esc(c.name)}" aria-label="Project name"></div>
       <p class="partists"><button data-act="proj-edit" data-id="${c.id}" title="Edit artists">${esc(projArtist(c))}</button></p>
       <p class="stat"><span><i class="pill st-final"></i>${nF} complete</span><span><i class="pill st-demo"></i>${nD} ${nD === 1 ? 'demo' : 'demos'}</span>${nU ? `<span><i class="pill st-unmixed"></i>${nU} unmixed</span>` : ''}</p>
       <p class="faint small">${ts.length} ${ts.length === 1 ? 'track' : 'tracks'}${ts.length ? ' · ' + total(ts) : ''}</p>
-      <textarea class="desc-in" id="p-desc" data-cf="desc" rows="2" placeholder="Add a description" aria-label="Description">${esc(c.desc)}</textarea>
       <div class="target"><label class="lab" for="p-target">Target release</label><input type="date" id="p-target" value="${esc(c.targetDate || '')}">${c.targetDate ? `<span class="tcount">${until(c.targetDate)}</span><button class="ico" data-act="target-clear" aria-label="Clear the target release date" title="Clear">${ico('x', 14)}</button>` : '<span class="faint small">Optional</span>'}</div>
-      <div class="tagrow">
-        ${c.tags.map((g, i) => `<span class="tag">${esc(g)}<button class="ico" data-act="untag" data-i="${i}" aria-label="Remove tag ${esc(g)}">${ico('x', 12)}</button></span>`).join('')}
-        <input class="tag-in" id="tag-in" placeholder="+ Genre tag" aria-label="Add a genre tag"></div>
       <div class="crow">
-        <button class="btn primary" data-act="play-col" data-id="${c.id}">${ico(S.playing && c.tracks.includes(S.cur) ? 'pause' : 'play', 16)} ${S.playing && c.tracks.includes(S.cur) ? 'Pause' : 'Play'}</button>
-        <button class="btn" data-act="to-concept" data-id="${c.id}">${ico('phone', 16)} Concept player</button>
+        <button class="btn primary big" data-act="play-col" data-id="${c.id}">${ico(S.playing && c.tracks.includes(S.cur) ? 'pause' : 'play', 16)} ${S.playing && c.tracks.includes(S.cur) ? 'Pause' : 'Play'}</button>
+        <button class="btn big" data-act="add">${ico('upload', 18)} Upload tracks</button>
         <button class="btn" data-act="vw-open-case">${ico('disc', 16)} View CD</button>
-        <button class="btn" data-act="add">${ico('upload', 16)} Upload tracks</button>
-        <button class="btn" data-act="dl-proj" id="dl-proj">${ico('save', 16)} Download</button>
       </div>
       <div class="ctools">
         <div class="covers"><span class="lab">Covers</span>${c.covers.map(cv => `<button class="cthumb ${cv.id === c.cover ? 'on' : ''}" data-act="cover-pick" data-id="${cv.id}" style="${srcs['art:' + cv.id] ? `background:url(${srcs['art:' + cv.id]}) center/cover` : ''}" aria-label="Use this cover"></button>`).join('')}<button class="cthumb add" data-act="art" aria-label="Add a cover version" title="Add a cover version">${ico('plus', 16)}</button>${c.cover ? `<button class="btn sm" data-act="cover-rm">Remove this cover</button>` : ''}</div>
       </div>
       <div class="ctools"><button class="btn sm" data-act="delcol">${ico('trash', 14)} Delete project</button></div>
     </div></section>
-    <div class="ptabs">${seg('ptab', [['tracks', `Tracks <em>${ts.length}</em>`], ['cd', 'CD']], S.projTab, 'ptab')}</div>
-    ${S.projTab === 'cd' ? cdGridHTML(c) : `${colhead}<div id="list" class="list"></div>
-    <p class="faint small" style="margin:14px 12px 0">Drag a track onto another to swap their places.</p>`}`;
-  if (S.projTab === 'cd') cdMount();
+    ${colhead}<div id="list" class="list"></div>`;
+  S.projTab = 'tracks';
 }
 
 /* ---------- dates ---------- */
@@ -1950,7 +1964,7 @@ function renderConcept(m) {
     </section>
     <section>
       <button class="artist-card glass" data-act="cx-artist"><span class="av" style="${ord[0] ? pcov(ord[0]) : cover(3, 9)}"></span><span class="meta"><b style="font-size:17px">${esc(C.artist)}</b><span>Open the artist page · ${S.cols.length} projects</span></span>${ico('chevR', 18)}</button>
-      ${S.cols.length ? `<div class="launch">${ord.map((c, n) => `<button class="lcard" data-act="to-concept" data-id="${c.id}" style="--n:${n};--g:${pgrad(c)};--glow:${pcolors(c)[0]}"><span class="pc-ring"><span class="pc-art" style="${pcov(c)}"></span></span><b>${esc(c.name)}</b><span>${KINDS[c.type]} · ${total(colTracks(c))}</span></button>`).join('')}</div>`
+      ${S.cols.length ? `<div class="launch">${ord.map((c, n) => `<button class="lcard" data-act="to-concept" data-id="${c.id}" style="--n:${n};--g:${pgrad(c)};--glow:${pcolors(c)[0]}"><span class="pc-ring"><span class="pc-art fit" style="${pcovFit(c)}"></span></span><b>${esc(c.name)}</b><span>${KINDS[c.type]} · ${total(colTracks(c))}</span></button>`).join('')}</div>`
       : '<div class="empty"><p><b>No projects yet</b></p><p class="faint">Create an album, EP or mixtape to preview it here.</p><div class="crow"><button class="btn primary" data-act="newcol">New project</button></div></div>'}
     </section></div>`;
 }
@@ -2082,7 +2096,7 @@ function openDrawer(id) {
   <label class="lab" for="d-lyr">Lyrics</label><textarea class="field" id="d-lyr" data-f="lyrics" rows="4" placeholder="One line per row. Shown in the concept player.">${esc(t.lyrics || '')}</textarea>
   <label class="lab">In projects</label>
   <div class="chk-list">${S.cols.map(c => `<label class="check"><input type="checkbox" data-incol="${c.id}" ${c.tracks.includes(id) ? 'checked' : ''}><span>${esc(c.name)}</span></label>`).join('') || '<p class="faint small">Create a project first.</p>'}</div>
-  <div class="crow"><button class="btn sm" data-act="recolor-t">Change shade</button><button class="btn sm" data-act="deltrack">${ico('trash', 14)} Delete track</button></div>`;
+  <div class="crow"><button class="btn sm" data-act="deltrack">${ico('trash', 14)} Delete track</button></div>`;
   d.inert = false; d.classList.add('open');
 }
 function versHTML(t) {
@@ -2326,7 +2340,7 @@ function act(a, el, e) {
     case 'set-st': { const t = trk(id); if (t) { t.status = k; refresh(); } break; }
     case 'ctx-deltrack': { const t = trk(id); if (!t) break; if (S.cur === t.id) { Engine.pause(); S.cur = null; S.playing = false; } S.tracks = S.tracks.filter(x => x !== t); S.cols.forEach(c => c.tracks = c.tracks.filter(x => x !== t.id)); DB.del(t.id); (t.versions || []).forEach(v => DB.del(v.id)); if (S.editId === t.id) closeDrawer(); toast('Track deleted'); refresh(); break; }
     case 'ctx-viewcd': S.colId = id; S.cd.colId = id; openViewer('case'); break;
-    case 'ctx-editcd': closeDrawer(); S.view = 'collection'; S.colId = id; S.projTab = 'cd'; refresh(); break;
+    case 'ctx-editcd': closeDrawer(); S.cd.colId = id; S.view = 'cd'; UI.cdSel = null; refresh(); break;
     case 'ctx-dlproj': { const c = col(id); if (c) downloadProject(c); break; }
     case 'ctx-delcol': { const c = col(id); if (!c) break; if (S.cd.designs) delete S.cd.designs[c.id]; S.cols = S.cols.filter(x => x !== c); c.covers.forEach(x => DB.del('art:' + x.id)); if (S.colId === c.id && S.view === 'collection') S.view = 'library'; toast('Project deleted. Its tracks are still in your library.'); refresh(); break; }
     case 'nav': closeDrawer(); S.view = el.dataset.view; refresh(); break;
@@ -2349,7 +2363,6 @@ function act(a, el, e) {
     case 'status': { const t = trk(S.editId); if (!t) break; t.status = k; settlePick(el, k); renderList(); save(); break; }
     case 'ctype': { const c = col(S.colId); c.type = k; settlePick(el, k); renderSide(); save(); break; }
     case 'cycle-st': { const t = trk(id), ks = Object.keys(ST); t.status = ks[(ks.indexOf(t.status) + 1) % ks.length]; refresh(); if (S.editId === id) openDrawer(id); break; }
-    case 'recolor-t': { const t = trk(S.editId); t.h1 = Math.floor(Math.random() * 360); t.h2 = (t.h1 + 40 + Math.floor(Math.random() * 120)) % 360; $('.dcov').setAttribute('style', tcov(t)); refresh(); break; }
     case 'deltrack': { if (!confirmBtn(el, 'Click again to delete')) break; const t = trk(S.editId); if (!t) break; if (S.cur === t.id) { Engine.pause(); S.cur = null; S.playing = false; } S.tracks = S.tracks.filter(x => x !== t); S.cols.forEach(c => c.tracks = c.tracks.filter(x => x !== t.id)); DB.del(t.id); t.versions.forEach(v => DB.del(v.id)); closeDrawer(); toast('Track deleted'); refresh(); break; }
     case 'ver-add': $('#verfile').click(); break;
     case 'ver-set': { const t = trk(S.editId); t.ver = id; const wasCur = S.cur === t.id; if (wasCur) { const p = Engine.pos(); Engine.load(t); if (S.playing) Engine.play(); audio.addEventListener('loadedmetadata', () => { try { audio.currentTime = Math.min(p, audio.duration - .5); } catch (e) { } }, { once: true }); } $('#d-vers').innerHTML = versHTML(t); renderList(); renderBar(); save(); toast('Now using ' + (id === t.id ? 'Original' : t.versions.find(v => v.id === id).name)); break; }
@@ -2389,6 +2402,7 @@ function act(a, el, e) {
   }
 }
 document.addEventListener('click', e => {
+  { const r = e.target.closest && e.target.closest('#list .row'); if (r && !e.target.closest('button, input, a, select, textarea, [data-act]')) { const id = r.dataset.id; if (S.cur === id) toggle(); else playTrack(id, curListIds.length ? curListIds : null); return; } }
   { const m = $('#ctx'); if (m) { const it = e.target.closest('.ctx-i'); if (!it || !(it.dataset.confirm && !it.dataset.armed)) setTimeout(closeCtx, 0); } }
   if (UI.fontOpen && !e.target.closest('#psfontdrop, [data-act="cd-fontpick"]')) { UI.fontOpen = false; renderFontDrop(); }
   const el = e.target.closest('[data-act]');
