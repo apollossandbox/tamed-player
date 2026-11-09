@@ -1,8 +1,8 @@
 {
-  "version": "1.2.0",
+  "version": "1.2.1",
   "file": "TamedPlayer-Setup.exe",
-  "size": 82386739,
-  "sha256": "7fccd747b2a5a8e925717df055a58d5465ef783b91ad91042378c375cc447d91",
-  "notes": "Cleaner project page, Folder projects, Released or target date, sortable sidebar, Export Disc zip, CD designs linked to covers, project tabs in the CD creator, installed fonts, Shift+drag free transform, spines editable on the tray card, viewer opens still and face-on, Arial throughout.",
+  "size": 82386627,
+  "sha256": "6792d2eaa38da3fec82c96b346c1d9879c337587192288f20981487f164ef918",
+  "notes": "Readability: stronger contrast for grey text and labels, no tiny text anywhere, clearer viewer and editor text.",
   "date": "2026-11-09"
 }
