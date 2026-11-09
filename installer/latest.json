@@ -1,8 +1,8 @@
 {
-  "version": "1.0.1",
+  "version": "1.0.2",
   "file": "TamedPlayer-Setup.exe",
-  "size": 82346600,
-  "sha256": "37bbf748e2d01895aa61ab16784b8d8ccc6d4133f0267f7c43712f20b72ded4e",
-  "notes": "Layer locking, right-click menus, undo/redo and Photoshop shortcuts in the CD editor. Project rename with multiple artists. Song metadata and credits. Automatic updates.",
+  "size": 82347578,
+  "sha256": "fb8906eeb1c30b8f73baa8528a11de74e623651d687b75c2b1f08118cbb3de08",
+  "notes": "Change cover art from the right-click menu. Pick or replace the cover while naming a project, including zip imports. New projects open a details window.",
   "date": "2026-11-09"
 }
