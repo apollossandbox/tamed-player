@@ -2489,6 +2489,101 @@ async function docAct(a, el) {
 
 /* ---------- FL Studio link (Windows app): set FL's tempo over a virtual MIDI port, then drag the WAV into the playlist ---------- */
 const FL = { access: null, pong: 0, tried: false, err: '', status: null, msg: '' };
+// The FL Studio plugin (a MIDI controller script). The Windows build also writes this to desktop/fl/device_TamedPlayer.py.
+const FL_SCRIPT = `# name=Tamed Player
+# url=https://github.com/apollossandbox/tamed-player
+# supportedDevices=Tamed Link
+"""
+Tamed Player link for FL Studio.
+
+Tamed Player's Audio Doctor sends a short MIDI message through a virtual MIDI
+port (for example a loopMIDI port called "Tamed Link"). This script reads it
+and sets the project tempo, rewinds to bar 1 and opens the playlist, so the WAV
+you drag in from Tamed Player lands on the grid.
+
+Messages (SysEx, manufacturer 0x7D, then "TP"):
+  F0 7D 54 50 01 b0 b1 b2 b3 F7   set tempo, value = BPM x 1000 in four 7-bit bytes
+  F0 7D 54 50 02 F7               ping, answered with F0 7D 54 50 03 F7 when an output port is linked
+  F0 7D 54 50 05 F7               rewind to bar 1 and show the playlist
+"""
+import midi
+import general
+import transport
+import ui
+import device
+
+HEAD = (0xF0, 0x7D, 0x54, 0x50)
+
+
+def OnInit():
+    print("Tamed Player link is ready")
+
+
+def _hint(text):
+    try:
+        ui.setHintMsg(text)
+    except Exception:
+        pass
+
+
+def OnSysEx(event):
+    data = event.sysex
+    if not data or len(data) < 6 or tuple(data[:4]) != HEAD:
+        return
+    event.handled = True
+    cmd = data[4]
+    body = data[5:-1]
+    if cmd == 0x01 and len(body) >= 4:
+        milli = (body[0] << 21) | (body[1] << 14) | (body[2] << 7) | body[3]
+        bpm = milli / 1000.0
+        if 10.0 <= bpm <= 522.0:
+            general.processRECEvent(midi.REC_Tempo, milli, midi.REC_Control | midi.REC_UpdateControl)
+            _hint("Tamed Player: tempo set to %g BPM" % bpm)
+    elif cmd == 0x02:
+        try:
+            device.midiOutSysex(bytes(HEAD + (0x03, 0xF7)))
+        except Exception:
+            pass
+        _hint("Tamed Player is connected")
+    elif cmd == 0x05:
+        try:
+            if transport.isPlaying():
+                transport.stop()
+            transport.setSongPos(0)
+            ui.showWindow(midi.widPlaylist)
+            ui.setFocused(midi.widPlaylist)
+        except Exception:
+            pass
+`;
+const FL_HOWTO = `Tamed Player plugin for FL Studio
+==================================
+
+What it does
+Tamed Player's Audio Doctor uses it to set FL Studio's tempo to your song, rewind to bar 1 and open the playlist,
+so the beat-aligned WAV you drag in from Tamed Player sits on the grid.
+
+Install
+1. Unzip this file. You get a folder called "Tamed Player".
+2. Move that folder into FL Studio's hardware scripts folder:
+     Windows: Documents\Image-Line\FL Studio\Settings\Hardware
+     Mac:     Documents/Image-Line/FL Studio/Settings/Hardware
+   (FL Studio shows its user data folder under Options > File settings.)
+   You should end up with ...\Settings\Hardware\Tamed Player\device_TamedPlayer.py
+3. Make a virtual MIDI port called "Tamed Link" with loopMIDI (free): https://www.tobias-erichsen.de/software/loopmidi.html
+   On Windows 11 with Windows MIDI Services you can use its loopback port instead.
+4. Open FL Studio > Options > MIDI settings. Under Input, pick "Tamed Link", set Controller type to "Tamed Player" and enable it.
+   To let Tamed Player's Test button get an answer, also pick the same port under Output and give both the same Port number.
+5. In Tamed Player: Audio Doctor > Send to FL Studio > Set up > pick the port > Test.
+   FL Studio's hint bar says "Tamed Player is connected".
+
+Made by dris, trulytamed and all of KGB.
+`;
+async function flDownload() {
+  if (!window.JSZip) return toast('Zip support did not load');
+  let dl = null; try { dl = await claude.use('downloads'); } catch (e) { } if (!dl) return toast('Saving files is not available in this view');
+  const z = new JSZip(); z.file('Tamed Player/device_TamedPlayer.py', FL_SCRIPT.replace(/\n/g, '\r\n')); z.file('How to install.txt', FL_HOWTO.replace(/\n/g, '\r\n'));
+  try { await dl.save({ filename: 'Tamed Player for FL Studio.zip', data: await z.generateAsync({ type: 'blob' }) }); toast('Saved the FL Studio plugin'); } catch (e) { if (e && e.code !== 'declined') toast('The plugin could not be saved'); }
+}
 async function flMidi() {
   if (FL.access || FL.tried) return FL.access; FL.tried = true;
   try {
@@ -2506,14 +2601,14 @@ function flTempo(bpm) { const v = Math.round(bpm * 1000); return flSend(1, [(v >
 function flIn(e) { const d = e.data; if (d && d[0] === 0xF0 && d[1] === 0x7D && d[2] === 0x54 && d[3] === 0x50 && d[4] === 3) { FL.pong = Date.now(); FL.msg = 'FL Studio answered. The link works.'; renderFlBox(); } }
 async function renderFlBox() {
   const el = $('#flbox'); if (!el) return;
-  if (!window.tpDesktop || !tpDesktop.fl) { el.innerHTML = `<p class="faint small di-note">Sending to FL Studio works in the Tamed Player app for Windows. It sets FL's tempo to this song and lets you drag the WAV straight onto the playlist.</p>`; return; }
+  if (!window.tpDesktop || !tpDesktop.fl) { el.innerHTML = `<p class="faint small di-note">Sending to FL Studio works in the Tamed Player app for Windows. It sets FL's tempo to this song and lets you drag the WAV straight onto the playlist. You can get the FL Studio plugin here now.</p><div class="crow"><button class="btn" data-act="doc-fl-download">${ico('save', 14)} Download FL Studio plugin</button></div>`; return; }
   await flMidi(); if (!FL.status) { try { FL.status = await tpDesktop.fl.status(); } catch (e) { FL.status = {}; } }
   if (!$('#flbox')) return;
   const t = S.tracks.find(x => keyOf(x) === DOC.sel), an = t && S.an[keyOf(t)], port = flPort(), outs = flOuts();
   const linked = !!port, answered = FL.pong && Date.now() - FL.pong < 6e5;
   el.innerHTML = `<div class="fl-stat"><span class="dst ${answered ? 'ok' : linked ? 'wait' : 'err'}">●</span><span>${answered ? 'Linked to FL Studio through <b>' + esc(port.name) + '</b>' : linked ? 'Using MIDI port <b>' + esc(port.name) + '</b>' : FL.err ? esc(FL.err) : 'No link port yet, so FL\'s tempo won\'t change on its own'}</span><button class="btn sm" data-act="doc-fl-setup">${DOC.flSetup ? 'Hide setup' : 'Set up'}</button></div>
     ${DOC.flSetup ? `<ol class="fl-steps">
-      <li><b>Install the FL Studio script.</b> ${FL.status && FL.status.installed ? '<span class="dst ok">Installed</span>' : ''}<br><button class="btn sm" data-act="doc-fl-install">${ico('save', 13)} ${FL.status && FL.status.installed ? 'Install again' : 'Install script'}</button></li>
+      <li><b>Install the FL Studio plugin.</b> ${FL.status && FL.status.installed ? '<span class="dst ok">Installed</span>' : ''}<br><span class="crow"><button class="btn sm" data-act="doc-fl-install">${ico('save', 13)} ${FL.status && FL.status.installed ? 'Install again' : 'Install into FL Studio'}</button><button class="btn sm" data-act="doc-fl-download">Download plugin</button></span></li>
       <li><b>Make a virtual MIDI port.</b> Install <a href="https://www.tobias-erichsen.de/software/loopmidi.html" target="_blank" rel="noopener">loopMIDI</a> (free) and add a port named <b>Tamed Link</b>. On Windows 11 with Windows MIDI Services you can use its loopback port.</li>
       <li><b>Turn it on in FL Studio.</b> Options › MIDI settings. Under Input, pick <b>Tamed Link</b>, set Controller type to <b>Tamed Player</b> and enable it. To get the answer below, also pick the same port under Output and give both the same Port number.</li>
       <li><b>Pick the port here and test.</b><div class="crow"><label class="sel box"><select id="doc-midi" aria-label="MIDI port">${outs.length ? outs.map(o => `<option ${port && port.id === o.id ? 'selected' : ''}>${esc(o.name)}</option>`).join('') : '<option value="">No MIDI ports found</option>'}</select></label><button class="btn sm" data-act="doc-fl-test" ${linked ? '' : 'disabled'}>Test</button></div></li>
@@ -2526,7 +2621,8 @@ async function renderFlBox() {
 async function flAct(a, t, an) {
   switch (a) {
     case 'doc-fl-setup': DOC.flSetup = !DOC.flSetup; renderFlBox(); break;
-    case 'doc-fl-install': { const r = await tpDesktop.fl.install(); if (r && r.ok) { FL.status = null; FL.msg = 'Script installed in ' + r.dir + '. Restart FL Studio if it was open.'; } else if (r && r.error) FL.msg = 'The script could not be installed: ' + r.error; renderFlBox(); break; }
+    case 'doc-fl-download': flDownload(); break;
+    case 'doc-fl-install': { const r = await tpDesktop.fl.install(); if (r && r.ok) { FL.status = null; FL.msg = 'Plugin installed in ' + r.dir + '. Restart FL Studio if it was open.'; } else if (r && r.error) FL.msg = 'The script could not be installed: ' + r.error; renderFlBox(); break; }
     case 'doc-fl-test': { if (!flSend(2)) { FL.msg = 'That port could not be used.'; renderFlBox(); break; } FL.msg = 'Sent. FL\'s hint bar should say "Tamed Player is connected".'; renderFlBox(); break; }
     case 'doc-fl-reveal': if (an && an.flPath) tpDesktop.fl.reveal(an.flPath); break;
     case 'doc-fl-send': {
@@ -2579,6 +2675,9 @@ function renderSettings(m) {
       ${setRow('Saved on this device', '<span id="set-usage">Checking…</span>', '')}
       ${setRow('Back up everything', 'One zip with every project, song, cover, CD design and font. Keep it somewhere safe.', `<button class="btn sm" data-act="backup">${ico('save', 14)} Back up</button>`)}
       ${setRow('Restore from a backup', 'Replaces everything here with the backup\'s contents.', `<button class="btn sm" data-act="restore">${ico('upload', 14)} Restore…</button>`)}
+    </section>
+    <section class="set-card box"><h2>FL Studio</h2>
+      ${setRow('FL Studio plugin', 'Lets Audio Doctor set FL Studio\'s tempo and open the playlist when you send a song. The zip has install steps.', `<div class="crow">${window.tpDesktop && tpDesktop.fl ? `<button class="btn sm" data-act="set-fl-install">${ico('save', 14)} Install into FL Studio</button>` : ''}<button class="btn sm" data-act="doc-fl-download">${ico('save', 14)} Download plugin</button></div>`)}
     </section>
     ${window.tpDesktop ? `<section class="set-card box"><h2>Desktop app</h2>${setRow('Version ' + esc(tpDesktop.version), 'New versions come from the tamed-player repository on GitHub and install over this one. Your projects are kept.', `<button class="btn sm" data-act="desk-update">${ico('repeat', 14)} Check for updates</button>`)}</section>` : ''}
     <section class="set-card box"><h2>Keyboard shortcuts</h2>
@@ -3036,6 +3135,7 @@ function act(a, el, e) {
     case 'meta-add': { const tb = $(`#modal [data-list="${k}"]`); if (tb) { tb.insertAdjacentHTML('beforeend', metaRow(k)); const ins = tb.querySelectorAll('tr:last-child input'); if (ins[0]) ins[0].focus(); } break; }
     case 'meta-rm': { const tr = el.closest('tr'), tb = tr.parentElement; if (tb.children.length > 1) tr.remove(); else tr.querySelectorAll('input').forEach(i => i.value = ''); break; }
     case 'desk-update': if (window.tpDesktop) { toast('Checking for updates…'); tpDesktop.checkForUpdates(); } break;
+    case 'set-fl-install': if (window.tpDesktop && tpDesktop.fl) tpDesktop.fl.install().then(r => { if (r && r.ok) toast('Installed. Restart FL Studio if it was open.'); else if (r && r.error) toast('The plugin could not be installed'); }); break;
     case 'set-st': { const t = trk(id); if (t) { t.status = k; refresh(); } break; }
     case 'ctx-deltrack': { const t = trk(id); if (!t) break; if (S.cur === t.id) { Engine.pause(); S.cur = null; S.playing = false; } S.tracks = S.tracks.filter(x => x !== t); S.cols.forEach(c => c.tracks = c.tracks.filter(x => x !== t.id)); DB.del(t.id); (t.versions || []).forEach(v => DB.del(v.id)); if (S.editId === t.id) closeDrawer(); toast('Track deleted'); refresh(); break; }
     case 'ctx-viewcd': S.colId = id; S.cd.colId = id; openViewer('case'); break;

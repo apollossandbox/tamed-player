@@ -20,6 +20,10 @@ body = swap(body, '<script src="lib/jszip.min.js"></script>', bridge + '\n<scrip
 const page = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 ${body}
 </body></html>`;
+// The FL Studio plugin lives in the page (so the web version can offer it as a download); copy it out for the installer.
+const fl = src.match(/const FL_SCRIPT = `([\s\S]*?)`;/); if (!fl) throw new Error('Missing in page: FL_SCRIPT');
+fs.mkdirSync(path.join(__dirname, 'fl'), { recursive: true });
+fs.writeFileSync(path.join(__dirname, 'fl', 'device_TamedPlayer.py'), fl[1]);
 fs.mkdirSync(path.join(__dirname, 'app'), { recursive: true });
 fs.writeFileSync(path.join(__dirname, 'app', 'index.html'), page);
 fs.copyFileSync(path.join(__dirname, 'build', 'icon.png'), path.join(__dirname, 'app', 'icon.png'));

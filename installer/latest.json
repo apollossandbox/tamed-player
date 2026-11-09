@@ -1,8 +1,8 @@
 {
-  "version": "1.1.0",
+  "version": "1.1.1",
   "file": "TamedPlayer-Setup.exe",
-  "size": 82379989,
-  "sha256": "4ab6a4b89a3d27f15fd1601192ae4be343d7cae77b34a95e1f133320cc07237f",
-  "notes": "Audio Doctor: reads tempo, key and first beat; MP3 to WAV; beat-aligned exports; Send to FL Studio. Uploaded versions keep their file name.",
+  "size": 82380588,
+  "sha256": "37d9f2284ce5e5b579e21bf4f5ea6a2f61739ed7a59ec0cd4f53a14d3e14306b",
+  "notes": "The FL Studio plugin can be downloaded from Audio Doctor and Settings, or installed straight into FL Studio.",
   "date": "2026-11-09"
 }
