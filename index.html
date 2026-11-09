@@ -644,6 +644,14 @@ body.cx-on .bar { transform: none; }
 .pa-share { position: relative; } .pa-share .share-pop { top: calc(100% + 8px); left: 0; right: auto; }
 .hide-folder { display: none; }
 
+
+.psd .psd-close { display: inline-grid; place-items: center; width: 16px; height: 16px; margin-left: 2px; border-radius: 4px; color: var(--ink3); font-style: normal; } .psd .psd-close:hover { background: var(--hover); color: var(--ink); }
+.psd { max-width: 220px; } .psd-add { display: inline-grid; place-items: center; width: 26px; height: 26px; margin-left: 2px; border-radius: 6px; color: var(--ink2); } .psd-add:hover { background: var(--hover); color: var(--ink); }
+.psd-view { align-self: center; margin-right: 6px; } .psd-view .seg > button { padding: 3px 10px; font-size: 11.5px; }
+.dsg-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 6px; }
+.dsg { display: flex; align-items: center; gap: 8px; padding: 5px 6px; border-radius: 7px; text-align: left; color: var(--ink2); } .dsg:hover { background: var(--hover); } .dsg.on { background: var(--panel3); color: var(--ink); }
+.dsg span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; } .dsg small { font-size: 10.5px; color: var(--ink3); }
+.dsg-cv { width: 22px; height: 22px; border-radius: 4px; background: var(--panel2) center/cover; flex: none; display: grid; place-items: center; color: var(--ink3); }
 /* Audio Doctor */
 .doc-drop { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px; margin-bottom: 16px; border: 1.5px dashed var(--line); border-radius: 14px; color: var(--ink2); }
 .doc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 430px); gap: 16px; align-items: start; }
@@ -1403,10 +1411,23 @@ const FONT_LIB = [
   ['Space Mono', 'Mono', [400, 700], 1, 0], ['IBM Plex Mono', 'Mono', [300, 400, 500, 600, 700], 1, 0], ['Courier Prime', 'Mono', [400, 700], 1, 0], ['VT323', 'Mono', [400], 0, 0],
   ['Press Start 2P', 'Mono', [400], 0, 0], ['Silkscreen', 'Mono', [400, 700], 0, 0], ['Major Mono Display', 'Mono', [400], 0, 0]
 ].map(([n, c, w, i, v, sys]) => ({ n, c, w, i: !!i, v: !!v, sys: !!sys }));
-const FONT_CATS = ['All', 'Sans', 'Serif', 'Display', 'Script', 'Mono', 'Yours'];
+const FONT_CATS = ['All', 'Installed', 'Sans', 'Serif', 'Display', 'Script', 'Mono', 'Yours'];
+/* fonts already on this computer work without uploading: common ones are found by measuring, and the full list comes from the browser when allowed */
+const LOCAL_CANDIDATES = ['Arial Black', 'Arial Narrow', 'Arial Rounded MT Bold', 'Bahnschrift', 'Calibri', 'Cambria', 'Candara', 'Century Gothic', 'Comic Sans MS', 'Consolas', 'Constantia', 'Corbel', 'Franklin Gothic Medium', 'Gabriola', 'Gadugi', 'Ink Free', 'Impact', 'Leelawadee UI', 'Lucida Console', 'Lucida Sans Unicode', 'Malgun Gothic', 'Microsoft Sans Serif', 'MS Gothic', 'Palatino Linotype', 'Segoe Print', 'Segoe Script', 'Segoe UI', 'Segoe UI Black', 'Sitka', 'Sylfaen', 'Tahoma', 'Trebuchet MS', 'Verdana', 'Book Antiqua', 'Bookman Old Style', 'Century Schoolbook', 'Garamond', 'Gill Sans MT', 'Haettenschweiler', 'Rockwell', 'Rockwell Extra Bold', 'Stencil', 'Algerian', 'Bauhaus 93', 'Bodoni MT', 'Britannic Bold', 'Broadway', 'Brush Script MT', 'Castellar', 'Chiller', 'Colonna MT', 'Cooper Black', 'Copperplate Gothic Bold', 'Curlz MT', 'Edwardian Script ITC', 'Elephant', 'Engravers MT', 'Felix Titling', 'Footlight MT Light', 'Forte', 'Freestyle Script', 'Gigi', 'Goudy Old Style', 'Harlow Solid Italic', 'Harrington', 'High Tower Text', 'Jokerman', 'Juice ITC', 'Kristen ITC', 'Magneto', 'Matura MT Script Capitals', 'Mistral', 'Modern No. 20', 'Niagara Solid', 'OCR A Extended', 'Old English Text MT', 'Onyx', 'Papyrus', 'Parchment', 'Playbill', 'Poor Richard', 'Ravie', 'Showcard Gothic', 'Snap ITC', 'Tw Cen MT', 'Viner Hand ITC', 'Vivaldi', 'Wide Latin', 'Helvetica Neue', 'Avenir', 'Avenir Next', 'Futura', 'Gill Sans', 'Optima', 'Didot', 'Bodoni 72', 'Baskerville', 'Hoefler Text', 'American Typewriter', 'Menlo', 'Monaco', 'Marker Felt', 'Chalkboard', 'Noteworthy', 'Copperplate', 'Big Caslon', 'Rockwell', 'SF Pro Display', 'Roboto', 'Open Sans', 'Montserrat', 'Lato', 'Poppins', 'Helvetica'];
+const LOCAL = { names: null };
+function fontInstalled(n) {
+  const x = (fontInstalled.cv = fontInstalled.cv || document.createElement('canvas').getContext('2d')), t = 'mmmmmmmmmlliWW@#0123QqgÅ';
+  return ['monospace', 'serif', 'sans-serif'].some(b => { x.font = `72px ${b}`; const w0 = x.measureText(t).width; x.font = `72px "${n.replace(/"/g, '')}", ${b}`; return Math.abs(x.measureText(t).width - w0) > .5; });
+}
+function localFonts() {
+  if (LOCAL.names) return LOCAL.names; const lib = new Set(FONT_LIB.map(f => f.n));
+  LOCAL.names = [...new Set([...LOCAL_CANDIDATES.filter(n => !lib.has(n) && fontInstalled(n)), ...(S.cd.localNames || []).filter(n => !lib.has(n))])].sort((a, b) => a.localeCompare(b));
+  return LOCAL.names;
+}
+const isLocalFont = n => (S.cd.localNames || []).includes(n) || (LOCAL.names || []).includes(n);
 const WEIGHT_NAMES = { 100: 'Thin', 200: 'Extra Light', 300: 'Light', 400: 'Regular', 500: 'Medium', 600: 'Semibold', 700: 'Bold', 800: 'Extra Bold', 900: 'Black' };
 const LEGACY_FONTS = { sans: 'Arial', serif: 'Georgia', marker: 'Permanent Marker', mono: 'Courier New' };
-const fontEntry = n => FONT_LIB.find(f => f.n === n) || (S.cd.fonts || []).map(f => ({ n: f.n, c: 'Yours', w: [400], i: false, v: false, custom: true })).find(f => f.n === n) || null;
+const fontEntry = n => FONT_LIB.find(f => f.n === n) || (S.cd.fonts || []).map(f => ({ n: f.n, c: 'Yours', w: [400], i: false, v: false, custom: true })).find(f => f.n === n) || (isLocalFont(n) ? { n, c: 'Installed', w: [300, 400, 700, 900], i: true, v: false, sys: true, local: true } : null);
 const fontWeights = f => !f ? [400] : f.v ? Array.from({ length: (f.w[1] - f.w[0]) / 100 + 1 }, (_, i) => f.w[0] + i * 100) : f.w;
 const fontStack = n => { const f = fontEntry(n); return `"${n}", ${f && f.c === 'Serif' ? 'Georgia, serif' : f && f.c === 'Mono' ? '"Courier New", monospace' : f && f.c === 'Script' ? 'cursive' : 'Arial, Helvetica, sans-serif'}`; };
 function fontQuery(f) {
@@ -1452,10 +1473,12 @@ async function loadCustomFonts() {
 }
 function fontListHTML() {
   const q = (UI.fontQ || '').toLowerCase(), cat = UI.fontCat || 'All', L = selLayer();
-  const all = [...FONT_LIB, ...(S.cd.fonts || []).map(f => fontEntry(f.n))];
-  const list = all.filter(f => (cat === 'All' || f.c === cat) && (!q || f.n.toLowerCase().includes(q)));
-  return list.map(f => `<button class="fontitem ${L && L.font === f.n ? 'on' : ''}" data-act="cd-font" data-k="${esc(f.n)}" style="font-family:${esc(fontStack(f.n))}"><span>${esc(f.n)}</span><small>${f.c === 'Yours' ? 'Uploaded' : f.c}</small></button>`).join('')
-    || `<p class="faint small" style="padding:8px">${cat === 'Yours' ? 'Upload a .ttf, .otf, .woff or .woff2 file to use your own font.' : 'No fonts match.'}</p>`;
+  const lib = new Set(FONT_LIB.map(f => f.n)), all = [...FONT_LIB, ...(S.cd.fonts || []).map(f => fontEntry(f.n)), ...localFonts().filter(n => !lib.has(n)).map(n => ({ n, c: 'Installed' }))];
+  const list = all.filter(f => (cat === 'All' || f.c === cat || (cat === 'Installed' && f.sys)) && (!q || f.n.toLowerCase().includes(q)));
+  const raw = (UI.fontQ || '').trim(), typed = raw && !all.some(f => f.n.toLowerCase() === raw.toLowerCase()) && fontInstalled(raw) ? `<button class="fontitem" data-act="cd-font" data-k="${esc(raw)}" style="font-family:${esc('"' + raw + '", Arial')}"><span>${esc(raw)}</span><small>On this computer</small></button>` : '';
+  const more = cat === 'Installed' && window.queryLocalFonts && !UI.localAsked ? `<button class="pso-btn" data-act="cd-fontlocal" style="margin:6px 8px">${ico('search', 13)} Show every font on this computer</button>` : '';
+  return typed + (list.map(f => `<button class="fontitem ${L && L.font === f.n ? 'on' : ''}" data-act="cd-font" data-k="${esc(f.n)}" style="font-family:${esc(fontStack(f.n))}"><span>${esc(f.n)}</span><small>${f.c === 'Yours' ? 'Uploaded' : f.c === 'Installed' || f.sys ? 'On this computer' : f.c}</small></button>`).join('')
+    || (typed ? '' : `<p class="faint small" style="padding:8px">${cat === 'Yours' ? 'Upload a .ttf, .otf, .woff or .woff2 file to use your own font.' : raw ? 'No fonts match. If the font is installed, type its exact name.' : 'No fonts match.'}</p>`)) + more;
 }
 function openFontList() { [...FONT_LIB, ...[]].forEach(linkFont); const l = $('#fontlist'); if (l) l.innerHTML = fontListHTML(); }
 const sheetKeys = () => S.cd.caseType === 'slim' ? ['front', 'inside', 'disc'] : ['front', 'inside', 'tray', 'trayIn', 'spineL', 'spineR', 'disc'];
@@ -1811,6 +1834,23 @@ function cdDirty() { if (cdQueued) return; cdQueued = true; requestAnimationFram
 
 /* page */
 const cdInProject = () => S.view === 'collection' && S.projTab === 'cd';
+function designSet(c) {
+  const D = design(c); if (!D.$) D.$ = { id: uid(), name: 'Design 1', n: 1, cover: null };
+  S.cd.alts = S.cd.alts || {}; const alts = S.cd.alts[c.id] || (S.cd.alts[c.id] = []);
+  return { D, alts, all: [D, ...alts].sort((a, b) => (a.$.n || 0) - (b.$.n || 0)) };
+}
+function switchDesign(c, id, quiet) {
+  const { D, alts } = designSet(c); if (D.$.id === id) return; const i = alts.findIndex(x => x.$.id === id); if (i < 0) return;
+  const nd = alts.splice(i, 1)[0]; alts.push(D); S.cd.designs[c.id] = nd; UI.cdSel = null; H.col = null;
+  if (!quiet && nd.$.cover && c.covers.some(k => k.id === nd.$.cover)) c.cover = nd.$.cover; // a linked design brings its cover with it
+  save();
+  if (!quiet) refresh(); if (C3 && cdActive()) { buildCase(); cdDirty(); }
+  return nd;
+}
+// when a project's cover changes, bring up the CD design linked to it
+function designForCover(c) { if (!c || !S.cd.designs || !S.cd.designs[c.id]) return; const { D, all } = designSet(c); const m = all.find(x => x.$.cover && x.$.cover === c.cover); if (m && m !== D) { switchDesign(c, m.$.id, true); toast('CD design: ' + m.$.name); } }
+function cdTabs(c) { const t = (S.cd.tabs || []).filter(id => col(id) && !isFolder(col(id))); if (c && !t.includes(c.id)) t.push(c.id); S.cd.tabs = t; return t; }
+function cdOpenTab(id) { if (!col(id)) return; S.cd.colId = id; if (S.view === 'collection') S.colId = id; cdTabs(col(id)); UI.cdSel = null; H.col = null; refresh(); }
 const cdActive = () => S.view === 'cd' || cdInProject();
 /* ---------- CD editor workspace: options bar, toolbar, document tabs, canvas, status bar, Properties + Layers dock ---------- */
 Object.assign(IC, {
@@ -1835,7 +1875,8 @@ function cdGridHTML(c) {
   return `<div class="ps ${UI.psFull ? 'full' : ''} ${S.cd.lock ? 'locked' : ''}" id="ps">
     <div class="ps-opts" id="psopts"></div>
     <div class="ps-tools" id="pstools"></div>
-    <div class="ps-docs" role="tablist"><button class="psd ${three ? 'on' : ''}" role="tab" aria-selected="${three}" data-act="cd-view" data-k="3d">${ico('cube', 13)}<span>${esc(c.name)} · 3D Case</span></button><button class="psd ${three ? '' : 'on'}" role="tab" aria-selected="${!three}" data-act="cd-view" data-k="2d">${ico('sheet', 13)}<span>Print Sheet · ${SHEETS[S.cd.sheet].name}</span></button><span class="grow"></span><button class="psd-v lockt ${S.cd.lock ? 'on' : ''}" data-act="cd-lock" role="switch" aria-checked="${!!S.cd.lock}" title="${S.cd.lock ? 'Turn editing back on' : 'Turn editing off and just view the model'}"><i class="sw2"></i>View only</button><button class="psd-v" data-act="vw-open-case" title="Open the CD viewer">${ico('cube', 13)} Viewer</button><button class="psd-v" data-act="vw-open-disc" title="View the disc on its own">${ico('disc', 13)} Disc</button><button class="psd-x" data-act="cd-full" title="${UI.psFull ? 'Exit full screen (Esc)' : 'Full screen'}" aria-label="${UI.psFull ? 'Exit full screen' : 'Full screen'}">${ico(UI.psFull ? 'shrink' : 'expand', 14)}</button></div>
+    <div class="ps-docs" role="tablist">${cdTabs(c).map(id => { const x = col(id); return `<button class="psd ${id === c.id ? 'on' : ''}" role="tab" aria-selected="${id === c.id}" data-act="cd-tab" data-id="${id}" title="${esc(x.name)}">${ico('disc', 13)}<span>${esc(x.name)}</span>${cdTabs(c).length > 1 ? `<i class="psd-close" data-act="cd-tabx" data-id="${id}" role="button" aria-label="Close ${esc(x.name)}" title="Close">${ico('x', 11)}</i>` : ''}</button>`; }).join('')}${S.cols.some(x => !isFolder(x) && !cdTabs(c).includes(x.id)) ? `<button class="psd-add" data-act="cd-tabadd" title="Open another project" aria-label="Open another project">${ico('plus', 13)}</button>` : ''}
+      <span class="grow"></span><div class="psd-view">${seg('cdv', [['3d', '3D case'], ['2d', 'Print sheet']], three ? '3d' : '2d', 'cd-view')}</div><button class="psd-v lockt ${S.cd.lock ? 'on' : ''}" data-act="cd-lock" role="switch" aria-checked="${!!S.cd.lock}" title="${S.cd.lock ? 'Turn editing back on' : 'Turn editing off and just view the model'}"><i class="sw2"></i>View only</button><button class="psd-v" data-act="vw-open-case" title="Open the CD viewer">${ico('cube', 13)} Viewer</button><button class="psd-v" data-act="vw-open-disc" title="View the disc on its own">${ico('disc', 13)} Disc</button><button class="psd-x" data-act="cd-full" title="${UI.psFull ? 'Exit full screen (Esc)' : 'Full screen'}" aria-label="${UI.psFull ? 'Exit full screen' : 'Full screen'}">${ico(UI.psFull ? 'shrink' : 'expand', 14)}</button></div>
     <div class="ps-canvas" id="cdview">${three ? '' : '<div class="ps-scroll" id="psscroll"><canvas id="cd2d"></canvas></div>'}</div>
     <div class="ps-status" id="psstatus"></div>
     <aside class="ps-dock">
@@ -1912,6 +1953,11 @@ function renderPsProps() {
     P.innerHTML = `<div class="psp-sec"><h4>${ico('folder', 13)} ${sh.name}</h4><p class="psp-note">${sh.size} trim, 3 mm bleed. ${sh.note}</p>
         <span class="psp-lab">Background</span>
         <div class="swatches">${[...new Set(bgs)].map(b => `<button class="sw ${sd.bg === b ? 'on' : ''}" style="--c:${bgCss(b)}" data-act="cd-bg" data-k="${b}" aria-label="${b === 'silver' ? 'Unprinted silver' : b === 'none' ? 'None, show the tray card' : 'Color ' + b}" title="${b === 'none' ? 'None: show the tray card art' : b === 'silver' ? 'Unprinted silver' : b}"></button>`).join('')}<label class="sw" style="--c:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);overflow:hidden" title="Custom color"><input type="color" id="cd-bg" value="${sd.bg === 'silver' || sd.bg === 'none' ? '#cccccc' : toHex(sd.bg)}" style="opacity:0;width:100%;height:100%;cursor:pointer" aria-label="Custom background color"></label></div></div>
+      ${(() => { const { D, all } = designSet(c), ci = c.covers.findIndex(x => x.id === c.cover); return `<div class="psp-sec"><h4>Designs</h4>
+        <div class="dsg-list">${all.map(x => { const cv = x.$.cover && c.covers.find(k => k.id === x.$.cover), cn = cv ? c.covers.indexOf(cv) + 1 : 0; return `<button class="dsg ${x === D ? 'on' : ''}" data-act="cd-dsg" data-k="${x.$.id}" title="${x.$.cover ? 'Linked to cover ' + cn : 'Not linked to a cover'}">${cv && srcs['art:' + cv.id] ? `<i class="dsg-cv" style="background-image:url(${srcs['art:' + cv.id]})"></i>` : `<i class="dsg-cv none">${ico('disc', 12)}</i>`}<span>${esc(x.$.name)}</span>${x.$.cover ? `<small>Cover ${cn || '?'}</small>` : ''}</button>`; }).join('')}</div>
+        <div class="crow"><button class="pso-btn" data-act="cd-dsg-dup">${ico('copy', 13)} Duplicate</button><button class="pso-btn" data-act="cd-dsg-new">${ico('plus', 13)} New</button>${all.length > 1 ? `<button class="pso-ib" data-act="cd-dsg-step" data-k="-1" title="Previous design" aria-label="Previous design">◀</button><button class="pso-ib" data-act="cd-dsg-step" data-k="1" title="Next design" aria-label="Next design">▶</button>` : ''}</div>
+        <div class="crow">${c.cover ? `<button class="pso-btn ${D.$.cover === c.cover ? 'on' : ''}" data-act="cd-dsg-link">${ico('link', 13)} ${D.$.cover === c.cover ? 'Linked to cover ' + (ci + 1) : 'Link to cover ' + (ci + 1)}</button>` : ''}<button class="pso-btn" data-act="cd-dsg-ren">${ico('edit', 13)} Rename</button>${all.length > 1 ? `<button class="pso-btn" data-act="cd-dsg-del">${ico('trash', 13)} Delete</button>` : ''}</div>
+        <p class="psp-note">Link a design to a cover and it comes up whenever that cover is in use.</p></div>`; })()}
       <div class="psp-sec"><h4>Package</h4>
         ${cdInProject() ? '' : `<div class="sel box wide"><select id="cd-col" aria-label="Project">${S.cols.filter(x => !isFolder(x)).map(x => `<option value="${x.id}" ${x.id === c.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></div>`}
         ${seg('cdcase', [['jewel', 'Jewel case'], ['slim', 'Slim jewel']], S.cd.caseType, 'cd-case', 'full')}
@@ -2039,6 +2085,18 @@ function cdAct(a, el) {
   const sd = c ? design(c)[key] : null, sh = SHEETS[key];
   switch (a) {
     case 'cd-view': S.cd.view = k; refresh(); break;
+    case 'cd-tab': if (id !== c.id) cdOpenTab(id); break;
+    case 'cd-dsg': switchDesign(c, k); break;
+    case 'cd-dsg-step': { const { D, all } = designSet(c), i = all.indexOf(D), nx = all[(i + (+k) + all.length) % all.length]; switchDesign(c, nx.$.id); toast(nx.$.name); break; }
+    case 'cd-dsg-dup': case 'cd-dsg-new': { const { D, alts, all } = designSet(c), n = Math.max(...all.map(x => x.$.n || 0)) + 1;
+      const nd = a === 'cd-dsg-dup' ? JSON.parse(JSON.stringify(D)) : autoDesign(c); nd.$ = { id: uid(), name: a === 'cd-dsg-dup' ? D.$.name + ' copy' : 'Design ' + n, n, cover: null };
+      alts.push(nd); switchDesign(c, nd.$.id); toast(a === 'cd-dsg-dup' ? 'Duplicated the design' : 'New design'); break; }
+    case 'cd-dsg-link': { const { D, all } = designSet(c); if (D.$.cover === c.cover) D.$.cover = null; else { all.forEach(x => { if (x.$.cover === c.cover) x.$.cover = null; }); D.$.cover = c.cover; } save(); renderCdPanel(); break; }
+    case 'cd-dsg-ren': { const { D } = designSet(c), n = prompt('Name this design', D.$.name); if (n && n.trim()) { D.$.name = n.trim().slice(0, 40); save(); renderCdPanel(); } break; }
+    case 'cd-dsg-del': { if (!confirmBtn(el, 'Click again to delete')) break; const { D, alts } = designSet(c); if (!alts.length) break; const gone = D.$.name; S.cd.designs[c.id] = alts.shift(); UI.cdSel = null; H.col = null; save(); refresh(); if (C3) { buildCase(); cdDirty(); } toast('Deleted ' + gone); break; }
+    case 'cd-tabx': { const t = cdTabs(c), i = t.indexOf(id); if (t.length < 2 || i < 0) break; t.splice(i, 1); S.cd.tabs = t; if (id === c.id) cdOpenTab(t[Math.min(i, t.length - 1)]); else refresh(); break; }
+    case 'cd-tabadd': { const r = el.getBoundingClientRect(), open = cdTabs(c); ctxMenu(r.left, r.bottom + 4, [{ head: 'Open a project' }, ...S.cols.filter(x => !isFolder(x) && !open.includes(x.id)).map(x => ({ label: x.name, act: 'cd-tabopen', id: x.id, icon: 'disc' }))]); break; }
+    case 'cd-tabopen': cdOpenTab(id); break;
     case 'cd-tool': S.cd.tool = k; S.cd.mode = k === 'orbit' ? 'orbit' : 'move'; renderPsTools(); renderPsOpts(); save(); break;
     case 'cd-full': UI.psFull = !UI.psFull; { const ps = $('#ps'); if (ps) ps.classList.toggle('full', UI.psFull); } renderCdPanel(); { const x = $('[data-act="cd-full"]'); if (x) { x.innerHTML = ico(UI.psFull ? 'shrink' : 'expand', 14); x.title = UI.psFull ? 'Exit full screen (Esc)' : 'Full screen'; } } if (S.cd.view === '2d') requestAnimationFrame(draw2D); break;
     case 'cd-zoom': cdZoom(k); break;
@@ -2076,7 +2134,8 @@ function cdAct(a, el) {
     case 'cd-addtext': addLayer({ type: 'text', text: c.name, size: 6, lh: 1.3, ls: 0, italic: false, caps: false, color: sd.bg === '#ffffff' || sd.bg === 'silver' || sd.bg === '#f4f4f2' ? '#111111' : '#ffffff', font: key === 'disc' && sd.bg === 'silver' ? 'Permanent Marker' : 'Archivo', align: 'center', weight: 700, w: sh.w * .8 }); break;
     case 'cd-fontpick': UI.fontOpen = !(UI.fontOpen && UI.fontFrom === el.dataset.from); UI.fontFrom = el.dataset.from; renderFontDrop(); if (UI.fontOpen) { [...FONT_LIB].forEach(linkFont); const q = $('#font-q'); if (q) q.focus(); } break;
     case 'cd-fontcat': UI.fontCat = k; $$('.pso-cats button').forEach(b => b.classList.toggle('on', b.dataset.k === k)); openFontList(); break;
-    case 'cd-font': if (L && L.locked) { lockedToast(); break; } if (L) { fixText(L); L.font = k; const ws = fontWeights(fontEntry(k)); if (!ws.includes(L.weight)) L.weight = ws.reduce((a, b) => Math.abs(b - L.weight) < Math.abs(a - L.weight) ? b : a); UI.fontOpen = false; renderCdPanel(); cdDirty(); save(); } break;
+    case 'cd-fontlocal': UI.localAsked = true; (async () => { try { const fl = await window.queryLocalFonts(); const names = [...new Set(fl.map(f => f.family))]; S.cd.localNames = [...new Set([...(S.cd.localNames || []), ...names])]; LOCAL.names = null; save(); toast(`Found ${names.length} fonts on this computer`); } catch (e) { toast("The browser didn't share the font list. Type a font's exact name in the search box to use it."); } openFontList(); })(); break;
+    case 'cd-font': if (L && L.locked) { lockedToast(); break; } if (L && !fontEntry(k)) { S.cd.localNames = [...new Set([...(S.cd.localNames || []), k])]; LOCAL.names = null; } if (L) { fixText(L); L.font = k; const ws = fontWeights(fontEntry(k)); if (!ws.includes(L.weight)) L.weight = ws.reduce((a, b) => Math.abs(b - L.weight) < Math.abs(a - L.weight) ? b : a); UI.fontOpen = false; renderCdPanel(); cdDirty(); save(); } break;
     case 'cd-fontup': $('#cdfont').click(); break;
     case 'cd-tog': if (L && L.locked) { lockedToast(); break; } if (L) { L[k] = !L[k]; renderPsOpts(); renderPsProps(); cdDirty(); save(); } break;
     case 'cd-align': if (L && L.locked) { lockedToast(); break; } if (L) { L.align = k; renderPsOpts(); renderPsProps(); cdDirty(); save(); } break;
@@ -3202,7 +3261,7 @@ function act(a, el, e) {
     case 'ctx-replaudio': UI.replFor = id; $('#replaudio').click(); break;
     case 'ctx-addver': S.editId = id; $('#verfile').click(); break;
     case 'ctx-dlaudio': { const t = trk(id); if (t) (async () => { const k = keyOf(t), b = await DB.get(k); if (!b) return toast('The audio file is missing'); const ext = ((b.name || '').match(/\.[a-z0-9]+$/i) || [''])[0] || ({ 'audio/mpeg': '.mp3', 'audio/wav': '.wav', 'audio/x-wav': '.wav', 'audio/flac': '.flac', 'audio/mp4': '.m4a', 'audio/ogg': '.ogg' }[b.type] || '.mp3'); await saveBlob(safeName(dispTitle(t)) + ext, b); })(); break; }
-    case 'ctx-usecover': { const c = col(id); if (c) { c.cover = k; refresh(); toast('Cover changed'); } break; }
+    case 'ctx-usecover': { const c = col(id); if (c) { c.cover = k; designForCover(c); refresh(); toast('Cover changed'); } break; }
     case 'ctx-rmcover': { const c = col(id); if (c && c.cover) { DB.del('art:' + c.cover); delete srcs['art:' + c.cover]; c.covers = c.covers.filter(x => x.id !== c.cover); c.cover = c.covers.length ? c.covers[c.covers.length - 1].id : null; refresh(); toast('Cover removed'); } break; }
     case 'meta-open': openModal('meta', id); break;
     case 'modal-save': saveDetails(); break;
@@ -3259,7 +3318,7 @@ function act(a, el, e) {
     case 'vis': { col(S.colId).vis = k; refresh(); $('#sharepop').classList.add('open'); applySlides(); break; }
     case 'copy': if (navigator.clipboard) navigator.clipboard.writeText('https://' + el.dataset.link).then(() => toast('Link copied'), () => toast('Select the link and copy it')); else toast('Select the link and copy it'); break;
     case 'art': $('#art').click(); break;
-    case 'cover-pick': { const c = col(S.colId); c.cover = id; refresh(); break; }
+    case 'cover-pick': { const c = col(S.colId); c.cover = id; designForCover(c); refresh(); break; }
     case 'cover-rm': { if (!confirmBtn(el, 'Click again to remove')) break; const c = col(S.colId); DB.del('art:' + c.cover); delete srcs['art:' + c.cover]; c.covers = c.covers.filter(x => x.id !== c.cover); c.cover = c.covers.length ? c.covers[c.covers.length - 1].id : null; refresh(); break; }
     case 'untag': { const c = col(S.colId); c.tags.splice(+el.dataset.i, 1); refresh(); break; }
     case 'delcol': { if (!confirmBtn(el, 'Click again to delete the project')) break; const c = col(S.colId); if (S.cd.designs) delete S.cd.designs[c.id]; S.cols = S.cols.filter(x => x !== c); c.covers.forEach(x => DB.del('art:' + x.id)); S.view = 'library'; toast('Project deleted. Its tracks are still in your library.'); refresh(); break; }

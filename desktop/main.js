@@ -84,8 +84,8 @@ const dragIcon = () => { const i = nativeImage.createFromPath(path.join(__dirnam
 
 app.whenReady().then(() => {
   // Web MIDI (with SysEx) is how the app talks to the FL Studio script
-  session.defaultSession.setPermissionRequestHandler((wc, perm, cb) => cb(['midi', 'midiSysex', 'clipboard-sanitized-write'].includes(perm)));
-  session.defaultSession.setPermissionCheckHandler((wc, perm) => ['midi', 'midiSysex', 'clipboard-sanitized-write'].includes(perm));
+  session.defaultSession.setPermissionRequestHandler((wc, perm, cb) => cb(['midi', 'midiSysex', 'clipboard-sanitized-write', 'local-fonts'].includes(perm)));
+  session.defaultSession.setPermissionCheckHandler((wc, perm) => ['midi', 'midiSysex', 'clipboard-sanitized-write', 'local-fonts'].includes(perm));
   ipcMain.handle('tp-fl-install', () => installFlScript().catch(e => ({ ok: false, error: e.message })));
   ipcMain.handle('tp-fl-status', () => { const f = path.join(flUserDir(), 'Settings', 'Hardware', 'Tamed Player', 'device_TamedPlayer.py'); return { flFound: fs.existsSync(flUserDir()), installed: fs.existsSync(f) }; });
   ipcMain.handle('tp-fl-save', (e, name, data) => {
