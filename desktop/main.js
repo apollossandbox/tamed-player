@@ -1,6 +1,6 @@
 // Tamed Player desktop shell. The app itself is app/index.html; this file opens the window
 // and keeps the app up to date from GitHub.
-const { app, BrowserWindow, shell, session, dialog, net, ipcMain } = require('electron');
+const { app, BrowserWindow, shell, session, dialog, net, ipcMain, nativeImage } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
@@ -62,7 +62,38 @@ async function checkForUpdates(manual) {
   } finally { checking = false; }
 }
 
+/* ---------- FL Studio link ---------- */
+// The FL Studio script lives in FL's user data folder: Documents\Image-Line\FL Studio\Settings\Hardware\Tamed Player.
+// WAVs sent to FL are kept in Documents\Tamed Player\Sent to FL Studio, because FL projects point at the file on disk.
+const flUserDir = () => path.join(app.getPath('documents'), 'Image-Line', 'FL Studio');
+const sentDir = () => path.join(app.getPath('documents'), 'Tamed Player', 'Sent to FL Studio');
+const cleanName = n => String(n || 'track.wav').replace(/[<>:"/\\|?*\x00-\x1f]/g, '').replace(/\s+/g, ' ').trim().slice(0, 150) || 'track.wav';
+async function installFlScript() {
+  let base = flUserDir();
+  if (!fs.existsSync(base)) {
+    const r = await dialog.showOpenDialog(win, { title: 'Find your FL Studio user data folder', message: 'Choose the "FL Studio" folder inside Documents\\Image-Line (FL Studio shows it under Options > File settings > User data folder).', properties: ['openDirectory'] });
+    if (r.canceled || !r.filePaths[0]) return { ok: false, canceled: true };
+    base = r.filePaths[0]; if (path.basename(base).toLowerCase() === 'image-line') base = path.join(base, 'FL Studio');
+  }
+  const dir = path.join(base, 'Settings', 'Hardware', 'Tamed Player');
+  fs.mkdirSync(dir, { recursive: true });
+  fs.copyFileSync(path.join(__dirname, 'fl', 'device_TamedPlayer.py'), path.join(dir, 'device_TamedPlayer.py'));
+  return { ok: true, dir };
+}
+const dragIcon = () => { const i = nativeImage.createFromPath(path.join(__dirname, 'app', 'icon.png')); return i.isEmpty() ? i : i.resize({ width: 48, height: 48 }); };
+
 app.whenReady().then(() => {
+  // Web MIDI (with SysEx) is how the app talks to the FL Studio script
+  session.defaultSession.setPermissionRequestHandler((wc, perm, cb) => cb(['midi', 'midiSysex', 'clipboard-sanitized-write'].includes(perm)));
+  session.defaultSession.setPermissionCheckHandler((wc, perm) => ['midi', 'midiSysex', 'clipboard-sanitized-write'].includes(perm));
+  ipcMain.handle('tp-fl-install', () => installFlScript().catch(e => ({ ok: false, error: e.message })));
+  ipcMain.handle('tp-fl-status', () => { const f = path.join(flUserDir(), 'Settings', 'Hardware', 'Tamed Player', 'device_TamedPlayer.py'); return { flFound: fs.existsSync(flUserDir()), installed: fs.existsSync(f) }; });
+  ipcMain.handle('tp-fl-save', (e, name, data) => {
+    const dir = sentDir(); fs.mkdirSync(dir, { recursive: true });
+    const file = path.join(dir, cleanName(name)); fs.writeFileSync(file, Buffer.from(data)); return file;
+  });
+  ipcMain.on('tp-drag', (e, file) => { if (typeof file === 'string' && file.startsWith(sentDir()) && fs.existsSync(file)) e.sender.startDrag({ file, icon: dragIcon() }); });
+  ipcMain.handle('tp-reveal', (e, file) => { if (typeof file === 'string' && file.startsWith(sentDir()) && fs.existsSync(file)) shell.showItemInFolder(file); else shell.openPath(sentDir()); });
   session.defaultSession.on('will-download', (e, item) => {
     item.setSaveDialogOptions({ title: 'Save from Tamed Player', defaultPath: path.join(app.getPath('documents'), item.getFilename()) });
   });

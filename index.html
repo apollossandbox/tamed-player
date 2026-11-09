@@ -626,6 +626,37 @@ body.cx-on .bar { transform: none; }
 .lcard .acard-art { margin-bottom: 4px; }
 @media (max-width: 760px) { .pgrid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); margin: 0 -8px; } .acard { padding: 8px; } .acard-play { opacity: 1; transform: none; width: 40px; height: 40px; } }
 
+/* Audio Doctor */
+.doc-drop { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px; margin-bottom: 16px; border: 1.5px dashed var(--line); border-radius: 14px; color: var(--ink2); }
+.doc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 430px); gap: 16px; align-items: start; }
+.doc-list { padding: 8px; border-radius: 14px; min-width: 0; } .doc-lh { display: flex; align-items: center; gap: 6px; padding: 6px 8px 10px; } .doc-lh .grow { flex: 1; }
+.doc-row { display: grid; grid-template-columns: 14px minmax(0, 1fr) 72px 48px; gap: 10px; align-items: center; width: 100%; padding: 9px 10px; border-radius: 9px; text-align: left; }
+.doc-row:hover { background: var(--panel2); } .doc-row.on { background: var(--panel3); }
+.dbpm, .dkey { font-variant-numeric: tabular-nums; font-weight: 700; text-align: right; } .dbpm small { font-weight: 400; color: var(--ink3); font-size: 10.5px; } .dkey { color: var(--ink2); }
+.dst { font-size: 10px; color: var(--ink3); } .dst.ok { color: #3fb950; } .dst.err { color: #e5484d; } .dst.wait { color: var(--ink2); } .dst.run { color: #f5a623; animation: blink 1s infinite alternate; }
+@keyframes blink { to { opacity: .3; } }
+.doc-insp { padding: 16px 18px; border-radius: 14px; display: flex; flex-direction: column; gap: 10px; position: sticky; top: 8px; min-width: 0; }
+.di-head { display: flex; align-items: center; gap: 8px; } .di-title { font-size: 22px; }
+.di-wave { display: flex; flex-direction: column; gap: 6px; } .di-wave canvas { width: 100%; display: block; border-radius: 8px; background: var(--panel2); }
+.di-cap { font-size: 11px; color: var(--ink3); }
+.di-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ds { display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 10px; background: var(--panel2); min-width: 0; }
+.ds > span { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); font-weight: 700; }
+.ds-v { display: flex; align-items: center; gap: 2px; flex-wrap: nowrap; min-width: 0; } .ds-v b { margin-right: 4px; white-space: nowrap; } .ds-v b { font-size: 16px; } .ds-v em { font-style: normal; font-size: 11.5px; color: var(--ink2); }
+.ds-v input { width: 76px; height: 28px; padding: 0 6px; border-radius: 7px; border: 1px solid var(--line); background: var(--panel); font-weight: 700; font-size: 15px; }
+.ds small { font-size: 11px; color: var(--ink2); } .ds .pso-ib { width: auto; min-width: 22px; height: 24px; padding: 0 4px; font-size: 11.5px; color: var(--ink2); flex: none; }
+.ds .pso-ib:hover { background: var(--panel3); color: var(--ink); }
+.di-sec { display: flex; flex-direction: column; gap: 8px; padding-top: 10px; border-top: 1px solid var(--line); }
+.di-opt { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; } .di-opt > span { font-size: 12.5px; color: var(--ink2); }
+.di-opt .seg > button { padding: 5px 9px; font-size: 12px; } .di-note { margin: 0; }
+.doc-add { height: 30px; padding: 0 8px; } .doc-add select { font-size: 12.5px; }
+#flbox { display: flex; flex-direction: column; gap: 10px; } #flbox .di-note { margin: 0; }
+.fl-stat { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink2); } .fl-stat > span:nth-child(2) { flex: 1; min-width: 0; } .fl-stat .dst { font-size: 12px; }
+.fl-steps { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; font-size: 12.5px; color: var(--ink2); line-height: 1.5; } .fl-steps b { color: var(--ink); } .fl-steps a { color: var(--ink); } .fl-steps .btn, .fl-steps .crow { margin-top: 6px; }
+.fl-drag { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; border: 1.5px dashed var(--ink3); background: var(--panel2); cursor: grab; user-select: none; }
+.fl-drag:active { cursor: grabbing; } .fl-drag > span { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; } .fl-drag small { color: var(--ink3); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 1100px) { .doc { grid-template-columns: minmax(0, 1fr); } .doc-insp { position: static; } }
+
 /* settings */
 .settings { display: flex; flex-direction: column; gap: 16px; max-width: 820px; }
 .set-card { padding: 6px 20px; border-radius: 14px; } .set-card h2 { font-size: 15px; font-weight: 800; margin: 14px 0 4px; }
@@ -858,6 +889,7 @@ body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after 
 <input type="file" id="file" accept="audio/*" multiple hidden>
 <input type="file" id="art" accept="image/*" hidden>
 <input type="file" id="mcoverfile" accept="image/*" hidden>
+<input type="file" id="docfile" accept="audio/*,.mp3,.wav,.flac,.m4a,.ogg,.opus,.aif,.aiff" multiple hidden>
 <input type="file" id="restorefile" accept=".zip,application/zip" hidden>
 <input type="file" id="verfile" accept="audio/*" hidden>
 <input type="file" id="cdimg" accept="image/*" hidden>
@@ -973,13 +1005,15 @@ function normalize() {
   if (S.tl && Array.isArray(S.tl.items)) S.tl.items.forEach(i => { const c = i.kind === 'release' && col(i.colId); if (c && i.date && !c.targetDate) c.targetDate = i.date; });
   delete S.tl;
   S.eq = { on: false, preset: 'flat', g: [0, 0, 0, 0, 0], ...(S.eq || {}) };
+  S.an = S.an && typeof S.an === 'object' ? S.an : {};
+  S.docPrefs = { bits: 24, rate: 'orig', align: 'auto', bars: false, acid: true, name: true, target: '', range: 80, ...(S.docPrefs || {}) };
   S.prefs = { theme: 'system', reduceMotion: false, autoNext: true, clickToPlay: true, gradient: true, defType: 'album', ...(S.prefs || {}) };
   if ('wash' in S.prefs) { if (!('gradientSet' in S.prefs)) S.prefs.gradient = S.prefs.wash !== false; delete S.prefs.wash; }
   S.cd = { colId: null, view: '3d', sheet: 'front', caseType: 'jewel', tray: 'clear', mode: 'orbit', open: false, discOut: false, designs: {}, ...(S.cd || {}) };
   delete S.cd.style; delete S.cd.label; delete S.cd.skip;
   S.tracks.forEach(t => { if (t.artist === 'Artist Name') t.artist = ''; });
   S.cx = { open: false, page: 'album', colId: null, ...(S.cx || {}), open: false };
-  if (!['library', 'collection', 'cd', 'concept', 'settings'].includes(S.view)) S.view = 'library';
+  if (!['library', 'collection', 'cd', 'concept', 'doctor', 'settings'].includes(S.view)) S.view = 'library';
   if (!['projects', 'tracks'].includes(S.libTab)) S.libTab = 'projects';
   if (!['tracks', 'cd'].includes(S.projTab)) S.projTab = 'tracks';
   if (S.filter !== 'all' && !ST[S.filter]) S.filter = 'all';
@@ -1101,7 +1135,7 @@ function settlePick(el, k) { const p = el.closest('.pick'); if (!p) return; $$('
 function toast(msg) { const e = $('#toast'); e.textContent = msg; e.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove('show'), 2600); }
 
 function renderSide() {
-  const nav = [['library', 'grid', 'Library', S.cols.length], ['cd', 'disc', 'CD creator'], ['concept', 'phone', 'Concept player'], ['settings', 'gear', 'Settings']];
+  const nav = [['library', 'grid', 'Library', S.cols.length], ['cd', 'disc', 'CD creator'], ['concept', 'phone', 'Concept player'], ['doctor', 'pulse', 'Audio Doctor'], ['settings', 'gear', 'Settings']];
   $('#side').innerHTML = `
   <div class="brand">${logo(26)}<span>Tamed Player</span></div>
   <nav class="snav" data-slide="nav"><i class="thumb"></i>${nav.map(([v, i, l, n]) => `<button class="navbtn ${S.view === v ? 'on' : ''}" data-act="nav" data-view="${v}">${ico(i)}<span>${l}</span>${n !== undefined ? `<em>${n}</em>` : ''}</button>`).join('')}</nav>
@@ -1161,6 +1195,7 @@ function renderMain() {
   if (S.view === 'library') renderLibrary(m);
   else if (S.view === 'collection') renderProject(m);
   else if (S.view === 'cd') renderCD(m);
+  else if (S.view === 'doctor') renderDoctor(m);
   else if (S.view === 'settings') renderSettings(m);
   else renderConcept(m);
   renderList();
@@ -2094,6 +2129,422 @@ async function cdSnap() {
   try { await dl.save({ filename: slug(cdCol().name) + '-cd-3d.png', data: blob }); toast('Image saved'); } catch (e) { if (e && e.code !== 'declined') toast('The image could not be saved'); }
 }
 
+/* ---------- Audio Doctor: read tempo, key and levels; MP3 to WAV; beat-aligned exports for DAWs ---------- */
+Object.assign(IC, { send: 'M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z', pulse: 'M3 12h4l3-8 4 16 3-8h4', wave: 'M2 12h2M6 8v8M10 4v16M14 7v10M18 10v4M22 12h0' });
+const PCN = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+const CAMELOT = { maj: ['8B', '3B', '10B', '5B', '12B', '7B', '2B', '9B', '4B', '11B', '6B', '1B'], min: ['5A', '12A', '7A', '2A', '9A', '4A', '11A', '6A', '1A', '8A', '3A', '10A'] };
+const KS_MAJ = [6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88], KS_MIN = [6.33, 2.68, 3.52, 5.38, 2.60, 3.53, 2.54, 4.75, 3.98, 2.69, 3.34, 3.17];
+const yieldUI = () => new Promise(r => setTimeout(r, 0));
+const TEMPO_RANGES = { '70': '70–140', '80': '80–160', '90': '90–180' };
+function foldBpm(b, lo) { lo = +(lo || (S.docPrefs && S.docPrefs.range) || 80); if (!(b > 0)) return b; while (b < lo - .5) b *= 2; while (b > 2 * lo + .5) b /= 2; return b; }
+
+/* radix-2 FFT, magnitude only */
+const FFTC = {};
+function fftT(n) {
+  if (FFTC[n]) return FFTC[n]; const rev = new Uint32Array(n), bits = Math.round(Math.log2(n));
+  for (let i = 0; i < n; i++) { let r = 0; for (let b = 0; b < bits; b++) r |= ((i >> b) & 1) << (bits - 1 - b); rev[i] = r; }
+  const cs = new Float32Array(n / 2), sn = new Float32Array(n / 2), win = new Float32Array(n);
+  for (let i = 0; i < n / 2; i++) { cs[i] = Math.cos(2 * Math.PI * i / n); sn[i] = -Math.sin(2 * Math.PI * i / n); }
+  for (let i = 0; i < n; i++) win[i] = .5 - .5 * Math.cos(2 * Math.PI * i / (n - 1));
+  return (FFTC[n] = { rev, cs, sn, win });
+}
+function magSpec(x, off, n, out, re, im) {
+  const T = fftT(n), L = x.length;
+  for (let i = 0; i < n; i++) { const j = T.rev[i], k = off + i; re[j] = (k < L ? x[k] : 0) * T.win[i]; im[j] = 0; }
+  for (let size = 2; size <= n; size <<= 1) {
+    const half = size >> 1, step = n / size;
+    for (let i = 0; i < n; i += size) for (let j = 0, k = 0; j < half; j++, k += step) {
+      const a = i + j, b = a + half, c = T.cs[k], s = T.sn[k], tr = re[b] * c - im[b] * s, ti = re[b] * s + im[b] * c;
+      re[b] = re[a] - tr; im[b] = im[a] - ti; re[a] += tr; im[a] += ti;
+    }
+  }
+  for (let i = 0; i < n / 2; i++) out[i] = Math.sqrt(re[i] * re[i] + im[i] * im[i]);
+}
+
+/* read the true sample rate and format from the file header, so decoding keeps the original rate */
+function sniffAudio(ab, blob) {
+  const u = new Uint8Array(ab), str = (o, l) => String.fromCharCode(...u.subarray(o, o + l)), dv = new DataView(ab);
+  const name = (blob && blob.name) || '', ext = (name.match(/\.([a-z0-9]+)$/i) || [, ''])[1].toLowerCase();
+  const out = { fmt: (ext || (blob && blob.type || '').split('/')[1] || 'audio').toUpperCase().replace('MPEG', 'MP3'), sr: 0, bits: 0, kbps: 0, chIn: 0 };
+  try {
+    if (str(0, 4) === 'RIFF' && str(8, 4) === 'WAVE') {
+      out.fmt = 'WAV'; let p = 12;
+      while (p + 8 <= u.length) { const id = str(p, 4), sz = dv.getUint32(p + 4, true); if (id === 'fmt ') { out.chIn = dv.getUint16(p + 10, true); out.sr = dv.getUint32(p + 12, true); out.bits = dv.getUint16(p + 22, true); break; } p += 8 + sz + (sz & 1); }
+    } else if (str(0, 4) === 'fLaC') {
+      out.fmt = 'FLAC'; out.sr = (u[18] << 12) | (u[19] << 4) | (u[20] >> 4); out.chIn = ((u[20] >> 1) & 7) + 1; out.bits = (((u[20] & 1) << 4) | (u[21] >> 4)) + 1;
+    } else if (str(0, 4) === 'OggS') { out.fmt = /OpusHead/.test(str(28, 8)) ? 'OPUS' : 'OGG'; out.sr = out.fmt === 'OPUS' ? 48000 : dv.getUint32(40, true); }
+    else {
+      let p = 0; if (str(0, 3) === 'ID3') p = 10 + ((u[6] << 21) | (u[7] << 14) | (u[8] << 7) | u[9]);
+      for (let i = p; i < Math.min(u.length - 4, p + 65536); i++) {
+        if (u[i] === 0xFF && (u[i + 1] & 0xE0) === 0xE0) {
+          const ver = (u[i + 1] >> 3) & 3, layer = (u[i + 1] >> 1) & 3, sri = (u[i + 2] >> 2) & 3, bri = u[i + 2] >> 4;
+          if (ver === 1 || layer === 0 || sri === 3 || bri === 0 || bri === 15) continue;
+          const SR = { 3: [44100, 48000, 32000], 2: [22050, 24000, 16000], 0: [11025, 12000, 8000] }[ver];
+          out.fmt = 'MP3'; out.sr = SR[sri]; out.chIn = (u[i + 3] >> 6) === 3 ? 1 : 2;
+          out.kbps = ver === 3 && layer === 1 ? [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320][bri] : 0; break;
+        }
+      }
+    }
+  } catch (e) { }
+  return out;
+}
+async function decodeNative(ab, sr) {
+  const Ctx = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  const rate = sr >= 8000 && sr <= 192000 ? sr : 44100;
+  return await new Ctx(2, 1, rate).decodeAudioData(ab.slice(0));
+}
+
+/* analysis: tempo + beat phase (spectral-flux onsets, autocorrelation, comb refinement), key (chroma + Krumhansl), levels */
+async function analyzeBuffer(buf) {
+  const sr = buf.sampleRate, n = buf.length, nc = buf.numberOfChannels, mono = new Float32Array(n);
+  let peak = 0;
+  for (let c = 0; c < nc; c++) { const d = buf.getChannelData(c); for (let i = 0; i < n; i++) { const v = d[i]; mono[i] += v / nc; const a = v < 0 ? -v : v; if (a > peak) peak = a; } }
+  let sum = 0; for (let i = 0; i < n; i++) sum += mono[i] * mono[i];
+  const rms = Math.sqrt(sum / Math.max(1, n)), thr = 0.0032;
+  let lead = 0; while (lead < n && Math.abs(mono[lead]) < thr) lead++;
+  let tail = n - 1; while (tail > lead && Math.abs(mono[tail]) < thr) tail--;
+  const res = { peakDb: peak > 0 ? 20 * Math.log10(peak) : -120, rmsDb: rms > 0 ? 20 * Math.log10(rms) : -120, lead: lead / sr, tailSil: (n - 1 - tail) / sr };
+  // onset envelope
+  const N = 1024, H = Math.max(256, Math.round(sr * 512 / 44100)), fps = sr / H, maxN = Math.min(n, Math.round(sr * 200));
+  const frames = Math.max(0, Math.floor((maxN - N) / H)), env = new Float32Array(frames), mag = new Float32Array(N / 2), prev = new Float32Array(N / 2), re = new Float32Array(N), im = new Float32Array(N);
+  const kMax = Math.min(N / 2, Math.round(9000 / (sr / N))), kLo = Math.max(2, Math.round(180 / (sr / N))), kMid = Math.round(2500 / (sr / N));
+  const bandE = [new Float32Array(frames), new Float32Array(frames), new Float32Array(frames)], bandSum = [0, 0, 0];
+  for (let f = 0; f < frames; f++) {
+    magSpec(mono, f * H, N, mag, re, im); const bs = [0, 0, 0];
+    for (let k = 1; k < kMax; k++) { const v = Math.log1p(100 * mag[k]), d = v - prev[k]; if (d > 0) bs[k < kLo ? 0 : k < kMid ? 1 : 2] += d; prev[k] = v; }
+    for (let j = 0; j < 3; j++) { bandE[j][f] = bs[j]; bandSum[j] += bs[j]; }
+    if (f % 700 === 0) await yieldUI();
+  }
+  for (let f = 0; f < frames; f++) { let s = 0; for (let j = 0; j < 3; j++) if (bandSum[j] > 1e-6) s += bandE[j][f] / (bandSum[j] / frames); env[f] = s; }
+  if (frames < fps * 6) { Object.assign(res, { bpm: 0, conf: 0, firstBeat: res.lead }); }
+  else {
+    // remove slow trends so only attacks remain, per band
+    const W = Math.max(3, Math.round(fps * .4));
+    const detrend = src => { const pre = new Float64Array(frames + 1); for (let i = 0; i < frames; i++) pre[i + 1] = pre[i] + src[i]; const o = new Float32Array(frames); for (let i = 0; i < frames; i++) { const a = Math.max(0, i - W), b = Math.min(frames, i + W + 1); o[i] = Math.max(0, src[i] - (pre[b] - pre[a]) / (b - a)); } return o; };
+    const bands = bandE.map(detrend), e2 = new Float32Array(frames);
+    bands.forEach((bd, j) => { let m = 0; for (let i = 0; i < frames; i++) m += bd[i]; m = m / frames / (j === 0 ? 2 : 1); if (m > 1e-9) for (let i = 0; i < frames; i++) e2[i] += bd[i] / m; });
+    // autocorrelation per band, so a kick and a hat never count as the same hit
+    const lo = +(S.docPrefs && S.docPrefs.range || 80), Lf = fps * 60 / (2 * lo), Ls = fps * 60 / lo, Lmax = Math.min(frames - 1, Math.ceil(Ls * 4) + 2), ac = new Float32Array(Lmax + 2);
+    for (const bd of bands) {
+      let z = 0; for (let i = 0; i < frames; i++) z += bd[i] * bd[i]; if (z <= 1e-12) continue; z /= frames;
+      for (let L = Math.max(1, Math.floor(Lf / 2) - 1); L <= Lmax; L++) { let s = 0; for (let i = 0; i + L < frames; i++) s += bd[i] * bd[i + L]; ac[L] += s / (frames - L) / z; }
+      await yieldUI();
+    }
+    // score each tempo in the range by how well the song repeats at half, one, two and four beats
+    const acI = x => { const i = Math.floor(x), f = x - i; return i + 1 <= Lmax ? ac[i] * (1 - f) + ac[i + 1] * f : 0; };
+    let bestL = Ls, best = -1;
+    for (let L = Lf - 1; L <= Ls + 1; L += .1) { const v = .5 * acI(L / 2) + acI(L) + acI(2 * L) + .5 * acI(4 * L); if (v > best) { best = v; bestL = L; } }
+    const bpm0 = foldBpm(60 * fps / bestL);
+    const at = x => { const i = Math.floor(x), f = x - i; return i + 1 < frames ? e2[i] * (1 - f) + e2[i + 1] * f : 0; };
+    let top = { s: -1, b: bpm0, ph: 0 }; let meanAll = 0, cnt = 0;
+    for (let b = bpm0 - 1.4; b <= bpm0 + 1.4; b += .02) {
+      const P = 60 * fps / b;
+      for (let ph = 0; ph < P; ph += .5) { let s = 0, k = 0; for (let x = ph; x < frames - 1; x += P) { s += at(x); k++; } s /= Math.max(1, k); meanAll += s; cnt++; if (s > top.s) top = { s, b, ph }; }
+      if (cnt % 4000 === 0) await yieldUI();
+    }
+    let bpm = top.b; if (Math.abs(bpm - Math.round(bpm)) <= .15) bpm = Math.round(bpm); else bpm = Math.round(bpm * 100) / 100;
+    const T = 60 / bpm, tb = (top.ph * H + N / 2) / sr, from = Math.max(0, res.lead - .06);
+    let fb = from + (((tb - from) % T) + T) % T; if (fb - T > from - .045) fb -= T;
+    // the first beat is the first grid line with a real hit on it (skips quiet intros that only have a pad)
+    { const Pf = T * sr / H, ref = (() => { let s = 0, k = 0; for (let x = top.ph; x < frames - 1; x += Pf) { s += at(x); k++; } return s / Math.max(1, k); })(), fr = t => (t * sr - N / 2) / H;
+      const hit = t => { let m = 0; for (let d = -2; d <= 2; d++) m = Math.max(m, at(Math.max(0, fr(t) + d))); return m; };
+      for (let t = fb, i = 0; t < res.lead + 30 && i < 64; t += T, i++) if (hit(t) > .35 * ref) { fb = t; break; } }
+    // sample-accurate: strongest attack within ±30 ms
+    const st = Math.max(1, Math.round(sr * .0005)), wn = Math.max(8, Math.round(sr * .002)), a0 = Math.max(wn, Math.round((fb - .03) * sr)), a1 = Math.min(n - wn, Math.round((fb + .03) * sr));
+    const ds = [], hist = [], HN = Math.round(.01 * sr / st), eAt = pos => { let e = 0; for (let i = Math.max(0, pos); i < pos + wn; i++) e += mono[i] * mono[i]; return e; };
+    for (let pos = a0 - HN * st; pos < a0; pos += st) hist.push(eAt(pos));
+    for (let pos = a0; pos < a1; pos += st) { const e = eAt(pos), pm = Math.max(...hist); ds.push([pos, e > 1e-6 ? Math.log(e + 1e-7) - Math.log(pm + 1e-7) : 0]); hist.push(e); if (hist.length > HN) hist.shift(); }
+    const dmax = ds.reduce((m, x) => Math.max(m, x[1]), 0), firstRise = dmax > .7 ? ds.find(x => x[1] > dmax * .5) : null;
+    if (firstRise) { // the exact sample where the hit starts
+      const fp = firstRise[0], p0 = Math.max(wn, fp - wn); let pr = 0; for (let i = Math.max(0, p0 - wn); i < p0; i++) pr += mono[i] * mono[i];
+      let pk = 0; for (let i = p0; i < Math.min(n, fp + 2 * wn); i++) pk = Math.max(pk, Math.abs(mono[i]));
+      const th = Math.max(Math.sqrt(pr / wn) * 3, pk * .08); let q = p0; while (q < fp + 2 * wn - 1 && Math.abs(mono[q]) < th) q++; fb = q / sr; }
+    Object.assign(res, { bpm, bpmRaw: Math.round(top.b * 100) / 100, conf: Math.max(0, Math.min(1, (top.s / (meanAll / Math.max(1, cnt)) - 1) / 1.5)), firstBeat: Math.max(0, fb) });
+  }
+  // key
+  const N2 = sr > 60000 ? 16384 : 8192, H2 = N2, frames2 = Math.max(0, Math.floor((Math.min(n, sr * 150) - N2) / H2));
+  const m2 = new Float32Array(N2 / 2), r2 = new Float32Array(N2), i2 = new Float32Array(N2), chroma = new Float64Array(12), binPc = new Int8Array(N2 / 2).fill(-1);
+  for (let k = 1; k < N2 / 2; k++) { const f = k * sr / N2; if (f >= 55 && f <= 2200) binPc[k] = ((Math.round(12 * Math.log2(f / 440)) + 69) % 12 + 12) % 12; }
+  for (let f = 0; f < frames2; f++) { magSpec(mono, f * H2, N2, m2, r2, i2); for (let k = 1; k < N2 / 2; k++) if (binPc[k] >= 0) chroma[binPc[k]] += m2[k]; if (f % 60 === 0) await yieldUI(); }
+  const pear = (a, b) => { const ma = a.reduce((x, y) => x + y) / 12, mb = b.reduce((x, y) => x + y) / 12; let s = 0, sa = 0, sb = 0; for (let i = 0; i < 12; i++) { s += (a[i] - ma) * (b[i] - mb); sa += (a[i] - ma) ** 2; sb += (b[i] - mb) ** 2; } return s / Math.sqrt(sa * sb || 1); };
+  const ch = [...chroma], scores = [];
+  for (let t = 0; t < 12; t++) for (const [mode, prof] of [['maj', KS_MAJ], ['min', KS_MIN]]) { const rot = prof.map((_, i) => prof[(i - t + 12) % 12]); scores.push({ t, mode, r: pear(ch, rot) }); }
+  scores.sort((a, b) => b.r - a.r);
+  if (frames2 > 3 && chroma.some(v => v > 0)) { const k = scores[0]; Object.assign(res, { key: PCN[k.t] + (k.mode === 'min' ? ' minor' : ' major'), keyPc: k.t, mode: k.mode, camelot: CAMELOT[k.mode][k.t], keyConf: Math.max(0, Math.min(1, (k.r - scores[1].r) * 8)) }); }
+  return res;
+}
+async function analyzeKey(key) {
+  const blob = await DB.get(key); if (!blob) throw new Error('The audio file is missing');
+  const ab = await blob.arrayBuffer(), info = sniffAudio(ab, blob), buf = await decodeNative(ab, info.sr);
+  DOC.buf = { key, buffer: buf, info };
+  const r = await analyzeBuffer(buf);
+  return { ...info, ...r, sr: buf.sampleRate, ch: buf.numberOfChannels, dur: buf.duration, size: blob.size, at: Date.now(), v: 2 };
+}
+const keyOf = t => (t.ver && t.ver !== t.id && srcs[t.ver]) ? t.ver : t.id;
+function applyAnalysis(k, r) {
+  if (!r || !r.bpm) return; const t = S.tracks.find(x => keyOf(x) === k); if (!t) return;
+  if (!t.bpm || t.bpmAuto) { t.bpm = Math.round(r.bpm); t.bpmAuto = true; }
+  if (r.key && (!t.key || t.keyAuto)) { t.key = r.key; t.keyAuto = true; }
+}
+const AQ = { q: [], busy: false, cur: null };
+function queueAnalysis(keys, force) { (keys || []).forEach(k => { if (k && !AQ.q.includes(k) && (force || !S.an[k] || S.an[k].error || (S.an[k].v || 0) < 2)) AQ.q.push(k); }); runAQ(); }
+async function runAQ() {
+  if (AQ.busy) return; AQ.busy = true;
+  while (AQ.q.length) {
+    const k = AQ.cur = AQ.q[0]; if (S.view === 'doctor') renderDocList();
+    try { const r = await analyzeKey(k); S.an[k] = r; applyAnalysis(k, r); } catch (e) { S.an[k] = { error: (e && e.message) || 'Could not read this file', at: Date.now() }; }
+    AQ.q.shift(); AQ.cur = null; save();
+    if (S.view === 'doctor') { renderDocList(); if (DOC.sel === k) renderDocInspector(); } else if (S.view === 'collection' || S.view === 'library') renderList();
+    await new Promise(r => setTimeout(r, 30));
+  }
+  AQ.busy = false;
+}
+
+/* export: align, resample, encode WAV (with tempo tag and info) */
+async function renderAligned(buf, an, P) {
+  const T = 60 / an.bpm, bar = T * 4, fb = Math.max(0, an.firstBeat || 0);
+  let mode = P.align; if (mode === 'auto') mode = (fb - (an.lead || 0) <= .08) ? 'trim' : 'pad';
+  let start = 0, pad = 0; if (!an.bpm) mode = 'none';
+  if (mode === 'trim') start = fb; else if (mode === 'pad') { const k = Math.ceil(fb / bar - 1e-6); pad = fb < .002 ? 0 : k * bar - fb; }
+  const first = mode === 'trim' ? 0 : mode === 'pad' ? fb + pad : fb;
+  let len = pad + (buf.duration - start);
+  if (P.bars && an.bpm) len = first + Math.max(1, Math.ceil((len - first) / bar - 1e-6)) * bar;
+  const rate = P.rate === 'orig' ? buf.sampleRate : +P.rate, Ctx = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  const oc = new Ctx(buf.numberOfChannels, Math.max(1, Math.round(len * rate)), rate), src = oc.createBufferSource();
+  src.buffer = buf; src.connect(oc.destination); src.start(pad, start);
+  return { out: await oc.startRendering(), first, mode, bars: an.bpm ? (len - first) / bar : 0 };
+}
+function encodeWav(ab, bits, meta) {
+  const nc = ab.numberOfChannels, sr = ab.sampleRate, len = ab.length, bps = bits / 8, dataLen = len * nc * bps, chans = [...Array(nc)].map((_, c) => ab.getChannelData(c));
+  const enc = new TextEncoder(), chunks = [];
+  const fmt = new DataView(new ArrayBuffer(16)); fmt.setUint16(0, bits === 32 ? 3 : 1, true); fmt.setUint16(2, nc, true); fmt.setUint32(4, sr, true); fmt.setUint32(8, sr * nc * bps, true); fmt.setUint16(12, nc * bps, true); fmt.setUint16(14, bits, true);
+  chunks.push(['fmt ', new Uint8Array(fmt.buffer)]);
+  if (meta.bpm) {
+    const a = new DataView(new ArrayBuffer(24)); a.setUint32(0, 0x04 | (meta.keyPc != null ? 0x02 : 0), true); a.setUint16(4, meta.keyPc != null ? 48 + meta.keyPc : 60, true); a.setUint16(6, 0x8000, true); a.setFloat32(8, 0, true);
+    a.setUint32(12, Math.max(1, Math.round(len / sr * meta.bpm / 60)), true); a.setUint16(16, 4, true); a.setUint16(18, 4, true); a.setFloat32(20, meta.bpm, true);
+    chunks.push(['acid', new Uint8Array(a.buffer)]);
+  }
+  const info = [['INAM', meta.title], ['IART', meta.artist], ['ICMT', meta.comment], ['ISFT', 'Tamed Player Audio Doctor']].filter(x => x[1]);
+  if (info.length) { const parts = [enc.encode('INFO')]; info.forEach(([id, v]) => { const b = enc.encode(v + '\0'), h = new DataView(new ArrayBuffer(8)); enc.encodeInto(id, new Uint8Array(h.buffer)); h.setUint32(4, b.length, true); parts.push(new Uint8Array(h.buffer), b, ...(b.length & 1 ? [new Uint8Array(1)] : [])); }); const tot = parts.reduce((s, x) => s + x.length, 0), u = new Uint8Array(tot); let o = 0; parts.forEach(x => { u.set(x, o); o += x.length; }); chunks.push(['LIST', u]); }
+  const data = new ArrayBuffer(dataLen), dv = new DataView(data); let o = 0;
+  for (let i = 0; i < len; i++) for (let c = 0; c < nc; c++) {
+    let v = chans[c][i];
+    if (bits === 32) { dv.setFloat32(o, v, true); }
+    else if (bits === 24) { v = Math.max(-1, Math.min(1, v)); const x = Math.round(v * 8388607); dv.setUint8(o, x & 255); dv.setUint8(o + 1, (x >> 8) & 255); dv.setUint8(o + 2, (x >> 16) & 255); }
+    else { v = Math.max(-1, Math.min(1, v + (Math.random() - Math.random()) / 32768)); dv.setInt16(o, Math.round(v * 32767), true); }
+    o += bps;
+  }
+  chunks.push(['data', new Uint8Array(data)]);
+  const total = 4 + chunks.reduce((s, [, b]) => s + 8 + b.length + (b.length & 1), 0), out = new Uint8Array(8 + total), od = new DataView(out.buffer);
+  out.set(enc.encode('RIFF'), 0); od.setUint32(4, total, true); out.set(enc.encode('WAVE'), 8); let p = 12;
+  for (const [id, b] of chunks) { out.set(enc.encode(id), p); od.setUint32(p + 4, b.length, true); out.set(b, p + 8); p += 8 + b.length + (b.length & 1); }
+  return new Blob([out], { type: 'audio/wav' });
+}
+async function docBuffer(k) {
+  if (DOC.buf && DOC.buf.key === k) return DOC.buf.buffer;
+  const blob = await DB.get(k); if (!blob) throw new Error('The audio file is missing');
+  const ab = await blob.arrayBuffer(), info = sniffAudio(ab, blob), buffer = await decodeNative(ab, info.sr); DOC.buf = { key: k, buffer, info }; return buffer;
+}
+function wavName(t, an, P) { const base = safeName(dispTitle(t)); return P.name && an && an.bpm ? `${base} - ${an.bpm} BPM${an.key ? ' - ' + an.key : ''}.wav` : `${base}.wav`; }
+async function makeWav(t) {
+  const k = keyOf(t), an = S.an[k] || {}, P = S.docPrefs, buf = await docBuffer(k);
+  const { out, first, mode } = await renderAligned(buf, an, P);
+  const blob = encodeWav(out, +P.bits, { bpm: P.acid ? an.bpm : 0, keyPc: an.keyPc, title: dispTitle(t), artist: dispArtist(t), comment: an.bpm ? `${an.bpm} BPM${an.key ? ', ' + an.key : ''}. First beat at ${first.toFixed(3)} s (${mode}).` : '' });
+  return { blob, name: wavName(t, an, P), mode };
+}
+async function saveBlob(name, blob, zipName) {
+  let dl = null; try { dl = await claude.use('downloads'); } catch (e) { } if (!dl) return toast('Saving files is not available in this view');
+  try {
+    if (window.tpDesktop || !/\.wav$/i.test(name)) await dl.save({ filename: name, data: blob });
+    else { if (!window.JSZip) return toast('Zip support did not load'); const z = new JSZip(); z.file(name, blob); await dl.save({ filename: zipName || name.replace(/\.wav$/i, '.zip'), data: await z.generateAsync({ type: 'blob' }) }); }
+    toast('Saved ' + name);
+  } catch (e) { if (e && e.code !== 'declined') toast('The file could not be saved'); }
+}
+
+/* screen */
+const DOC = { sel: null, buf: null, preview: null };
+const fmtDb = v => v == null ? '–' : (v <= -119 ? '-∞' : v.toFixed(1)) + ' dB';
+const fmtBytes = b => b > 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.round(b / 1024) + ' KB';
+function renderDoctor(m) {
+  const P = S.docPrefs;
+  m.innerHTML = `<header class="head"><div><h1>Audio Doctor</h1><p class="faint">Reads tempo, key and levels, converts MP3 to WAV, and lines songs up to the beat for FL Studio and other DAWs. Everything runs on this device.</p></div>
+    <div class="hact"><label class="sel box"><span class="faint">Add uploads to</span><select id="doc-target" aria-label="Add uploads to">${['<option value="">Library only</option>', ...S.cols.map(c => `<option value="${c.id}" ${P.target === c.id ? 'selected' : ''}>${esc(c.name)}</option>`)].join('')}</select></label>
+    <label class="sel box" title="A beat can be counted at half or double speed. Pick the range your genre usually uses."><span class="faint">Tempo range</span><select id="doc-range" aria-label="Tempo range">${Object.entries(TEMPO_RANGES).map(([k, v]) => `<option value="${k}" ${+P.range === +k ? 'selected' : ''}>${v} BPM</option>`).join('')}</select></label>
+    <button class="btn primary" data-act="doc-upload">${ico('upload', 16)} Upload audio</button></div></header>
+  <div class="doc-drop" id="docdrop">${ico('pulse', 22)}<span><b>Drop audio files here</b> · MP3, WAV, FLAC, M4A or OGG</span></div>
+  <div class="doc">
+    <section class="doc-list box"><div class="doc-lh"><b>Files</b><span class="grow"></span><button class="btn sm" data-act="doc-analyze-all">${ico('repeat', 13)} Read all</button><button class="btn sm" data-act="doc-allwav">${ico('save', 13)} All as WAV</button></div><div id="doclist"></div></section>
+    <aside class="doc-insp box" id="docinsp"></aside>
+  </div>`;
+  renderDocList(); renderDocInspector();
+  queueAnalysis(S.tracks.map(keyOf));
+}
+function renderDocList() {
+  const el = $('#doclist'); if (!el) return;
+  const ts = [...S.tracks].sort((a, b) => (b.added || 0) - (a.added || 0));
+  if (!ts.length) { el.innerHTML = `<p class="faint small" style="padding:16px">No audio yet. Drop files above or choose <b>Upload audio</b>.</p>`; return; }
+  if (!DOC.sel || !ts.some(t => keyOf(t) === DOC.sel)) DOC.sel = keyOf(ts[0]);
+  el.innerHTML = ts.map(t => {
+    const k = keyOf(t), an = S.an[k], busy = AQ.cur === k, queued = AQ.q.includes(k) && !busy, projs = S.cols.filter(c => c.tracks.includes(t.id));
+    const st = busy ? '<span class="dst run" title="Reading">●</span>' : queued ? '<span class="dst wait" title="Waiting">●</span>' : an && an.error ? '<span class="dst err" title="Could not read">●</span>' : an ? '<span class="dst ok" title="Read">●</span>' : '<span class="dst" title="Not read yet">●</span>';
+    return `<button class="doc-row ${DOC.sel === k ? 'on' : ''}" data-act="doc-sel" data-id="${t.id}">${st}<span class="meta"><b>${esc(dispTitle(t))}</b><span>${an && !an.error ? `${esc(an.fmt || '')} · ${(an.sr / 1000).toFixed(1)} kHz` : busy ? 'Reading…' : queued ? 'Waiting…' : an && an.error ? 'Could not read' : '–'}${projs.length ? ' · ' + esc(projs.map(c => c.name).join(', ')) : ''}</span></span>
+      <span class="dbpm">${an && an.bpm ? an.bpm + '<small> BPM</small>' : '–'}</span><span class="dkey">${an && an.key ? esc(an.key.replace(' major', '').replace(' minor', 'm')) : '–'}</span></button>`;
+  }).join('');
+}
+function renderDocInspector() {
+  const el = $('#docinsp'); if (!el) return; const t = S.tracks.find(x => keyOf(x) === DOC.sel);
+  if (!t) { el.innerHTML = '<p class="faint" style="padding:20px">Pick a file to see its details.</p>'; return; }
+  const k = keyOf(t), an = S.an[k], P = S.docPrefs, busy = AQ.cur === k || AQ.q.includes(k), projs = S.cols.filter(c => c.tracks.includes(t.id)), others = S.cols.filter(c => !c.tracks.includes(t.id));
+  const T = an && an.bpm ? 60 / an.bpm : 0;
+  el.innerHTML = `<div class="di-head"><input class="title-in di-title" id="doc-title" value="${esc(t.title)}" aria-label="Track title"><button class="ico" data-act="play" data-id="${t.id}" title="Play" aria-label="Play">${ico(S.cur === t.id && S.playing ? 'pause' : 'play', 18)}</button></div>
+    <p class="faint small">${an && !an.error ? `${esc(an.fmt)}${an.kbps ? ' ' + an.kbps + ' kbps' : ''}${an.bits ? ' · ' + an.bits + '-bit' : ''} · ${(an.sr / 1000).toFixed(1)} kHz · ${an.ch === 1 ? 'mono' : 'stereo'} · ${fmt(an.dur)} · ${fmtBytes(an.size)}` : busy ? 'Reading the file…' : an && an.error ? esc(an.error) : 'Not read yet'}</p>
+    <div class="di-wave"><canvas id="docwave" aria-label="Waveform with beat grid"></canvas><canvas id="doczoom" aria-label="First bars, zoomed"></canvas><span class="di-cap">Top: whole song with bars. Bottom: the first two bars after export, with the 0:00 line.</span></div>
+    ${an && !an.error ? `<div class="di-stats">
+      <div class="ds"><span>Tempo</span><div class="ds-v"><input type="number" step="0.01" min="40" max="260" id="doc-bpm" value="${an.bpm || ''}" aria-label="Tempo in BPM"><em>BPM</em><button class="pso-ib" data-act="doc-half" title="Half tempo">½</button><button class="pso-ib" data-act="doc-double" title="Double tempo">×2</button></div><small>${an.bpm ? (an.conf > .5 ? 'Confident' : an.conf > .2 ? 'Fairly sure' : 'Unsure, check by ear') + (an.bpmRaw && an.bpmRaw !== an.bpm ? ' · measured ' + an.bpmRaw : '') : 'No steady beat found'}</small></div>
+      <div class="ds"><span>Key</span><div class="ds-v"><b>${esc(an.key || '–')}</b>${an.camelot ? `<em>${an.camelot}</em>` : ''}</div><small>${an.key ? (an.keyConf > .4 ? 'Clear' : 'Ambiguous; could be the relative key') : ''}</small></div>
+      <div class="ds"><span>First beat</span><div class="ds-v"><b>${an.firstBeat != null ? (an.firstBeat * 1000).toFixed(0) + ' ms' : '–'}</b><button class="pso-ib" data-act="doc-beat" data-k="-1" title="One beat earlier">◀</button><button class="pso-ib" data-act="doc-beat" data-k="1" title="One beat later">▶</button><button class="pso-ib" data-act="doc-nudge" data-k="-5" title="5 ms earlier">-5</button><button class="pso-ib" data-act="doc-nudge" data-k="5" title="5 ms later">+5</button></div><small>Silence at start: ${(an.lead * 1000).toFixed(0)} ms</small></div>
+      <div class="ds"><span>Levels</span><div class="ds-v"><b>${fmtDb(an.peakDb)}</b><em>peak</em></div><small>${fmtDb(an.rmsDb)} average${an.peakDb > -0.1 ? ' · may clip' : ''}</small></div>
+    </div>` : ''}
+    <div class="di-sec"><b>Projects</b><div class="tagrow">${projs.map(c => `<span class="tag">${esc(c.name)}<button class="ico" data-act="doc-rmproj" data-id="${c.id}" aria-label="Remove from ${esc(c.name)}">${ico('x', 12)}</button></span>`).join('') || '<span class="faint small">Not in a project</span>'}
+      ${others.length ? `<label class="sel box doc-add"><select id="doc-addproj" aria-label="Add to project"><option value="">+ Add to project…</option>${others.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></label>` : ''}</div></div>
+    <div class="di-sec"><b>Export WAV</b>
+      <div class="di-opt"><span>Bit depth</span>${seg('docbits', [['16', '16-bit'], ['24', '24-bit'], ['32', '32-bit float']], String(P.bits), 'doc-bits')}</div>
+      <div class="di-opt"><span>Sample rate</span>${seg('docrate', [['orig', 'Original'], ['44100', '44.1 kHz'], ['48000', '48 kHz']], P.rate, 'doc-rate')}</div>
+      <div class="di-opt"><span>Line up to the grid</span>${seg('docalign', [['auto', 'Auto'], ['trim', 'Start on beat'], ['pad', 'Pad to bar'], ['none', 'Off']], P.align, 'doc-align')}</div>
+      <p class="faint small di-note">${{ auto: 'Starts the file exactly on the first beat when only silence comes before it, otherwise adds silence so the first beat lands on a bar. Nothing audible is cut.', trim: 'Cuts everything before the first beat, so the first beat is at 0:00.', pad: 'Adds silence at the start so the first beat lands on the next bar line. Nothing is cut.', none: 'Exports the audio as it is.' }[P.align]}</p>
+      <label class="check"><input type="checkbox" data-dp="bars" ${P.bars ? 'checked' : ''}><span>Make the length whole bars (adds silence at the end)</span></label>
+      <label class="check"><input type="checkbox" data-dp="acid" ${P.acid ? 'checked' : ''}><span>Write the tempo into the file (FL Studio, Ableton and others read it)</span></label>
+      <label class="check"><input type="checkbox" data-dp="name" ${P.name ? 'checked' : ''}><span>Put the tempo and key in the file name</span></label>
+      <div class="crow"><button class="btn" data-act="doc-preview">${ico(DOC.preview ? 'pause' : 'play', 14)} ${DOC.preview ? 'Stop preview' : 'Preview with click'}</button><button class="btn primary" data-act="doc-wav">${ico('save', 14)} Download WAV</button><button class="btn sm" data-act="doc-reread">${ico('repeat', 13)} Read again</button></div>
+    </div>
+    <div class="di-sec"><b>Send to FL Studio</b><div id="flbox"></div></div>`;
+  applySlides(); drawDocWaves(); renderFlBox();
+}
+async function drawDocWaves() {
+  const t = S.tracks.find(x => keyOf(x) === DOC.sel), cv = $('#docwave'), cz = $('#doczoom'); if (!t || !cv) return;
+  const k = keyOf(t), an = S.an[k]; let buf;
+  try { buf = await docBuffer(k); } catch (e) { return; }
+  if (!$('#docwave') || DOC.sel !== k) return;
+  const ink = getComputedStyle(document.body).color, dpr = Math.min(2, devicePixelRatio || 1);
+  const prep = (c, h) => { const w = c.clientWidth || 380; c.width = w * dpr; c.height = h * dpr; c.style.height = h + 'px'; const x = c.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, w, h); return [x, w]; };
+  const ch0 = buf.getChannelData(0), ch1 = buf.numberOfChannels > 1 ? buf.getChannelData(1) : ch0, sr = buf.sampleRate;
+  const wave = (x, w, h, t0, t1, alpha) => { x.fillStyle = ink; x.globalAlpha = alpha; const s0 = Math.max(0, Math.floor(t0 * sr)), s1 = Math.min(buf.length, Math.ceil(t1 * sr)), per = Math.max(1, (s1 - s0) / w);
+    for (let px = 0; px < w; px++) { const a = Math.floor(s0 + px * per), b = Math.min(s1, Math.floor(a + per)); let mn = 0, mx = 0; for (let i = a; i < b; i += Math.max(1, Math.floor(per / 64))) { const v = (ch0[i] + ch1[i]) / 2; if (v < mn) mn = v; if (v > mx) mx = v; } x.fillRect(px, h / 2 - mx * h / 2, 1, Math.max(1, (mx - mn) * h / 2)); } x.globalAlpha = 1; };
+  // overview
+  { const [x, w] = prep(cv, 74), dur = buf.duration; wave(x, w, 74, 0, dur, .55);
+    if (an && an.bpm) { const T = 60 / an.bpm; for (let b = 0, tt = an.firstBeat; tt < dur; b++, tt += T) { if (b % 4) continue; x.fillStyle = b % 16 ? 'rgba(128,128,140,.35)' : 'rgba(128,128,140,.75)'; x.fillRect(tt / dur * w, 0, 1, 74); } x.fillStyle = '#e5484d'; x.fillRect(an.firstBeat / dur * w, 0, 2, 74); }
+    if (an && an.lead) { x.fillStyle = 'rgba(229,72,77,.12)'; x.fillRect(0, 0, an.lead / dur * w, 74); } }
+  // zoom: two bars around the first beat, shown as they will be after export
+  { const [x, w] = prep(cz, 90); if (!an || !an.bpm) { wave(x, w, 90, 0, Math.min(buf.duration, 4), .6); return; }
+    const T = 60 / an.bpm, P = S.docPrefs, fb = an.firstBeat, bar = 4 * T; let mode = P.align; if (mode === 'auto') mode = (fb - (an.lead || 0) <= .08) ? 'trim' : 'pad';
+    const shift = mode === 'trim' ? fb : mode === 'pad' ? -((Math.ceil(fb / bar - 1e-6) * bar) - fb) * (fb < .002 ? 0 : 1) : 0;
+    const v0 = -T * .5, v1 = 2 * bar + T * .25, X = tt => (tt - v0) / (v1 - v0) * w;
+    x.save(); x.translate(X(-shift) - X(0), 0); wave(x, w, 90, v0 + shift < 0 ? 0 : v0 + shift, v1 + shift, .65); x.restore();
+    if (v0 + shift < 0) { x.fillStyle = 'rgba(128,128,140,.12)'; x.fillRect(0, 0, X(-shift), 90); }
+    const first = fb - shift; for (let b = -1; b < 10; b++) { const tt = first + b * T; if (tt < v0 || tt > v1) continue; x.fillStyle = b % 4 === 0 ? 'rgba(128,128,140,.85)' : 'rgba(128,128,140,.35)'; x.fillRect(X(tt), 0, b % 4 === 0 ? 2 : 1, 90); }
+    x.fillStyle = '#e5484d'; x.fillRect(X(0), 0, 2, 90); x.font = '700 10px Arial'; x.fillText('0:00', X(0) + 4, 12); x.fillStyle = ink; x.globalAlpha = .7; x.fillText('bar 1', X(first) + 4, 86); x.globalAlpha = 1; }
+}
+async function docPreview(t) {
+  if (DOC.preview) { try { DOC.preview.ctx.close(); } catch (e) { } DOC.preview = null; renderDocInspector(); return; }
+  const k = keyOf(t), an = S.an[k]; if (!an || !an.bpm) return toast('Read the file first so the tempo is known');
+  if (S.playing) toggle();
+  const buf = await docBuffer(k), { out, first } = await renderAligned(buf, an, { ...S.docPrefs, rate: 'orig', bars: false });
+  const ctx = new (window.AudioContext || window.webkitAudioContext)(), src = ctx.createBufferSource(); src.buffer = out; const g = ctx.createGain(); g.gain.value = .8; src.connect(g).connect(ctx.destination);
+  const T = 60 / an.bpm, t0 = ctx.currentTime + .1, len = Math.min(out.duration, 24); src.start(t0, 0, len);
+  for (let b = 0, tt = first; tt < len; b++, tt += T) { const o = ctx.createOscillator(), e = ctx.createGain(); o.frequency.value = b % 4 ? 1000 : 1600; e.gain.setValueAtTime(.0001, t0 + tt); e.gain.exponentialRampToValueAtTime(.5, t0 + tt + .002); e.gain.exponentialRampToValueAtTime(.0001, t0 + tt + .05); o.connect(e).connect(ctx.destination); o.start(t0 + tt); o.stop(t0 + tt + .06); }
+  DOC.preview = { ctx }; src.onended = () => { if (DOC.preview && DOC.preview.ctx === ctx) { DOC.preview = null; try { ctx.close(); } catch (e) { } renderDocInspector(); } };
+  renderDocInspector();
+}
+async function docUpload(files) {
+  const list = [...files].filter(f => (f.type || '').startsWith('audio/') || AUD.test(f.name)); if (!list.length) return toast('Choose audio files (MP3, WAV, FLAC, M4A or OGG)');
+  const c = col(S.docPrefs.target), keys = [];
+  for (const f of list) { const t = newTrack(f, f.name.replace(/\.[^.]+$/, '').replace(/[_]+/g, ' ')); const url = URL.createObjectURL(f); t.dur = await probeDur(url); srcs[t.id] = url; S.tracks.push(t); await DB.put(t.id, f); if (c) c.tracks.push(t.id); keys.push(t.id); }
+  DOC.sel = keys[0]; toast(`Added ${keys.length} file${keys.length > 1 ? 's' : ''}${c ? ' to ' + c.name : ''}. Reading tempo and key…`); refresh(); queueAnalysis(keys);
+}
+async function docAct(a, el) {
+  const t = S.tracks.find(x => keyOf(x) === DOC.sel), k = el.dataset.k, id = el.dataset.id, an = t && S.an[keyOf(t)];
+  if (a.startsWith('doc-fl-')) return flAct(a, t, an);
+  switch (a) {
+    case 'doc-upload': $('#docfile').click(); break;
+    case 'doc-sel': { const tr = trk(id); if (tr) { DOC.sel = keyOf(tr); renderDocList(); renderDocInspector(); } break; }
+    case 'doc-analyze-all': queueAnalysis(S.tracks.map(keyOf), true); toast('Reading every file again…'); break;
+    case 'doc-reread': if (t) queueAnalysis([keyOf(t)], true); break;
+    case 'doc-half': case 'doc-double': if (an && an.bpm) { an.bpm = Math.round(an.bpm * (a === 'doc-half' ? .5 : 2) * 100) / 100; applyAnalysis(keyOf(t), an); save(); renderDocList(); renderDocInspector(); } break;
+    case 'doc-beat': if (an && an.bpm) { an.firstBeat = Math.max(0, an.firstBeat + (+k) * 60 / an.bpm); save(); renderDocInspector(); } break;
+    case 'doc-nudge': if (an) { an.firstBeat = Math.max(0, (an.firstBeat || 0) + (+k) / 1000); save(); renderDocInspector(); } break;
+    case 'doc-bits': S.docPrefs.bits = +k; save(); renderDocInspector(); break;
+    case 'doc-rate': S.docPrefs.rate = k; save(); renderDocInspector(); break;
+    case 'doc-align': S.docPrefs.align = k; save(); renderDocInspector(); break;
+    case 'doc-rmproj': { const c = col(id); if (c && t) { c.tracks = c.tracks.filter(x => x !== t.id); save(); renderDocList(); renderDocInspector(); renderSide(); } break; }
+    case 'doc-preview': if (t) docPreview(t); break;
+    case 'doc-wav': if (t) { if (!an || an.error) return toast('Read the file first'); toast('Making the WAV…'); try { const { blob, name } = await makeWav(t); await saveBlob(name, blob); } catch (e) { toast('The WAV could not be made'); } } break;
+    case 'doc-allwav': {
+      if (!window.JSZip) return toast('Zip support did not load'); const ts = S.tracks.filter(x => S.an[keyOf(x)] && !S.an[keyOf(x)].error); if (!ts.length) return toast('Nothing has been read yet');
+      let dl = null; try { dl = await claude.use('downloads'); } catch (e) { } if (!dl) return toast('Saving files is not available in this view');
+      const z = new JSZip(); let n = 0; for (const tr of ts) { toast(`Converting ${++n} of ${ts.length}…`); try { const { blob, name } = await makeWav(tr); z.file(name, blob); } catch (e) { } await yieldUI(); }
+      try { await dl.save({ filename: `tamed-player-wav-${today()}.zip`, data: await z.generateAsync({ type: 'blob' }) }); toast(`Saved ${n} WAV files`); } catch (e) { if (e && e.code !== 'declined') toast('The zip could not be saved'); }
+      break; }
+  }
+}
+
+/* ---------- FL Studio link (Windows app): set FL's tempo over a virtual MIDI port, then drag the WAV into the playlist ---------- */
+const FL = { access: null, pong: 0, tried: false, err: '', status: null, msg: '' };
+async function flMidi() {
+  if (FL.access || FL.tried) return FL.access; FL.tried = true;
+  try {
+    if (!navigator.requestMIDIAccess) throw new Error('MIDI is not available here');
+    FL.access = await navigator.requestMIDIAccess({ sysex: true });
+    const bind = () => FL.access.inputs.forEach(i => { i.onmidimessage = flIn; });
+    bind(); FL.access.onstatechange = () => { bind(); renderFlBox(); };
+  } catch (e) { FL.err = 'MIDI isn\'t available on this computer, so FL\'s tempo can\'t be set from here'; }
+  return FL.access;
+}
+const flOuts = () => FL.access ? [...FL.access.outputs.values()] : [];
+function flPort() { const o = flOuts(), want = S.docPrefs.midiOut; return o.find(x => x.name === want) || o.find(x => /tamed|loopmidi|loopback|loopbe/i.test(x.name)) || null; }
+function flSend(cmd, body = []) { const o = flPort(); if (!o) return false; try { o.send([0xF0, 0x7D, 0x54, 0x50, cmd, ...body, 0xF7]); return true; } catch (e) { return false; } }
+function flTempo(bpm) { const v = Math.round(bpm * 1000); return flSend(1, [(v >> 21) & 127, (v >> 14) & 127, (v >> 7) & 127, v & 127]); }
+function flIn(e) { const d = e.data; if (d && d[0] === 0xF0 && d[1] === 0x7D && d[2] === 0x54 && d[3] === 0x50 && d[4] === 3) { FL.pong = Date.now(); FL.msg = 'FL Studio answered. The link works.'; renderFlBox(); } }
+async function renderFlBox() {
+  const el = $('#flbox'); if (!el) return;
+  if (!window.tpDesktop || !tpDesktop.fl) { el.innerHTML = `<p class="faint small di-note">Sending to FL Studio works in the Tamed Player app for Windows. It sets FL's tempo to this song and lets you drag the WAV straight onto the playlist.</p>`; return; }
+  await flMidi(); if (!FL.status) { try { FL.status = await tpDesktop.fl.status(); } catch (e) { FL.status = {}; } }
+  if (!$('#flbox')) return;
+  const t = S.tracks.find(x => keyOf(x) === DOC.sel), an = t && S.an[keyOf(t)], port = flPort(), outs = flOuts();
+  const linked = !!port, answered = FL.pong && Date.now() - FL.pong < 6e5;
+  el.innerHTML = `<div class="fl-stat"><span class="dst ${answered ? 'ok' : linked ? 'wait' : 'err'}">●</span><span>${answered ? 'Linked to FL Studio through <b>' + esc(port.name) + '</b>' : linked ? 'Using MIDI port <b>' + esc(port.name) + '</b>' : FL.err ? esc(FL.err) : 'No link port yet, so FL\'s tempo won\'t change on its own'}</span><button class="btn sm" data-act="doc-fl-setup">${DOC.flSetup ? 'Hide setup' : 'Set up'}</button></div>
+    ${DOC.flSetup ? `<ol class="fl-steps">
+      <li><b>Install the FL Studio script.</b> ${FL.status && FL.status.installed ? '<span class="dst ok">Installed</span>' : ''}<br><button class="btn sm" data-act="doc-fl-install">${ico('save', 13)} ${FL.status && FL.status.installed ? 'Install again' : 'Install script'}</button></li>
+      <li><b>Make a virtual MIDI port.</b> Install <a href="https://www.tobias-erichsen.de/software/loopmidi.html" target="_blank" rel="noopener">loopMIDI</a> (free) and add a port named <b>Tamed Link</b>. On Windows 11 with Windows MIDI Services you can use its loopback port.</li>
+      <li><b>Turn it on in FL Studio.</b> Options › MIDI settings. Under Input, pick <b>Tamed Link</b>, set Controller type to <b>Tamed Player</b> and enable it. To get the answer below, also pick the same port under Output and give both the same Port number.</li>
+      <li><b>Pick the port here and test.</b><div class="crow"><label class="sel box"><select id="doc-midi" aria-label="MIDI port">${outs.length ? outs.map(o => `<option ${port && port.id === o.id ? 'selected' : ''}>${esc(o.name)}</option>`).join('') : '<option value="">No MIDI ports found</option>'}</select></label><button class="btn sm" data-act="doc-fl-test" ${linked ? '' : 'disabled'}>Test</button></div></li>
+    </ol>` : ''}
+    ${FL.msg ? `<p class="faint small di-note">${esc(FL.msg)}</p>` : ''}
+    <div class="crow"><button class="btn primary" data-act="doc-fl-send" ${an && an.bpm ? '' : 'disabled'}>${ico('send', 14)} Send to FL Studio</button></div>
+    ${an && an.flPath ? `<div class="fl-drag" draggable="true" data-fl="${esc(an.flPath)}" title="Drag onto the FL Studio playlist at bar 1">${ico('wave', 22)}<span><b>Drag into the FL Studio playlist</b><small>${esc(an.flName || '')}</small></span><button class="btn sm" data-act="doc-fl-reveal">Show file</button></div>
+      <p class="faint small di-note">Drop it at the very start of bar 1. ${an.flMode === 'pad' ? 'The file starts with silence so the first beat lands on a bar.' : 'The file starts on the first beat.'}</p>` : ''}`;
+}
+async function flAct(a, t, an) {
+  switch (a) {
+    case 'doc-fl-setup': DOC.flSetup = !DOC.flSetup; renderFlBox(); break;
+    case 'doc-fl-install': { const r = await tpDesktop.fl.install(); if (r && r.ok) { FL.status = null; FL.msg = 'Script installed in ' + r.dir + '. Restart FL Studio if it was open.'; } else if (r && r.error) FL.msg = 'The script could not be installed: ' + r.error; renderFlBox(); break; }
+    case 'doc-fl-test': { if (!flSend(2)) { FL.msg = 'That port could not be used.'; renderFlBox(); break; } FL.msg = 'Sent. FL\'s hint bar should say "Tamed Player is connected".'; renderFlBox(); break; }
+    case 'doc-fl-reveal': if (an && an.flPath) tpDesktop.fl.reveal(an.flPath); break;
+    case 'doc-fl-send': {
+      if (!t || !an || !an.bpm) return toast('Read the file first so the tempo is known');
+      toast('Making the WAV for FL Studio…');
+      try {
+        const { blob, name, mode } = await makeWav(t), file = await tpDesktop.fl.save(name, await blob.arrayBuffer());
+        an.flPath = file; an.flName = name; an.flMode = mode; save();
+        const linked = flTempo(an.bpm); if (linked) flSend(5);
+        FL.msg = linked ? `FL Studio's tempo is now ${an.bpm} BPM. Drag the file below onto the playlist.` : 'The WAV is ready. Drag it onto the playlist and set FL\'s tempo to ' + an.bpm + ' BPM (or set up the link so it happens on its own).';
+        toast(linked ? 'Sent to FL Studio at ' + an.bpm + ' BPM' : 'WAV ready to drag into FL Studio');
+      } catch (e) { toast('The WAV could not be made'); }
+      renderFlBox(); break;
+    }
+  }
+}
+document.addEventListener('dragstart', e => { const el = e.target && e.target.closest && e.target.closest('[data-fl]'); if (el && window.tpDesktop && tpDesktop.fl) { e.preventDefault(); tpDesktop.fl.drag(el.dataset.fl); } });
+
 /* ---------- settings ---------- */
 Object.assign(IC, { gear: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z' });
 function applyPrefs() {
@@ -2378,7 +2829,7 @@ async function handleFiles(files) {
     const t = newTrack(f, name); const url = URL.createObjectURL(f); t.dur = await probeDur(url);
     srcs[t.id] = url; S.tracks.push(t); await DB.put(t.id, f); n++; if (c) c.tracks.push(t.id);
   }
-  toast(`Added ${n} track${n > 1 ? 's' : ''}${c ? ' to ' + c.name : ''}`); refresh();
+  toast(`Added ${n} track${n > 1 ? 's' : ''}${c ? ' to ' + c.name : ''}`); refresh(); queueAnalysis(S.tracks.slice(-n).map(keyOf));
 }
 async function duplicateProject(id) {
   const src = col(id); if (!src) return;
@@ -2499,6 +2950,7 @@ async function importFiles(files) {
     const url = URL.createObjectURL(p.e.blob); t.dur = await probeDur(url); srcs[t.id] = url; await DB.put(t.id, p.e.blob);
     S.tracks.push(t); c.tracks.push(t.id);
   }
+  setTimeout(() => queueAnalysis(c.tracks.map(id => trk(id)).filter(Boolean).map(keyOf)), 500);
   const art = chosen.cover && chosen.cover.file ? chosen.cover.file : chosen.cover === false ? null : found;
   if (art) await addCover(c, art);
   S.cols.push(c); S.view = 'collection'; S.colId = c.id; UI.importLink = '';
@@ -2550,6 +3002,7 @@ function act(a, el, e) {
   const id = el.dataset.id, k = el.dataset.k;
   if (a.startsWith('cd-') && cdAct(a, el)) return;
   if (a === 'vw-open-case' || a === 'vw-open-disc') return openViewer(a === 'vw-open-disc' ? 'disc' : 'case');
+  if (a.startsWith('doc-')) { docAct(a, el); return; }
   if (a.startsWith('vw-') && UI.vw) {
     const V = UI.vw;
     if (a === 'vw-close') closeViewer();
@@ -2664,11 +3117,13 @@ document.addEventListener('input', e => {
   const t = e.target;
   if (t.id === 'q') { S.q = t.value; renderList(); }
   else if (t.id === 'cdl-name') { const L = selLayer(); if (L) { L.name = t.value.trim() || undefined; const b = $('#pslayers .psl.on .nm'); if (b) b.textContent = layerName(L); save(); } }
+  else if (t.id === 'doc-bpm') { const tr = S.tracks.find(x => keyOf(x) === DOC.sel), an = tr && S.an[keyOf(tr)]; const v = +t.value; if (an && v >= 40 && v <= 260) { an.bpm = v; applyAnalysis(keyOf(tr), an); save(); renderDocList(); drawDocWaves(); } }
+  else if (t.id === 'doc-title') { const tr = S.tracks.find(x => keyOf(x) === DOC.sel); if (tr) { tr.title = t.value || tr.title; save(); renderDocList(); } }
   else if (t.id === 'font-q') { UI.fontQ = t.value; const l = $('#fontlist'); if (l) l.innerHTML = fontListHTML(); }
   else if (t.dataset.cdl === 'color') { const L = selLayer(); if (L) { L.color = t.value; $$('.pso-swatch').forEach(lb => lb.style.setProperty('--c', t.value)); cdDirty(); save(); } }
   else if (t.id === 'vol' || t.dataset.vol !== undefined) { S.vol = +t.value; Engine.vol(S.vol); $$('input[type=range][data-vol], #vol').forEach(r => { if (r !== t) r.value = S.vol; }); save(); }
   else if (t.dataset.eqb !== undefined) { S.eq.g[+t.dataset.eqb] = +t.value; S.eq.preset = 'custom'; S.eq.on = true; if (AC) applyEq(); t.parentElement.firstElementChild.textContent = (t.value > 0 ? '+' : '') + t.value + ' dB'; const on = $('#eqpop [data-slide="eqp"] .on'); if (!on || on.dataset.k !== 'custom') { $$('#eqpop [data-slide="eqp"] > button').forEach(b => b.classList.toggle('on', b.dataset.k === 'custom')); applySlides(); } $('#eqpop .switch').setAttribute('aria-checked', 'true'); $('#eqpop').classList.remove('off'); save(); }
-  else if (t.dataset.f) { const tr = trk(S.editId); if (t.dataset.f === 'features') tr.features = t.value.split(',').map(s => s.trim()).filter(Boolean); else tr[t.dataset.f] = t.dataset.f === 'bpm' ? +t.value : t.value; updPreview(tr); renderList(); renderBar(); save(); }
+  else if (t.dataset.f) { const tr = trk(S.editId); if (t.dataset.f === 'bpm') tr.bpmAuto = false; if (t.dataset.f === 'key') tr.keyAuto = false; if (t.dataset.f === 'features') tr.features = t.value.split(',').map(s => s.trim()).filter(Boolean); else tr[t.dataset.f] = t.dataset.f === 'bpm' ? +t.value : t.value; updPreview(tr); renderList(); renderBar(); save(); }
   else if (t.dataset.vname) { const tr = trk(S.editId), v = tr.versions.find(x => x.id === t.dataset.vname); v.name = t.value || 'Untitled version'; renderList(); save(); }
   else if (t.dataset.cf) { const c = col(S.colId); c[t.dataset.cf] = t.value; if (t.dataset.cf === 'name') renderSide(); save(); }
   else if (t.dataset.cc && t.type !== 'checkbox') { S.concept[t.dataset.cc] = t.value; save(); renderBar(); }
@@ -2682,10 +3137,16 @@ document.addEventListener('change', e => {
   else if (t.id === 'file') { handleFiles(t.files); t.value = ''; }
   else if (t.id === 'zipfile') { importFiles(t.files); t.value = ''; }
   else if (t.id === 'art') { const f = t.files[0], c = col(UI.coverFor || S.colId); UI.coverFor = null; if (f && c) addCover(c, f).then(() => { refresh(); toast('Cover changed for ' + c.name); }); t.value = ''; }
+  else if (t.id === 'docfile') { const fl = [...t.files]; t.value = ''; if (fl.length) docUpload(fl); }
+  else if (t.id === 'doc-target') { S.docPrefs.target = t.value; save(); }
+  else if (t.id === 'doc-midi') { S.docPrefs.midiOut = t.value; FL.pong = 0; FL.msg = ''; save(); renderFlBox(); }
+  else if (t.id === 'doc-range') { S.docPrefs.range = +t.value; for (const [k, an] of Object.entries(S.an)) if (an && an.bpm) { const b = foldBpm(an.bpm); if (b !== an.bpm) { an.bpm = Math.round(b * 100) / 100; applyAnalysis(k, an); } } save(); renderDocList(); renderDocInspector(); }
+  else if (t.id === 'doc-addproj') { const c = col(t.value), tr = S.tracks.find(x => keyOf(x) === DOC.sel); if (c && tr && !c.tracks.includes(tr.id)) { c.tracks.push(tr.id); toast('Added to ' + c.name); save(); renderDocList(); renderDocInspector(); renderSide(); } }
+  else if (t.dataset.dp) { S.docPrefs[t.dataset.dp] = t.checked; save(); }
   else if (t.id === 'restorefile') { const f = t.files[0]; t.value = ''; if (f) restoreAll(f); }
   else if (t.id === 'set-deftype') { S.prefs.defType = t.value; save(); }
   else if (t.id === 'mcoverfile') { const f = t.files[0]; t.value = ''; if (f) setModalCover(f); }
-  else if (t.id === 'verfile') { const f = t.files[0], tr = trk(S.editId); if (f && tr) (async () => { const id = uid(), url = URL.createObjectURL(f); const v = { id, name: 'Version ' + (tr.versions.length + 2), dur: await probeDur(url), added: Date.now() }; srcs[id] = url; await DB.put(id, f); tr.versions.push(v); tr.ver = id; if (S.cur === tr.id) { Engine.load(tr); if (S.playing) Engine.play(); } $('#d-vers').innerHTML = versHTML(tr); renderList(); save(); toast('Version added'); })(); t.value = ''; }
+  else if (t.id === 'verfile') { const f = t.files[0], tr = trk(S.editId); if (f && tr) (async () => { const id = uid(), url = URL.createObjectURL(f); const v = { id, name: f.name.replace(/\.[^.]+$/, '').replace(/[_]+/g, ' ').trim() || 'Version ' + (tr.versions.length + 2), dur: await probeDur(url), added: Date.now() }; srcs[id] = url; await DB.put(id, f); tr.versions.push(v); tr.ver = id; queueAnalysis([id]); if (S.cur === tr.id) { Engine.load(tr); if (S.playing) Engine.play(); } $('#d-vers').innerHTML = versHTML(tr); renderList(); save(); toast('Version added'); })(); t.value = ''; }
   else if (t.id === 'd-featin') { const tr = trk(S.editId); tr.featInTitle = t.checked; updPreview(tr); renderList(); renderBar(); save(); }
   else if (t.dataset.incol) { const c = col(t.dataset.incol), id = S.editId; c.tracks = c.tracks.filter(x => x !== id); if (t.checked) c.tracks.push(id); refresh(); }
   else if (t.id === 'p-target') { const c = col(S.colId); c.targetDate = t.value || null; refresh(); }
@@ -2778,10 +3239,11 @@ document.addEventListener('drop', e => {
   if (d && txt.startsWith('track:')) { e.preventDefault(); const c = col(d.dataset.drop), id = txt.slice(6); if (c.tracks.includes(id)) toast('Already in ' + c.name); else { c.tracks.push(id); toast('Added to ' + c.name); refresh(); } return; }
   if (e.dataTransfer.files && e.dataTransfer.files.length) {
     e.preventDefault(); const fs = [...e.dataTransfer.files];
+    if (S.view === 'doctor' && !fs.some(f => /\.zip$/i.test(f.name))) { docUpload(fs); return; }
     if (UI.modal && UI.modal.kind === 'import' || fs.some(f => /\.zip$/i.test(f.name))) importFiles(fs); else handleFiles(fs);
   }
 });
-addEventListener('resize', () => { for (const k in slideMemo) delete slideMemo[k]; applySlides(); if (cdActive() && S.cd.view === '2d') draw2D(); });
+addEventListener('resize', () => { if (S.view === 'doctor') drawDocWaves(); for (const k in slideMemo) delete slideMemo[k]; applySlides(); if (cdActive() && S.cd.view === '2d') draw2D(); });
 document.addEventListener('paste', e => { if (UI.modal && UI.modal.kind === 'import' && e.target.id !== 'm-link') { const s = e.clipboardData.getData('text'); if (s) { UI.importLink = s.trim(); const i = $('#m-link'); if (i) i.value = UI.importLink; const a = $('#m-open'); if (a) a.href = UI.importLink; } } });
 
 
