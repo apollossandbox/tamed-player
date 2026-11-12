@@ -1,4 +1,4 @@
-<title>Tamed Player</title>
+<title>Compass</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Permanent+Marker&display=swap" media="print" onload="this.media='all'">
 <style>
@@ -680,6 +680,25 @@ body.cx-on .bar { transform: none; }
 .eb-ro { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); font-weight: 700; }
 .sgrp { margin: 10px 10px 2px; font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); }
 .shead .ico.on { color: var(--ink); background: var(--panel3); }
+
+/* store, marketplace, launcher */
+.sgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 26px 20px; margin-bottom: 28px; }
+.scard { display: flex; flex-direction: column; gap: 3px; min-width: 0; cursor: pointer; } .scard b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .scard span { color: var(--ink2); font-size: 13px; } .scard em { font-style: normal; font-size: 12px; color: var(--ink3); } .scard .btn { align-self: flex-start; margin-top: 6px; }
+.scd { position: absolute; inset: 8%; border-radius: 4px; box-shadow: 0 10px 24px -8px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.25); } .scd i { position: absolute; inset: 0; background: linear-gradient(120deg, rgba(255,255,255,.28), transparent 40%); }
+.shero { position: relative; height: 240px; border-radius: 16px; overflow: hidden; margin: 6px 0 24px; display: flex; align-items: flex-end; } .shero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,.75), transparent 70%); }
+.shero > div { position: relative; z-index: 1; padding: 22px; color: #fff; } .shero small { text-transform: uppercase; letter-spacing: .1em; font-weight: 700; opacity: .8; } .shero h2 { font-size: 32px; margin: 4px 0; } .shero p { margin: 0 0 12px; opacity: .85; }
+.srow-h { font-size: 18px; margin: 8px 0 12px; }
+.mk-hero { text-align: center; padding: 36px 16px 26px; } .mk-hero h1 { font-size: clamp(28px, 4vw, 42px); margin: 0 0 6px; } .mk-hero p { color: var(--ink2); margin: 0 0 18px; }
+.mk-search { display: flex; align-items: center; gap: 10px; max-width: 620px; margin: 0 auto 16px; padding: 6px 6px 6px 16px; border-radius: 99px; background: var(--panel2); border: 1px solid var(--line); } .mk-search input { flex: 1; background: none; border: 0; outline: 0; font-size: 15px; color: var(--ink); }
+.mk-hero .chips { justify-content: center; margin-bottom: 10px; }
+.mk-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 26px; } .mk-row { display: grid; grid-template-columns: 26px 34px 44px minmax(0, 1fr) 70px 90px 84px; gap: 12px; align-items: center; padding: 6px 10px; border-radius: 10px; } .mk-row:hover { background: var(--hover); }
+.mk-n { color: var(--ink3); text-align: center; } .mk-play { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--onink); } .mk-cov { width: 44px; height: 44px; border-radius: 6px; background-size: cover; }
+.mk-prod { display: flex; gap: 22px; flex-wrap: wrap; margin-bottom: 26px; } .mk-prod > div { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 92px; text-align: center; } .mk-av { width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; background: var(--panel3); font-size: 28px; font-weight: 800; }
+.dawgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+.daw { display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); opacity: .75; } .daw.ok { opacity: 1; }
+.daw-i { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; background: var(--panel3); font-weight: 800; font-size: 16px; } .daw.ok .daw-i { background: var(--ink); color: var(--onink); }
+.daw small { color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 760px) { .mk-row { grid-template-columns: 34px 44px minmax(0, 1fr) 84px; } .mk-row .mk-n, .mk-row .mono { display: none; } }
 /* Audio Doctor */
 .doc-drop { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px; margin-bottom: 16px; border: 1.5px dashed var(--line); border-radius: 14px; color: var(--ink2); }
 .doc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 430px); gap: 16px; align-items: start; }
@@ -958,7 +977,7 @@ body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 'use strict';
-/* Tamed Player: music organizer, CD drafts and a concept streaming player. Vanilla JS, no build. */
+/* Compass: music organizer, CD drafts and a concept streaming player. Vanilla JS, no build. */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -1278,7 +1297,7 @@ function toast(msg) { const e = $('#toast'); e.textContent = msg; e.classList.ad
 function renderSide() {
   const nav = [['library', 'grid', 'Library', S.cols.length], ['cd', 'disc', 'CD Creator'], ['launcher', 'cube', 'Launcher'], ['store', 'disc', 'Music Store'], ['market', 'grid', 'Marketplace'], ['doctor', 'pulse', 'Audio Editor'], ['settings', 'gear', 'Settings']];
   $('#side').innerHTML = `
-  <div class="brand">${logo(26)}<span>Tamed Player</span></div>
+  <div class="brand">${logo(26)}<span>Compass</span></div>
   <nav class="snav" data-slide="nav"><i class="thumb"></i>${nav.map(([v, i, l, n]) => `<button class="navbtn ${S.view === v ? 'on' : ''}" data-act="nav" data-view="${v}">${ico(i)}<span>${l}</span>${n !== undefined ? `<em>${n}</em>` : ''}</button>`).join('')}</nav>
   <div class="shead"><span>Projects</span><button class="ico ${S.side.sort !== 'custom' || S.side.type !== 'all' || S.side.rel !== 'all' ? 'on' : ''}" data-act="side-menu" aria-label="Sort and filter projects" title="Sort and filter">${ico('list', 15)}</button><button class="ico" data-act="newcol" aria-label="New project" title="New project">${ico('plus', 16)}</button></div>
   <div class="colswrap"><div class="cols" data-slide="cols"><i class="thumb"></i>${(() => { let last = null; return sideProjects().map(c => { const a = projArtist(c), head = S.side.sort === 'artist' && a !== last ? `<p class="sgrp">${esc(a || 'No artist')}</p>` : ''; last = a; return `${head}
@@ -1376,7 +1395,9 @@ function renderMain() {
   else if (S.view === 'collection') renderProject(m);
   else if (S.view === 'cd') renderCD(m);
   else if (S.view === 'doctor') renderDoctor(m);
-  else if (S.view === 'store' || S.view === 'market' || S.view === 'launcher') m.innerHTML = `<header class="head"><div><h1>${{ store: 'Music Store', market: 'Marketplace', launcher: 'Launcher' }[S.view]}</h1></div></header>`;
+  else if (S.view === 'store') renderStore(m);
+  else if (S.view === 'market') renderMarket(m);
+  else if (S.view === 'launcher') renderLauncher(m);
   else if (S.view === 'settings') renderSettings(m);
   else renderConcept(m);
   renderList();
@@ -1412,7 +1433,7 @@ function renderLibrary(m) {
 
 function renderProject(m) {
   const c = col(S.colId); if (!c) { S.view = 'library'; return renderLibrary(m); }
-  const ts = colTracks(c), link = `tamed.fm/${slug(S.concept.artist)}/${slug(c.name)}`;
+  const ts = colTracks(c), link = `compass.fm/${slug(S.concept.artist)}/${slug(c.name)}`;
   const nF = ts.filter(t => t.status === 'final').length, nD = ts.filter(t => t.status === 'demo').length, nU = ts.filter(t => t.status === 'unmixed').length;
   const fol = isFolder(c), playing = S.playing && c.tracks.includes(S.cur);
   m.innerHTML = `<section class="chero">
@@ -1541,7 +1562,7 @@ function openModal(kind, id, x = {}) {
     h = `<h2>Import from Untitled</h2>
     <p class="faint">Browsers can't read untitled.stream pages directly, so this takes two steps. The link is saved on the project.</p>
     <label class="lab" for="m-link">Untitled link</label><input class="field" id="m-link" placeholder="https://untitled.stream/library/project/…" value="${esc(UI.importLink || '')}">
-    <ol class="steps"><li>Paste the link and open it. On Untitled, press <b>Download</b> (the project has to allow downloads).</li><li>Drop the downloaded .zip here. Tamed Player reads the cover art, track names, track order, project name and artist from the files.</li></ol>
+    <ol class="steps"><li>Paste the link and open it. On Untitled, press <b>Download</b> (the project has to allow downloads).</li><li>Drop the downloaded .zip here. Compass reads the cover art, track names, track order, project name and artist from the files.</li></ol>
     <div class="crow"><a class="btn sm" id="m-open" href="${esc(UI.importLink || 'https://untitled.stream')}" target="_blank" rel="noopener">${ico('link', 14)} Open link</a></div>
     <div class="dropzone" id="m-drop">${ico('import', 26)}<b>Drop the .zip here</b><span class="faint small">or loose audio and image files</span><button class="btn sm primary" data-act="zip-pick">Choose files</button></div>
     <p class="faint small" id="m-status" role="status"></p>`;
@@ -2383,7 +2404,7 @@ async function addCD3Dx(c, root) {
     paintSheet(cv.getContext('2d'), k, d[k], PRINTMM, d); root.file(`print/${i + 1} ${sh.name}.png`, await new Promise(r => cv.toBlob(r, 'image/png')));
   }
   if (C3.w && C3.r.domElement.isConnected) { C3.r.render(C3.scene, C3.cam); const pv = await new Promise(r => C3.r.domElement.toBlob(r, 'image/png')); if (pv) root.file('preview.png', pv); }
-  root.file('README.txt', `${c.name} by ${projArtist(c)} - 3D CD from Tamed Player
+  root.file('README.txt', `${c.name} by ${projArtist(c)} - 3D CD from Compass
 
 ${base} CD.glb
   The whole package as one 3D model: a clear ${S.cd.caseType === 'slim' ? 'slim ' : ''}jewel case with the booklet, ${S.cd.caseType === 'slim' ? '' : 'tray card, spines, under-tray art, '}and the disc, with all the artwork built in.
@@ -2416,7 +2437,7 @@ async function exportDisc(cid) {
     (t.credits || []).forEach(cr => lines.push(`      ${cr.role}: ${cr.name}`));
   }
   const rel = isFolder(c) || !c.targetDate ? '' : (c.released ? 'Released ' : 'Target release ') + fdate(c.targetDate);
-  root.file('Tracklist.txt', `${c.name}\n${projArtist(c)} · ${KINDS[c.type]}${rel ? ' · ' + rel : ''}\n\n${lines.join('\n')}\n\n${ts.length} ${ts.length === 1 ? 'song' : 'songs'} · ${total(ts)}\n\nMade with Tamed Player\n`.replace(/\n/g, '\r\n'));
+  root.file('Tracklist.txt', `${c.name}\n${projArtist(c)} · ${KINDS[c.type]}${rel ? ' · ' + rel : ''}\n\n${lines.join('\n')}\n\n${ts.length} ${ts.length === 1 ? 'song' : 'songs'} · ${total(ts)}\n\nMade with Compass\n`.replace(/\n/g, '\r\n'));
   // the 3D CD with the art built in, and the print files
   if (!isFolder(c)) { toast('Building the 3D CD…'); const ok = await addCD3D(c, root.folder('3D CD')); if (!ok) toast('The 3D CD was left out; the rest is still packed'); }
   const blob = await z.generateAsync({ type: 'blob', compression: 'STORE' });
@@ -2624,7 +2645,7 @@ function encodeWav(ab, bits, meta) {
     a.setUint32(12, Math.max(1, Math.round(len / sr * meta.bpm / 60)), true); a.setUint16(16, 4, true); a.setUint16(18, 4, true); a.setFloat32(20, meta.bpm, true);
     chunks.push(['acid', new Uint8Array(a.buffer)]);
   }
-  const info = [['INAM', meta.title], ['IART', meta.artist], ['ICMT', meta.comment], ['ISFT', 'Tamed Player Audio Doctor']].filter(x => x[1]);
+  const info = [['INAM', meta.title], ['IART', meta.artist], ['ICMT', meta.comment], ['ISFT', 'Compass Audio Doctor']].filter(x => x[1]);
   if (info.length) { const parts = [enc.encode('INFO')]; info.forEach(([id, v]) => { const b = enc.encode(v + '\0'), h = new DataView(new ArrayBuffer(8)); enc.encodeInto(id, new Uint8Array(h.buffer)); h.setUint32(4, b.length, true); parts.push(new Uint8Array(h.buffer), b, ...(b.length & 1 ? [new Uint8Array(1)] : [])); }); const tot = parts.reduce((s, x) => s + x.length, 0), u = new Uint8Array(tot); let o = 0; parts.forEach(x => { u.set(x, o); o += x.length; }); chunks.push(['LIST', u]); }
   const data = new ArrayBuffer(dataLen), dv = new DataView(data); let o = 0;
   for (let i = 0; i < len; i++) for (let c = 0; c < nc; c++) {
@@ -2783,24 +2804,24 @@ async function docAct(a, el) {
       if (!window.JSZip) return toast('Zip support did not load'); const ts = S.tracks.filter(x => S.an[keyOf(x)] && !S.an[keyOf(x)].error); if (!ts.length) return toast('Nothing has been read yet');
       let dl = null; try { dl = await claude.use('downloads'); } catch (e) { } if (!dl) return toast('Saving files is not available in this view');
       const z = new JSZip(); let n = 0; for (const tr of ts) { toast(`Converting ${++n} of ${ts.length}…`); try { const { blob, name } = await makeWav(tr); z.file(name, blob); } catch (e) { } await yieldUI(); }
-      try { await dl.save({ filename: `tamed-player-wav-${today()}.zip`, data: await z.generateAsync({ type: 'blob' }) }); toast(`Saved ${n} WAV files`); } catch (e) { if (e && e.code !== 'declined') toast('The zip could not be saved'); }
+      try { await dl.save({ filename: `compass-wav-${today()}.zip`, data: await z.generateAsync({ type: 'blob' }) }); toast(`Saved ${n} WAV files`); } catch (e) { if (e && e.code !== 'declined') toast('The zip could not be saved'); }
       break; }
   }
 }
 
 /* ---------- FL Studio link (Windows app): set FL's tempo over a virtual MIDI port, then drag the WAV into the playlist ---------- */
 const FL = { access: null, pong: 0, tried: false, err: '', status: null, msg: '' };
-// The FL Studio plugin (a MIDI controller script). The Windows build also writes this to desktop/fl/device_TamedPlayer.py.
-const FL_SCRIPT = `# name=Tamed Player
+// The FL Studio plugin (a MIDI controller script). The Windows build also writes this to desktop/fl/device_Compass.py.
+const FL_SCRIPT = `# name=Compass
 # url=https://github.com/apollossandbox/tamed-player
 # supportedDevices=Tamed Link
 """
-Tamed Player link for FL Studio.
+Compass link for FL Studio.
 
-Tamed Player's Audio Doctor sends a short MIDI message through a virtual MIDI
+Compass's Audio Doctor sends a short MIDI message through a virtual MIDI
 port (for example a loopMIDI port called "Tamed Link"). This script reads it
 and sets the project tempo, rewinds to bar 1 and opens the playlist, so the WAV
-you drag in from Tamed Player lands on the grid.
+you drag in from Compass lands on the grid.
 
 Messages (SysEx, manufacturer 0x7D, then "TP"):
   F0 7D 54 50 01 b0 b1 b2 b3 F7   set tempo, value = BPM x 1000 in four 7-bit bytes
@@ -2817,7 +2838,7 @@ HEAD = (0xF0, 0x7D, 0x54, 0x50)
 
 
 def OnInit():
-    print("Tamed Player link is ready")
+    print("Compass link is ready")
 
 
 def _hint(text):
@@ -2839,13 +2860,13 @@ def OnSysEx(event):
         bpm = milli / 1000.0
         if 10.0 <= bpm <= 522.0:
             general.processRECEvent(midi.REC_Tempo, milli, midi.REC_Control | midi.REC_UpdateControl)
-            _hint("Tamed Player: tempo set to %g BPM" % bpm)
+            _hint("Compass: tempo set to %g BPM" % bpm)
     elif cmd == 0x02:
         try:
             device.midiOutSysex(bytes(HEAD + (0x03, 0xF7)))
         except Exception:
             pass
-        _hint("Tamed Player is connected")
+        _hint("Compass is connected")
     elif cmd == 0x05:
         try:
             if transport.isPlaying():
@@ -2856,34 +2877,34 @@ def OnSysEx(event):
         except Exception:
             pass
 `;
-const FL_HOWTO = `Tamed Player plugin for FL Studio
+const FL_HOWTO = `Compass plugin for FL Studio
 ==================================
 
 What it does
-Tamed Player's Audio Doctor uses it to set FL Studio's tempo to your song, rewind to bar 1 and open the playlist,
-so the beat-aligned WAV you drag in from Tamed Player sits on the grid.
+Compass's Audio Doctor uses it to set FL Studio's tempo to your song, rewind to bar 1 and open the playlist,
+so the beat-aligned WAV you drag in from Compass sits on the grid.
 
 Install
-1. Unzip this file. You get a folder called "Tamed Player".
+1. Unzip this file. You get a folder called "Compass".
 2. Move that folder into FL Studio's hardware scripts folder:
      Windows: Documents\Image-Line\FL Studio\Settings\Hardware
      Mac:     Documents/Image-Line/FL Studio/Settings/Hardware
    (FL Studio shows its user data folder under Options > File settings.)
-   You should end up with ...\Settings\Hardware\Tamed Player\device_TamedPlayer.py
+   You should end up with ...\Settings\Hardware\Compass\device_Compass.py
 3. Make a virtual MIDI port called "Tamed Link" with loopMIDI (free): https://www.tobias-erichsen.de/software/loopmidi.html
    On Windows 11 with Windows MIDI Services you can use its loopback port instead.
-4. Open FL Studio > Options > MIDI settings. Under Input, pick "Tamed Link", set Controller type to "Tamed Player" and enable it.
-   To let Tamed Player's Test button get an answer, also pick the same port under Output and give both the same Port number.
-5. In Tamed Player: Audio Doctor > Send to FL Studio > Set up > pick the port > Test.
-   FL Studio's hint bar says "Tamed Player is connected".
+4. Open FL Studio > Options > MIDI settings. Under Input, pick "Tamed Link", set Controller type to "Compass" and enable it.
+   To let Compass's Test button get an answer, also pick the same port under Output and give both the same Port number.
+5. In Compass: Audio Doctor > Send to FL Studio > Set up > pick the port > Test.
+   FL Studio's hint bar says "Compass is connected".
 
 Made by sxteen ways, trulytamed and all of KGB.
 `;
 async function flDownload() {
   if (!window.JSZip) return toast('Zip support did not load');
   let dl = null; try { dl = await claude.use('downloads'); } catch (e) { } if (!dl) return toast('Saving files is not available in this view');
-  const z = new JSZip(); z.file('Tamed Player/device_TamedPlayer.py', FL_SCRIPT.replace(/\n/g, '\r\n')); z.file('How to install.txt', FL_HOWTO.replace(/\n/g, '\r\n'));
-  try { await dl.save({ filename: 'Tamed Player for FL Studio.zip', data: await z.generateAsync({ type: 'blob' }) }); toast('Saved the FL Studio plugin'); } catch (e) { if (e && e.code !== 'declined') toast('The plugin could not be saved'); }
+  const z = new JSZip(); z.file('Compass/device_Compass.py', FL_SCRIPT.replace(/\n/g, '\r\n')); z.file('How to install.txt', FL_HOWTO.replace(/\n/g, '\r\n'));
+  try { await dl.save({ filename: 'Compass for FL Studio.zip', data: await z.generateAsync({ type: 'blob' }) }); toast('Saved the FL Studio plugin'); } catch (e) { if (e && e.code !== 'declined') toast('The plugin could not be saved'); }
 }
 async function flMidi() {
   if (FL.access || FL.tried) return FL.access; FL.tried = true;
@@ -2902,7 +2923,7 @@ function flTempo(bpm) { const v = Math.round(bpm * 1000); return flSend(1, [(v >
 function flIn(e) { const d = e.data; if (d && d[0] === 0xF0 && d[1] === 0x7D && d[2] === 0x54 && d[3] === 0x50 && d[4] === 3) { FL.pong = Date.now(); FL.msg = 'FL Studio answered. The link works.'; renderFlBox(); } }
 async function renderFlBox() {
   const el = $('#flbox'); if (!el) return;
-  if (!window.tpDesktop || !tpDesktop.fl) { el.innerHTML = `<p class="faint small di-note">Sending to FL Studio works in the Tamed Player app for Windows. It sets FL's tempo to this song and lets you drag the WAV straight onto the playlist. You can get the FL Studio plugin here now.</p><div class="crow"><button class="btn" data-act="doc-fl-download">${ico('save', 14)} Download FL Studio plugin</button></div>`; return; }
+  if (!window.tpDesktop || !tpDesktop.fl) { el.innerHTML = `<p class="faint small di-note">Sending to FL Studio works in the Compass app for Windows. It sets FL's tempo to this song and lets you drag the WAV straight onto the playlist. You can get the FL Studio plugin here now.</p><div class="crow"><button class="btn" data-act="doc-fl-download">${ico('save', 14)} Download FL Studio plugin</button></div>`; return; }
   if (FL.want) await flMidi(); if (!FL.status) { try { FL.status = await tpDesktop.fl.status(); } catch (e) { FL.status = {}; } }
   if (!$('#flbox')) return;
   const t = S.tracks.find(x => keyOf(x) === DOC.sel), an = t && S.an[keyOf(t)], port = flPort(), outs = flOuts();
@@ -2911,7 +2932,7 @@ async function renderFlBox() {
     ${DOC.flSetup ? `<ol class="fl-steps">
       <li><b>Install the FL Studio plugin.</b> ${FL.status && FL.status.installed ? '<span class="dst ok">Installed</span>' : ''}<br><span class="crow"><button class="btn sm" data-act="doc-fl-install">${ico('save', 13)} ${FL.status && FL.status.installed ? 'Install again' : 'Install into FL Studio'}</button><button class="btn sm" data-act="doc-fl-download">Download plugin</button></span></li>
       <li><b>Make a virtual MIDI port.</b> Install <a href="https://www.tobias-erichsen.de/software/loopmidi.html" target="_blank" rel="noopener">loopMIDI</a> (free) and add a port named <b>Tamed Link</b>. On Windows 11 with Windows MIDI Services you can use its loopback port.</li>
-      <li><b>Turn it on in FL Studio.</b> Options › MIDI settings. Under Input, pick <b>Tamed Link</b>, set Controller type to <b>Tamed Player</b> and enable it. To get the answer below, also pick the same port under Output and give both the same Port number.</li>
+      <li><b>Turn it on in FL Studio.</b> Options › MIDI settings. Under Input, pick <b>Tamed Link</b>, set Controller type to <b>Compass</b> and enable it. To get the answer below, also pick the same port under Output and give both the same Port number.</li>
       <li><b>Pick the port here and test.</b><div class="crow"><label class="sel box"><select id="doc-midi" aria-label="MIDI port">${outs.length ? outs.map(o => `<option ${port && port.id === o.id ? 'selected' : ''}>${esc(o.name)}</option>`).join('') : '<option value="">No MIDI ports found</option>'}</select></label><button class="btn sm" data-act="doc-fl-test" ${linked ? '' : 'disabled'}>Test</button></div></li>
     </ol>` : ''}
     ${FL.msg ? `<p class="faint small di-note">${esc(FL.msg)}</p>` : ''}
@@ -2924,7 +2945,7 @@ async function flAct(a, t, an) {
     case 'doc-fl-setup': DOC.flSetup = !DOC.flSetup; FL.want = true; renderFlBox(); break;
     case 'doc-fl-download': flDownload(); break;
     case 'doc-fl-install': { const r = await tpDesktop.fl.install(); if (r && r.ok) { FL.status = null; FL.msg = 'Plugin installed in ' + r.dir + '. Restart FL Studio if it was open.'; } else if (r && r.error) FL.msg = 'The script could not be installed: ' + r.error; renderFlBox(); break; }
-    case 'doc-fl-test': { if (!flSend(2)) { FL.msg = 'That port could not be used.'; renderFlBox(); break; } FL.msg = 'Sent. FL\'s hint bar should say "Tamed Player is connected".'; renderFlBox(); break; }
+    case 'doc-fl-test': { if (!flSend(2)) { FL.msg = 'That port could not be used.'; renderFlBox(); break; } FL.msg = 'Sent. FL\'s hint bar should say "Compass is connected".'; renderFlBox(); break; }
     case 'doc-fl-reveal': if (an && an.flPath) tpDesktop.fl.reveal(an.flPath); break;
     case 'doc-fl-send': {
       if (!t || !an || !an.bpm) return toast('Read the file first so the tempo is known');
@@ -2945,6 +2966,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.4.0', d: '2026-11-12', items: ['Tamed Player is now Compass. Your projects carry over.', 'Library: My Music tab for albums you bought. Drop the zip and it is named and ordered for you. Digital albums are read-only; Make My Version gives you an editable copy.', 'Folders hold projects and show the four newest covers. Drag a project onto a folder, or onto another project to make a folder.', 'Archive projects, and Recently deleted in Settings keeps deleted projects and songs for 30 days.', 'Sidebar shows the artist and can be sorted, grouped by artist and filtered.', 'Select songs with Shift or Ctrl and right-click to export, move, copy, duplicate, change status or delete them. Export Track for a single song.', 'The Added date sits between Status and Time.', 'Launcher finds FL Studio, Ableton, REAPER and other DAWs and opens them; locate any it misses.', 'Music Store with Digital and Physical, and a first look at the Marketplace.'] },
   { v: '1.3.0', d: '2026-11-12', items: ['Menu: Library, CD Creator, Launcher, Music Store, Marketplace, Audio Editor, Settings. Launcher and the stores are placeholders for now.', 'Songs play straight into the next one with no gap.', 'Imported file names are cleaned up ("01-georgia-peach" becomes "georgia peach") and numbers set the track order. The artist comes from the files; nothing is filled in by default.', 'Add from zip replaces Import from Untitled.', 'The 3D CD no longer disappears from the viewer when the playlist ends or repeats.', 'Audio Editor no longer starts the FL Studio MIDI link on its own, and its side panel is compact and scrolls.', 'Released projects show just the track count. Download comes before Share. Project rows show the date each song was added.', 'One click selects a song, double-click plays it. Version labels, the row cover and the player bar phone button are gone.', 'Concept player: album covers show on artist pages, each artist has their own page, picture and background.', 'Covers fill their squares, the type picker has no boxes, the lyrics box is bigger, a settings button sits next to credits, and the logo disc turns.'] },
   { v: '1.2.5', d: '2026-11-09', items: ['Changelog: see what changed in every version from Settings, after an update, and when checking for updates.'] },
   { v: '1.2.4', d: '2026-11-09', items: ['Both CD spines now face the front cover, like a real jewel case.'] },
@@ -2980,6 +3002,41 @@ function checkWhatsNew() {
 }
 if (window.tpDesktop && tpDesktop.onChangelog) tpDesktop.onChangelog(d => openChangelog(d && d.changelog, d && d.since));
 
+/* ---------- Music Store: a storefront for music, digital and physical ---------- */
+function renderStore(m) {
+  const tab = UI.storeTab || 'digital', rel = S.cols.filter(c => !isFolder(c) && !c.archived && (c.released || isMine(c) || colTracks(c).length));
+  const card = (c, n) => `<div class="scard" style="--n:${n}" data-act="col" data-id="${c.id}" role="button" tabindex="0"><div class="acard-art">${tab === 'physical' ? `<span class="scd" style="${pcov(c)}"><i></i></span>` : albumArt(c)}</div><b>${esc(c.name)}</b><span>${esc(projArtist(c) || 'Unknown artist')}</span><em>${tab === 'physical' ? 'CD · Jewel case' : (KINDS[c.type] || 'Album') + ' · ' + colTracks(c).length + ' songs'}</em><button class="btn sm" disabled>${tab === 'physical' ? 'Pre-order soon' : 'Buy soon'}</button></div>`;
+  const hero = rel.find(c => artOf(c)) || rel[0];
+  m.innerHTML = `<header class="head"><div><h1>Music Store</h1><p class="faint">Buy music straight from artists. Checkout opens when accounts arrive; this is how the shop will look.</p></div></header>
+    <div class="tools">${seg('storetab', [['digital', 'Digital'], ['physical', 'Physical']], tab, 'store-tab')}</div>
+    ${hero ? `<section class="shero" style="${pcov(hero)}"><div><small>Featured ${tab === 'physical' ? 'CD' : 'release'}</small><h2>${esc(hero.name)}</h2><p>${esc(projArtist(hero) || '')}</p><button class="btn primary" data-act="play-col" data-id="${hero.id}">${ico('play', 15)} Listen</button></div></section>` : ''}
+    <h3 class="srow-h">${tab === 'physical' ? 'CDs' : 'New releases'}</h3><div class="sgrid">${rel.map(card).join('') || '<p class="faint">Nothing to show yet. Release a project to see it here.</p>'}</div>`;
+}
+/* ---------- Marketplace (in progress): beats, kits and loops, laid out like a beat store ---------- */
+function renderMarket(m) {
+  const ts = S.tracks.filter(t => !S.cols.some(c => isMine(c) && c.tracks.includes(t.id))).slice(0, 12), genres = ['Trap', 'Drill', 'Boom Bap', 'R&B', 'Hip Hop', 'Pop', 'Afrobeats', 'Rage', 'Jersey Club', 'Lo-fi'];
+  const producers = [...new Set(S.cols.flatMap(projArtists))].slice(0, 8);
+  m.innerHTML = `<section class="mk-hero"><h1>Your sound starts here</h1><p>Beats, drum kits, loops and project files from independent producers.</p>
+      <label class="mk-search">${ico('search', 18)}<input placeholder="Search beats, kits, producers" aria-label="Search the marketplace"><button class="btn primary">Search</button></label>
+      <div class="chips">${genres.map(g => `<button class="chip">${g}</button>`).join('')}</div><p class="faint small">The marketplace is still being built. Nothing here is for sale yet.</p></section>
+    <h3 class="srow-h">Trending beats</h3>
+    <div class="mk-list">${ts.map((t, i) => `<div class="mk-row"><span class="mk-n">${i + 1}</span><button class="mk-play" data-act="play" data-id="${t.id}" aria-label="Play">${ico(S.cur === t.id && S.playing ? 'pause' : 'play', 14)}</button><span class="mk-cov" style="${tcov(t)}"></span><span class="meta"><b>${esc(dispTitle(t))}</b><span>${esc(dispArtist(t) || 'Producer')}</span></span><span class="mono">${t.bpm ? t.bpm + ' BPM' : ''}</span><span class="mono">${esc(t.key || '')}</span><button class="btn sm" disabled>$29.99</button></div>`).join('') || '<p class="faint">Your beats will show here once the marketplace opens.</p>'}</div>
+    <h3 class="srow-h">Top producers</h3><div class="mk-prod">${producers.map(n => `<div><span class="mk-av">${esc(n.slice(0, 1).toUpperCase())}</span><b>${esc(n)}</b></div>`).join('') || '<p class="faint">Producers appear here.</p>'}</div>
+    <h3 class="srow-h">Sound kits</h3><div class="sgrid">${['Drum Kit', 'Melody Loops', '808 Pack', 'Vocal Chops'].map((k, i) => `<div class="scard"><div class="acard-art"><span class="acard-ph" style="${cover(40 + i * 70, 120 + i * 50)}"></span></div><b>${k}</b><span>Coming soon</span></div>`).join('')}</div>`;
+}
+/* ---------- Launcher: find the DAWs on this computer and open them ---------- */
+const DAWS = [['fl', 'FL Studio'], ['ableton', 'Ableton Live'], ['logic', 'Logic Pro'], ['studioone', 'Studio One'], ['reaper', 'REAPER'], ['cubase', 'Cubase'], ['bitwig', 'Bitwig Studio'], ['protools', 'Pro Tools'], ['reason', 'Reason'], ['garageband', 'GarageBand']];
+async function renderLauncher(m) {
+  const desk = window.tpDesktop && tpDesktop.daw; S.daws = S.daws || {};
+  if (desk && !UI.dawScan) { UI.dawScan = 'busy'; tpDesktop.daw.scan().then(r => { UI.dawScan = r || {}; if (S.view === 'launcher') renderMain(); }).catch(() => { UI.dawScan = {}; }); }
+  const found = id => S.daws[id] || (UI.dawScan && UI.dawScan !== 'busy' && UI.dawScan[id]);
+  const list = DAWS.map(([id, n]) => ({ id, n, path: found(id) })).sort((a, b) => !!b.path - !!a.path);
+  m.innerHTML = `<header class="head"><div><h1>Launcher</h1><p class="faint">${desk ? (UI.dawScan === 'busy' ? 'Looking for music software on this computer…' : `Found ${list.filter(x => x.path).length} on this computer. Locate any that weren't found.`) : 'Opening DAWs works in the Compass app for Windows. Download it from Settings.'}</p></div>
+    ${desk ? `<div class="hact"><button class="btn" data-act="daw-rescan">${ico('repeat', 15)} Scan again</button></div>` : ''}</header>
+    <div class="dawgrid">${list.map(d => `<div class="daw ${d.path ? 'ok' : ''}"><span class="daw-i">${esc(d.n.split(' ').map(w => w[0]).join('').slice(0, 2))}</span><b>${esc(d.n)}</b><small title="${esc(d.path || '')}">${d.path ? esc(d.path.split(/[\\/]/).pop()) : 'Not found'}</small>
+      <div class="crow">${d.path ? `<button class="btn sm primary" data-act="daw-open" data-k="${d.id}" ${desk ? '' : 'disabled'}>${ico('play', 13)} Open</button>` : ''}<button class="btn sm" data-act="daw-locate" data-k="${d.id}" ${desk ? '' : 'disabled'}>Locate…</button></div></div>`).join('')}</div>`;
+}
+
 /* ---------- settings ---------- */
 Object.assign(IC, { gear: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z' });
 function applyPrefs() {
@@ -2991,7 +3048,7 @@ const sw = (k, on, label) => `<button class="switch" role="switch" aria-checked=
 const setRow = (title, desc, control) => `<div class="set-row"><div class="set-txt"><b>${title}</b>${desc ? `<span>${desc}</span>` : ''}</div><div class="set-ctl">${control}</div></div>`;
 function renderSettings(m) {
   const P = S.prefs;
-  m.innerHTML = `<header class="head"><div><h1>Settings</h1><p class="faint">How Tamed Player looks, plays and keeps your work.</p></div></header>
+  m.innerHTML = `<header class="head"><div><h1>Settings</h1><p class="faint">How Compass looks, plays and keeps your work.</p></div></header>
   <div class="settings">
     <section class="set-card box"><h2>Profile</h2>
       ${setRow('Main artist name', 'Used for the artist page and for projects without their own artists.', `<input class="field" id="set-artist" data-cc="artist" value="${esc(S.concept.artist === 'Artist Name' ? '' : S.concept.artist || '')}" placeholder="${esc(artistOf())}" autocomplete="off">`)}
@@ -3025,7 +3082,7 @@ function renderSettings(m) {
       <dt>${MOD}/</dt><dd>Lock or unlock layer</dd><dt>${MOD},</dt><dd>Hide or show layer</dd><dt>Arrows</dt><dd>Nudge layer (Shift for 5 mm)</dd><dt>${MOD}0 / = / -</dt><dd>Fit, zoom in, zoom out</dd></dl>
     </section>
     <section class="set-card box"><h2>About</h2>
-      ${setRow('Tamed Player ' + esc(APP_VERSION), 'Made by sxteen ways, trulytamed and all of KGB.', `<button class="btn sm" data-act="credits">${ico('star', 14)} Credits</button>`)}
+      ${setRow('Compass ' + esc(APP_VERSION), 'Made by sxteen ways, trulytamed and all of KGB.', `<button class="btn sm" data-act="credits">${ico('star', 14)} Credits</button>`)}
       ${setRow('Changelog', 'What changed in every version.', `<button class="btn sm" data-act="changelog">${ico('list', 14)} What's new</button>`)}
     </section>
     <section class="set-card box"><h2>Recently deleted</h2><p class="faint small" style="margin:0 0 8px">Deleted projects and songs stay here for 30 days.</p>
@@ -3049,15 +3106,15 @@ async function backupAll() {
   (S.cd.fonts || []).forEach(f => keys.add('cdfont:' + f.id));
   const files = {}; let i = 0;
   for (const k of keys) { const b = await DB.get(k); if (b) { const n = 'files/' + (++i) + '-' + k.replace(/[^\w.-]+/g, '_'); z.file(n, b); files[k] = { n, type: b.type || '' }; } }
-  z.file('tamed-player-backup.json', JSON.stringify({ app: 'Tamed Player', kind: 'backup', format: 1, date: new Date().toISOString(), state: { ...S, playing: false, q: '', editId: null, cx: { ...S.cx, open: false } }, files }));
+  z.file('tamed-player-backup.json', JSON.stringify({ app: 'Compass', kind: 'backup', format: 1, date: new Date().toISOString(), state: { ...S, playing: false, q: '', editId: null, cx: { ...S.cx, open: false } }, files }));
   const blob = await z.generateAsync({ type: 'blob' });
-  try { await dl.save({ filename: `tamed-player-backup-${today()}.zip`, data: blob }); toast('Backup ready'); } catch (e) { if (e && e.code === 'too_large') toast('The backup is too large to save here'); else if (e && e.code !== 'declined') toast('The backup could not be saved'); }
+  try { await dl.save({ filename: `compass-backup-${today()}.zip`, data: blob }); toast('Backup ready'); } catch (e) { if (e && e.code === 'too_large') toast('The backup is too large to save here'); else if (e && e.code !== 'declined') toast('The backup could not be saved'); }
 }
 async function restoreAll(file) {
   if (!window.JSZip) return toast('Zip support did not load, so backups are unavailable');
   try {
     const z = await JSZip.loadAsync(file), j = z.file('tamed-player-backup.json');
-    if (!j) return toast('That zip is not a Tamed Player backup. To import music, drop it in the Library.');
+    if (!j) return toast('That zip is not a Compass backup. To import music, drop it in the Library.');
     const meta = JSON.parse(await j.async('string')); toast('Restoring…');
     for (const [k, f] of Object.entries(meta.files || {})) { const e = z.file(f.n); if (e) { const b = await e.async('blob'); await DB.put(k, f.type ? new Blob([b], { type: f.type }) : b); } }
     localStorage.setItem(KEY, JSON.stringify(meta.state)); location.reload();
@@ -3084,7 +3141,7 @@ function renderConcept(m) {
 
 /* ---------- concept takeover ---------- */
 const vbadge = sz => S.concept.verified ? `<i class="vf" style="width:${sz}px;height:${sz}px">${ico('check', Math.round(sz * .6))}</i>` : '';
-const lyricLines = t => { const l = (t.lyrics || '').split('\n').map(x => x.trim()).filter(Boolean); return l.length ? l : ['No lyrics added yet', 'Add them from the track menu in Tamed Player']; };
+const lyricLines = t => { const l = (t.lyrics || '').split('\n').map(x => x.trim()).filter(Boolean); return l.length ? l : ['No lyrics added yet', 'Add them from the track menu in Compass']; };
 function renderCx() {
   const box = $('#cx'), X = S.cx;
   document.body.classList.toggle('cx-on', X.open);
@@ -3228,7 +3285,7 @@ const updPreview = t => { const p = $('#d-prev'); if (p) p.innerHTML = `<b>${esc
 let crRun = false;
 function openCredits() {
   const el = $('#credits');
-  $('#crinner').innerHTML = `<div class="cr-logo">${logo(132)}</div><p class="cr-line cr-k" style="--d:0">Tamed Player was made by</p><p class="cr-line cr-name" style="--d:1">sxteen ways</p><p class="cr-line cr-name" style="--d:2">trulytamed</p><p class="cr-line cr-name sm" style="--d:3">&amp; all of KGB</p>`;
+  $('#crinner').innerHTML = `<div class="cr-logo">${logo(132)}</div><p class="cr-line cr-k" style="--d:0">Compass was made by</p><p class="cr-line cr-name" style="--d:1">sxteen ways</p><p class="cr-line cr-name" style="--d:2">trulytamed</p><p class="cr-line cr-name sm" style="--d:3">&amp; all of KGB</p>`;
   el.inert = false; el.classList.add('open'); crRun = true; crLoop();
 }
 function closeCredits() { const el = $('#credits'); el.classList.remove('open'); el.inert = true; crRun = false; }
@@ -3426,7 +3483,7 @@ async function downloadProject(c) {
   let dl = null; try { dl = await claude.use('downloads'); } catch (e) { }
   if (!dl) return toast('Saving files is not available in this view');
   toast('Packing ' + c.name + '…');
-  const z = new JSZip(), root = z.folder(safeName(c.name)), ts = colTracks(c), meta = { app: 'Tamed Player', format: 1, artist: projArtist(c), project: { ...c, covers: [] }, tracks: [] };
+  const z = new JSZip(), root = z.folder(safeName(c.name)), ts = colTracks(c), meta = { app: 'Compass', format: 1, artist: projArtist(c), project: { ...c, covers: [] }, tracks: [] };
   for (const [i, t] of ts.entries()) {
     const n = String(i + 1).padStart(2, '0') + ' ' + safeName(dispTitle(t)), b = await DB.get(t.id), mt = { ...t, versions: [] };
     if (b) { const f = n + '.' + (t.ext || extOf(b)); root.file(f, b); mt.file = f; } else mt.file = null;
@@ -3490,6 +3547,10 @@ function act(a, el, e) {
     case 'm-cover-clear': if (UI.mCover && UI.mCover.url) URL.revokeObjectURL(UI.mCover.url); UI.mCover = false; refreshCoverPick(); break;
     case 'ctx-cover': UI.coverFor = id; $('#art').click(); break;
     case 'save-now': saveNow(); break;
+    case 'store-tab': UI.storeTab = k; renderMain(); break;
+    case 'daw-rescan': UI.dawScan = null; renderMain(); break;
+    case 'daw-open': { const p = (S.daws || {})[k] || (UI.dawScan || {})[k]; if (p && window.tpDesktop) tpDesktop.daw.open(p).then(r => toast(r && r.ok ? 'Opening ' + (DAWS.find(d => d[0] === k) || [, k])[1] + '…' : 'It could not be opened: ' + ((r && r.error) || 'unknown error'))); break; }
+    case 'daw-locate': if (window.tpDesktop) tpDesktop.daw.locate((DAWS.find(d => d[0] === k) || [, k])[1]).then(p => { if (p) { (S.daws = S.daws || {})[k] = p; save(); renderMain(); toast('Saved'); } }); break;
     case 'bulk-play': { const ids = k.split(','); playTrack(ids[0], ids); break; }
     case 'bulk-export': exportTracks(k.split(',')); break;
     case 'bulk-dup': dupTracks(k.split(',')); break;

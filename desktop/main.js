@@ -1,12 +1,13 @@
-// Tamed Player desktop shell. The app itself is app/index.html; this file opens the window
+// Compass desktop shell. The app itself is app/index.html; this file opens the window
 // and keeps the app up to date from GitHub.
 const { app, BrowserWindow, shell, session, dialog, net, ipcMain, nativeImage } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
 
-// Same data folder for every version (%APPDATA%\Tamed Player), so updates keep your projects.
-app.setName('Tamed Player');
+// Same data folder as before the rename (%APPDATA%\Tamed Player), so updates keep your projects.
+app.setName('Compass');
+app.setPath('userData', path.join(app.getPath('appData'), 'Tamed Player'));
 app.setAppUserModelId('com.trulytamed.tamedplayer');
 if (!app.requestSingleInstanceLock()) app.quit();
 
@@ -17,7 +18,7 @@ let win = null;
 function createWindow() {
   win = new BrowserWindow({
     width: 1440, height: 900, minWidth: 1000, minHeight: 660,
-    title: 'Tamed Player', backgroundColor: '#0b0b0c', autoHideMenuBar: true, show: false,
+    title: 'Compass', backgroundColor: '#0b0b0c', autoHideMenuBar: true, show: false,
     icon: path.join(__dirname, 'app', 'icon.png'),
     webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true, spellcheck: false,
       preload: path.join(__dirname, 'preload.js') }
@@ -38,18 +39,18 @@ async function checkForUpdates(manual) {
     const info = await r.json();
     const showLog = () => { if (win) win.webContents.send('tp-changelog', { changelog: Array.isArray(info.changelog) ? info.changelog : [], since: app.getVersion() }); };
     if (!info.version || !newer(info.version, app.getVersion())) {
-      if (manual) { const { response } = await dialog.showMessageBox(win, { type: 'info', buttons: ['OK', "What's new"], defaultId: 0, cancelId: 0, message: 'Tamed Player is up to date', detail: 'You have version ' + app.getVersion() + '.' }); if (response === 1) showLog(); }
+      if (manual) { const { response } = await dialog.showMessageBox(win, { type: 'info', buttons: ['OK', "What's new"], defaultId: 0, cancelId: 0, message: 'Compass is up to date', detail: 'You have version ' + app.getVersion() + '.' }); if (response === 1) showLog(); }
       return;
     }
     const { response } = await dialog.showMessageBox(win, {
       type: 'info', buttons: ['Download and install', "What's new", 'Later'], defaultId: 0, cancelId: 2,
-      message: `Tamed Player ${info.version} is available`,
+      message: `Compass ${info.version} is available`,
       detail: `You have ${app.getVersion()}.${info.notes ? '\n\n' + info.notes : ''}\n\nThe new version installs over this one. Your projects are kept.`
     });
     if (response === 1) { showLog(); return; }
     if (response !== 0) return;
-    const url = new URL(info.file || 'TamedPlayer-Setup.exe', FEED).toString();
-    const dest = path.join(app.getPath('temp'), `TamedPlayer-Setup-${info.version}.exe`);
+    const url = new URL(info.file || 'Compass-Setup.exe', FEED).toString();
+    const dest = path.join(app.getPath('temp'), `Compass-Setup-${info.version}.exe`);
     const res = await net.fetch(url, { cache: 'no-store' });
     if (!res.ok) throw new Error('The installer could not be downloaded (' + res.status + ').');
     const total = +res.headers.get('content-length') || 0, reader = res.body.getReader(), chunks = []; let got = 0;
@@ -65,10 +66,10 @@ async function checkForUpdates(manual) {
 }
 
 /* ---------- FL Studio link ---------- */
-// The FL Studio script lives in FL's user data folder: Documents\Image-Line\FL Studio\Settings\Hardware\Tamed Player.
-// WAVs sent to FL are kept in Documents\Tamed Player\Sent to FL Studio, because FL projects point at the file on disk.
+// The FL Studio script lives in FL's user data folder: Documents\Image-Line\FL Studio\Settings\Hardware\Compass.
+// WAVs sent to FL are kept in Documents\Compass\Sent to FL Studio, because FL projects point at the file on disk.
 const flUserDir = () => path.join(app.getPath('documents'), 'Image-Line', 'FL Studio');
-const sentDir = () => path.join(app.getPath('documents'), 'Tamed Player', 'Sent to FL Studio');
+const sentDir = () => path.join(app.getPath('documents'), 'Compass', 'Sent to FL Studio');
 const cleanName = n => String(n || 'track.wav').replace(/[<>:"/\\|?*\x00-\x1f]/g, '').replace(/\s+/g, ' ').trim().slice(0, 150) || 'track.wav';
 async function installFlScript() {
   let base = flUserDir();
@@ -77,19 +78,56 @@ async function installFlScript() {
     if (r.canceled || !r.filePaths[0]) return { ok: false, canceled: true };
     base = r.filePaths[0]; if (path.basename(base).toLowerCase() === 'image-line') base = path.join(base, 'FL Studio');
   }
-  const dir = path.join(base, 'Settings', 'Hardware', 'Tamed Player');
+  const dir = path.join(base, 'Settings', 'Hardware', 'Compass');
   fs.mkdirSync(dir, { recursive: true });
-  fs.copyFileSync(path.join(__dirname, 'fl', 'device_TamedPlayer.py'), path.join(dir, 'device_TamedPlayer.py'));
+  fs.copyFileSync(path.join(__dirname, 'fl', 'device_Compass.py'), path.join(dir, 'device_Compass.py'));
   return { ok: true, dir };
 }
 const dragIcon = () => { const i = nativeImage.createFromPath(path.join(__dirname, 'app', 'icon.png')); return i.isEmpty() ? i : i.resize({ width: 48, height: 48 }); };
 
+/* ---------- Launcher: find DAWs in their usual install folders ---------- */
+function dawScan() {
+  const env = process.env, PF = [env.ProgramFiles, env['ProgramFiles(x86)'], env.ProgramData, env.LOCALAPPDATA && path.join(env.LOCALAPPDATA, 'Programs')].filter(Boolean);
+  const ls = dir => { try { return fs.readdirSync(dir); } catch (e) { return []; } }, ex = f => { try { return fs.statSync(f).isFile(); } catch (e) { return false; } };
+  // each rule: base folder under a Program Files root, a folder-name pattern, and exe names to look for (newest folder wins)
+  const rules = {
+    fl: [['Image-Line', /^FL Studio/i, ['FL64.exe', 'FL.exe']]],
+    ableton: [['Ableton', /^Live/i, null]],
+    studioone: [['PreSonus', /^Studio One/i, ['Studio One.exe']]],
+    reaper: [['', /^REAPER/i, ['reaper.exe']]],
+    cubase: [['Steinberg', /^Cubase/i, null]],
+    bitwig: [['', /^Bitwig Studio/i, ['Bitwig Studio.exe']]],
+    protools: [['Avid', /^Pro Tools/i, ['ProTools.exe']]],
+    reason: [['Propellerhead', /^Reason/i, null], ['Reason Studios', /^Reason/i, null]]
+  };
+  const out = {};
+  if (process.platform === 'darwin') {
+    const apps = ls('/Applications'), pick = re => { const a = apps.filter(n => re.test(n)).sort().pop(); return a ? path.join('/Applications', a) : null; };
+    Object.assign(out, { fl: pick(/^FL Studio/i), ableton: pick(/^Ableton Live/i), logic: pick(/^Logic Pro/i), studioone: pick(/^Studio One/i), reaper: pick(/^REAPER/i), cubase: pick(/^Cubase/i), bitwig: pick(/^Bitwig/i), protools: pick(/^Pro Tools/i), reason: pick(/^Reason/i), garageband: pick(/^GarageBand/i) });
+  } else {
+    for (const [id, rs] of Object.entries(rules)) {
+      for (const root of PF) for (const [base, re, exes] of rs) {
+        if (out[id]) break; const b = path.join(root, base);
+        for (const dir of ls(b).filter(n => re.test(n)).sort((x, y) => y.localeCompare(x, undefined, { numeric: true }))) {
+          const full = path.join(b, dir), cands = exes ? exes.map(e => path.join(full, e)) : [...ls(full), ...ls(path.join(full, 'Program')).map(n => path.join('Program', n))].filter(n => /\.exe$/i.test(n) && !/unins|crash|helper|setup/i.test(n)).map(n => path.join(full, n));
+          const hit = cands.find(ex); if (hit) { out[id] = hit; break; }
+        }
+      }
+    }
+  }
+  Object.keys(out).forEach(k => { if (!out[k]) delete out[k]; });
+  return out;
+}
+
 app.whenReady().then(() => {
+  ipcMain.handle('tp-daw-scan', () => dawScan());
+  ipcMain.handle('tp-daw-open', async (e, file) => { if (typeof file !== 'string' || !fs.existsSync(file) || !/\.(exe|app|lnk)$/i.test(file)) return { ok: false, error: 'That program was not found' }; const err = await shell.openPath(file); return err ? { ok: false, error: err } : { ok: true }; });
+  ipcMain.handle('tp-daw-locate', async (e, name) => { const r = await dialog.showOpenDialog(win, { title: 'Find ' + (name || 'your DAW'), properties: process.platform === 'darwin' ? ['openFile', 'treatPackageAsDirectory'] : ['openFile'], filters: process.platform === 'win32' ? [{ name: 'Programs', extensions: ['exe', 'lnk'] }] : [] }); return r.canceled ? null : r.filePaths[0]; });
   // Web MIDI (with SysEx) is how the app talks to the FL Studio script
   session.defaultSession.setPermissionRequestHandler((wc, perm, cb) => cb(['midi', 'midiSysex', 'clipboard-sanitized-write', 'local-fonts'].includes(perm)));
   session.defaultSession.setPermissionCheckHandler((wc, perm) => ['midi', 'midiSysex', 'clipboard-sanitized-write', 'local-fonts'].includes(perm));
   ipcMain.handle('tp-fl-install', () => installFlScript().catch(e => ({ ok: false, error: e.message })));
-  ipcMain.handle('tp-fl-status', () => { const f = path.join(flUserDir(), 'Settings', 'Hardware', 'Tamed Player', 'device_TamedPlayer.py'); return { flFound: fs.existsSync(flUserDir()), installed: fs.existsSync(f) }; });
+  ipcMain.handle('tp-fl-status', () => { const f = path.join(flUserDir(), 'Settings', 'Hardware', 'Compass', 'device_Compass.py'); return { flFound: fs.existsSync(flUserDir()), installed: fs.existsSync(f) }; });
   ipcMain.handle('tp-fl-save', (e, name, data) => {
     const dir = sentDir(); fs.mkdirSync(dir, { recursive: true });
     const file = path.join(dir, cleanName(name)); fs.writeFileSync(file, Buffer.from(data)); return file;
@@ -97,7 +135,7 @@ app.whenReady().then(() => {
   ipcMain.on('tp-drag', (e, file) => { if (typeof file === 'string' && file.startsWith(sentDir()) && fs.existsSync(file)) e.sender.startDrag({ file, icon: dragIcon() }); });
   ipcMain.handle('tp-reveal', (e, file) => { if (typeof file === 'string' && file.startsWith(sentDir()) && fs.existsSync(file)) shell.showItemInFolder(file); else shell.openPath(sentDir()); });
   session.defaultSession.on('will-download', (e, item) => {
-    item.setSaveDialogOptions({ title: 'Save from Tamed Player', defaultPath: path.join(app.getPath('documents'), item.getFilename()) });
+    item.setSaveDialogOptions({ title: 'Save from Compass', defaultPath: path.join(app.getPath('documents'), item.getFilename()) });
   });
   ipcMain.handle('tp-check-updates', () => checkForUpdates(true));
   ipcMain.on('tp-version', e => { e.returnValue = app.getVersion(); });

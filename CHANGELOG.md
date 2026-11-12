@@ -1,6 +1,18 @@
 # Changelog
 
-Every Tamed Player release, newest first. The app shows the same list under Settings › Changelog.
+Every Compass release, newest first. The app shows the same list under Settings › Changelog.
+
+## 1.4.0 · 2026-11-12
+
+- Tamed Player is now Compass. Your projects carry over.
+- Library: My Music tab for albums you bought. Drop the zip and it is named and ordered for you. Digital albums are read-only; Make My Version gives you an editable copy.
+- Folders hold projects and show the four newest covers. Drag a project onto a folder, or onto another project to make a folder.
+- Archive projects, and Recently deleted in Settings keeps deleted projects and songs for 30 days.
+- Sidebar shows the artist and can be sorted, grouped by artist and filtered.
+- Select songs with Shift or Ctrl and right-click to export, move, copy, duplicate, change status or delete them. Export Track for a single song.
+- The Added date sits between Status and Time.
+- Launcher finds FL Studio, Ableton, REAPER and other DAWs and opens them; locate any it misses.
+- Music Store with Digital and Physical, and a first look at the Marketplace.
 
 ## 1.3.0 · 2026-11-12
 

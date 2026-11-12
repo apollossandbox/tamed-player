@@ -20,28 +20,28 @@ npx electron-builder --win dir --x64 --publish never -c.win.signAndEditExecutabl
 # 2. Stamp icon and version info into the exe with the 64-bit resource editor.
 RCEDIT="$(ls ~/.cache/electron-builder/winCodeSign/winCodeSign-*/rcedit-x64.exe | head -1)"
 WINE64="$(command -v wine64 || echo /usr/lib/wine/wine64)"
-WINEARCH=win64 WINEPREFIX="$HOME/.wine64" "$WINE64" "$RCEDIT" "dist/win-unpacked/Tamed Player.exe" \
-  --set-version-string FileDescription "Tamed Player" --set-version-string ProductName "Tamed Player" \
+WINEARCH=win64 WINEPREFIX="$HOME/.wine64" "$WINE64" "$RCEDIT" "dist/win-unpacked/Compass.exe" \
+  --set-version-string FileDescription "Compass" --set-version-string ProductName "Compass" \
   --set-version-string LegalCopyright "trulytamed and KGB" --set-version-string CompanyName trulytamed \
-  --set-version-string InternalName "Tamed Player" --set-version-string OriginalFilename "Tamed Player.exe" \
+  --set-version-string InternalName "Compass" --set-version-string OriginalFilename "Compass.exe" \
   --set-file-version "$VERSION" --set-product-version "$VERSION.0" --set-icon build/icon.ico
 
 # 3. Build the installer from the prepared app. (A trailing "channel" error from electron-builder is harmless.)
 npx electron-builder --win nsis --x64 --prepackaged dist/win-unpacked --publish never \
   -c.win.signAndEditExecutable=false -c.win.icon=build/icon.ico || true
-test -f "dist/TamedPlayer-Setup-$VERSION.exe"
+test -f "dist/Compass-Setup-$VERSION.exe"
 
 # 4. Replace the published installer and the update file.
 mkdir -p ../installer
-rm -f ../installer/TamedPlayer-Setup*.exe
-cp "dist/TamedPlayer-Setup-$VERSION.exe" ../installer/TamedPlayer-Setup.exe
+rm -f ../installer/TamedPlayer-Setup*.exe ../installer/Compass-Setup*.exe
+cp "dist/Compass-Setup-$VERSION.exe" ../installer/Compass-Setup.exe
 node -e '
 const fs = require("fs"), [v, notes0] = process.argv.slice(1);
 const changelog = JSON.parse(fs.readFileSync("changelog.json", "utf8")), top = changelog.find(e => e.v === v);
 if (!top) { console.error("Add a CHANGELOG entry for " + v + " in index.html first."); process.exit(1); }
 const notes = notes0 || top.items.join(" ");
-const f = "../installer/TamedPlayer-Setup.exe", size = fs.statSync(f).size;
+const f = "../installer/Compass-Setup.exe", size = fs.statSync(f).size;
 const sha256 = require("crypto").createHash("sha256").update(fs.readFileSync(f)).digest("hex");
-fs.writeFileSync("../installer/latest.json", JSON.stringify({ version: v, file: "TamedPlayer-Setup.exe", size, sha256, notes, date: new Date().toISOString().slice(0, 10), changelog: changelog.slice(0, 20) }, null, 2) + "\n");
+fs.writeFileSync("../installer/latest.json", JSON.stringify({ version: v, file: "Compass-Setup.exe", size, sha256, notes, date: new Date().toISOString().slice(0, 10), changelog: changelog.slice(0, 20) }, null, 2) + "\n");
 ' "$VERSION" "$NOTES"
-echo "Built installer/TamedPlayer-Setup.exe ($VERSION). Commit and push the repo to publish it."
+echo "Built installer/Compass-Setup.exe ($VERSION). Commit and push the repo to publish it."

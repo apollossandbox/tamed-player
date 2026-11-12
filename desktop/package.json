@@ -1,8 +1,8 @@
 {
   "name": "tamed-player",
-  "productName": "Tamed Player",
-  "version": "1.3.0",
-  "description": "Music organizer with a 3D CD package creator and a concept streaming player.",
+  "productName": "Compass",
+  "version": "1.4.0",
+  "description": "Compass: music library, CD creator, audio tools and DAW launcher.",
   "author": "trulytamed",
   "main": "main.js",
   "private": true,
@@ -17,7 +17,7 @@
   },
   "build": {
     "appId": "com.trulytamed.tamedplayer",
-    "productName": "Tamed Player",
+    "productName": "Compass",
     "copyright": "trulytamed and KGB",
     "directories": {
       "output": "dist",
@@ -39,7 +39,7 @@
         }
       ],
       "icon": "build/icon.png",
-      "artifactName": "TamedPlayer-Setup-${version}.exe"
+      "artifactName": "Compass-Setup-${version}.exe"
     },
     "nsis": {
       "oneClick": false,
@@ -47,7 +47,7 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Tamed Player",
+      "shortcutName": "Compass",
       "deleteAppDataOnUninstall": false
     }
   }

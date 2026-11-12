@@ -23,13 +23,13 @@ ${body}
 // The FL Studio plugin lives in the page (so the web version can offer it as a download); copy it out for the installer.
 const fl = src.match(/const FL_SCRIPT = `([\s\S]*?)`;/); if (!fl) throw new Error('Missing in page: FL_SCRIPT');
 fs.mkdirSync(path.join(__dirname, 'fl'), { recursive: true });
-fs.writeFileSync(path.join(__dirname, 'fl', 'device_TamedPlayer.py'), fl[1]);
+fs.writeFileSync(path.join(__dirname, 'fl', 'device_Compass.py'), fl[1]);
 fs.mkdirSync(path.join(__dirname, 'app'), { recursive: true });
 fs.writeFileSync(path.join(__dirname, 'app', 'index.html'), page);
 // The changelog lives in the page; write it out for GitHub (CHANGELOG.md) and the update file (changelog.json).
 const cl = src.match(/const CHANGELOG = (\[[\s\S]*?\n\]);/); if (!cl) throw new Error('Missing in page: CHANGELOG');
 const log = Function('return ' + cl[1])();
 fs.writeFileSync(path.join(__dirname, 'changelog.json'), JSON.stringify(log, null, 2) + '\n');
-fs.writeFileSync(path.join(__dirname, '..', 'CHANGELOG.md'), '# Changelog\n\nEvery Tamed Player release, newest first. The app shows the same list under Settings › Changelog.\n\n' + log.map(e => `## ${e.v} · ${e.d}\n\n${e.items.map(i => '- ' + i).join('\n')}\n`).join('\n'));
+fs.writeFileSync(path.join(__dirname, '..', 'CHANGELOG.md'), '# Changelog\n\nEvery Compass release, newest first. The app shows the same list under Settings › Changelog.\n\n' + log.map(e => `## ${e.v} · ${e.d}\n\n${e.items.map(i => '- ' + i).join('\n')}\n`).join('\n'));
 fs.copyFileSync(path.join(__dirname, 'build', 'icon.png'), path.join(__dirname, 'app', 'icon.png'));
 console.log('app/index.html written (' + page.length + ' bytes)');

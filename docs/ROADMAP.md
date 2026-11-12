@@ -1,4 +1,4 @@
-# Tamed Player roadmap
+# Compass roadmap
 
 Goal: one free place to make, share and release music. Money comes from a marketplace (beats, kits, project files) and paid commissions, with a small fee. Artists keep ownership of everything they sell.
 
