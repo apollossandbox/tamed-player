@@ -674,7 +674,7 @@ body.cx-on .bar { transform: none; }
 .fgrid img, .fgrid span { width: 100%; height: 100%; object-fit: cover; display: block; } .fgrid.n1 > * { grid-column: 1 / -1; grid-row: 1 / -1; } .fgrid.n2 > * { grid-row: 1 / -1; } .fgrid.n3 > :first-child { grid-row: 1 / -1; }
 .acard-disc { position: absolute; inset: 0; display: grid; place-items: center; color: rgba(255,255,255,.85); }
 .acard.over { background: var(--panel3); box-shadow: inset 0 0 0 2px var(--ink); } .acard.dragging { opacity: .45; }
-.lib-arch { margin: 18px 6px 0; } .lib-note { margin: 0 0 8px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.lib-arch { margin: 18px 6px 0; } .lib-note { margin: 0 0 12px; line-height: 1.6; } .lib-note .btn { margin-right: 8px; }
 .fkids { margin: 6px 0 22px; } .fkids h3 { font-size: 15px; margin: 0 0 4px; }
 .mine-note { display: flex; align-items: center; gap: 10px; padding: 10px 14px; margin: 0 0 14px; border-radius: 10px; background: var(--panel2); color: var(--ink2); font-size: 13px; } .mine-note span { flex: 1; }
 .eb-ro { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); font-weight: 700; }
@@ -683,7 +683,7 @@ body.cx-on .bar { transform: none; }
 
 /* store, marketplace, launcher */
 .sgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 26px 20px; margin-bottom: 28px; }
-.scard { display: flex; flex-direction: column; gap: 3px; min-width: 0; cursor: pointer; } .scard b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .scard span { color: var(--ink2); font-size: 13px; } .scard em { font-style: normal; font-size: 12px; color: var(--ink3); } .scard .btn { align-self: flex-start; margin-top: 6px; }
+.scard { display: flex; flex-direction: column; gap: 3px; min-width: 0; cursor: pointer; } .scard b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .scard span { color: var(--ink2); font-size: 13px; } .scard em { font-style: normal; font-size: 12px; color: var(--ink3); } .scard .btn { align-self: flex-start; margin-top: 6px; } .btn.buy { font-weight: 800; }
 .scd { position: absolute; inset: 8%; border-radius: 4px; box-shadow: 0 10px 24px -8px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.25); } .scd i { position: absolute; inset: 0; background: linear-gradient(120deg, rgba(255,255,255,.28), transparent 40%); }
 .shero { position: relative; height: 240px; border-radius: 16px; overflow: hidden; margin: 6px 0 24px; display: flex; align-items: flex-end; } .shero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,.75), transparent 70%); }
 .shero > div { position: relative; z-index: 1; padding: 22px; color: #fff; } .shero small { text-transform: uppercase; letter-spacing: .1em; font-weight: 700; opacity: .8; } .shero h2 { font-size: 32px; margin: 4px 0; } .shero p { margin: 0 0 12px; opacity: .85; }
@@ -1167,6 +1167,7 @@ function normalize() {
   if (!['projects', 'tracks', 'mine', 'archived', 'cds', 'stats'].includes(S.libTab)) S.libTab = 'projects';
   S.trash = Array.isArray(S.trash) ? S.trash.filter(x => x && Date.now() - x.at < 30 * DAY) : [];
   S.side = { sort: 'custom', type: 'all', rel: 'all', ...(S.side || {}) };
+  S.cols.forEach(c => { if (c.store && !c.release) c.release = { digital: 9.99, cd: null, at: Date.now() }; delete c.store; delete c.own; });
   S.cols.forEach(c => { c.mine = !!c.mine; c.archived = !!c.archived; if (!Array.isArray(c.kids)) c.kids = []; c.kids = c.kids.filter(id => col(id) && id !== c.id); if (c.parent && !(col(c.parent) && isFolder(col(c.parent)))) delete c.parent; });
   if (!['tracks', 'cd'].includes(S.projTab)) S.projTab = 'tracks';
   if (S.filter !== 'all' && !ST[S.filter]) S.filter = 'all';
@@ -1351,7 +1352,7 @@ const relDate = c => c.targetDate || null;
 const relText = c => !c.targetDate ? '' : c.released ? 'Released ' + fdate(c.targetDate) : 'Target release ' + fdate(c.targetDate) + ' · ' + until(c.targetDate).replace(/^In /, 'in ');
 function orderedProjects() {
   const has = S.cols.some(c => c.targetDate);
-  return S.cols.filter(c => !isFolder(c)).sort((a, b) => {
+  return S.cols.filter(c => !isFolder(c) && !isMine(c)).sort((a, b) => {
     if (has) { const da = relDate(a), db = relDate(b); if (da && db && da !== db) return da.localeCompare(db); if (da && !db) return -1; if (db && !da) return 1; }
     return (a.created || 0) - (b.created || 0);
   });
@@ -1503,7 +1504,7 @@ function renderMain() {
 
 const meVerified = n => !!(S.concept && S.concept.verified) && !!n && (!S.concept.artist || S.concept.artist === 'Artist Name' || n.trim().toLowerCase() === S.concept.artist.trim().toLowerCase());
 const LIBTABS_EXTRA = [['cds', 'CD Player'], ['stats', 'Stats']], LIBVIEWS = {};
-const cdList = () => S.cols.filter(c => !isFolder(c) && !c.archived);
+const cdList = () => S.cols.filter(c => !isFolder(c) && !isMine(c) && !c.archived);
 LIBVIEWS.cds = () => { const a = cdList(); return `<p class="faint small lib-note">Every CD you've made. Click one to look at it, or right-click to play it. In the player: Space plays, ←/→ change songs, [ ] change CDs, H hides the controls.</p>
   <div class="cdgrid">${a.map((c, n) => `<div class="cdcard" role="button" tabindex="0" data-act="cdp-view" data-id="${c.id}" style="--n:${n}"><div class="cdjewel"><span class="cdj-art">${albumArt(c)}</span><i class="cdj-hinge"></i><i class="cdj-gloss"></i></div><b>${esc(c.name)}</b><span>${esc(projArtist(c) || (KINDS[c.type] || ''))}</span><button class="acard-play" data-act="cdp-play" data-id="${c.id}" aria-label="Play ${esc(c.name)}">${ico('play', 18)}</button></div>`).join('') || '<p class="faint">No CDs yet. Make a project and design its CD in the CD Creator.</p>'}</div>`; };
 LIBVIEWS.stats = () => {
@@ -1517,7 +1518,7 @@ LIBVIEWS.stats = () => {
 };
 function libMine() {
   const a = S.cols.filter(c => isMine(c) && shown(c));
-  return `<p class="faint small lib-note">Albums you bought or downloaded. Drop an album's zip here and it's unzipped, named and ordered for you. Digital albums can't be edited; right-click one and choose <b>Make My Version</b> to get an editable project.</p>
+  return `<p class="faint small lib-note">Albums, mixtapes, EPs and singles you bought or downloaded. Drop a zip here and it's unzipped, named and ordered for you. Digital albums can't be edited; right-click one and choose <b>Make My Version</b> to get an editable project.</p>
   <div class="pgrid">${a.map(projCard).join('')}<div class="acard acard-new" role="button" tabindex="0" data-act="zip-mine" style="--n:${a.length}" aria-label="Add a digital album"><div class="acard-art"><span class="acard-ph plus">${ico('import', 34)}</span></div><div class="acard-t">Add an album</div><div class="acard-s">Choose or drop a .zip</div></div></div>
   ${S.cols.some(c => c.archived && isMine(c)) ? `<button class="btn sm lib-arch" data-act="libtab" data-k="archived">Archived (${S.cols.filter(c => c.archived && isMine(c)).length})</button>` : ''}`;
 }
@@ -1532,7 +1533,7 @@ function renderLibrary(m) {
     <div><h1>Library</h1><p class="faint">${S.cols.filter(c => !isMine(c) && !isFolder(c)).length} projects · ${S.cols.filter(isMine).length} digital ${S.cols.filter(isMine).length === 1 ? 'album' : 'albums'} · ${S.tracks.length} ${S.tracks.length === 1 ? 'track' : 'tracks'}${S.tracks.length ? ' · ' + total(S.tracks) : ''}</p></div>
     <div class="hact"><button class="btn" data-act="zip-add">${ico('import', 16)} Add from zip</button><button class="btn primary" data-act="add">${ico('upload', 16)} Add music</button></div>
   </header>
-  <div class="tools">${seg('libtab', [['projects', 'Projects'], ['mine', 'My Music'], ['tracks', 'All tracks'], ...LIBTABS_EXTRA], S.libTab === 'archived' ? 'projects' : S.libTab, 'libtab')}
+  <div class="tools">${seg('libtab', [['projects', 'Projects'], ['mine', 'Digital Albums'], ['tracks', 'All tracks'], ...LIBTABS_EXTRA], S.libTab === 'archived' ? 'projects' : S.libTab, 'libtab')}
   ${S.libTab !== 'tracks' ? '' : `<label class="search box">${ico('search', 16)}<input id="q" type="search" placeholder="Search title, artist, tag or key" value="${esc(S.q)}" autocomplete="off"></label>
     <label class="sel box"><span class="faint">Sort</span><select id="sort"><option value="added">Recently added</option><option value="title">Title</option><option value="status">Status</option><option value="bpm">Tempo</option></select></label>`}</div>
   ${S.libTab === 'mine' ? libMine() : S.libTab === 'archived' ? libArchived() : LIBVIEWS[S.libTab] ? LIBVIEWS[S.libTab]() : projects ? `<div class="pgrid">${S.cols.filter(c => !isMine(c) && shown(c)).map(projCard).join('')}<div class="acard acard-new" role="button" tabindex="0" data-act="newcol" style="--n:${S.cols.length}" aria-label="New project"><div class="acard-art"><span class="acard-ph plus">${ico('plus', 34)}</span></div><div class="acard-t">New project</div><div class="acard-s">Album, EP, mixtape or single</div></div></div>${S.cols.some(c => c.archived && !isMine(c)) ? `<button class="btn sm lib-arch" data-act="libtab" data-k="archived">${ico('save', 13)} Archived projects (${S.cols.filter(c => c.archived && !isMine(c)).length})</button>` : ''}`
@@ -1544,7 +1545,7 @@ function renderProject(m) {
   const c = col(S.colId); if (!c) { S.view = 'library'; return renderLibrary(m); }
   const ts = colTracks(c), link = `compass.fm/${slug(S.concept.artist)}/${slug(c.name)}`;
   const nF = ts.filter(t => t.status === 'final').length, nD = ts.filter(t => t.status === 'demo').length, nU = ts.filter(t => t.status === 'unmixed').length;
-  const fol = isFolder(c), playing = S.playing && c.tracks.includes(S.cur);
+  const fol = isFolder(c), playing = S.playing && c.tracks.includes(S.cur), dig = isMine(c);
   m.innerHTML = `<section class="chero">
     <div class="covcol"><div class="covwrap" id="covwrap"><div class="bigcov" style="${pcov(c)}"></div></div></div>
     <div class="cinfo">
@@ -1562,7 +1563,7 @@ function renderProject(m) {
           <div class="link box ${c.vis === 'private' ? 'off' : ''}">${ico('link', 16)}<code>${esc(link)}</code><button class="btn sm" data-act="copy" data-link="${esc(link)}" ${c.vis === 'private' ? 'disabled' : ''}>${c.vis === 'private' ? 'Private' : 'Copy'}</button></div>
           ${c.source ? `<a class="btn sm" href="${esc(c.source)}" target="_blank" rel="noopener">${ico('link', 14)} Open the Untitled source</a>` : ''}
           <p class="faint small">Sample link. Nothing is published.</p></div></span>
-        ${fol ? '' : `<button class="ico pa" data-act="vw-open-case" title="View CD" aria-label="View CD">${ico('disc', 20)}</button>`}
+        ${fol || dig ? '' : `<button class="ico pa" data-act="vw-open-case" title="View CD" aria-label="View CD">${ico('disc', 20)}</button>`}
         <button class="ico pa" data-act="proj-more" data-id="${c.id}" title="More" aria-label="More options">${ico('dots', 22)}</button>
       </div>
     </div></section>
@@ -1626,7 +1627,8 @@ function openModal(kind, id, x = {}) {
   let h = '';
   if (kind === 'name') {
     h = `<h2>Name this project</h2><p class="faint">Found ${x.count} ${x.count === 1 ? 'track' : 'tracks'}${x.from ? ' in ' + esc(x.from) : ''}.</p>
-    <label class="lab">Add as</label>${seg('mdest', [['proj', 'Project'], ['mine', 'Digital album (My Music)']], UI.importMine ? 'mine' : 'proj', 'm-dest', 'full')}
+    <label class="lab">What is this?</label>${seg('mdest', [['proj', 'Add project'], ['mine', 'Add digital product']], UI.importMine ? 'mine' : 'proj', 'm-dest', 'full')}
+    <div id="m-dtypebox" class="${UI.importMine ? '' : 'hide-folder'}"><label class="lab" for="m-dtype">Digital product type</label><div class="sel box wide"><select id="m-dtype">${[['album', 'Album'], ['mixtape', 'Mixtape'], ['ep', 'EP'], ['single', 'Single']].map(([k, l]) => `<option value="${k}" ${x.dtype === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div><p class="faint small" style="margin:6px 0 0">Digital products go in Library › Digital Albums. They can be played but not edited.</p></div>
     <label class="lab" for="m-name">Project name</label><input class="field" id="m-name" value="${esc(x.def)}" placeholder="${esc(x.def)}" autocomplete="off">
     ${coverPickHTML(UI.mCoverDef, UI.mCoverHint)}`;
   } else if (kind === 'proj') {
@@ -1682,6 +1684,14 @@ function openModal(kind, id, x = {}) {
       : sec === 'color' ? `<h4>Color Overlay</h4>${colr('color.c', 'Color', e.c || '#ff0000')}${num('color.op', 'Opacity', Math.round((e.op ?? 1) * 100), 0, 100, 1, '%')}`
       : `<h4>Gradient Overlay</h4>${colr('grad.c1', 'From', e.c1 || '#000000')}${colr('grad.c2', 'To', e.c2 || '#ffffff')}${num('grad.angle', 'Angle', e.angle ?? 90, -180, 180, 1, '°')}${num('grad.op', 'Opacity', Math.round((e.op ?? 1) * 100), 0, 100, 1, '%')}`;
     h = `<h2>Layer Style</h2><p class="faint small" style="margin:0">${esc(layerName(L))}</p><div class="ls"><nav>${secs.map(([k, l]) => `<div class="ls-n ${sec === k ? 'on' : ''}">${k === 'blend' ? '' : `<input type="checkbox" data-lsf="${k}.on" ${on(k) ? 'checked' : ''} aria-label="Turn ${l} on">`}<button data-act="ls-sec" data-k="${k}">${l}</button></div>`).join('')}</nav><section>${body}</section></div>`;
+  } else if (kind === 'release') {
+    const c = col(id), R = c.release || {}, fmt = R.digital != null && R.cd != null ? 'both' : R.cd != null ? 'cd' : 'digital', n = colTracks(c).length;
+    h = `<h2>${c.release ? 'Release settings' : 'Release'} · ${esc(c.name)}</h2><p class="faint small" style="margin:0">Released music shows in the Music Store. Checkout opens when accounts arrive; until then this is a preview of your store page.</p>
+    <label class="lab">Release as</label>${seg('relfmt', [['digital', 'Digital only'], ['cd', 'CD only'], ['both', 'Digital and CD']], fmt, 'rel-fmt', 'full')}
+    <div class="two"><div id="rel-dig" class="${fmt === 'cd' ? 'hide-folder' : ''}"><label class="lab" for="rel-pd">Digital price (USD)</label><input class="field" id="rel-pd" type="number" min="0" step=".01" value="${R.digital ?? (n <= 1 ? .99 : n <= 6 ? 4.99 : 9.99)}"></div>
+      <div id="rel-cd" class="${fmt === 'digital' ? 'hide-folder' : ''}"><label class="lab" for="rel-pc">CD price (USD)</label><input class="field" id="rel-pc" type="number" min="0" step=".01" value="${R.cd ?? 14.99}"></div></div>
+    ${!isMine(c) && !(S.cd.designs && S.cd.designs[c.id]) ? `<p class="faint small" id="rel-cdnote">This project has no CD design yet. The CD uses the cover until you design one in the CD Creator.</p>` : ''}
+    <label class="check" style="margin-top:10px"><input type="checkbox" id="rel-own" ${R.at ? 'checked' : ''}><span>This is my music and I have the rights to sell it.</span></label>`;
   } else if (kind === 'changelog') {
     const C = UI.clog || { list: CHANGELOG };
     h = `<h2>What's new</h2><p class="faint small" style="margin:0">You have version ${esc(APP_VERSION)}.</p><div class="clog">${changelogHTML(C.list, C.since)}</div>`;
@@ -1694,11 +1704,11 @@ function openModal(kind, id, x = {}) {
     <div class="dropzone" id="m-drop">${ico('import', 26)}<b>Drop the .zip here</b><span class="faint small">or loose audio and image files</span><button class="btn sm primary" data-act="zip-pick">Choose files</button></div>
     <p class="faint small" id="m-status" role="status"></p>`;
   }
-  md.innerHTML = h + `<div class="crow" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-act="close-modal">${kind === 'import' || kind === 'changelog' ? 'Close' : 'Cancel'}</button>${kind === 'name' ? '<button class="btn primary" data-act="name-ok">Create project</button>' : ''}${kind === 'lstyle' ? '<button class="btn primary" data-act="ls-ok">OK</button>' : ''}${kind === 'proj' || kind === 'meta' ? `<button class="btn primary" data-act="modal-save">${x.isNew ? 'Create project' : 'Save'}</button>` : ''}</div>`;
+  md.innerHTML = h + `<div class="crow" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-act="close-modal">${kind === 'import' || kind === 'changelog' ? 'Close' : 'Cancel'}</button>${kind === 'name' ? '<button class="btn primary" data-act="name-ok">Create project</button>' : ''}${kind === 'lstyle' ? '<button class="btn primary" data-act="ls-ok">OK</button>' : ''}${kind === 'release' ? `${(col(id) || {}).release ? '<button class="btn" data-act="rel-pull">Take out of Store</button>' : ''}<button class="btn primary" data-act="rel-ok">${(col(id) || {}).release ? 'Save' : 'Release'}</button>` : ''}${kind === 'proj' || kind === 'meta' ? `<button class="btn primary" data-act="modal-save">${x.isNew ? 'Create project' : 'Save'}</button>` : ''}</div>`;
   md.classList.toggle('wide', kind === 'meta' || kind === 'lstyle'); md.classList.toggle('clogm', kind === 'changelog');
   md.inert = false; $('#scrim').classList.add('open'); requestAnimationFrame(() => { md.classList.add('open'); applySlides(); const f = $('input,select', md); if (f) { f.focus(); if (f.select) f.select(); } });
 }
-const askName = (def, count, from, coverBlob) => new Promise(res => { UI.mCover = null; UI.mCoverDef = coverBlob ? URL.createObjectURL(coverBlob) : ''; UI.mCoverHint = coverBlob ? 'Found in the download. Click to use a different image.' : 'No cover found in the download. Click to add one.'; UI.nameResolve = res; openModal('name', null, { def, count, from }); });
+const askName = (def, count, from, coverBlob, dtype) => new Promise(res => { UI.mCover = null; UI.mCoverDef = coverBlob ? URL.createObjectURL(coverBlob) : ''; UI.mCoverHint = coverBlob ? 'Found in the download. Click to use a different image.' : 'No cover found in the download. Click to add one.'; UI.nameResolve = res; openModal('name', null, { def, count, from, dtype }); });
 function closeModal(v) { if (UI.modal && UI.modal.kind === 'lstyle' && UI.lsSnap && !UI.lsKeep) { const f = findLayer(UI.modal.id); if (f) { Object.keys(f.L).forEach(k => delete f.L[k]); Object.assign(f.L, JSON.parse(UI.lsSnap)); cdDirty(); renderCdPanel(); } } UI.lsSnap = null; UI.lsKeep = false; const r = UI.nameResolve; UI.nameResolve = null; if (r) r(v ?? null); setTimeout(() => { UI.mCover = null; UI.mCoverDef = ''; }, 0); UI.modal = null; $('#modal').classList.remove('open'); $('#modal').inert = true; $('#scrim').classList.remove('open'); }
 
 /* ---------- CD creator: procedural clear jewel case + art compiler ---------- */
@@ -1806,7 +1816,7 @@ function trayToStrip(side, tx, ty) { const ex = stripEdge(side); return side ===
 function stripXform(x, side, p) { const ex = stripEdge(side); if (side === 'R') { x.translate(ex * p, 0); x.rotate(Math.PI / 2); } else { x.translate((ex - SHEETS.tray.spine) * p, SHEETS.tray.h * p); x.rotate(-Math.PI / 2); } }
 const toHex = c => { if (!c) return '#111111'; if (c[0] === '#') return c.length === 7 ? c : '#111111'; const m = c.match(/\d+(\.\d+)?/g); return m ? '#' + m.slice(0, 3).map(n => Math.round(+n).toString(16).padStart(2, '0')).join('') : '#111111'; };
 const shade = (hex, k) => '#' + [1, 3, 5].map(i => Math.min(255, Math.round(parseInt(hex.slice(i, i + 2), 16) * k)).toString(16).padStart(2, '0')).join('');
-function cdCol() { const ok = x => x && !isFolder(x) ? x : null; const c = ok(UI.cdForce && col(UI.cdForce)) || ok(UI.vw && UI.vwCol && col(UI.vwCol)) || ok(S.view === 'collection' && col(S.colId)) || ok(col(S.cd.colId)) || S.cols.find(x => !isFolder(x)); if (c) S.cd.colId = c.id; return c; }
+function cdCol() { const ok = x => x && !isFolder(x) && !isMine(x) ? x : null; const c = ok(UI.cdForce && col(UI.cdForce)) || ok(UI.vw && UI.vwCol && col(UI.vwCol)) || ok(S.view === 'collection' && col(S.colId)) || ok(col(S.cd.colId)) || S.cols.find(x => !isFolder(x)); if (c) S.cd.colId = c.id; return c; }
 function design(c) {
   if (!S.cd.designs) S.cd.designs = {};
   const D = S.cd.designs[c.id] || (S.cd.designs[c.id] = autoDesign(c));
@@ -1849,6 +1859,14 @@ function lsSet(t) {
   if (UI.modal && UI.modal.kind === 'lstyle') apply(L); else sameKind(L, apply);
   if (b && b !== 'on' && t.closest('#modal')) { const cb = $(`#modal input[type=checkbox][data-lsf="${a}.on"]`); if (cb) cb.checked = true; }
   $$(`[data-lsf="${path}"]`).forEach(o => { if (o !== t && o.type !== 'checkbox') o.value = t.value; }); cdDirty();
+}
+function releaseSave() {
+  const c = col(UI.modal && UI.modal.id); if (!c) return; const on = $('#modal [data-act="rel-fmt"].on'), fmt = on ? on.dataset.k : 'digital';
+  if (!$('#rel-own').checked) return toast('Confirm that this is your music to release it');
+  const price = id => { const v = Math.round(Math.max(0, +($('#' + id) || {}).value || 0) * 100) / 100; return v; };
+  c.release = { digital: fmt !== 'cd' ? price('rel-pd') : null, cd: fmt !== 'digital' ? price('rel-pc') : null, at: (c.release && c.release.at) || Date.now() };
+  if (!c.released && !isMine(c)) { c.released = true; c.targetDate = c.targetDate || today(); }
+  save(); closeModal(); refresh(); toast(`${c.name} is in the Store: ${[c.release.digital != null ? 'digital $' + c.release.digital.toFixed(2) : '', c.release.cd != null ? 'CD $' + c.release.cd.toFixed(2) : ''].filter(Boolean).join(', ')}`);
 }
 function selLayers() { const L = selLayer(); if (!L) return []; const sd = design(cdCol())[UI.cdSel.sheet]; return [L, ...[...UI.cdMulti].map(id => sd.layers.find(l => l.id === id)).filter(l => l && l !== L)]; }
 const sameKind = (L, f) => selLayers().filter(l => l.type === L.type && !l.locked).forEach(f);
@@ -2206,7 +2224,7 @@ function openViewer(mode = 'case') {
   if (!g.running) { g.running = true; requestAnimationFrame(loop3D); }
 }
 function viewerFor(id, opts = {}) {
-  const c = col(id); if (!c) return; UI.vwList = opts.list || UI.vwList || S.cols.filter(x => !isFolder(x) && !x.archived).map(x => x.id);
+  const c = col(id); if (!c) return; UI.vwList = opts.list || UI.vwList || cdList().map(x => x.id);
   if (UI.vw) { UI.vwCol = id; S.cd.colId = id; buildCase(); vwTitle(); renderVwList(); } else { UI.vwCol = id; S.cd.colId = id; openViewer('case'); }
   if (opts.play) { UI.vw.auto = true; UI.vw.playing = true; const ts = colTracks(c); if (ts.length && !(S.playing && c.tracks.includes(S.cur))) playTrack(ts[0].id, ts.map(t => t.id)); renderViewerBar(); }
   { const d = design(c), ls = Object.values(d).flatMap(sd => (sd && sd.layers) || []); ls.filter(l => l.type === 'img').forEach(l => getImg(l.src)); waitFonts(ls).then(() => { if (UI.vw) cdPaintTex(); }); }
@@ -2255,7 +2273,7 @@ function switchDesign(c, id, quiet) {
 }
 // when a project's cover changes, bring up the CD design linked to it
 function designForCover(c) { if (!c || !S.cd.designs || !S.cd.designs[c.id]) return; const { D, all } = designSet(c); const m = all.find(x => x.$.cover && x.$.cover === c.cover); if (m && m !== D) { switchDesign(c, m.$.id, true); toast('CD design: ' + m.$.name); } }
-function cdTabs(c) { const t = (S.cd.tabs || []).filter(id => col(id) && !isFolder(col(id))); if (c && !t.includes(c.id)) t.push(c.id); S.cd.tabs = t; return t; }
+function cdTabs(c) { const t = (S.cd.tabs || []).filter(id => col(id) && !isFolder(col(id)) && !isMine(col(id))); if (c && !t.includes(c.id)) t.push(c.id); S.cd.tabs = t; return t; }
 function cdOpenTab(id) { if (!col(id)) return; S.cd.colId = id; if (S.view === 'collection') S.colId = id; cdTabs(col(id)); UI.cdSel = null; H.col = null; refresh(); }
 const cdActive = () => S.view === 'cd' || cdInProject();
 /* ---------- CD editor workspace: options bar, toolbar, document tabs, canvas, status bar, Properties + Layers dock ---------- */
@@ -2281,7 +2299,7 @@ function cdGridHTML(c) {
   return `<div class="ps ${UI.psFull ? 'full' : ''} ${S.cd.lock ? 'locked' : ''}" id="ps">
     <div class="ps-opts" id="psopts"></div>
     <div class="ps-tools" id="pstools"></div>
-    <div class="ps-docs" role="tablist">${cdTabs(c).map(id => { const x = col(id); return `<button class="psd ${id === c.id ? 'on' : ''}" role="tab" aria-selected="${id === c.id}" data-act="cd-tab" data-id="${id}" title="${esc(x.name)}">${ico('disc', 13)}<span>${esc(x.name)}</span>${cdTabs(c).length > 1 ? `<i class="psd-close" data-act="cd-tabx" data-id="${id}" role="button" aria-label="Close ${esc(x.name)}" title="Close">${ico('x', 11)}</i>` : ''}</button>`; }).join('')}${S.cols.some(x => !isFolder(x) && !cdTabs(c).includes(x.id)) ? `<button class="psd-add" data-act="cd-tabadd" title="Open another project" aria-label="Open another project">${ico('plus', 13)}</button>` : ''}
+    <div class="ps-docs" role="tablist">${cdTabs(c).map(id => { const x = col(id); return `<button class="psd ${id === c.id ? 'on' : ''}" role="tab" aria-selected="${id === c.id}" data-act="cd-tab" data-id="${id}" title="${esc(x.name)}">${ico('disc', 13)}<span>${esc(x.name)}</span>${cdTabs(c).length > 1 ? `<i class="psd-close" data-act="cd-tabx" data-id="${id}" role="button" aria-label="Close ${esc(x.name)}" title="Close">${ico('x', 11)}</i>` : ''}</button>`; }).join('')}${cdList().some(x => !cdTabs(c).includes(x.id)) ? `<button class="psd-add" data-act="cd-tabadd" title="Open another project" aria-label="Open another project">${ico('plus', 13)}</button>` : ''}
       <span class="grow"></span><div class="psd-view">${seg('cdv', [['3d', '3D case'], ['2d', 'Print sheet']], three ? '3d' : '2d', 'cd-view')}</div><button class="psd-v lockt ${S.cd.lock ? 'on' : ''}" data-act="cd-lock" role="switch" aria-checked="${!!S.cd.lock}" title="${S.cd.lock ? 'Turn editing back on' : 'Turn editing off and just view the model'}"><i class="sw2"></i>View only</button><button class="psd-v" data-act="vw-open-case" title="Open the CD viewer">${ico('cube', 13)} Viewer</button><button class="psd-v" data-act="vw-open-disc" title="View the disc on its own">${ico('disc', 13)} Disc</button><button class="psd-x" data-act="cd-full" title="${UI.psFull ? 'Exit full screen (Esc)' : 'Full screen'}" aria-label="${UI.psFull ? 'Exit full screen' : 'Full screen'}">${ico(UI.psFull ? 'shrink' : 'expand', 14)}</button></div>
     <div class="ps-canvas" id="cdview">${three ? '' : '<div class="ps-scroll" id="psscroll"><canvas id="cd2d"></canvas></div>'}</div>
     <div class="ps-status" id="psstatus"></div>
@@ -2304,7 +2322,7 @@ function cdMount() {
 /* CD Creator start screen: your CDs, open one to edit, or just look at the models */
 function cdHomeHTML() {
   const H = UI.cdh = UI.cdh || { tab: 'files', sort: 'mod', view: 'grid', q: '' }, mod = S.cd.mod || {};
-  let a = S.cols.filter(c => !isFolder(c) && !c.archived);
+  let a = cdList();
   if (H.q) a = a.filter(c => (c.name + ' ' + projArtist(c)).toLowerCase().includes(H.q.toLowerCase()));
   const when = c => mod[c.id] || (S.cd.designs && S.cd.designs[c.id] ? c.created : 0) || 0;
   a.sort(H.sort === 'name' ? (x, y) => x.name.localeCompare(y.name) : H.sort === 'artist' ? (x, y) => (projArtist(x) || '~').localeCompare(projArtist(y) || '~') : (x, y) => when(y) - when(x));
@@ -2392,7 +2410,7 @@ function renderPsProps() {
         <div class="crow">${c.cover ? `<button class="pso-btn ${D.$.cover === c.cover ? 'on' : ''}" data-act="cd-dsg-link">${ico('link', 13)} ${D.$.cover === c.cover ? 'Linked to cover ' + (ci + 1) : 'Link to cover ' + (ci + 1)}</button>` : ''}<button class="pso-btn" data-act="cd-dsg-ren">${ico('edit', 13)} Rename</button>${all.length > 1 ? `<button class="pso-btn" data-act="cd-dsg-del">${ico('trash', 13)} Delete</button>` : ''}</div>
         <p class="psp-note">Link a design to a cover and it comes up whenever that cover is in use.</p></div>`; })()}
       <div class="psp-sec"><h4>Package</h4>
-        ${cdInProject() ? '' : `<div class="sel box wide"><select id="cd-col" aria-label="Project">${S.cols.filter(x => !isFolder(x)).map(x => `<option value="${x.id}" ${x.id === c.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></div>`}
+        ${cdInProject() ? '' : `<div class="sel box wide"><select id="cd-col" aria-label="Project">${cdList().map(x => `<option value="${x.id}" ${x.id === c.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></div>`}
         ${seg('cdcase', [['jewel', 'Jewel case'], ['slim', 'Slim jewel']], S.cd.caseType, 'cd-case', 'full')}
         ${seg('cdtray', [['clear', 'Clear tray'], ['black', 'Black tray']], S.cd.tray, 'cd-tray', 'full')}
         <div class="meter ${over ? 'over' : ''}"><p><span>${fmt(sec)} of 80:00</span><span>${over ? 'Over by ' + fmt(sec - cap) : fmt(cap - sec) + ' left'}</span></p><div class="rail"><div class="fill" style="width:${Math.min(100, sec / cap * 100)}%"></div></div></div></div>
@@ -2530,7 +2548,7 @@ function cdAct(a, el) {
     case 'cd-dsg-ren': { const { D } = designSet(c), n = prompt('Name this design', D.$.name); if (n && n.trim()) { D.$.name = n.trim().slice(0, 40); save(); renderCdPanel(); } break; }
     case 'cd-dsg-del': { if (!confirmBtn(el, 'Click again to delete')) break; const { D, alts } = designSet(c); if (!alts.length) break; const gone = D.$.name; S.cd.designs[c.id] = alts.shift(); UI.cdSel = null; H.col = null; save(); refresh(); if (C3) { buildCase(); cdDirty(); } toast('Deleted ' + gone); break; }
     case 'cd-tabx': { const t = cdTabs(c), i = t.indexOf(id); if (t.length < 2 || i < 0) break; t.splice(i, 1); S.cd.tabs = t; if (id === c.id) cdOpenTab(t[Math.min(i, t.length - 1)]); else refresh(); break; }
-    case 'cd-tabadd': { const r = el.getBoundingClientRect(), open = cdTabs(c); ctxMenu(r.left, r.bottom + 4, [{ head: 'Open a project' }, ...S.cols.filter(x => !isFolder(x) && !open.includes(x.id)).map(x => ({ label: x.name, act: 'cd-tabopen', id: x.id, icon: 'disc' }))]); break; }
+    case 'cd-tabadd': { const r = el.getBoundingClientRect(), open = cdTabs(c); ctxMenu(r.left, r.bottom + 4, [{ head: 'Open a project' }, ...cdList().filter(x => !open.includes(x.id)).map(x => ({ label: x.name, act: 'cd-tabopen', id: x.id, icon: 'disc' }))]); break; }
     case 'cd-tabopen': cdOpenTab(id); break;
     case 'cd-tool': S.cd.tool = k; S.cd.mode = k === 'orbit' ? 'orbit' : 'move'; renderPsTools(); renderPsOpts(); save(); break;
     case 'cd-full': UI.psFull = !UI.psFull; { const ps = $('#ps'); if (ps) ps.classList.toggle('full', UI.psFull); } renderCdPanel(); { const x = $('[data-act="cd-full"]'); if (x) { x.innerHTML = ico(UI.psFull ? 'shrink' : 'expand', 14); x.title = UI.psFull ? 'Exit full screen (Esc)' : 'Full screen'; } } if (S.cd.view === '2d') requestAnimationFrame(draw2D); break;
@@ -3256,6 +3274,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.7.0', d: '2026-11-12', items: ['Importing a zip asks: Add project, or Add digital product (album, mixtape, EP or single). Digital products live only in Library › Digital Albums, never in the project list, CD Creator or CD Player.', 'Release… in the right-click menu puts a project or digital album in the Music Store as digital only, CD only, or both, at the prices you set. Release Settings changes them, and Take out of Store removes it.', 'The Store and Marketplace show only real releases; the sample items are gone.'] },
   { v: '1.6.2', d: '2026-11-12', items: ['CD Creator opens on a start screen: New CD, Open, your CDs sorted by when you last changed them (grid or list, with a filter), and View models to look at finished CDs without editing. The grid button in the editor tabs brings you back.'] },
   { v: '1.6.1', d: '2026-11-12', items: ['Menu order: Library, Launcher, Music Store, Marketplace, CD Creator, Audio Editor, Settings.', 'Launcher shows only the programs found on this computer. Add a program points Compass at one the scan missed, and Mac-only apps are hidden on Windows.'] },
   { v: '1.6.0', d: '2026-11-12', items: ['CD editor: Shift-click to select several layers, then move them together or change font, size, spacing and color for all of them at once. Alt-drag duplicates.', 'Layer Style (fx): blend mode, opacity, fill, stroke, drop shadow, outer glow, color overlay and gradient overlay. Blend mode, opacity and fill also sit at the top of the Layers panel.', 'New tools: Hand (H), Zoom (Z), Rectangle and Ellipse (U, Shift+U) and Eyedropper (I). Place image moved to Ctrl+Shift+P.', 'Smart guides snap layers to the middle and edges of the panel and to each other; hold Ctrl to skip. Grid with Ctrl+\' and snapping with Ctrl+;.', 'Launcher shows each program\'s own icon.', 'The verified badge in Settings now shows only next to your own artist name and turns off straight away.'] },
@@ -3298,25 +3317,26 @@ if (window.tpDesktop && tpDesktop.onChangelog) tpDesktop.onChangelog(d => openCh
 
 /* ---------- Music Store: a storefront for music, digital and physical ---------- */
 function renderStore(m) {
-  const tab = UI.storeTab || 'digital', rel = S.cols.filter(c => c.store && c.own && !c.archived);
-  const card = (c, n) => `<div class="scard" style="--n:${n}" data-act="col" data-id="${c.id}" role="button" tabindex="0"><div class="acard-art">${tab === 'physical' ? `<span class="scd" style="${pcov(c)}"><i></i></span>` : albumArt(c)}</div><b>${esc(c.name)}</b><span>${esc(projArtist(c) || 'Unknown artist')}</span><em>${tab === 'physical' ? 'CD · Jewel case' : (KINDS[c.type] || 'Album') + ' · ' + colTracks(c).length + ' songs'}</em><button class="btn sm" disabled>${tab === 'physical' ? 'Pre-order soon' : 'Buy soon'}</button></div>`;
-  const hero = rel.find(c => artOf(c)) || rel[0];
-  m.innerHTML = `<header class="head"><div><h1>Music Store</h1><p class="faint">Buy music straight from artists. Checkout opens when accounts arrive; this is how the shop will look.</p></div></header>
+  const tab = UI.storeTab || 'digital', rel = S.cols.filter(c => c.release && !c.archived && (tab === 'physical' ? c.release.cd != null : c.release.digital != null)).sort((a, b) => (b.release.at || 0) - (a.release.at || 0));
+  const price = c => tab === 'physical' ? c.release.cd : c.release.digital, money = v => v ? '$' + v.toFixed(2) : 'Free';
+  const card = (c, n) => `<div class="scard" style="--n:${n}" data-act="col" data-id="${c.id}" role="button" tabindex="0"><div class="acard-art">${tab === 'physical' ? `<span class="scd" style="${pcov(c)}"><i></i></span>` : albumArt(c)}</div><b>${esc(c.name)}</b><span>${esc(projArtist(c) || 'Unknown artist')}</span><em>${tab === 'physical' ? 'CD · Jewel case' : (KINDS[c.type] || 'Album') + ' · ' + colTracks(c).length + ' songs'}</em><button class="btn sm buy" data-act="store-buy" data-id="${c.id}" title="Checkout opens when accounts arrive">${money(price(c))}</button></div>`;
+  const hero = rel[0];
+  m.innerHTML = `<header class="head"><div><h1>Music Store</h1><p class="faint">Your releases, as buyers will see them. Checkout opens when accounts arrive.</p></div></header>
     <div class="tools">${seg('storetab', [['digital', 'Digital'], ['physical', 'Physical']], tab, 'store-tab')}</div>
-    ${hero ? `<section class="shero" style="${pcov(hero)}"><div><small>Featured ${tab === 'physical' ? 'CD' : 'release'}</small><h2>${esc(hero.name)}</h2><p>${esc(projArtist(hero) || '')}</p><button class="btn primary" data-act="play-col" data-id="${hero.id}">${ico('play', 15)} Listen</button></div></section>` : ''}
-    <h3 class="srow-h">${tab === 'physical' ? 'CDs' : 'New releases'}</h3><div class="sgrid">${rel.map(card).join('') || '<p class="faint">Nothing in the Store yet. Right-click one of your projects and choose <b>Convert to Digital Album</b>, then <b>Put in the Store</b>. Only your own music can be sold; albums you imported stay in My Music.</p>'}</div>`;
+    ${hero ? `<section class="shero" style="${pcov(hero)}"><div><small>New ${tab === 'physical' ? 'on CD' : 'release'}</small><h2>${esc(hero.name)}</h2><p>${esc(projArtist(hero) || '')}</p><div class="crow"><button class="btn primary" data-act="play-col" data-id="${hero.id}">${ico('play', 15)} Listen</button><button class="btn buy" data-act="store-buy" data-id="${hero.id}">${money(price(hero))}</button></div></div></section>` : ''}
+    ${rel.length ? `<h3 class="srow-h">${tab === 'physical' ? 'CDs' : 'Releases'}</h3><div class="sgrid">${rel.map(card).join('')}</div>` : `<div class="empty"><p><b>Nothing ${tab === 'physical' ? 'on CD' : 'released'} yet</b></p><p class="faint">Right-click a project or digital album and choose <b>Release…</b> to put it here as a digital release, a CD, or both, at your price.</p></div>`}`;
 }
 /* ---------- Marketplace (in progress): beats, kits and loops, laid out like a beat store ---------- */
 function renderMarket(m) {
-  const ts = S.tracks.filter(t => !S.cols.some(c => isMine(c) && c.tracks.includes(t.id))).slice(0, 12), genres = ['Trap', 'Drill', 'Boom Bap', 'R&B', 'Hip Hop', 'Pop', 'Afrobeats', 'Rage', 'Jersey Club', 'Lo-fi'];
-  const producers = [...new Set(S.cols.flatMap(projArtists))].slice(0, 8);
+  const ts = [], genres = ['Trap', 'Drill', 'Boom Bap', 'R&B', 'Hip Hop', 'Pop', 'Afrobeats', 'Rage', 'Jersey Club', 'Lo-fi'];
+  const producers = [];
   m.innerHTML = `<section class="mk-hero"><h1>Your sound starts here</h1><p>Beats, drum kits, loops and project files from independent producers.</p>
       <label class="mk-search">${ico('search', 18)}<input placeholder="Search beats, kits, producers" aria-label="Search the marketplace"><button class="btn primary">Search</button></label>
       <div class="chips">${genres.map(g => `<button class="chip">${g}</button>`).join('')}</div><p class="faint small">The marketplace is still being built. Nothing here is for sale yet.</p></section>
     <h3 class="srow-h">Trending beats</h3>
-    <div class="mk-list">${ts.map((t, i) => `<div class="mk-row"><span class="mk-n">${i + 1}</span><button class="mk-play" data-act="play" data-id="${t.id}" aria-label="Play">${ico(S.cur === t.id && S.playing ? 'pause' : 'play', 14)}</button><span class="mk-cov" style="${tcov(t)}"></span><span class="meta"><b>${esc(dispTitle(t))}</b><span>${esc(dispArtist(t) || 'Producer')}</span></span><span class="mono">${t.bpm ? t.bpm + ' BPM' : ''}</span><span class="mono">${esc(t.key || '')}</span><button class="btn sm" disabled>$29.99</button></div>`).join('') || '<p class="faint">Your beats will show here once the marketplace opens.</p>'}</div>
+    <div class="mk-list">${ts.map((t, i) => `<div class="mk-row"><span class="mk-n">${i + 1}</span><button class="mk-play" data-act="play" data-id="${t.id}" aria-label="Play">${ico(S.cur === t.id && S.playing ? 'pause' : 'play', 14)}</button><span class="mk-cov" style="${tcov(t)}"></span><span class="meta"><b>${esc(dispTitle(t))}</b><span>${esc(dispArtist(t) || 'Producer')}</span></span><span class="mono">${t.bpm ? t.bpm + ' BPM' : ''}</span><span class="mono">${esc(t.key || '')}</span><button class="btn sm" disabled>$29.99</button></div>`).join('') || '<p class="faint">Beats will show here once the marketplace opens.</p>'}</div>
     <h3 class="srow-h">Top producers</h3><div class="mk-prod">${producers.map(n => `<div><span class="mk-av">${esc(n.slice(0, 1).toUpperCase())}</span><b>${esc(n)}</b></div>`).join('') || '<p class="faint">Producers appear here.</p>'}</div>
-    <h3 class="srow-h">Sound kits</h3><div class="sgrid">${['Drum Kit', 'Melody Loops', '808 Pack', 'Vocal Chops'].map((k, i) => `<div class="scard"><div class="acard-art"><span class="acard-ph" style="${cover(40 + i * 70, 120 + i * 50)}"></span></div><b>${k}</b><span>Coming soon</span></div>`).join('')}</div>`;
+    <h3 class="srow-h">Sound kits</h3><p class="faint">Drum kits, loops and project files will show here.</p>`;
 }
 /* ---------- Launcher: find the DAWs on this computer and open them ---------- */
 const DAWS = [['fl', 'FL Studio'], ['ableton', 'Ableton Live'], ['logic', 'Logic Pro'], ['studioone', 'Studio One'], ['reaper', 'REAPER'], ['cubase', 'Cubase'], ['bitwig', 'Bitwig Studio'], ['protools', 'Pro Tools'], ['reason', 'Reason'], ['garageband', 'GarageBand']];
@@ -3762,8 +3782,8 @@ async function importFiles(files) {
     for (const p of P) { const t = newTrack(p.e.blob, p.title, (p.tags.TPE1 || partist || '').split(/\s*(?:,|&|\bfeat\.?|\bft\.?)\s*/i)[0].trim(), { status: 'final', ext: (p.e.name.match(/\.([a-z0-9]+)$/i) || [, 'mp3'])[1].toLowerCase() }); t.size = p.e.blob.size; const url = URL.createObjectURL(p.e.blob); t.dur = await probeDur(url); srcs[t.id] = url; await DB.put(t.id, p.e.blob); S.tracks.push(t); into.tracks.push(t.id); (into.addedAt = into.addedAt || {})[t.id] = Date.now(); ids.push(t.id); }
     const d = addDisc(into, pname, ids); save(); refresh(); toast(`Added ${ids.length} songs to ${into.name} as ${discLabel(into, d)}`); return;
   }
-  const chosen = await askName(pname, P.length, zname, found); if (chosen == null) { toast('Import cancelled'); return; }
-  const c = newProject(chosen.name); c.type = P.length === 1 ? 'single' : P.length <= 6 ? 'ep' : 'album'; c.mine = !!chosen.mine; UI.importMine = false;
+  const chosen = await askName(pname, P.length, zname, found, P.length === 1 ? 'single' : P.length <= 6 ? 'ep' : 'album'); if (chosen == null) { toast('Import cancelled'); return; }
+  const c = newProject(chosen.name); c.type = P.length === 1 ? 'single' : P.length <= 6 ? 'ep' : 'album'; c.mine = !!chosen.mine; if (c.mine && KINDS[chosen.dtype]) { c.type = chosen.dtype; c.released = true; } UI.importMine = false;
   if (UI.importLink) c.source = UI.importLink;
   if (partist) c.artists = [partist.split(/\s*(?:,|&|\bfeat\.?|\bft\.?|\bfeaturing)\s*/i)[0].trim()];
   for (const p of P) {
@@ -3779,7 +3799,7 @@ async function importFiles(files) {
   setTimeout(() => queueAnalysis(c.tracks.map(id => trk(id)).filter(Boolean).map(keyOf)), 500);
   const art = chosen.cover && chosen.cover.file ? chosen.cover.file : chosen.cover === false ? null : found;
   if (art) await addCover(c, art);
-  S.cols.push(c); S.view = 'collection'; S.colId = c.id; UI.importLink = ''; if (c.mine) S.libTab = 'mine';
+  S.cols.push(c); UI.importLink = ''; if (c.mine) { S.view = 'library'; S.libTab = 'mine'; } else { S.view = 'collection'; S.colId = c.id; }
   closeModal(); toast(`Imported ${c.name}: ${P.length} track${P.length > 1 ? 's' : ''}`); refresh();
 }
 
@@ -3869,10 +3889,10 @@ function act(a, el, e) {
     case 'cdh-vw': UI.cdh.view = k; renderMain(); break;
     case 'cdh-open': S.cd.home = false; cdOpenTab(id); break;
     case 'cdh-home': S.cd.home = true; if (S.view !== 'cd') S.view = 'cd'; refresh(); break;
-    case 'cdh-view': viewerFor(id, { list: S.cols.filter(c => !isFolder(c) && !c.archived).map(c => c.id) }); break;
+    case 'cdh-view': viewerFor(id, { list: cdList().map(c => c.id) }); break;
     case 'libtab-cds': S.view = 'library'; S.libTab = 'cds'; refresh(); break;
-    case 'cdh-new': { const r = el.getBoundingClientRect(), a = S.cols.filter(c => !isFolder(c) && !c.archived && !(S.cd.designs && S.cd.designs[c.id])); ctxMenu(r.right + 6, r.top, [{ head: 'Start a CD for' }, ...a.map(c => ({ label: c.name, act: 'cdh-open', id: c.id, icon: 'disc' })), ...(a.length ? [{ sep: 1 }] : []), { label: 'New project…', act: 'newcol', icon: 'plus' }]); break; }
-    case 'cdh-openmenu': { const r = el.getBoundingClientRect(), a = S.cols.filter(c => !isFolder(c) && !c.archived && S.cd.designs && S.cd.designs[c.id]); ctxMenu(r.right + 6, r.top, [{ head: 'Open a CD' }, ...(a.length ? a.map(c => ({ label: c.name, act: 'cdh-open', id: c.id, icon: 'edit' })) : [{ label: 'No CDs started yet', disabled: true }])]); break; }
+    case 'cdh-new': { const r = el.getBoundingClientRect(), a = cdList().filter(c => !(S.cd.designs && S.cd.designs[c.id])); ctxMenu(r.right + 6, r.top, [{ head: 'Start a CD for' }, ...a.map(c => ({ label: c.name, act: 'cdh-open', id: c.id, icon: 'disc' })), ...(a.length ? [{ sep: 1 }] : []), { label: 'New project…', act: 'newcol', icon: 'plus' }]); break; }
+    case 'cdh-openmenu': { const r = el.getBoundingClientRect(), a = cdList().filter(c => S.cd.designs && S.cd.designs[c.id]); ctxMenu(r.right + 6, r.top, [{ head: 'Open a CD' }, ...(a.length ? a.map(c => ({ label: c.name, act: 'cdh-open', id: c.id, icon: 'edit' })) : [{ label: 'No CDs started yet', disabled: true }])]); break; }
     case 'cdh-more': { const r = el.getBoundingClientRect(); ctxMenu(r.left, r.bottom + 4, [{ head: (col(id) || {}).name }, { label: 'Open in Editor', act: 'cdh-open', id, icon: 'edit' }, { label: 'View Model', act: 'cdh-view', id, icon: 'cube' }, { label: 'Play CD', act: 'cdp-play', id, icon: 'play' }, { sep: 1 }, { label: 'Make Video', act: 'cdh-video', id, icon: 'play' }, { label: 'Export 3D CD…', act: 'ctx-export3d', id, icon: 'cube' }, { label: 'Export Disc…', act: 'ctx-disc', id, icon: 'save' }]); break; }
     case 'cdh-video': viewerFor(id); setTimeout(exportShowcase, 600); break;
     case 'cd-lstyle': { const L = selLayer(); if (!L) break; UI.lsSnap = JSON.stringify(L); UI.lsSec = UI.lsSec || 'blend'; openModal('lstyle', L.id); break; }
@@ -3881,8 +3901,10 @@ function act(a, el, e) {
     case 'cd-grid': S.cd.grid = !S.cd.grid; save(); renderPsStatus(); cdDirty(); break;
     case 'cd-snapt': S.cd.snap = S.cd.snap === false; save(); renderPsStatus(); toast(S.cd.snap === false ? 'Snapping off' : 'Snapping on'); break;
     case 'verified-info': toast('Verified: This album is verified by its distributors and is an official release. Your digital token is irreplicable and you retain sole ownership of this copy of this release.'); break;
-    case 'ctx-todigital': { const c = col(id); if (!c) break; if (!colTracks(c).length) { toast('Add songs before making it a digital album'); break; } c.mine = true; c.own = true; if (!c.released) { c.released = true; c.targetDate = c.targetDate || today(); } save(); refresh(); toast(c.name + ' is now a digital album in My Music. You can put it in the Store.'); break; }
-    case 'ctx-store': { const c = col(id); if (!c || !c.own) break; c.store = !c.store; save(); refresh(); toast(c.store ? c.name + ' is in the Store. Sales open when accounts arrive.' : 'Removed ' + c.name + ' from the Store'); break; }
+    case 'ctx-release': { const c = col(id); if (c) openModal('release', c.id); break; }
+    case 'rel-fmt': $$('[data-act="rel-fmt"]', el.parentElement).forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el); }); $('#rel-dig').classList.toggle('hide-folder', k === 'cd'); $('#rel-cd').classList.toggle('hide-folder', k === 'digital'); applySlides(); break;
+    case 'rel-ok': releaseSave(); break;
+    case 'rel-pull': { const c = col(UI.modal && UI.modal.id); if (c) { delete c.release; save(); closeModal(); refresh(); toast(c.name + ' was taken out of the Store'); } break; }
     case 'cdp-view': viewerFor(id, { list: cdList().map(c => c.id) }); break;
     case 'cdp-play': viewerFor(id, { list: cdList().map(c => c.id), play: true }); break;
     case 'disc-add': { const c = col(S.colId); if (!c || isMine(c)) break; const d = addDisc(c); save(); renderList(); toast('Added ' + discLabel(c, d) + '. Drag songs onto it.'); break; }
@@ -3894,6 +3916,7 @@ function act(a, el, e) {
     case 'm-logo': $('#logofile').click(); break;
     case 'm-logo-clear': UI.mLogo = false; { const b = $('.mlogo-pv'); if (b) { b.style.backgroundImage = ''; b.innerHTML = ico('image', 20); } } el.remove(); break;
     case 'store-tab': UI.storeTab = k; renderMain(); break;
+    case 'store-buy': toast('Checkout opens when accounts arrive'); break;
     case 'daw-rescan': UI.dawScan = null; S.dawHidden = []; save(); renderMain(); break;
     case 'daw-add': { const r = el.getBoundingClientRect(), onMac = /Mac/i.test(navigator.platform || navigator.userAgent), have = id => (S.daws || {})[id] || (UI.dawScan && UI.dawScan[id]); ctxMenu(r.left, r.top + 40, [{ head: 'Which program?' }, ...DAWS.filter(([id]) => (onMac || !['logic', 'garageband'].includes(id)) && !have(id)).map(([id, n]) => ({ label: n + '…', act: 'daw-locate', k: id }))]); break; }
     case 'daw-forget': { if (S.daws) delete S.daws[k]; if (UI.dawScan && UI.dawScan !== 'busy') delete UI.dawScan[k]; save(); renderMain(); break; }
@@ -3919,7 +3942,7 @@ function act(a, el, e) {
     case 'trash-restore': restoreTrash(+k); break;
     case 'trash-purge': if (!confirmBtn(el, 'Click again')) break; purgeTrash(+k); break;
     case 'trash-empty': if (!confirmBtn(el, 'Click again to empty')) break; while (S.trash.length) purgeTrash(0); break;
-    case 'm-dest': $$('[data-act="m-dest"]', el.parentElement).forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el); }); applySlides(); break;
+    case 'm-dest': $$('[data-act="m-dest"]', el.parentElement).forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el); }); { const bx = $('#m-dtypebox'); if (bx) bx.classList.toggle('hide-folder', k !== 'mine'); } applySlides(); break;
     case 'zip-add': UI.importMine = S.view === 'library' && S.libTab === 'mine'; $('#zipfile').click(); break;
     case 'changelog': openChangelog(); break;
     case 'changelog-new': $('#toast').classList.remove('show', 'act'); openChangelog(null, k); break;
@@ -3997,7 +4020,7 @@ function act(a, el, e) {
     case 'credits': openCredits(); break;
     case 'credits-close': closeCredits(); break;
     case 'close-modal': closeModal(); break;
-    case 'name-ok': { const i = $('#m-name'), d = $('#modal [data-act="m-dest"].on'); closeModal({ name: i.value.trim() || i.placeholder, cover: UI.mCover, mine: !!(d && d.dataset.k === 'mine') }); break; }
+    case 'name-ok': { const i = $('#m-name'), d = $('#modal [data-act="m-dest"].on'); closeModal({ name: i.value.trim() || i.placeholder, cover: UI.mCover, mine: !!(d && d.dataset.k === 'mine'), dtype: ($('#m-dtype') || {}).value }); break; }
     case 'target-clear': col(S.colId).targetDate = null; refresh(); break;
     case 'dl-proj': downloadProject(col(S.colId)); break;
     case 'noop': break;
@@ -4341,10 +4364,10 @@ function projectMenu(c) {
     { label: c.cover ? 'Change Cover Art…' : 'Add Cover Art…', act: 'ctx-cover', id: c.id, icon: 'image' },
     ...(c.covers.length > 1 ? c.covers.map((cv, i) => ({ label: (cv.id === c.cover ? 'Using cover ' : 'Use cover ') + (i + 1), act: 'ctx-usecover', id: c.id, k: cv.id, icon: cv.id === c.cover ? 'check' : null, disabled: cv.id === c.cover })) : []),
     ...(c.cover ? [{ label: 'Remove This Cover', act: 'ctx-rmcover', id: c.id, icon: 'x' }] : []), { sep: 1 },
-    ...(isFolder(c) ? [] : [{ label: 'Concept Player', act: 'to-concept', id: c.id, icon: 'phone' }, { label: 'View CD', act: 'ctx-viewcd', id: c.id, icon: 'disc' }, { label: 'Edit CD', act: 'ctx-editcd', id: c.id, icon: 'edit' }, { label: 'Export 3D CD…', act: 'ctx-export3d', id: c.id, icon: 'cube' }]),
+    ...(isFolder(c) || isMine(c) ? [] : [{ label: 'Concept Player', act: 'to-concept', id: c.id, icon: 'phone' }, { label: 'View CD', act: 'ctx-viewcd', id: c.id, icon: 'disc' }, { label: 'Edit CD', act: 'ctx-editcd', id: c.id, icon: 'edit' }, { label: 'Export 3D CD…', act: 'ctx-export3d', id: c.id, icon: 'cube' }]),
     { label: isFolder(c) ? 'Export Folder (Art, Tracks, Tracklist)…' : 'Export Disc (Art, 3D, Tracks, Tracklist)…', act: 'ctx-disc', id: c.id, icon: 'save' }, { label: 'Download Project', act: 'ctx-dlproj', id: c.id, icon: 'save' }, { sep: 1 },
-    ...(isMine(c) ? [{ label: 'Make My Version', act: 'ctx-myver', id: c.id, icon: 'copy' }] : isFolder(c) ? [] : [{ label: 'Convert to Digital Album', act: 'ctx-todigital', id: c.id, icon: 'disc' }]),
-    ...(isMine(c) && !isFolder(c) ? (c.own ? [{ label: c.store ? 'Remove from Store' : 'Put in the Store', act: 'ctx-store', id: c.id, icon: 'upload' }] : [{ label: "Can't sell: not your release", disabled: true, icon: 'lock' }]) : []),
+    ...(isMine(c) ? [{ label: 'Make My Version', act: 'ctx-myver', id: c.id, icon: 'copy' }] : []),
+    ...(isFolder(c) ? [] : [{ label: c.release ? 'Release Settings…' : 'Release…', act: 'ctx-release', id: c.id, icon: 'upload' }]),
     ...(c.parent ? [{ label: 'Move Out of Folder', act: 'ctx-unfold', id: c.id, icon: 'back' }] : []),
     ...S.cols.filter(f => isFolder(f) && f.id !== c.id && f.id !== c.parent && !f.archived).slice(0, 8).map(f => ({ label: 'Move to ' + f.name, act: 'ctx-tofold', id: c.id, k: f.id, icon: 'folder' })),
     { label: c.archived ? 'Unarchive' : 'Archive', act: 'ctx-arch', id: c.id, icon: 'save' }, { sep: 1 },

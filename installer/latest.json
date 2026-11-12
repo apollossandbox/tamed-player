@@ -1,11 +1,20 @@
 {
-  "version": "1.6.2",
+  "version": "1.7.0",
   "file": "Compass-Setup.exe",
-  "size": 82426740,
-  "sha256": "fbdfdf79d8962d69f66155511fee601c097d75a9327bf95fee6b2327f7b9690c",
-  "notes": "CD Creator opens on a start screen: New CD, Open, your CDs sorted by when you last changed them (grid or list, with a filter), and View models to look at finished CDs without editing. The grid button in the editor tabs brings you back.",
+  "size": 82427490,
+  "sha256": "9aa458622cd7edce31c3baace6528ed81b54b63f9bd103f5e3c70a1e701edd20",
+  "notes": "Importing a zip asks: Add project, or Add digital product (album, mixtape, EP or single). Digital products live only in Library › Digital Albums, never in the project list, CD Creator or CD Player. Release… in the right-click menu puts a project or digital album in the Music Store as digital only, CD only, or both, at the prices you set. Release Settings changes them, and Take out of Store removes it. The Store and Marketplace show only real releases; the sample items are gone.",
   "date": "2026-11-12",
   "changelog": [
+    {
+      "v": "1.7.0",
+      "d": "2026-11-12",
+      "items": [
+        "Importing a zip asks: Add project, or Add digital product (album, mixtape, EP or single). Digital products live only in Library › Digital Albums, never in the project list, CD Creator or CD Player.",
+        "Release… in the right-click menu puts a project or digital album in the Music Store as digital only, CD only, or both, at the prices you set. Release Settings changes them, and Take out of Store removes it.",
+        "The Store and Marketplace show only real releases; the sample items are gone."
+      ]
+    },
     {
       "v": "1.6.2",
       "d": "2026-11-12",
@@ -181,14 +190,6 @@
       "d": "2026-11-09",
       "items": [
         "Drag images onto CD panels in 3D and on the print sheet."
-      ]
-    },
-    {
-      "v": "1.0.4",
-      "d": "2026-11-09",
-      "items": [
-        "Duplicate project and make a sequel.",
-        "The disc spins only in the viewer."
       ]
     }
   ]
