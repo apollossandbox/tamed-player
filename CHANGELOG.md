@@ -2,6 +2,15 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.6.0 · 2026-11-12
+
+- CD editor: Shift-click to select several layers, then move them together or change font, size, spacing and color for all of them at once. Alt-drag duplicates.
+- Layer Style (fx): blend mode, opacity, fill, stroke, drop shadow, outer glow, color overlay and gradient overlay. Blend mode, opacity and fill also sit at the top of the Layers panel.
+- New tools: Hand (H), Zoom (Z), Rectangle and Ellipse (U, Shift+U) and Eyedropper (I). Place image moved to Ctrl+Shift+P.
+- Smart guides snap layers to the middle and edges of the panel and to each other; hold Ctrl to skip. Grid with Ctrl+' and snapping with Ctrl+;.
+- Launcher shows each program's own icon.
+- The verified badge in Settings now shows only next to your own artist name and turns off straight away.
+
 ## 1.5.0 · 2026-11-12
 
 - Projects can have several discs: Add a disc at the bottom of the song list, drag songs onto a disc, drag discs to reorder them, and number each disc from 1 or across the whole project. Zips dropped on a project become a new disc.

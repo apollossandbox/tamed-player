@@ -696,7 +696,9 @@ body.cx-on .bar { transform: none; }
 .mk-prod { display: flex; gap: 22px; flex-wrap: wrap; margin-bottom: 26px; } .mk-prod > div { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 92px; text-align: center; } .mk-av { width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; background: var(--panel3); font-size: 28px; font-weight: 800; }
 .dawgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
 .daw { display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); opacity: .75; } .daw.ok { opacity: 1; }
-.daw-i { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; background: var(--panel3); font-weight: 800; font-size: 16px; } .daw.ok .daw-i { background: var(--ink); color: var(--onink); }
+.daw-i { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; background: linear-gradient(145deg, color-mix(in srgb, var(--b) 88%, #fff), var(--b)); color: var(--f); font-weight: 800; font-size: 17px; letter-spacing: -.02em; box-shadow: 0 6px 16px -8px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.12); }
+.daw-i.img { background: none; box-shadow: none; } .daw-i.img img { width: 56px; height: 56px; object-fit: contain; image-rendering: auto; }
+.daw:not(.ok) .daw-i { filter: grayscale(1); opacity: .55; }
 .daw small { color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 @media (max-width: 760px) { .mk-row { grid-template-columns: 34px 44px minmax(0, 1fr) 84px; } .mk-row .mk-n, .mk-row .mono { display: none; } }
 
@@ -731,6 +733,21 @@ body.cx-on .bar { transform: none; }
 .cdj-gloss { position: absolute; inset: 0; background: linear-gradient(115deg, rgba(255,255,255,.35), transparent 38%, transparent 70%, rgba(255,255,255,.1)); pointer-events: none; }
 .cdcard .acard-play { bottom: auto; top: calc(88% - 54px); right: 10px; } .cdcard:hover .acard-play { opacity: 1; transform: none; }
 .vbadge { display: inline-grid; place-items: center; width: 17px; height: 17px; margin-left: 6px; border-radius: 50%; background: #1db954; color: #fff; vertical-align: -3px; cursor: help; }
+
+/* editor: layer style, layers header, tools */
+.psl-top { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--ink2); flex-wrap: wrap; }
+.psl-top select { flex: 1 1 100%; min-width: 0; height: 26px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel2); color: var(--ink); font-size: 12px; }
+.psl-top label { display: inline-flex; align-items: center; gap: 4px; } .psl-top input { width: 52px; height: 26px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel2); color: var(--ink); text-align: right; padding: 0 4px; }
+.psl-fx { width: 28px; height: 26px; border-radius: 6px; background: var(--panel2); } .psl-fx i { font: italic 700 13px Georgia, serif; }
+.ls { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 14px; margin-top: 10px; min-height: 280px; }
+.ls nav { display: flex; flex-direction: column; gap: 2px; border-right: 1px solid var(--line); padding-right: 10px; }
+.ls-n { display: flex; align-items: center; gap: 6px; padding: 4px 6px; border-radius: 6px; } .ls-n.on { background: var(--panel3); } .ls-n button { flex: 1; text-align: left; font-weight: 600; font-size: 13px; padding: 4px 0; }
+.ls section h4 { margin: 0 0 8px; font-size: 13px; } .ls section h4 + * { margin-top: 0; } .ls section h4:not(:first-child) { margin-top: 16px; }
+.ls-f { display: grid; grid-template-columns: 110px minmax(0, 1fr) 64px 24px; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 13px; } .ls-f > span { color: var(--ink2); }
+.ls-f input[type=number] { height: 28px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel2); color: var(--ink); padding: 0 6px; } .ls-f em { font-style: normal; color: var(--ink3); font-size: 12px; }
+.ls-f select { grid-column: 2 / 4; height: 30px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel2); color: var(--ink); } .ls-f input[type=color] { grid-column: 2 / 3; width: 46px; height: 28px; border: 0; background: none; padding: 0; }
+.pss-b.txt.on { color: var(--ink); background: var(--panel3); }
+@media (max-width: 700px) { .ls { grid-template-columns: 1fr; } .ls nav { border-right: 0; flex-direction: row; flex-wrap: wrap; } }
 /* Audio Doctor */
 .doc-drop { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px; margin-bottom: 16px; border: 1.5px dashed var(--line); border-radius: 14px; color: var(--ink2); }
 .doc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 430px); gap: 16px; align-items: start; }
@@ -1466,6 +1483,7 @@ function renderMain() {
   if (enter) { m.scrollTop = 0; clearTimeout(renderMain.t); renderMain.t = setTimeout(() => m.classList.remove('enter'), 800); }
 }
 
+const meVerified = n => !!(S.concept && S.concept.verified) && !!n && (!S.concept.artist || S.concept.artist === 'Artist Name' || n.trim().toLowerCase() === S.concept.artist.trim().toLowerCase());
 const LIBTABS_EXTRA = [['cds', 'CD Player'], ['stats', 'Stats']], LIBVIEWS = {};
 const cdList = () => S.cols.filter(c => !isFolder(c) && !c.archived);
 LIBVIEWS.cds = () => { const a = cdList(); return `<p class="faint small lib-note">Every CD you've made. Click one to look at it, or right-click to play it. In the player: Space plays, ←/→ change songs, [ ] change CDs, H hides the controls.</p>
@@ -1634,6 +1652,18 @@ function openModal(kind, id, x = {}) {
       <tr><th>Copyright</th><td colspan="3"><input class="field" id="m-copy" value="${esc(m.copyright || '')}" placeholder="© ${new Date().getFullYear()} ${esc(projArtist(projOf(t)))}"></td></tr>
       <tr><th>Explicit</th><td colspan="3"><label class="check"><input type="checkbox" id="m-explicit" ${m.explicit ? 'checked' : ''}><span>Contains explicit lyrics</span></label></td></tr>
     </tbody></table>`;
+  } else if (kind === 'lstyle') {
+    const f = findLayer(id); if (!f) return; const L = f.L, F = L.fx || {}, sec = UI.lsSec || 'blend', on = k => F[k] && F[k].on;
+    const secs = [['blend', 'Blending Options'], ['stroke', 'Stroke'], ['shadow', 'Drop Shadow'], ['glow', 'Outer Glow'], ['color', 'Color Overlay'], ['grad', 'Gradient Overlay']];
+    const num = (path, label, v, min, max, step, unit) => `<label class="ls-f"><span>${label}</span><input type="range" data-lsf="${path}" min="${min}" max="${max}" step="${step}" value="${v}"><input type="number" data-lsf="${path}" min="${min}" max="${max}" step="${step}" value="${v}"><em>${unit || ''}</em></label>`;
+    const colr = (path, label, v) => `<label class="ls-f"><span>${label}</span><input type="color" data-lsf="${path}" value="${toHex(v)}"></label>`;
+    const e = F[sec] || {}, body = sec === 'blend' ? `<h4>General Blending</h4><label class="ls-f"><span>Blend Mode</span><select data-lsf="blend">${blendOpts(L.blend)}</select></label>${num('op', 'Opacity', Math.round((L.op ?? 1) * 100), 0, 100, 1, '%')}<h4>Advanced Blending</h4>${num('fill', 'Fill Opacity', Math.round((L.fill ?? 1) * 100), 0, 100, 1, '%')}<p class="faint small">Fill changes the art without fading its stroke, shadow or glow.</p>`
+      : sec === 'stroke' ? `<h4>Stroke</h4>${num('stroke.size', 'Size', e.size ?? .5, .1, 6, .1, 'mm')}${colr('stroke.c', 'Color', e.c || '#000000')}${num('stroke.op', 'Opacity', Math.round((e.op ?? 1) * 100), 0, 100, 1, '%')}<p class="faint small">Drawn outside the edge.</p>`
+      : sec === 'shadow' ? `<h4>Drop Shadow</h4>${colr('shadow.c', 'Color', e.c || '#000000')}${num('shadow.op', 'Opacity', Math.round((e.op ?? .6) * 100), 0, 100, 1, '%')}${num('shadow.angle', 'Angle', e.angle ?? 120, -180, 180, 1, '°')}${num('shadow.dist', 'Distance', e.dist ?? 1, 0, 20, .1, 'mm')}${num('shadow.size', 'Size', e.size ?? 1.5, 0, 20, .1, 'mm')}`
+      : sec === 'glow' ? `<h4>Outer Glow</h4>${colr('glow.c', 'Color', e.c || '#ffffff')}${num('glow.op', 'Opacity', Math.round((e.op ?? .75) * 100), 0, 100, 1, '%')}${num('glow.size', 'Size', e.size ?? 2, 0, 20, .1, 'mm')}`
+      : sec === 'color' ? `<h4>Color Overlay</h4>${colr('color.c', 'Color', e.c || '#ff0000')}${num('color.op', 'Opacity', Math.round((e.op ?? 1) * 100), 0, 100, 1, '%')}`
+      : `<h4>Gradient Overlay</h4>${colr('grad.c1', 'From', e.c1 || '#000000')}${colr('grad.c2', 'To', e.c2 || '#ffffff')}${num('grad.angle', 'Angle', e.angle ?? 90, -180, 180, 1, '°')}${num('grad.op', 'Opacity', Math.round((e.op ?? 1) * 100), 0, 100, 1, '%')}`;
+    h = `<h2>Layer Style</h2><p class="faint small" style="margin:0">${esc(layerName(L))}</p><div class="ls"><nav>${secs.map(([k, l]) => `<div class="ls-n ${sec === k ? 'on' : ''}">${k === 'blend' ? '' : `<input type="checkbox" data-lsf="${k}.on" ${on(k) ? 'checked' : ''} aria-label="Turn ${l} on">`}<button data-act="ls-sec" data-k="${k}">${l}</button></div>`).join('')}</nav><section>${body}</section></div>`;
   } else if (kind === 'changelog') {
     const C = UI.clog || { list: CHANGELOG };
     h = `<h2>What's new</h2><p class="faint small" style="margin:0">You have version ${esc(APP_VERSION)}.</p><div class="clog">${changelogHTML(C.list, C.since)}</div>`;
@@ -1646,12 +1676,12 @@ function openModal(kind, id, x = {}) {
     <div class="dropzone" id="m-drop">${ico('import', 26)}<b>Drop the .zip here</b><span class="faint small">or loose audio and image files</span><button class="btn sm primary" data-act="zip-pick">Choose files</button></div>
     <p class="faint small" id="m-status" role="status"></p>`;
   }
-  md.innerHTML = h + `<div class="crow" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-act="close-modal">${kind === 'import' || kind === 'changelog' ? 'Close' : 'Cancel'}</button>${kind === 'name' ? '<button class="btn primary" data-act="name-ok">Create project</button>' : ''}${kind === 'proj' || kind === 'meta' ? `<button class="btn primary" data-act="modal-save">${x.isNew ? 'Create project' : 'Save'}</button>` : ''}</div>`;
-  md.classList.toggle('wide', kind === 'meta'); md.classList.toggle('clogm', kind === 'changelog');
+  md.innerHTML = h + `<div class="crow" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-act="close-modal">${kind === 'import' || kind === 'changelog' ? 'Close' : 'Cancel'}</button>${kind === 'name' ? '<button class="btn primary" data-act="name-ok">Create project</button>' : ''}${kind === 'lstyle' ? '<button class="btn primary" data-act="ls-ok">OK</button>' : ''}${kind === 'proj' || kind === 'meta' ? `<button class="btn primary" data-act="modal-save">${x.isNew ? 'Create project' : 'Save'}</button>` : ''}</div>`;
+  md.classList.toggle('wide', kind === 'meta' || kind === 'lstyle'); md.classList.toggle('clogm', kind === 'changelog');
   md.inert = false; $('#scrim').classList.add('open'); requestAnimationFrame(() => { md.classList.add('open'); applySlides(); const f = $('input,select', md); if (f) { f.focus(); if (f.select) f.select(); } });
 }
 const askName = (def, count, from, coverBlob) => new Promise(res => { UI.mCover = null; UI.mCoverDef = coverBlob ? URL.createObjectURL(coverBlob) : ''; UI.mCoverHint = coverBlob ? 'Found in the download. Click to use a different image.' : 'No cover found in the download. Click to add one.'; UI.nameResolve = res; openModal('name', null, { def, count, from }); });
-function closeModal(v) { const r = UI.nameResolve; UI.nameResolve = null; if (r) r(v ?? null); setTimeout(() => { UI.mCover = null; UI.mCoverDef = ''; }, 0); UI.modal = null; $('#modal').classList.remove('open'); $('#modal').inert = true; $('#scrim').classList.remove('open'); }
+function closeModal(v) { if (UI.modal && UI.modal.kind === 'lstyle' && UI.lsSnap && !UI.lsKeep) { const f = findLayer(UI.modal.id); if (f) { Object.keys(f.L).forEach(k => delete f.L[k]); Object.assign(f.L, JSON.parse(UI.lsSnap)); cdDirty(); renderCdPanel(); } } UI.lsSnap = null; UI.lsKeep = false; const r = UI.nameResolve; UI.nameResolve = null; if (r) r(v ?? null); setTimeout(() => { UI.mCover = null; UI.mCoverDef = ''; }, 0); UI.modal = null; $('#modal').classList.remove('open'); $('#modal').inert = true; $('#scrim').classList.remove('open'); }
 
 /* ---------- CD creator: procedural clear jewel case + art compiler ---------- */
 const BLEED = 3, TEXMM = 6, PRINTMM = 300 / 25.4;
@@ -1791,7 +1821,19 @@ function autoDesign(c) {
     disc: { bg: 'silver', layers: cov ? [L({ type: 'img', src: cov, name: 'Project cover', ar: 1, x: 60, y: 60, w: 120 })] : [T(c.name, { font: 'Permanent Marker', size: 7, color: '#111111', x: 60, y: 30, w: 90, rot: -6 }), T(A, { font: 'Permanent Marker', size: 4.5, color: '#111111', x: 60, y: 40, w: 90, rot: -6 })] }
   };
 }
-const layerH = L => (L.type === 'img' ? L.w / (L.ar || 1) : Math.max(1, String(L.text).split('\n').length) * L.size * (L.lh ?? 1.3)) * (L.sy || 1);
+const layerH = L => (L.type === 'img' || L.type === 'shape' ? L.w / (L.ar || 1) : Math.max(1, String(L.text).split('\n').length) * L.size * (L.lh ?? 1.3)) * (L.sy || 1);
+UI.cdMulti = new Set();
+function lsSet(t) {
+  const path = t.dataset.lsf, L = UI.modal && UI.modal.kind === 'lstyle' ? (findLayer(UI.modal.id) || {}).L : selLayer(); if (!L || L.locked) return;
+  let v = t.type === 'checkbox' ? t.checked : t.type === 'color' || t.tagName === 'SELECT' ? t.value : +t.value;
+  const [a, b] = path.split('.'); if (['op', 'fill'].includes(a) || ['op'].includes(b)) v = Math.max(0, Math.min(100, v)) / 100;
+  const apply = l => { if (b) { l.fx = l.fx || {}; l.fx[a] = { ...(l.fx[a] || {}), [b]: v }; if (b !== 'on' && !('on' in l.fx[a])) l.fx[a].on = true; } else if (a === 'blend' && v === 'source-over') delete l.blend; else l[a] = v; };
+  if (UI.modal && UI.modal.kind === 'lstyle') apply(L); else sameKind(L, apply);
+  if (b && b !== 'on' && t.closest('#modal')) { const cb = $(`#modal input[type=checkbox][data-lsf="${a}.on"]`); if (cb) cb.checked = true; }
+  $$(`[data-lsf="${path}"]`).forEach(o => { if (o !== t && o.type !== 'checkbox') o.value = t.value; }); cdDirty();
+}
+function selLayers() { const L = selLayer(); if (!L) return []; const sd = design(cdCol())[UI.cdSel.sheet]; return [L, ...[...UI.cdMulti].map(id => sd.layers.find(l => l.id === id)).filter(l => l && l !== L)]; }
+const sameKind = (L, f) => selLayers().filter(l => l.type === L.type && !l.locked).forEach(f);
 function selLayer() { const s = UI.cdSel, c = cdCol(); if (!s || !s.id || !c) return null; const sd = design(c)[s.sheet]; return sd ? sd.layers.find(l => l.id === s.id) || null : null; }
 function hitLayer(sd, mx, my) {
   for (let i = sd.layers.length - 1; i >= 0; i--) {
@@ -1807,10 +1849,41 @@ function getImg(key) {
   if (!im || im.dataset.src !== srcs[key]) { im = new Image(); im.dataset.src = srcs[key]; im.onload = () => cdDirty(); im.src = srcs[key]; imgCache[key] = im; }
   return im.complete && im.naturalWidth ? im : null;
 }
+const BLENDS = [['source-over', 'Normal'], 0, ['darken', 'Darken'], ['multiply', 'Multiply'], ['color-burn', 'Color Burn'], 0, ['lighten', 'Lighten'], ['screen', 'Screen'], ['color-dodge', 'Color Dodge'], ['lighter', 'Linear Dodge (Add)'], 0, ['overlay', 'Overlay'], ['soft-light', 'Soft Light'], ['hard-light', 'Hard Light'], 0, ['difference', 'Difference'], ['exclusion', 'Exclusion'], 0, ['hue', 'Hue'], ['saturation', 'Saturation'], ['color', 'Color'], ['luminosity', 'Luminosity']];
+const blendOpts = cur => BLENDS.map(b => b ? `<option value="${b[0]}" ${(cur || 'source-over') === b[0] ? 'selected' : ''}>${b[1]}</option>` : '<option disabled>──────</option>').join('');
+const hexA = (hex, a) => { const h = toHex(hex); return `rgba(${parseInt(h.slice(1, 3), 16)},${parseInt(h.slice(3, 5), 16)},${parseInt(h.slice(5, 7), 16)},${a ?? 1})`; };
+function layerFancy(L) { const f = L.fx || {}; return (L.blend && L.blend !== 'source-over') || (L.fill ?? 1) < 1 || ['stroke', 'shadow', 'glow', 'color', 'grad'].some(k => f[k] && f[k].on); }
 function drawLayer(x, L, p) {
   if (L.hidden) return;
   x.save(); x.globalAlpha = L.op ?? 1; x.translate(L.x * p, L.y * p); x.rotate(L.rot * Math.PI / 180); if (L.flipX || L.flipY) x.scale(L.flipX ? -1 : 1, L.flipY ? -1 : 1);
   const w = L.w * p, h = layerH(L) * p;
+  if (!layerFancy(L)) { layerBody(x, L, p, w, h); x.restore(); return; }
+  const f = L.fx || {}, on = k => f[k] && f[k].on, mm = v => (v || 0) * p;
+  const m = Math.ceil(Math.max(on('stroke') ? mm(f.stroke.size) : 0, on('glow') ? mm(f.glow.size) * 2 : 0, on('shadow') ? mm(f.shadow.dist) + mm(f.shadow.size) * 2 : 0) + 4);
+  let W = Math.ceil(w + 2 * m), Hh = Math.ceil(h + 2 * m); const k = Math.min(1, 4096 / Math.max(W, Hh)); W = Math.ceil(W * k); Hh = Math.ceil(Hh * k);
+  const mk = () => { const c = document.createElement('canvas'); c.width = W; c.height = Hh; return c; };
+  const oc = mk(), o = oc.getContext('2d'); o.setTransform(k, 0, 0, k, W / 2, Hh / 2); layerBody(o, L, p, w, h); o.setTransform(1, 0, 0, 1, 0, 0);
+  if (on('color')) { o.globalCompositeOperation = 'source-atop'; o.fillStyle = hexA(f.color.c, f.color.op ?? 1); o.fillRect(0, 0, W, Hh); }
+  if (on('grad')) { const a = (f.grad.angle || 0) * Math.PI / 180, cx = W / 2, cy = Hh / 2, r = Math.max(W, Hh) / 2, g = o.createLinearGradient(cx - Math.cos(a) * r, cy + Math.sin(a) * r, cx + Math.cos(a) * r, cy - Math.sin(a) * r); g.addColorStop(0, hexA(f.grad.c1 || '#000000', f.grad.op ?? 1)); g.addColorStop(1, hexA(f.grad.c2 || '#ffffff', f.grad.op ?? 1)); o.globalCompositeOperation = 'source-atop'; o.fillStyle = g; o.fillRect(0, 0, W, Hh); }
+  let out = oc;
+  if (on('stroke')) { // outside stroke: the shape's silhouette, pushed out in every direction, behind the art
+    const sc = mk(), so = sc.getContext('2d'); so.drawImage(oc, 0, 0); so.globalCompositeOperation = 'source-in'; so.fillStyle = hexA(f.stroke.c || '#000000', f.stroke.op ?? 1); so.fillRect(0, 0, W, Hh);
+    const r = Math.max(.5, mm(f.stroke.size) * k), st = mk(), sx = st.getContext('2d'), n = Math.min(48, Math.max(12, Math.round(r * 2)));
+    for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2; sx.drawImage(sc, Math.cos(a) * r, Math.sin(a) * r); } sx.drawImage(oc, 0, 0); out = st;
+  }
+  x.globalCompositeOperation = L.blend || 'source-over'; const op = L.op ?? 1, fill = L.fill ?? 1;
+  const put = () => x.drawImage(out, -W / 2 / k, -Hh / 2 / k, W / k, Hh / k);
+  if (on('shadow') || on('glow')) {
+    // effects are drawn from a copy that sits far off-canvas, so only the shadow lands; then the art goes on top at its fill
+    const tr = x.getTransform(), sc = Math.hypot(tr.a, tr.b);
+    for (const [kk, dx, dy] of [['shadow', Math.cos(((f.shadow || {}).angle ?? 120) * Math.PI / 180), -Math.sin(((f.shadow || {}).angle ?? 120) * Math.PI / 180)], ['glow', 0, 0]]) { if (!on(kk)) continue; const e = f[kk];
+      x.save(); x.globalAlpha = op; const far = 1e5; x.shadowColor = hexA(e.c || (kk === 'glow' ? '#ffffff' : '#000000'), e.op ?? (kk === 'glow' ? .75 : .6)); x.shadowBlur = mm(e.size || 1) * sc * (kk === 'glow' ? 1.5 : 1);
+      x.setTransform(1, 0, 0, 1, 0, 0); x.shadowOffsetX = far + dx * mm(e.dist || 0) * sc; x.shadowOffsetY = dy * mm(e.dist || 0) * sc; x.translate(-far, 0); x.transform(tr.a, tr.b, tr.c, tr.d, tr.e, tr.f); put(); x.restore(); }
+  }
+  x.globalAlpha = op * fill; put(); x.restore();
+}
+function layerBody(x, L, p, w, h) {
+  if (L.type === 'shape') { x.fillStyle = L.color || '#ffffff'; x.beginPath(); if (L.shape === 'ellipse') x.ellipse(0, 0, w / 2, h / 2, 0, 0, Math.PI * 2); else if (L.radius) x.roundRect(-w / 2, -h / 2, w, h, L.radius * p); else x.rect(-w / 2, -h / 2, w, h); x.fill(); return; }
   if (L.type === 'img') {
     const im = getImg(L.src);
     if (im) x.drawImage(im, -w / 2, -h / 2, w, h);
@@ -1828,8 +1901,9 @@ function drawLayer(x, L, p) {
       ch.forEach((c, k) => { x.fillText(c, cx, y); cx += ws[k] + sp; });
     });
   }
-  x.restore();
+  
 }
+
 function paintBg(x, bg, W, H, o = 0) {
   if (bg === 'none') return; if (o) { x.save(); x.translate(o, o); paintBg(x, bg, W, H); x.restore(); return; }
   if (bg === 'silver') {
@@ -1896,6 +1970,9 @@ function draw2D() {
   cv.style.width = TW * p + 'px'; cv.style.height = TH * p + 'px'; cv.width = Math.round(TW * p * dpr); cv.height = Math.round(TH * p * dpr);
   const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0);
   paintSheet(x, key, design(c)[key], p, design(c)); paintGuides(x, key, p);
+  if (S.cd.grid) { x.save(); x.strokeStyle = 'rgba(79,179,255,.22)'; x.lineWidth = 1; for (let g = 0; g <= sh.w; g += 5) { x.beginPath(); x.moveTo((g + BLEED) * p, BLEED * p); x.lineTo((g + BLEED) * p, (sh.h + BLEED) * p); x.stroke(); } for (let g = 0; g <= sh.h; g += 5) { x.beginPath(); x.moveTo(BLEED * p, (g + BLEED) * p); x.lineTo((sh.w + BLEED) * p, (g + BLEED) * p); x.stroke(); } x.strokeStyle = 'rgba(79,179,255,.5)'; x.beginPath(); x.moveTo((sh.w / 2 + BLEED) * p, 0); x.lineTo((sh.w / 2 + BLEED) * p, TH * p); x.moveTo(0, (sh.h / 2 + BLEED) * p); x.lineTo(TW * p, (sh.h / 2 + BLEED) * p); x.stroke(); x.restore(); }
+  if (!S.cd.lock && UI.cdSel && UI.cdSel.sheet === key) selLayers().slice(1).forEach(l => { const w = l.w * p, h = layerH(l) * p; x.save(); x.translate((l.x + BLEED) * p, (l.y + BLEED) * p); x.rotate(l.rot * Math.PI / 180); x.strokeStyle = '#4fb3ff'; x.setLineDash([4, 3]); x.lineWidth = 1.5; x.strokeRect(-w / 2, -h / 2, w, h); x.restore(); });
+  (UI.guides || []).forEach(g => { x.save(); x.strokeStyle = '#ff2fa8'; x.lineWidth = 1; x.beginPath(); if (g.x != null) { x.moveTo((g.x + BLEED) * p, 0); x.lineTo((g.x + BLEED) * p, TH * p); } else { x.moveTo(0, (g.y + BLEED) * p); x.lineTo(TW * p, (g.y + BLEED) * p); } x.stroke(); x.restore(); });
   const L = S.cd.lock ? null : selLayer(); if (L && UI.cdSel.sheet === key) paintSel(x, L, p); else if (L && onTraySpine(key, UI.cdSel.sheet)) { x.save(); spineXform(x, UI.cdSel.sheet, p); paintSel(x, L, p); x.restore(); }
   UI.p2d = p;
 }
@@ -1906,6 +1983,12 @@ function start2D(e) {
   const cv = e.target, r = cv.getBoundingClientRect(), p = UI.p2d, key = S.cd.sheet, sd = design(cdCol())[key];
   const tx = (e.clientX - r.left) / p - BLEED, ty = (e.clientY - r.top) / p - BLEED, L = selLayer(), D = design(cdCol());
   const spAt = key === 'tray' ? (tx < SHEETS.tray.spine ? 'spineL' : tx > SHEETS.tray.w - SHEETS.tray.spine ? 'spineR' : null) : null;
+  { const tl = S.cd.tool;
+    if (tl === 'hand') { const sc = $('#psscroll'); cv.setPointerCapture(e.pointerId); drag2 = { kind: 'pan', cx: e.clientX, cy: e.clientY, sl: sc ? sc.scrollLeft : 0, st: sc ? sc.scrollTop : 0 }; return; }
+    if (tl === 'zoom') { cdZoom(e.altKey ? 'out' : 'in'); return; }
+    if (tl === 'rect' || tl === 'ellipse') { const sh = SHEETS[key], c0 = ['#ffffff', 'silver', '#f4f4f2', 'none'].includes(sd.bg) ? '#111111' : '#ffffff'; addLayer({ type: 'shape', shape: tl, color: c0, w: Math.min(30, sh.w * .4), ar: 1, x: tx, y: ty, name: tl === 'rect' ? 'Rectangle' : 'Ellipse' }); S.cd.tool = 'move'; renderCdPanel(); return; }
+    if (tl === 'picker') { const d = cv.getContext('2d').getImageData(Math.round((e.clientX - r.left) * (cv.width / r.width)), Math.round((e.clientY - r.top) * (cv.height / r.height)), 1, 1).data, hex = '#' + [d[0], d[1], d[2]].map(v => v.toString(16).padStart(2, '0')).join('');
+      const Ls = selLayers().filter(l => l.type !== 'img' && !l.locked); if (Ls.length) { Ls.forEach(l => { l.color = hex; }); toast('Color ' + hex); } else { sd.bg = hex; toast('Background ' + hex); } renderCdPanel(); cdDirty(); save(); return; } }
   if (S.cd.tool === 'text') { if (spAt) { const [sx, sy] = toSheet(key, spAt, tx, ty); cdPlaceText(spAt, sx, SHEETS[spAt].h / 2); const nl = selLayer(); if (nl) { nl.size = 3; nl.w = SHEETS[spAt].w - 12; nl.x = Math.min(Math.max(sx, nl.w / 2), SHEETS[spAt].w - nl.w / 2); nl.fit = true; } S.cd.sheet = 'tray'; refresh(); } else cdPlaceText(key, tx, ty); return; }
   cv.setPointerCapture(e.pointerId);
   const ls = UI.cdSel && UI.cdSel.sheet;
@@ -1919,13 +2002,30 @@ function start2D(e) {
   let hit = null, hs = key;
   if (spAt && D[spAt]) { const [sx, sy] = toSheet(key, spAt, tx, ty); hit = hitLayer(D[spAt], sx, sy); if (hit) hs = spAt; }
   if (!hit) hit = hitLayer(sd, tx, ty);
+  if (e.shiftKey && hit && L && hs === ls) { if (hit === L) { const nx = [...UI.cdMulti][0]; if (nx) { UI.cdMulti.delete(nx); UI.cdSel.id = nx; } } else if (UI.cdMulti.has(hit.id)) UI.cdMulti.delete(hit.id); else { UI.cdMulti.add(hit.id); } renderCdPanel(); draw2D(); return; }
+  if (!(hit && (UI.cdMulti.has(hit.id) || (L && hit === L)))) UI.cdMulti.clear();
+  if (hit && UI.cdMulti.has(hit.id) && L) { UI.cdMulti.delete(hit.id); UI.cdMulti.add(L.id); }
   UI.cdSel = { sheet: hs, id: hit ? hit.id : null }; renderCdPanel(); draw2D();
-  if (hit && !hit.locked) { const [mx, my] = toSheet(key, hs, tx, ty); drag2 = { kind: 'move', L: hit, sheet: hs, x: mx, y: my }; }
+  if (hit && !hit.locked) {
+    if (e.altKey) { const grp = selLayers(), sd2 = design(cdCol())[hs]; const copies = grp.map(l => { const n = { ...JSON.parse(JSON.stringify(l)), id: uid(), locked: false, name: l.name ? l.name + ' copy' : undefined }; sd2.layers.splice(sd2.layers.indexOf(l) + 1, 0, n); return n; }); UI.cdSel.id = copies[0].id; UI.cdMulti = new Set(copies.slice(1).map(c => c.id)); renderCdPanel(); }
+    const [mx, my] = toSheet(key, hs, tx, ty), grp = selLayers().filter(l => !l.locked); drag2 = { kind: 'move', L: selLayer(), grp, sheet: hs, x: mx, y: my, x0: mx, y0: my, start: grp.map(l => [l.x, l.y]) };
+  }
 }
 function move2D(e) {
   if (!drag2) return; const cv = $('#cd2d'); if (!cv) return;
   const r = cv.getBoundingClientRect(), p = UI.p2d, [mx, my] = toSheet(S.cd.sheet, drag2.sheet || S.cd.sheet, (e.clientX - r.left) / p - BLEED, (e.clientY - r.top) / p - BLEED), L = drag2.L;
-  if (drag2.kind === 'move') { L.x += mx - drag2.x; L.y += my - drag2.y; drag2.x = mx; drag2.y = my; }
+  if (drag2.kind === 'pan') { const sc = $('#psscroll'); if (sc) { sc.scrollLeft = drag2.sl - (e.clientX - drag2.cx); sc.scrollTop = drag2.st - (e.clientY - drag2.cy); } return; }
+  if (drag2.kind === 'move') {
+    let dx = mx - drag2.x0, dy = my - drag2.y0; UI.guides = [];
+    if (S.cd.snap !== false && !e.ctrlKey && drag2.sheet === S.cd.sheet && L.rot % 90 === 0) { // smart guides: snap to the panel's middle, edges and safe area, and to other layers
+      const sh = SHEETS[S.cd.sheet], sd = design(cdCol())[S.cd.sheet], grp = new Set(drag2.grp), tol = 7 / p, i0 = drag2.grp.indexOf(L), [sx, sy] = drag2.start[i0 < 0 ? 0 : i0];
+      const hw = (L.rot % 180 ? layerH(L) : L.w) / 2, hh = (L.rot % 180 ? L.w : layerH(L)) / 2, xs = [sh.w / 2, 0, sh.w, 3, sh.w - 3], ys = [sh.h / 2, 0, sh.h, 3, sh.h - 3];
+      sd.layers.filter(l => !grp.has(l) && !l.hidden).forEach(l => { const a = (l.rot % 180 ? layerH(l) : l.w) / 2, b = (l.rot % 180 ? l.w : layerH(l)) / 2; xs.push(l.x, l.x - a, l.x + a); ys.push(l.y, l.y - b, l.y + b); });
+      const best = (v, half, list) => { let r = null; for (const c of list) for (const o of [0, -half, half]) { const d = c - (v + o); if (Math.abs(d) < tol && (!r || Math.abs(d) < Math.abs(r.d))) r = { d, at: c }; } return r; };
+      const bx = best(sx + dx, hw, xs), by = best(sy + dy, hh, ys); if (bx) { dx += bx.d; UI.guides.push({ x: bx.at }); } if (by) { dy += by.d; UI.guides.push({ y: by.at }); }
+    }
+    drag2.grp.forEach((l, i) => { l.x = drag2.start[i][0] + dx; l.y = drag2.start[i][1] + dy; }); drag2.x = mx; drag2.y = my;
+  }
   else if (drag2.kind === 'scale' && e.shiftKey) { // free transform: width and height change on their own
     const a = -L.rot * Math.PI / 180, dx = mx - L.x, dy = my - L.y, lx = Math.abs(dx * Math.cos(a) - dy * Math.sin(a)), ly = Math.abs(dx * Math.sin(a) + dy * Math.cos(a));
     L.w = Math.max(3, lx * 2); const base = layerH({ ...L, sy: 1 }); L.sy = Math.max(.05, Math.round(ly * 2 / base * 1000) / 1000); if (Math.abs(L.sy - 1) < .01) delete L.sy;
@@ -2195,14 +2295,15 @@ function renderCdPanel() { if (!$('#ps')) return; renderPsTools(); renderPsOpts(
 function renderPsTools() {
   const el = $('#pstools'); if (!el) return; const t = S.cd.tool || 'move', three = S.cd.view === '3d';
   const tb = (k, icon, label, key) => `<button class="pst ${t === k ? 'on' : ''}" data-act="cd-tool" data-k="${k}" title="${label} (${key})" aria-label="${label}" aria-pressed="${t === k}">${ico(icon, 18)}</button>`;
-  el.innerHTML = tb('move', 'move', 'Move', 'V') + (three ? tb('orbit', 'orbit', 'Rotate case', 'R') : '') + tb('text', 'type', 'Type', 'T')
-    + `<button class="pst" data-act="cd-addimg" title="Place image (I)" aria-label="Place image">${ico('image', 18)}</button>`;
+  el.innerHTML = tb('move', 'move', 'Move', 'V') + (three ? tb('orbit', 'orbit', 'Rotate case', 'R') : tb('hand', 'hand', 'Hand', 'H') + tb('zoom', 'search', 'Zoom (Alt-click zooms out)', 'Z')) + tb('text', 'type', 'Type', 'T')
+    + (three ? '' : tb('rect', 'rect', 'Rectangle', 'U') + tb('ellipse', 'ellipse', 'Ellipse', 'Shift+U') + tb('picker', 'picker', 'Eyedropper', 'I'))
+    + `<button class="pst" data-act="cd-addimg" title="Place image (${MOD}Shift+P)" aria-label="Place image">${ico('image', 18)}</button>`;
 }
 function renderPsOpts() {
   const el = $('#psopts'), c = cdCol(); if (!el || !c) return;
   const L = selLayer(), three = S.cd.view === '3d', t = S.cd.tool || 'move', sh = SHEETS[S.cd.sheet];
   const sep = '<span class="pso-sep"></span>';
-  const n = (k, label, step, unit, w = 58) => `<label class="pso-num" title="${label}"><b>${label}</b><input type="number" data-cdl="${k}" step="${step}" value="${fmtv(k, L[k])}" style="width:${w}px" aria-label="${label}">${unit ? `<em>${unit}</em>` : ''}</label>`;
+  const n = (k, label, step, unit, w = 58) => `<label class="pso-num" title="${label}"><b>${label}</b><input type="number" data-cdl="${k}" step="${step}" value="${fmtv(k, L[k] ?? 0)}" style="width:${w}px" aria-label="${label}">${unit ? `<em>${unit}</em>` : ''}</label>`;
   let mid;
   if (S.cd.lock) {
     el.innerHTML = `<span class="pso-tool" title="View only">${ico('lock', 15)}</span><span class="pso-sep"></span><span class="pso-label">View only</span><span class="pso-hint">Editing is off. ${three ? 'Drag to turn the case. Scroll to zoom.' : 'Ctrl + scroll to zoom.'}</span>${three ? `<span class="pso-sep"></span><button class="pso-btn ${S.cd.open ? 'on' : ''}" data-act="cd-open">${S.cd.open ? 'Close case' : 'Open case'}</button><button class="pso-btn ${S.cd.discOut ? 'on' : ''}" data-act="cd-disc">${S.cd.discOut ? 'Put disc back' : 'Remove disc'}</button><button class="pso-btn" data-act="cd-resetview">Reset view</button>` : ''}<span class="grow"></span><button class="pso-btn" data-act="cd-lock">Turn editing on</button>`;
@@ -2219,7 +2320,7 @@ function renderPsOpts() {
       <label class="pso-swatch" style="--c:${toHex(L.color)}" title="Text color"><input type="color" data-cdl="color" value="${toHex(L.color)}" aria-label="Text color"></label>`;
   } else if (L) {
     mid = `${n('w', 'W', .5, 'mm')}${n('x', 'X', .5, 'mm')}${n('y', 'Y', .5, 'mm')}${n('rot', '∠', 1, '°', 50)}${n('op', 'Opacity', .05, '', 50)}${sep}
-      <button class="pso-btn" data-act="cd-fill">Fill panel</button><button class="pso-btn" data-act="cd-center">Center</button><button class="pso-btn" data-act="cd-rot90">Turn 90°</button>`;
+      ${L.type === 'shape' ? `<label class="pso-swatch" style="--c:${toHex(L.color)}" title="Fill color"><input type="color" data-cdl="color" value="${toHex(L.color)}" aria-label="Fill color"></label>${n('radius', 'Corner', .5, 'mm', 50)}${sep}` : ''}<button class="pso-btn" data-act="cd-fill">Fill panel</button><button class="pso-btn" data-act="cd-center">Center</button><button class="pso-btn" data-act="cd-rot90">Turn 90°</button>`;
   } else if (three) {
     mid = `<span class="pso-hint">${t === 'orbit' ? 'Drag to turn the case. Scroll to zoom.' : t === 'text' ? 'Click a panel on the case to add text there.' : 'Drag art on any panel. Drag empty space to turn the case.'}</span>`;
   } else {
@@ -2257,7 +2358,7 @@ function renderPsProps() {
     return;
   }
   fixText(L);
-  P.innerHTML = `<div class="psp-sec"><h4>${L.type === 'text' ? ico('type', 13) + ' Type layer' : ico('image', 13) + ' Image layer'}</h4>
+  P.innerHTML = `<div class="psp-sec"><h4>${L.type === 'text' ? ico('type', 13) + ' Type layer' : L.type === 'shape' ? ico(L.shape === 'ellipse' ? 'ellipse' : 'rect', 13) + ' Shape layer' : ico('image', 13) + ' Image layer'}</h4>
       <input class="ps-in" id="cdl-name" value="${esc(L.name || '')}" placeholder="${esc(layerName({ ...L, name: '' }))}" aria-label="Layer name">
       <div class="psp-row"><button class="pso-btn ${L.locked ? 'on' : ''}" data-act="cd-lockl" data-id="${L.id}">${ico(L.locked ? 'lock' : 'unlock', 13)} ${L.locked ? 'Locked' : 'Lock layer'}</button><button class="pso-btn" data-act="cd-eye" data-id="${L.id}">${ico('eye', 13)} ${L.hidden ? 'Show' : 'Hide'}</button><button class="pso-ib" data-act="cd-flipx" title="Flip horizontal" aria-label="Flip horizontal" ${L.locked ? 'disabled' : ''}>${ico('flipx', 15)}</button><button class="pso-ib" data-act="cd-flipy" title="Flip vertical" aria-label="Flip vertical" ${L.locked ? 'disabled' : ''}>${ico('flipy', 15)}</button></div>
       ${L.locked ? `<p class="psp-note">${ico('lock', 12)} This layer is locked, so it can't be moved or changed.</p>` : ''}</div><fieldset class="psp-fs" ${L.locked ? 'disabled' : ''}>
@@ -2277,10 +2378,12 @@ function renderPsProps() {
 function renderPsLayers() {
   const el = $('#pslayers'), c = cdCol(); if (!el || !c) return;
   const d = design(c), cur = S.cd.sheet, sel = UI.cdSel && UI.cdSel.sheet === cur ? UI.cdSel.id : null;
-  el.innerHTML = sheetKeys().map(k => {
+  const SL = sel ? selLayer() : null;
+  const top = `<div class="psl-top"><select data-lsf="blend" aria-label="Blend mode" ${SL ? '' : 'disabled'}>${blendOpts(SL && SL.blend)}</select><label title="Opacity">Opacity<input type="number" min="0" max="100" data-lsf="op" value="${SL ? Math.round((SL.op ?? 1) * 100) : 100}" ${SL ? '' : 'disabled'}>%</label><label title="Fill opacity: the art only, not its effects">Fill<input type="number" min="0" max="100" data-lsf="fill" value="${SL ? Math.round((SL.fill ?? 1) * 100) : 100}" ${SL ? '' : 'disabled'}>%</label><button class="psl-fx" data-act="cd-lstyle" title="Layer style" ${SL ? '' : 'disabled'}><i>fx</i></button></div>`;
+  el.innerHTML = top + sheetKeys().map(k => {
     const sd = d[k], open = k === cur;
     return `<div class="psg ${open ? 'open' : ''}"><button class="psg-h ${open ? 'cur' : ''}" data-act="cd-sheet" data-k="${k}" aria-expanded="${open}"><span class="chev">${ico(open ? 'down' : 'chevR', 12)}</span>${ico('folder', 14)}<span class="nm">${SHEETS[k].name}</span><small>${sd.layers.length}</small></button>
-      ${open ? `<div class="psg-b">${[...sd.layers].reverse().map(l => `<div class="psl ${sel === l.id ? 'on' : ''} ${l.hidden ? 'hid' : ''}" draggable="true" data-psl="${l.id}">
+      ${open ? `<div class="psg-b">${[...sd.layers].reverse().map(l => `<div class="psl ${sel === l.id || UI.cdMulti.has(l.id) ? 'on' : ''} ${l.hidden ? 'hid' : ''}" draggable="true" data-psl="${l.id}">
           <button class="eye" data-act="cd-eye" data-id="${l.id}" aria-label="${l.hidden ? 'Show' : 'Hide'} ${esc(layerName(l))}" title="${l.hidden ? 'Show' : 'Hide'}">${l.hidden ? '' : ico('eye', 14)}</button>
           <button class="psl-m" data-act="cd-sel" data-id="${l.id}"><span class="th ${l.type}" style="${l.type === 'img' && srcs[l.src] ? `background-image:url(${srcs[l.src]})` : ''}">${l.type === 'text' ? 'T' : ''}</span><span class="nm" data-rename="${l.id}" title="Double-click to rename">${esc(layerName(l))}</span></button><button class="lk ${l.locked ? 'on' : ''}" data-act="cd-lockl" data-id="${l.id}" aria-label="${l.locked ? 'Unlock' : 'Lock'} ${esc(layerName(l))}" title="${l.locked ? 'Unlock layer' : 'Lock layer'}">${ico(l.locked ? 'lock' : 'unlock', 12)}</button></div>`).join('')}
         <div class="psl psbg ${sel ? '' : 'on'}"><span class="eye">${ico('eye', 14)}</span><button class="psl-m" data-act="cd-bgsel" data-k="${k}"><span class="th" style="background:${bgCss(sd.bg)}"></span><i class="nm">Background</i>${ico('lock', 12)}</button></div></div>` : ''}</div>`;
@@ -2293,7 +2396,7 @@ function renderPsStatus() {
   const el = $('#psstatus'), c = cdCol(); if (!el || !c) return;
   const three = S.cd.view === '3d', sh = SHEETS[S.cd.sheet], ts = colTracks(c), sec = totalSec(ts) + Math.max(0, ts.length - 1) * 2;
   const z = three ? Math.round(44 / ((C3 && C3.tz) || 44) * 100) : Math.round((S.cd.zoom || 1) * 100);
-  el.innerHTML = `<span class="pss-z">${z}%</span><button class="pss-b" data-act="cd-zoom" data-k="out" aria-label="Zoom out">${ico('minus', 12)}</button><button class="pss-b" data-act="cd-zoom" data-k="in" aria-label="Zoom in">${ico('plus', 12)}</button><button class="pss-b txt" data-act="cd-zoom" data-k="fit">Fit</button>
+  el.innerHTML = `${three ? '' : `<button class="pss-b txt ${S.cd.grid ? 'on' : ''}" data-act="cd-grid" title="Grid (${MOD}')">Grid</button><button class="pss-b txt ${S.cd.snap === false ? '' : 'on'}" data-act="cd-snapt" title="Snap to guides (${MOD};). Hold ${MOD} while dragging to skip snapping.">Snap</button><span class="pso-sep"></span>`}<span class="pss-z">${z}%</span><button class="pss-b" data-act="cd-zoom" data-k="out" aria-label="Zoom out">${ico('minus', 12)}</button><button class="pss-b" data-act="cd-zoom" data-k="in" aria-label="Zoom in">${ico('plus', 12)}</button><button class="pss-b txt" data-act="cd-zoom" data-k="fit">Fit</button>
     <span class="pso-sep"></span><span>${three ? `${S.cd.caseType === 'slim' ? 'Slim jewel case' : 'Jewel case'}, ${S.cd.tray} tray · editing ${sh.name}` : `${sh.name} · ${sh.size} trim + 3 mm bleed · prints at 300 ppi`}</span><span class="grow"></span><span>Disc ${fmt(sec)} / 80:00</span>`;
 }
 function renderFontDrop() {
@@ -2413,20 +2516,20 @@ function cdAct(a, el) {
     case 'cd-case': S.cd.caseType = k; if (C3) buildCase(); refresh(); break;
     case 'cd-tray': S.cd.tray = k; if (C3) buildCase(); refresh(); break;
     case 'cd-bg': sd.bg = k; renderCdPanel(); cdDirty(); save(); break;
-    case 'cd-sel': if (UI.cdSel && UI.cdSel.id === id && UI.cdSel.sheet === key) break; UI.fontOpen = false; UI.cdSel = { sheet: key, id }; renderCdPanel(); cdDirty(); break;
+    case 'cd-sel': if (UI.shiftClick && UI.cdSel && UI.cdSel.id && UI.cdSel.sheet === key && UI.cdSel.id !== id) { UI.cdMulti.has(id) ? UI.cdMulti.delete(id) : UI.cdMulti.add(id); renderCdPanel(); cdDirty(); break; } if (UI.cdSel && UI.cdSel.id === id && UI.cdSel.sheet === key) break; UI.cdMulti.clear(); UI.fontOpen = false; UI.cdSel = { sheet: key, id }; renderCdPanel(); cdDirty(); break;
     case 'cd-up': { const i = sd.layers.findIndex(l => l.id === (id || (L && L.id))); if (i < sd.layers.length - 1) { [sd.layers[i], sd.layers[i + 1]] = [sd.layers[i + 1], sd.layers[i]]; renderCdPanel(); cdDirty(); save(); } break; }
     case 'cd-replimg': UI.replImg = id || (selLayer() || {}).id; $('#replimg').click(); return true;
-    case 'cd-del': if (!id) break; { const f = findLayer(id); if (f && f.L.locked) { lockedToast(); break; } } sd.layers = sd.layers.filter(l => l.id !== id); if (UI.cdSel && UI.cdSel.id === id) UI.cdSel.id = null; renderCdPanel(); cdDirty(); save(); break;
+    case 'cd-del': if (!id) break; { const f = findLayer(id); if (f && f.L.locked) { lockedToast(); break; } } { const gone = new Set([id, ...(UI.cdSel && UI.cdSel.id === id ? selLayers().filter(l => !l.locked).map(l => l.id) : [])]); sd.layers = sd.layers.filter(l => !gone.has(l.id)); UI.cdMulti.clear(); } if (UI.cdSel && UI.cdSel.id === id) UI.cdSel.id = null; renderCdPanel(); cdDirty(); save(); break;
     case 'cd-addimg': $('#cdimg').click(); break;
     case 'cd-addcover': { const src = 'art:' + c.cover; imgAR(srcs[src]).then(ar => addLayer({ type: 'img', src, name: 'Project cover', ar, w: Math.max(sh.w + 6, (sh.h + 6) * ar) })); break; }
     case 'cd-addtext': addLayer({ type: 'text', text: c.name, size: 6, lh: 1.3, ls: 0, italic: false, caps: false, color: sd.bg === '#ffffff' || sd.bg === 'silver' || sd.bg === '#f4f4f2' ? '#111111' : '#ffffff', font: key === 'disc' && sd.bg === 'silver' ? 'Permanent Marker' : 'Archivo', align: 'center', weight: 700, w: sh.w * .8 }); break;
     case 'cd-fontpick': UI.fontOpen = !(UI.fontOpen && UI.fontFrom === el.dataset.from); UI.fontFrom = el.dataset.from; renderFontDrop(); if (UI.fontOpen) { [...FONT_LIB].forEach(linkFont); const q = $('#font-q'); if (q) q.focus(); } break;
     case 'cd-fontcat': UI.fontCat = k; $$('.pso-cats button').forEach(b => b.classList.toggle('on', b.dataset.k === k)); openFontList(); break;
     case 'cd-fontlocal': UI.localAsked = true; (async () => { try { const fl = await window.queryLocalFonts(); const names = [...new Set(fl.map(f => f.family))]; S.cd.localNames = [...new Set([...(S.cd.localNames || []), ...names])]; LOCAL.names = null; save(); toast(`Found ${names.length} fonts on this computer`); } catch (e) { toast("The browser didn't share the font list. Type a font's exact name in the search box to use it."); } openFontList(); })(); break;
-    case 'cd-font': if (L && L.locked) { lockedToast(); break; } if (L && !fontEntry(k)) { S.cd.localNames = [...new Set([...(S.cd.localNames || []), k])]; LOCAL.names = null; } if (L) { fixText(L); L.font = k; const ws = fontWeights(fontEntry(k)); if (!ws.includes(L.weight)) L.weight = ws.reduce((a, b) => Math.abs(b - L.weight) < Math.abs(a - L.weight) ? b : a); UI.fontOpen = false; renderCdPanel(); cdDirty(); save(); } break;
+    case 'cd-font': if (L && L.locked) { lockedToast(); break; } if (L && !fontEntry(k)) { S.cd.localNames = [...new Set([...(S.cd.localNames || []), k])]; LOCAL.names = null; } if (L) { sameKind(L, l => { if (l !== L) { fixText(l); l.font = k; } }); fixText(L); L.font = k; const ws = fontWeights(fontEntry(k)); if (!ws.includes(L.weight)) L.weight = ws.reduce((a, b) => Math.abs(b - L.weight) < Math.abs(a - L.weight) ? b : a); UI.fontOpen = false; renderCdPanel(); cdDirty(); save(); } break;
     case 'cd-fontup': $('#cdfont').click(); break;
-    case 'cd-tog': if (L && L.locked) { lockedToast(); break; } if (L) { L[k] = !L[k]; renderPsOpts(); renderPsProps(); cdDirty(); save(); } break;
-    case 'cd-align': if (L && L.locked) { lockedToast(); break; } if (L) { L.align = k; renderPsOpts(); renderPsProps(); cdDirty(); save(); } break;
+    case 'cd-tog': if (L && L.locked) { lockedToast(); break; } if (L) { const nv = !L[k]; sameKind(L, l => { l[k] = nv; }); renderPsOpts(); renderPsProps(); cdDirty(); save(); } break;
+    case 'cd-align': if (L && L.locked) { lockedToast(); break; } if (L) { sameKind(L, l => { l.align = k; }); renderPsOpts(); renderPsProps(); cdDirty(); save(); } break;
     case 'cd-fill': if (L && L.locked) { lockedToast(); break; } if (L) { const W = sh.w + 6, H = sh.h + 6, turned = Math.abs(Math.round(L.rot / 90)) % 2 === 1; L.x = sh.w / 2; L.y = sh.h / 2; L.w = L.type === 'img' ? (turned ? Math.max(H, W / L.ar * 1) * 1 : Math.max(W, H * L.ar)) : sh.w - 12; if (turned && L.type === 'img') L.w = Math.max(H, W * L.ar); syncProps(); cdDirty(); save(); } break;
     case 'cd-center': if (L && L.locked) { lockedToast(); break; } if (L) { L.x = sh.w / 2; L.y = sh.h / 2; syncProps(); cdDirty(); save(); } break;
     case 'cd-rot90': if (L && L.locked) { lockedToast(); break; } if (L) { L.rot = ((L.rot + 90 + 180) % 360) - 180; syncProps(); cdDirty(); save(); } break;
@@ -2593,6 +2696,7 @@ async function cdSnap() {
 }
 
 /* ---------- Audio Doctor: read tempo, key and levels; MP3 to WAV; beat-aligned exports for DAWs ---------- */
+Object.assign(IC, { hand: 'M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 11V4.5a1.5 1.5 0 0 1 3 0V11M14 11V5.5a1.5 1.5 0 0 1 3 0V12M17 12V8.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-1a7 7 0 0 1-6-3.4L3.6 14a1.5 1.5 0 0 1 2.6-1.5L8 15', rect: 'M4 6h16v12H4z', ellipse: 'M5 12a7 6 0 1 0 14 0a7 6 0 1 0-14 0', picker: 'M14.5 4.5l5 5M18 3.5a2.1 2.1 0 0 1 3 3L17.5 10l-4-4zM13.5 6l-9 9L4 20l5-.5 9-9' });
 Object.assign(IC, { send: 'M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z', pulse: 'M3 12h4l3-8 4 16 3-8h4', wave: 'M2 12h2M6 8v8M10 4v16M14 7v10M18 10v4M22 12h0' });
 const PCN = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 const CAMELOT = { maj: ['8B', '3B', '10B', '5B', '12B', '7B', '2B', '9B', '4B', '11B', '6B', '1B'], min: ['5A', '12A', '7A', '2A', '9A', '4A', '11A', '6A', '1A', '8A', '3A', '10A'] };
@@ -3108,6 +3212,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.6.0', d: '2026-11-12', items: ['CD editor: Shift-click to select several layers, then move them together or change font, size, spacing and color for all of them at once. Alt-drag duplicates.', 'Layer Style (fx): blend mode, opacity, fill, stroke, drop shadow, outer glow, color overlay and gradient overlay. Blend mode, opacity and fill also sit at the top of the Layers panel.', 'New tools: Hand (H), Zoom (Z), Rectangle and Ellipse (U, Shift+U) and Eyedropper (I). Place image moved to Ctrl+Shift+P.', 'Smart guides snap layers to the middle and edges of the panel and to each other; hold Ctrl to skip. Grid with Ctrl+\' and snapping with Ctrl+;.', 'Launcher shows each program\'s own icon.', 'The verified badge in Settings now shows only next to your own artist name and turns off straight away.'] },
   { v: '1.5.0', d: '2026-11-12', items: ['Projects can have several discs: Add a disc at the bottom of the song list, drag songs onto a disc, drag discs to reorder them, and number each disc from 1 or across the whole project. Zips dropped on a project become a new disc.', 'Label, copyright, sound recording, UPC and catalog number in Edit Details, shown under the song list.', 'Project logos show instead of the name in the CD viewer.', 'Library › CD Player: every CD in a grid. Click to view, right-click to play.', 'CD viewer: play, skip and pick songs, step between CDs, control case and disc spin speed, hide the controls, and keys for all of it (press ? to see them).', 'Video: makes an 8-second MP4 of the case opening and the disc coming out, saved to Downloads.', 'Library › Stats: plays and time listened for every song and project.', 'Convert a project to a digital album and put it in the Store. Albums you imported can be played but not sold.', 'Verified releases show a green badge next to their length.'] },
   { v: '1.4.0', d: '2026-11-12', items: ['Tamed Player is now Compass. Your projects carry over.', 'Library: My Music tab for albums you bought. Drop the zip and it is named and ordered for you. Digital albums are read-only; Make My Version gives you an editable copy.', 'Folders hold projects and show the four newest covers. Drag a project onto a folder, or onto another project to make a folder.', 'Archive projects, and Recently deleted in Settings keeps deleted projects and songs for 30 days.', 'Sidebar shows the artist and can be sorted, grouped by artist and filtered.', 'Select songs with Shift or Ctrl and right-click to export, move, copy, duplicate, change status or delete them. Export Track for a single song.', 'The Added date sits between Status and Time.', 'Launcher finds FL Studio, Ableton, REAPER and other DAWs and opens them; locate any it misses.', 'Music Store with Digital and Physical, and a first look at the Marketplace.'] },
   { v: '1.3.0', d: '2026-11-12', items: ['Menu: Library, CD Creator, Launcher, Music Store, Marketplace, Audio Editor, Settings. Launcher and the stores are placeholders for now.', 'Songs play straight into the next one with no gap.', 'Imported file names are cleaned up ("01-georgia-peach" becomes "georgia peach") and numbers set the track order. The artist comes from the files; nothing is filled in by default.', 'Add from zip replaces Import from Untitled.', 'The 3D CD no longer disappears from the viewer when the playlist ends or repeats.', 'Audio Editor no longer starts the FL Studio MIDI link on its own, and its side panel is compact and scrolls.', 'Released projects show just the track count. Download comes before Share. Project rows show the date each song was added.', 'One click selects a song, double-click plays it. Version labels, the row cover and the player bar phone button are gone.', 'Concept player: album covers show on artist pages, each artist has their own page, picture and background.', 'Covers fill their squares, the type picker has no boxes, the lyrics box is bigger, a settings button sits next to credits, and the logo disc turns.'] },
@@ -3169,14 +3274,18 @@ function renderMarket(m) {
 }
 /* ---------- Launcher: find the DAWs on this computer and open them ---------- */
 const DAWS = [['fl', 'FL Studio'], ['ableton', 'Ableton Live'], ['logic', 'Logic Pro'], ['studioone', 'Studio One'], ['reaper', 'REAPER'], ['cubase', 'Cubase'], ['bitwig', 'Bitwig Studio'], ['protools', 'Pro Tools'], ['reason', 'Reason'], ['garageband', 'GarageBand']];
+const DAWLOOK = { fl: ['FL', '#ff8a00', '#2b2b2b'], ableton: ['Live', '#111111', '#f2f2f2'], logic: ['Lp', '#3a3a3c', '#e8e8ea'], studioone: ['S1', '#0a5ad4', '#ffffff'], reaper: ['R', '#2f6f50', '#ffffff'], cubase: ['Cu', '#c4122f', '#ffffff'], bitwig: ['Bw', '#ff5a00', '#1b1b1b'], protools: ['Pt', '#6a1fd8', '#ffffff'], reason: ['Rs', '#d81f26', '#ffffff'], garageband: ['Gb', '#f79400', '#ffffff'] };
+UI.dawIcons = UI.dawIcons || {};
+const dawTile = (id, path) => { const ic = path && UI.dawIcons[path]; if (ic) return `<span class="daw-i img"><img src="${ic}" alt="" draggable="false"></span>`; const [t, bg, fg] = DAWLOOK[id] || ['?', '#444', '#fff']; return `<span class="daw-i" style="--b:${bg};--f:${fg}">${t}</span>`; };
 async function renderLauncher(m) {
   const desk = window.tpDesktop && tpDesktop.daw; S.daws = S.daws || {};
   if (desk && !UI.dawScan) { UI.dawScan = 'busy'; tpDesktop.daw.scan().then(r => { UI.dawScan = r || {}; if (S.view === 'launcher') renderMain(); }).catch(() => { UI.dawScan = {}; }); }
   const found = id => S.daws[id] || (UI.dawScan && UI.dawScan !== 'busy' && UI.dawScan[id]);
   const list = DAWS.map(([id, n]) => ({ id, n, path: found(id) })).sort((a, b) => !!b.path - !!a.path);
+  if (desk && tpDesktop.daw.icon) list.filter(d => d.path && !(d.path in UI.dawIcons)).forEach(d => { UI.dawIcons[d.path] = null; tpDesktop.daw.icon(d.path).then(u => { if (u) { UI.dawIcons[d.path] = u; if (S.view === 'launcher') renderMain(); } }); });
   m.innerHTML = `<header class="head"><div><h1>Launcher</h1><p class="faint">${desk ? (UI.dawScan === 'busy' ? 'Looking for music software on this computer…' : `Found ${list.filter(x => x.path).length} on this computer. Locate any that weren't found.`) : 'Opening DAWs works in the Compass app for Windows. Download it from Settings.'}</p></div>
     ${desk ? `<div class="hact"><button class="btn" data-act="daw-rescan">${ico('repeat', 15)} Scan again</button></div>` : ''}</header>
-    <div class="dawgrid">${list.map(d => `<div class="daw ${d.path ? 'ok' : ''}"><span class="daw-i">${esc(d.n.split(' ').map(w => w[0]).join('').slice(0, 2))}</span><b>${esc(d.n)}</b><small title="${esc(d.path || '')}">${d.path ? esc(d.path.split(/[\\/]/).pop()) : 'Not found'}</small>
+    <div class="dawgrid">${list.map(d => `<div class="daw ${d.path ? 'ok' : ''}">${dawTile(d.id, d.path)}<b>${esc(d.n)}</b><small title="${esc(d.path || '')}">${d.path ? esc(d.path.split(/[\\/]/).pop()) : 'Not found'}</small>
       <div class="crow">${d.path ? `<button class="btn sm primary" data-act="daw-open" data-k="${d.id}" ${desk ? '' : 'disabled'}>${ico('play', 13)} Open</button>` : ''}<button class="btn sm" data-act="daw-locate" data-k="${d.id}" ${desk ? '' : 'disabled'}>Locate…</button></div></div>`).join('')}</div>`;
 }
 
@@ -3310,7 +3419,7 @@ function spHTML() {
   let body;
   if (X.page === 'artist') {
     const bg = artistArt(aName, 'bg'), aTracks = ord.flatMap(colTracks);
-    body = `<div class="sp-hero ${bg ? 'has-bg' : ''}" style="${bg ? `background:linear-gradient(transparent 30%, rgba(0,0,0,.7)), url(${bg}) center/cover` : ''}"><span class="cv round" style="${artistAv(aName)}"></span><div class="ht"><small>${C.verified ? vbadge(22) + ' Verified Artist' : 'Artist'}</small><h2>${esc(aName || 'Artist')}</h2><span class="sp-by"><span>${ord.length} ${ord.length === 1 ? 'project' : 'projects'} · ${total(aTracks)}</span></span>
+    body = `<div class="sp-hero ${bg ? 'has-bg' : ''}" style="${bg ? `background:linear-gradient(transparent 30%, rgba(0,0,0,.7)), url(${bg}) center/cover` : ''}"><span class="cv round" style="${artistAv(aName)}"></span><div class="ht"><small>${meVerified(aName) ? vbadge(22) + ' Verified Artist' : 'Artist'}</small><h2>${esc(aName || 'Artist')}</h2><span class="sp-by"><span>${ord.length} ${ord.length === 1 ? 'project' : 'projects'} · ${total(aTracks)}</span></span>
       <span class="sp-artbtns"><button data-act="cx-artpic" data-k="pic">${ico('image', 13)} Picture</button><button data-act="cx-artpic" data-k="bg">${ico('image', 13)} Background</button></span></div></div>
     <div class="sp-body"><div class="sp-actions"><button class="sp-big" data-act="cx-playall" data-id="${ord[0] ? ord[0].id : ''}" aria-label="Play">${ico(S.playing ? 'pause' : 'play', 24)}</button></div>
       ${ord.length ? `<h3 class="sp-sec">Latest release</h3><button class="sp-li" data-act="cx-album" data-id="${ord[ord.length - 1].id}" style="max-width:420px"><span class="cv" style="width:96px;height:96px;${pcov(ord[ord.length - 1])}"></span><span class="meta"><b style="font-weight:700">${esc(ord[ord.length - 1].name)}</b><span>${yearOf(ord[ord.length - 1])} · ${KINDS[ord[ord.length - 1].type]}</span></span></button>` : ''}
@@ -3319,7 +3428,7 @@ function spHTML() {
     body = `<div class="sp-lyrics">${lyricLines(t).map(l => `<p class="js-lyr">${esc(l)}</p>`).join('')}</div>`;
   } else if (c) {
     body = `<div class="sp-hero"><span class="cv" style="${pcov(c)}"></span><div class="ht"><small>${KINDS[c.type]}</small><h2>${esc(c.name)}</h2>
-      <span class="sp-by"><span class="av" style="${artistAv(projArtists(c)[0])}"></span><button data-act="cx-artist" data-k="${esc(projArtists(c)[0] || '')}"><b>${esc(projArtist(c))}</b></button>${C.verified ? vbadge(16) : ''}<span>• ${yearOf(c)} • ${ts.length} ${ts.length === 1 ? 'song' : 'songs'}, ${total(ts)}</span></span></div></div>
+      <span class="sp-by"><span class="av" style="${artistAv(projArtists(c)[0])}"></span><button data-act="cx-artist" data-k="${esc(projArtists(c)[0] || '')}"><b>${esc(projArtist(c))}</b></button>${projArtists(c).some(meVerified) ? vbadge(16) : ''}<span>• ${yearOf(c)} • ${ts.length} ${ts.length === 1 ? 'song' : 'songs'}, ${total(ts)}</span></span></div></div>
       <div class="sp-body"><div class="sp-actions"><button class="sp-big" data-act="cx-playall" data-id="${c.id}" aria-label="Play">${ico(playingHere ? 'pause' : 'play', 24)}</button><button class="ghost" data-act="noop" aria-label="Save">${ico('heart', 28)}</button><button class="ghost" data-act="noop" aria-label="More">${ico('dots', 28)}</button></div>
       <div class="sp-table"><div class="sp-th"><span style="text-align:right">#</span><span>Title</span><span style="text-align:right">${ico('time', 16)}</span></div>
       ${ts.map((x, i) => `<button class="sp-tr ${x.id === S.cur ? 'on' : ''}" data-act="cx-track" data-id="${x.id}"><span class="n">${x.id === S.cur && S.playing ? '<i class="eqi" style="justify-content:flex-end"><b></b><b></b><b></b></i>' : i + 1}</span><span class="meta"><b>${esc(dispTitle(x))}</b><span>${esc(dispArtist(x))}</span></span><span class="d">${fmt(verDur(x))}</span></button>`).join('')}</div>
@@ -3342,7 +3451,7 @@ function amHTML() {
   let body;
   if (X.page === 'artist') {
     const latest = ord[ord.length - 1];
-    body = `<div class="am-artist" style="${latest ? pcov(latest) : cover(3, 9)}"><h2>${esc(artistOf())}${C.verified ? vbadge(26) : ''}</h2></div>
+    body = `<div class="am-artist" style="${latest ? pcov(latest) : cover(3, 9)}"><h2>${esc(artistOf())}${meVerified(artistOf()) ? vbadge(26) : ''}</h2></div>
     <div class="am-btns" style="margin-top:0"><button data-act="cx-playall" data-id="${ord[0] ? ord[0].id : ''}">${ico(S.playing ? 'pause' : 'play', 14)} ${S.playing ? 'Pause' : 'Play'}</button></div>
     <p class="am-foot">${S.cols.length} projects · ${total(S.tracks)}</p>
     ${latest ? `<h3 class="am-sec">Latest Release</h3><button class="am-card" data-act="cx-album" data-id="${latest.id}" style="max-width:220px"><span class="cv" style="${pcov(latest)}"></span><b>${esc(latest.name)}</b><span>${yearOf(latest)}</span></button>` : ''}
@@ -3707,6 +3816,11 @@ function act(a, el, e) {
     case 'm-cover-clear': if (UI.mCover && UI.mCover.url) URL.revokeObjectURL(UI.mCover.url); UI.mCover = false; refreshCoverPick(); break;
     case 'ctx-cover': UI.coverFor = id; $('#art').click(); break;
     case 'save-now': saveNow(); break;
+    case 'cd-lstyle': { const L = selLayer(); if (!L) break; UI.lsSnap = JSON.stringify(L); UI.lsSec = UI.lsSec || 'blend'; openModal('lstyle', L.id); break; }
+    case 'ls-sec': UI.lsSec = k; { const keep = UI.lsSnap; UI.modal = null; openModal('lstyle', selLayer() && selLayer().id); UI.lsSnap = keep; } break;
+    case 'ls-ok': UI.lsKeep = true; save(); closeModal(); break;
+    case 'cd-grid': S.cd.grid = !S.cd.grid; save(); renderPsStatus(); cdDirty(); break;
+    case 'cd-snapt': S.cd.snap = S.cd.snap === false; save(); renderPsStatus(); toast(S.cd.snap === false ? 'Snapping off' : 'Snapping on'); break;
     case 'verified-info': toast('Verified: This album is verified by its distributors and is an official release. Your digital token is irreplicable and you retain sole ownership of this copy of this release.'); break;
     case 'ctx-todigital': { const c = col(id); if (!c) break; if (!colTracks(c).length) { toast('Add songs before making it a digital album'); break; } c.mine = true; c.own = true; if (!c.released) { c.released = true; c.targetDate = c.targetDate || today(); } save(); refresh(); toast(c.name + ' is now a digital album in My Music. You can put it in the Store.'); break; }
     case 'ctx-store': { const c = col(id); if (!c || !c.own) break; c.store = !c.store; save(); refresh(); toast(c.store ? c.name + ' is in the Store. Sales open when accounts arrive.' : 'Removed ' + c.name + ' from the Store'); break; }
@@ -3829,6 +3943,7 @@ function act(a, el, e) {
   }
 }
 document.addEventListener('click', e => {
+  UI.shiftClick = e.shiftKey;
   if (UI.noClick && Date.now() - UI.noClick < 350) { e.preventDefault(); e.stopPropagation(); return; }
   { const r = e.target.closest && e.target.closest('#list .row'); if (r && !e.target.closest('button, input, a, select, textarea, [data-act]')) selectRow(r.dataset.id, e); else if (!r && !e.target.closest('#ctx') && UI.sel && UI.sel.size && !e.target.closest('.bar, #modal, #drawer')) { UI.sel.clear(); $$('#list .row.sel').forEach(x => x.classList.remove('sel')); } if (false) { const id = r.dataset.id; if (S.cur === id) toggle(); else playTrack(id, curListIds.length ? curListIds : null); return; } }
   { const m = $('#ctx'); if (m) { const it = e.target.closest('.ctx-i'); if (!it || !(it.dataset.confirm && !it.dataset.armed)) setTimeout(closeCtx, 0); } }
@@ -3848,14 +3963,14 @@ document.addEventListener('input', e => {
   else if (t.id === 'doc-bpm') { const tr = S.tracks.find(x => keyOf(x) === DOC.sel), an = tr && S.an[keyOf(tr)]; const v = +t.value; if (an && v >= 40 && v <= 260) { an.bpm = v; applyAnalysis(keyOf(tr), an); save(); renderDocList(); drawDocWaves(); } }
   else if (t.id === 'doc-title') { const tr = S.tracks.find(x => keyOf(x) === DOC.sel); if (tr) { tr.title = t.value || tr.title; save(); renderDocList(); } }
   else if (t.id === 'font-q') { UI.fontQ = t.value; const l = $('#fontlist'); if (l) l.innerHTML = fontListHTML(); }
-  else if (t.dataset.cdl === 'color') { const L = selLayer(); if (L) { L.color = t.value; $$('.pso-swatch').forEach(lb => lb.style.setProperty('--c', t.value)); cdDirty(); save(); } }
+  else if (t.dataset.cdl === 'color') { const L = selLayer(); if (L) { sameKind(L, l => { l.color = t.value; }); $$('.pso-swatch').forEach(lb => lb.style.setProperty('--c', t.value)); cdDirty(); save(); } }
   else if (t.id === 'vol' || t.dataset.vol !== undefined) { S.vol = +t.value; Engine.vol(S.vol); $$('input[type=range][data-vol], #vol').forEach(r => { if (r !== t) r.value = S.vol; }); save(); }
   else if (t.dataset.eqb !== undefined) { S.eq.g[+t.dataset.eqb] = +t.value; S.eq.preset = 'custom'; S.eq.on = true; if (AC) applyEq(); t.parentElement.firstElementChild.textContent = (t.value > 0 ? '+' : '') + t.value + ' dB'; const on = $('#eqpop [data-slide="eqp"] .on'); if (!on || on.dataset.k !== 'custom') { $$('#eqpop [data-slide="eqp"] > button').forEach(b => b.classList.toggle('on', b.dataset.k === 'custom')); applySlides(); } $('#eqpop .switch').setAttribute('aria-checked', 'true'); $('#eqpop').classList.remove('off'); save(); }
   else if (t.dataset.f) { const tr = trk(S.editId); if (t.dataset.f === 'bpm') tr.bpmAuto = false; if (t.dataset.f === 'key') tr.keyAuto = false; if (t.dataset.f === 'features') tr.features = t.value.split(',').map(s => s.trim()).filter(Boolean); else tr[t.dataset.f] = t.dataset.f === 'bpm' ? +t.value : t.value; updPreview(tr); renderList(); renderBar(); save(); }
   else if (t.dataset.vname) { const tr = trk(S.editId), v = tr.versions.find(x => x.id === t.dataset.vname); v.name = t.value || 'Untitled version'; renderList(); save(); }
   else if (t.dataset.cf) { const c = col(S.colId); c[t.dataset.cf] = t.value; if (t.dataset.cf === 'name') renderSide(); save(); }
   else if (t.dataset.cc && t.type !== 'checkbox') { S.concept[t.dataset.cc] = t.value; save(); renderBar(); }
-  else if (t.dataset.cdl && t.tagName !== 'SELECT' && t.type !== 'checkbox') { const L = selLayer(); if (!L || L.locked) return; const kk = t.dataset.cdl; L[kk] = ['text', 'color'].includes(kk) ? t.value : +t.value; if (kk === 'text' && !L.name) { const b = $('#pslayers .psl.on .nm'); if (b) b.textContent = layerName(L); } syncProps(); cdDirty(); save(); }
+  else if (t.dataset.cdl && t.tagName !== 'SELECT' && t.type !== 'checkbox') { const L = selLayer(); if (!L || L.locked) return; const kk = t.dataset.cdl; const val = ['text', 'color'].includes(kk) ? t.value : +t.value; if (['x', 'y', 'w', 'text'].includes(kk)) L[kk] = val; else sameKind(L, l => { l[kk] = val; }); if (kk === 'text' && !L.name) { const b = $('#pslayers .psl.on .nm'); if (b) b.textContent = layerName(L); } syncProps(); cdDirty(); save(); }
   else if (t.id === 'cd-bg') { const c = cdCol(); design(c)[S.cd.sheet].bg = t.value; cdDirty(); save(); }
   else if (t.id === 'm-link') { UI.importLink = t.value.trim(); const a = $('#m-open'); if (a) a.href = /^https?:\/\//.test(UI.importLink) ? UI.importLink : 'https://untitled.stream'; }
 });
@@ -3892,11 +4007,12 @@ document.addEventListener('change', e => {
   else if (t.id === 'p-target') { const c = col(S.colId); c.targetDate = t.value || null; refresh(); }
   else if (t.id === 'm-ptype') { const b = $('#m-relbox'); if (b) b.classList.toggle('hide-folder', t.value === 'folder'); }
   else if (t.dataset && t.dataset.spin) { S.cd[t.dataset.spin] = +t.value; save(); }
+  else if (t.dataset && t.dataset.lsf) lsSet(t);
   else if (t.id === 'cd-col') { S.cd.colId = t.value; UI.cdSel = null; refresh(); }
   else if (t.id === 'cdimg') { const f = t.files[0]; if (f) cdAddImage(f); t.value = ''; }
-  else if (t.dataset.cdl && (t.tagName === 'SELECT' || t.type === 'checkbox')) { const L = selLayer(); if (L) { L[t.dataset.cdl] = t.type === 'checkbox' ? t.checked : t.dataset.cdl === 'weight' ? +t.value : t.value; cdDirty(); save(); } }
+  else if (t.dataset.cdl && (t.tagName === 'SELECT' || t.type === 'checkbox')) { const L = selLayer(); if (L) { const val = t.type === 'checkbox' ? t.checked : t.dataset.cdl === 'weight' ? +t.value : t.value; sameKind(L, l => { l[t.dataset.cdl] = val; }); cdDirty(); save(); } }
   else if (t.id === 'cdfont') { const f = t.files[0]; t.value = ''; if (f) addCustomFont(f).then(n => { const L = selLayer(); if (n && L) { L.font = n; L.weight = 400; UI.fontCat = 'Yours'; UI.fontOpen = false; renderCdPanel(); cdDirty(); save(); toast('Added ' + n); } }); }
-  else if (t.dataset.cc) { if (t.type === 'checkbox') { S.concept[t.dataset.cc] = t.checked; refresh(); } else { S.concept[t.dataset.cc] = t.value; save(); } }
+  else if (t.dataset.cc) { if (t.type === 'checkbox') { S.concept[t.dataset.cc] = t.checked; save(); refresh(); if (typeof renderCx === 'function') renderCx(); toast(t.checked ? 'Verified badge on for ' + (S.concept.artist || 'you') : 'Verified badge off'); } else { S.concept[t.dataset.cc] = t.value; save(); } }
 });
 function saveNow() { save(); toast('Saved'); const b = $('[data-act="save-now"]'); if (b) { b.classList.add('saved'); setTimeout(() => b.classList.remove('saved'), 900); } }
 document.addEventListener('keydown', e => {
@@ -3946,7 +4062,8 @@ document.addEventListener('keydown', e => {
   }
   if (cdActive() && !S.cd.lock && e.key === 'Escape' && UI.cdSel && UI.cdSel.id && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) && !UI.modal && !UI.vw && !UI.fontOpen && !UI.psFull) { UI.cdSel.id = null; renderCdPanel(); cdDirty(); return; }
   if (cdActive() && S.cd.lock && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) { if (e.code === 'Space') { e.preventDefault(); toggle(); } return; }
-  if (cdActive() && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) && !e.metaKey && !e.ctrlKey && !e.altKey) { const tk = { v: 'move', r: 'orbit', t: 'text' }[e.key.toLowerCase()]; if (tk && !(tk === 'orbit' && S.cd.view !== '3d')) { e.preventDefault(); return cdAct('cd-tool', { dataset: { k: tk } }); } if (e.key.toLowerCase() === 'i') { e.preventDefault(); return $('#cdimg').click(); } }
+  if (cdActive() && !UI.modal && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) && !e.metaKey && !e.ctrlKey && !e.altKey) { const kk = e.key.toLowerCase(), flat = S.cd.view !== '3d'; let tk = { v: 'move', r: 'orbit', t: 'text', h: 'hand', z: 'zoom', i: 'picker', u: e.shiftKey ? 'ellipse' : 'rect' }[kk]; if (tk && (tk === 'orbit' ? !flat : true) && (flat || ['move', 'orbit', 'text'].includes(tk))) { e.preventDefault(); return cdAct('cd-tool', { dataset: { k: tk } }); } }
+  if (cdActive() && (e.ctrlKey || e.metaKey) && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) { if (e.key === "'") { e.preventDefault(); return cdAct('cd-grid', { dataset: {} }); } if (e.key === ';') { e.preventDefault(); return cdAct('cd-snapt', { dataset: {} }); } if (e.shiftKey && (e.key === 'P' || e.key === 'p')) { e.preventDefault(); return $('#cdimg').click(); } if (!e.shiftKey && (e.key === 't' || e.key === 'T') && selLayer()) { e.preventDefault(); S.cd.tool = 'move'; renderCdPanel(); cdDirty(); return toast('Free transform: drag a corner, hold Shift to stretch, drag the round handle to rotate'); } }
   if (cdActive() && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) && !e.ctrlKey && !e.metaKey) { const L = selLayer(); if (L && L.locked && /^Arrow|Delete|Backspace/.test(e.key)) { e.preventDefault(); return lockedToast(); } if (L) { const st = e.shiftKey ? 5 : .5, mv = { ArrowLeft: [-st, 0], ArrowRight: [st, 0], ArrowUp: [0, -st], ArrowDown: [0, st] }[e.key]; if (mv) { e.preventDefault(); L.x += mv[0]; L.y += mv[1]; syncProps(); cdDirty(); save(); return; } if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); const sd = design(cdCol())[UI.cdSel.sheet]; sd.layers = sd.layers.filter(l => l !== L); UI.cdSel.id = null; renderCdPanel(); cdDirty(); save(); return; } } }
   if (e.code === 'Space' && !/INPUT|TEXTAREA|SELECT|BUTTON/.test(e.target.tagName)) { e.preventDefault(); toggle(); }
 });
@@ -3955,7 +4072,7 @@ let seeking = null;
 function seekTo(e) { const r = seeking.getBoundingClientRect(), p = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)); if (S.cur) { Engine.seek(p * Engine.dur()); tick(); } }
 document.addEventListener('pointerdown', e => { if (e.target.id === 'cd2d') return start2D(e); const s = e.target.closest('[data-seek]'); if (s) { seeking = s; s.setPointerCapture(e.pointerId); seekTo(e); } });
 document.addEventListener('pointermove', e => { if (seeking) seekTo(e); if (drag2) move2D(e); });
-document.addEventListener('pointerup', () => { seeking = null; if (drag2) { drag2 = null; save(); } });
+document.addEventListener('pointerup', () => { seeking = null; if (drag2) { drag2 = null; save(); if (UI.guides && UI.guides.length) { UI.guides = []; cdDirty(); } } });
 /* drag: reorder (swap) inside a project, add to a project in the sidebar, or drop files */
 let dragId = null;
 document.addEventListener('dragstart', e => { const a = e.target.closest && e.target.closest('.acard[data-id]'); if (!a || e.target.closest('.row')) return; UI.colDrag = a.dataset.id; e.dataTransfer.setData('text/plain', 'col:' + a.dataset.id); e.dataTransfer.effectAllowed = 'move'; requestAnimationFrame(() => a.classList.add('dragging')); });
@@ -4120,7 +4237,7 @@ function layerMenu(L) {
     { label: 'Paste', act: 'cd-paste', icon: 'paste', kbd: MOD + 'V', disabled: !UI.cdClip }, { sep: 1 },
     { label: lk ? 'Unlock Layer' : 'Lock Layer', act: 'cd-lockl', id: L.id, icon: lk ? 'unlock' : 'lock', kbd: MOD + '/' },
     { label: L.hidden ? 'Show Layer' : 'Hide Layer', act: 'cd-eye', id: L.id, icon: 'eye', kbd: MOD + ',' },
-    { label: 'Rename Layer…', act: 'cd-rename', id: L.id, icon: 'edit' },
+    { label: 'Rename Layer…', act: 'cd-rename', id: L.id, icon: 'edit' }, { label: 'Blending Options…', act: 'cd-lstyle', icon: 'edit' },
     ...(L.type === 'text' ? [{ label: 'Edit Text', act: 'cd-edittext', icon: 'type', disabled: lk }] : [{ label: 'Replace Image…', act: 'cd-replimg', id: L.id, icon: 'image', disabled: lk }]), { sep: 1 },
     { label: 'Bring to Front', act: 'cd-front', icon: 'front', kbd: MOD + 'Shift+]' }, { label: 'Bring Forward', act: 'cd-up', id: L.id, icon: 'up', kbd: MOD + ']' },
     { label: 'Send Backward', act: 'cd-down', icon: 'down', kbd: MOD + '[' }, { label: 'Send to Back', act: 'cd-back', icon: 'back', kbd: MOD + 'Shift+[' }, { sep: 1 },

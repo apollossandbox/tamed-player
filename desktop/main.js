@@ -121,6 +121,8 @@ function dawScan() {
 
 app.whenReady().then(() => {
   ipcMain.handle('tp-daw-scan', () => dawScan());
+  // the program's own icon, as Windows or macOS shows it
+  ipcMain.handle('tp-daw-icon', async (e, file) => { try { if (typeof file !== 'string' || !fs.existsSync(file)) return null; const im = await app.getFileIcon(file, { size: 'large' }); return im.isEmpty() ? null : im.toDataURL(); } catch (err) { return null; } });
   // videos go straight to the Downloads folder, no dialog
   ipcMain.handle('tp-save-downloads', (e, name, data) => { try { const dir = app.getPath('downloads'); let f = path.join(dir, cleanName(name)); const ext = path.extname(f), base = f.slice(0, -ext.length); for (let i = 2; fs.existsSync(f); i++) f = `${base} (${i})${ext}`; fs.writeFileSync(f, Buffer.from(data)); shell.showItemInFolder(f); return f; } catch (err) { return null; } });
   ipcMain.handle('tp-daw-open', async (e, file) => { if (typeof file !== 'string' || !fs.existsSync(file) || !/\.(exe|app|lnk)$/i.test(file)) return { ok: false, error: 'That program was not found' }; const err = await shell.openPath(file); return err ? { ok: false, error: err } : { ok: true }; });

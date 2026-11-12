@@ -3,7 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('tpDesktop', {
   version: ipcRenderer.sendSync('tp-version') || '',
   checkForUpdates: () => ipcRenderer.invoke('tp-check-updates'),
-  daw: { scan: () => ipcRenderer.invoke('tp-daw-scan'), open: f => ipcRenderer.invoke('tp-daw-open', f), locate: n => ipcRenderer.invoke('tp-daw-locate', n) },
+  daw: { scan: () => ipcRenderer.invoke('tp-daw-scan'), icon: f => ipcRenderer.invoke('tp-daw-icon', f), open: f => ipcRenderer.invoke('tp-daw-open', f), locate: n => ipcRenderer.invoke('tp-daw-locate', n) },
   saveToDownloads: (name, data) => ipcRenderer.invoke('tp-save-downloads', name, data),
   onChangelog: fn => ipcRenderer.on('tp-changelog', (e, data) => fn(data)),
   // FL Studio link: install the FL script, keep sent WAVs on disk, and drag them into FL

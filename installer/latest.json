@@ -1,11 +1,23 @@
 {
-  "version": "1.5.0",
+  "version": "1.6.0",
   "file": "Compass-Setup.exe",
-  "size": 82418746,
-  "sha256": "49a8e87c061d3e21c44ce9ee4de108d7eb17ca9a50c5ef61338b365956abb593",
-  "notes": "Projects can have several discs: Add a disc at the bottom of the song list, drag songs onto a disc, drag discs to reorder them, and number each disc from 1 or across the whole project. Zips dropped on a project become a new disc. Label, copyright, sound recording, UPC and catalog number in Edit Details, shown under the song list. Project logos show instead of the name in the CD viewer. Library › CD Player: every CD in a grid. Click to view, right-click to play. CD viewer: play, skip and pick songs, step between CDs, control case and disc spin speed, hide the controls, and keys for all of it (press ? to see them). Video: makes an 8-second MP4 of the case opening and the disc coming out, saved to Downloads. Library › Stats: plays and time listened for every song and project. Convert a project to a digital album and put it in the Store. Albums you imported can be played but not sold. Verified releases show a green badge next to their length.",
+  "size": 82424560,
+  "sha256": "ac3dc8e63a230e1584f76b8647c48781239fba32c2578ec6ccc737d3a1422c53",
+  "notes": "CD editor: Shift-click to select several layers, then move them together or change font, size, spacing and color for all of them at once. Alt-drag duplicates. Layer Style (fx): blend mode, opacity, fill, stroke, drop shadow, outer glow, color overlay and gradient overlay. Blend mode, opacity and fill also sit at the top of the Layers panel. New tools: Hand (H), Zoom (Z), Rectangle and Ellipse (U, Shift+U) and Eyedropper (I). Place image moved to Ctrl+Shift+P. Smart guides snap layers to the middle and edges of the panel and to each other; hold Ctrl to skip. Grid with Ctrl+' and snapping with Ctrl+;. Launcher shows each program's own icon. The verified badge in Settings now shows only next to your own artist name and turns off straight away.",
   "date": "2026-11-12",
   "changelog": [
+    {
+      "v": "1.6.0",
+      "d": "2026-11-12",
+      "items": [
+        "CD editor: Shift-click to select several layers, then move them together or change font, size, spacing and color for all of them at once. Alt-drag duplicates.",
+        "Layer Style (fx): blend mode, opacity, fill, stroke, drop shadow, outer glow, color overlay and gradient overlay. Blend mode, opacity and fill also sit at the top of the Layers panel.",
+        "New tools: Hand (H), Zoom (Z), Rectangle and Ellipse (U, Shift+U) and Eyedropper (I). Place image moved to Ctrl+Shift+P.",
+        "Smart guides snap layers to the middle and edges of the panel and to each other; hold Ctrl to skip. Grid with Ctrl+' and snapping with Ctrl+;.",
+        "Launcher shows each program's own icon.",
+        "The verified badge in Settings now shows only next to your own artist name and turns off straight away."
+      ]
+    },
     {
       "v": "1.5.0",
       "d": "2026-11-12",
@@ -176,13 +188,6 @@
       "d": "2026-11-09",
       "items": [
         "Change cover art from right-click and from the naming dialog."
-      ]
-    },
-    {
-      "v": "1.0.1",
-      "d": "2026-11-09",
-      "items": [
-        "Editor controls, credits and in-app updates."
       ]
     }
   ]
