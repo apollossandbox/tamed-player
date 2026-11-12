@@ -749,6 +749,23 @@ body.cx-on .bar { transform: none; }
 .ls-f select { grid-column: 2 / 4; height: 30px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel2); color: var(--ink); } .ls-f input[type=color] { grid-column: 2 / 3; width: 46px; height: 28px; border: 0; background: none; padding: 0; }
 .pss-b.txt.on { color: var(--ink); background: var(--panel3); }
 @media (max-width: 700px) { .ls { grid-template-columns: 1fr; } .ls nav { border-right: 0; flex-direction: row; flex-wrap: wrap; } }
+
+/* CD Creator start screen */
+.cdh { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 28px; min-height: 100%; }
+.cdh-side { display: flex; flex-direction: column; gap: 6px; padding-top: 4px; } .cdh-side > .btn { justify-content: center; } .cdh-side hr { width: 100%; border: 0; border-top: 1px solid var(--line); margin: 10px 0; }
+.cdh-nav { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; color: var(--ink2); font-weight: 600; text-align: left; } .cdh-nav span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .cdh-nav:hover { background: var(--hover); color: var(--ink); } .cdh-nav.on { color: var(--ink); background: var(--panel3); box-shadow: inset 2px 0 0 var(--ink); }
+.cdh-lab { margin: 14px 10px 2px; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }
+.cdh-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; } .cdh-top h2 { font-size: 22px; margin: 0; } .cdh-top .search { width: 200px; flex: 0 1 200px; } .cdh-vw > button { padding: 6px 9px; }
+.cdf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 26px 20px; }
+.cdf { display: flex; flex-direction: column; gap: 10px; cursor: pointer; min-width: 0; animation: pop .45s var(--ease) both; animation-delay: calc(var(--n) * 25ms); }
+.cdf-th { position: relative; aspect-ratio: 1; border-radius: 10px; background: var(--panel2); display: grid; place-items: center; padding: 14%; transition: background .2s; } .cdf:hover .cdf-th { background: var(--panel3); }
+.cdf-th .cdjewel { width: 100%; margin: 0; } .cdf-art { position: relative; width: 100%; height: 100%; border-radius: 3px; overflow: hidden; box-shadow: 0 10px 24px -10px rgba(0,0,0,.6); } .cdf-art img, .cdf-art > span { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cdf-ok { position: absolute; right: 8px; bottom: 8px; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; background: #1db954; color: #fff; }
+.cdf-m { display: flex; align-items: flex-start; gap: 6px; } .cdf-m > span { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; } .cdf-m b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .cdf-m small { color: var(--ink3); font-size: 12px; }
+.cdr-list { display: flex; flex-direction: column; gap: 2px; } .cdr { display: grid; grid-template-columns: 44px minmax(0, 1.4fr) minmax(0, 1fr) 140px 32px; gap: 14px; align-items: center; padding: 6px 10px; border-radius: 10px; cursor: pointer; } .cdr:hover { background: var(--hover); } .cdr > span { color: var(--ink2); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cdr-art { position: relative; width: 44px; height: 44px; border-radius: 4px; overflow: hidden; } .cdr-art img, .cdr-art > span { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.psd-home { align-self: center; width: 26px; height: 26px; border-radius: 6px; display: grid; place-items: center; color: var(--ink2); margin-right: 4px; } .psd-home:hover { background: var(--hover); color: var(--ink); }
+@media (max-width: 860px) { .cdh { grid-template-columns: 1fr; } .cdh-side { flex-direction: row; flex-wrap: wrap; } .cdh-side hr, .cdh-lab { display: none; } }
 /* Audio Doctor */
 .doc-drop { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px; margin-bottom: 16px; border: 1.5px dashed var(--line); border-radius: 14px; color: var(--ink2); }
 .doc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 430px); gap: 16px; align-items: start; }
@@ -2284,12 +2301,38 @@ function cdMount() {
   renderCdPanel();
   if (UI.canDl == null && window.claude && claude.use) claude.use('downloads').then(d => { UI.canDl = !!d; renderPsOpts(); }).catch(() => { UI.canDl = false; });
 }
+/* CD Creator start screen: your CDs, open one to edit, or just look at the models */
+function cdHomeHTML() {
+  const H = UI.cdh = UI.cdh || { tab: 'files', sort: 'mod', view: 'grid', q: '' }, mod = S.cd.mod || {};
+  let a = S.cols.filter(c => !isFolder(c) && !c.archived);
+  if (H.q) a = a.filter(c => (c.name + ' ' + projArtist(c)).toLowerCase().includes(H.q.toLowerCase()));
+  const when = c => mod[c.id] || (S.cd.designs && S.cd.designs[c.id] ? c.created : 0) || 0;
+  a.sort(H.sort === 'name' ? (x, y) => x.name.localeCompare(y.name) : H.sort === 'artist' ? (x, y) => (projArtist(x) || '~').localeCompare(projArtist(y) || '~') : (x, y) => when(y) - when(x));
+  const ago = t => { if (!t) return 'Not started'; const d = (Date.now() - t) / 1000; return d < 90 ? 'Just now' : d < 3600 ? Math.round(d / 60) + ' minutes ago' : d < 86400 ? Math.round(d / 3600) + ' hours ago' : d < 86400 * 45 ? Math.round(d / 86400) + ' days ago' : Math.round(d / 86400 / 30) + ' months ago'; };
+  const models = H.tab === 'models', started = c => !!(S.cd.designs && S.cd.designs[c.id]);
+  const card = (c, n) => `<div class="cdf" role="button" tabindex="0" data-act="${models ? 'cdh-view' : 'cdh-open'}" data-id="${c.id}" style="--n:${n}"><div class="cdf-th">${models ? `<div class="cdjewel"><span class="cdj-art">${albumArt(c)}</span><i class="cdj-hinge"></i><i class="cdj-gloss"></i></div>` : `<span class="cdf-art">${albumArt(c)}</span>`}${started(c) ? `<i class="cdf-ok" title="Has a CD design">${ico('check', 11)}</i>` : ''}</div>
+      <div class="cdf-m"><span><b title="${esc(c.name)}">${esc(c.name)}</b><small>${models ? esc(projArtist(c) || 'Jewel case') : 'CD · ' + ago(when(c))}</small></span><button class="ico" data-act="cdh-more" data-id="${c.id}" aria-label="More">${ico('dots', 16)}</button></div></div>`;
+  const row = c => `<div class="cdr" role="button" tabindex="0" data-act="${models ? 'cdh-view' : 'cdh-open'}" data-id="${c.id}"><span class="cdr-art">${albumArt(c)}</span><b>${esc(c.name)}</b><span>${esc(projArtist(c))}</span><span>${ago(when(c))}</span><button class="ico" data-act="cdh-more" data-id="${c.id}" aria-label="More">${ico('dots', 16)}</button></div>`;
+  return `<div class="cdh">
+    <aside class="cdh-side"><button class="btn primary" data-act="cdh-new">New CD</button><button class="btn" data-act="cdh-openmenu">Open…</button><hr>
+      <button class="cdh-nav ${!models ? 'on' : ''}" data-act="cdh-tab" data-k="files">${ico('disc', 16)} Your CDs</button><button class="cdh-nav ${models ? 'on' : ''}" data-act="cdh-tab" data-k="models">${ico('cube', 16)} View models</button>
+      <button class="cdh-nav" data-act="libtab-cds">${ico('play', 16)} CD Player</button>${(S.cd.tabs || []).length ? `<p class="cdh-lab">Open</p>${S.cd.tabs.map(col).filter(Boolean).map(c => `<button class="cdh-nav" data-act="cdh-open" data-id="${c.id}">${ico('edit', 14)} <span>${esc(c.name)}</span></button>`).join('')}` : ''}</aside>
+    <section class="cdh-main"><header class="cdh-top"><h2>${models ? 'View models' : 'Your CDs'}</h2><span class="grow"></span>
+      <label class="sel box"><span class="faint">Sort by</span><select id="cdh-sort"><option value="mod" ${H.sort === 'mod' ? 'selected' : ''}>Date modified</option><option value="name" ${H.sort === 'name' ? 'selected' : ''}>Name</option><option value="artist" ${H.sort === 'artist' ? 'selected' : ''}>Artist</option></select></label>
+      <div class="seg cdh-vw"><button class="${H.view === 'list' ? 'on' : ''}" data-act="cdh-vw" data-k="list" aria-label="List">${ico('list', 15)}</button><button class="${H.view !== 'list' ? 'on' : ''}" data-act="cdh-vw" data-k="grid" aria-label="Grid">${ico('grid', 15)}</button></div>
+      <label class="search box">${ico('search', 15)}<input id="cdh-q" type="search" placeholder="Filter" value="${esc(H.q)}"></label></header>
+      ${models ? '<p class="faint small" style="margin:0 0 12px">Look at a finished CD without editing it. Click one to open it in the viewer.</p>' : ''}
+      ${a.length ? (H.view === 'list' && !models ? `<div class="cdr-list">${a.map(row).join('')}</div>` : `<div class="cdf-grid">${a.map(card).join('')}</div>`) : `<div class="empty"><p><b>${S.cols.some(c => !isFolder(c)) ? 'Nothing matches' : 'No projects yet'}</b></p><p class="faint">Every project can have a CD. Make a project, then start its CD here.</p><div class="crow"><button class="btn primary" data-act="newcol">New project</button></div></div>`}
+    </section></div>`;
+}
 function renderCD(m) {
+  if (S.cd.home !== false && !cdInProject()) { m.innerHTML = cdHomeHTML(); return; }
   const c = cdCol();
   const head = `<header class="head"><div><h1>CD creator</h1><p class="faint">Design the booklet, tray card, spines and disc around a clear jewel case.</p></div></header>`;
   if (!c) { m.innerHTML = head + `<div class="empty"><p><b>No projects yet</b></p><p class="faint">Make a project first, then draft its CD here.</p><div class="crow"><button class="btn primary" data-act="newcol">New project</button></div></div>`; return; }
   m.innerHTML = cdGridHTML(c);
   cdMount();
+  { const d = $('.ps-docs'); if (d && !d.querySelector('.psd-home')) d.insertAdjacentHTML('afterbegin', `<button class="psd-home" data-act="cdh-home" title="All CDs" aria-label="All CDs">${ico('grid', 13)}</button>`); }
 }
 function renderCdPanel() { if (!$('#ps')) return; renderPsTools(); renderPsOpts(); renderPsProps(); renderPsLayers(); renderPsStatus(); renderFontDrop(); applySlides(); }
 
@@ -3213,6 +3256,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.6.2', d: '2026-11-12', items: ['CD Creator opens on a start screen: New CD, Open, your CDs sorted by when you last changed them (grid or list, with a filter), and View models to look at finished CDs without editing. The grid button in the editor tabs brings you back.'] },
   { v: '1.6.1', d: '2026-11-12', items: ['Menu order: Library, Launcher, Music Store, Marketplace, CD Creator, Audio Editor, Settings.', 'Launcher shows only the programs found on this computer. Add a program points Compass at one the scan missed, and Mac-only apps are hidden on Windows.'] },
   { v: '1.6.0', d: '2026-11-12', items: ['CD editor: Shift-click to select several layers, then move them together or change font, size, spacing and color for all of them at once. Alt-drag duplicates.', 'Layer Style (fx): blend mode, opacity, fill, stroke, drop shadow, outer glow, color overlay and gradient overlay. Blend mode, opacity and fill also sit at the top of the Layers panel.', 'New tools: Hand (H), Zoom (Z), Rectangle and Ellipse (U, Shift+U) and Eyedropper (I). Place image moved to Ctrl+Shift+P.', 'Smart guides snap layers to the middle and edges of the panel and to each other; hold Ctrl to skip. Grid with Ctrl+\' and snapping with Ctrl+;.', 'Launcher shows each program\'s own icon.', 'The verified badge in Settings now shows only next to your own artist name and turns off straight away.'] },
   { v: '1.5.0', d: '2026-11-12', items: ['Projects can have several discs: Add a disc at the bottom of the song list, drag songs onto a disc, drag discs to reorder them, and number each disc from 1 or across the whole project. Zips dropped on a project become a new disc.', 'Label, copyright, sound recording, UPC and catalog number in Edit Details, shown under the song list.', 'Project logos show instead of the name in the CD viewer.', 'Library › CD Player: every CD in a grid. Click to view, right-click to play.', 'CD viewer: play, skip and pick songs, step between CDs, control case and disc spin speed, hide the controls, and keys for all of it (press ? to see them).', 'Video: makes an 8-second MP4 of the case opening and the disc coming out, saved to Downloads.', 'Library › Stats: plays and time listened for every song and project.', 'Convert a project to a digital album and put it in the Store. Albums you imported can be played but not sold.', 'Verified releases show a green badge next to their length.'] },
@@ -3821,6 +3865,16 @@ function act(a, el, e) {
     case 'm-cover-clear': if (UI.mCover && UI.mCover.url) URL.revokeObjectURL(UI.mCover.url); UI.mCover = false; refreshCoverPick(); break;
     case 'ctx-cover': UI.coverFor = id; $('#art').click(); break;
     case 'save-now': saveNow(); break;
+    case 'cdh-tab': UI.cdh.tab = k; renderMain(); break;
+    case 'cdh-vw': UI.cdh.view = k; renderMain(); break;
+    case 'cdh-open': S.cd.home = false; cdOpenTab(id); break;
+    case 'cdh-home': S.cd.home = true; if (S.view !== 'cd') S.view = 'cd'; refresh(); break;
+    case 'cdh-view': viewerFor(id, { list: S.cols.filter(c => !isFolder(c) && !c.archived).map(c => c.id) }); break;
+    case 'libtab-cds': S.view = 'library'; S.libTab = 'cds'; refresh(); break;
+    case 'cdh-new': { const r = el.getBoundingClientRect(), a = S.cols.filter(c => !isFolder(c) && !c.archived && !(S.cd.designs && S.cd.designs[c.id])); ctxMenu(r.right + 6, r.top, [{ head: 'Start a CD for' }, ...a.map(c => ({ label: c.name, act: 'cdh-open', id: c.id, icon: 'disc' })), ...(a.length ? [{ sep: 1 }] : []), { label: 'New project…', act: 'newcol', icon: 'plus' }]); break; }
+    case 'cdh-openmenu': { const r = el.getBoundingClientRect(), a = S.cols.filter(c => !isFolder(c) && !c.archived && S.cd.designs && S.cd.designs[c.id]); ctxMenu(r.right + 6, r.top, [{ head: 'Open a CD' }, ...(a.length ? a.map(c => ({ label: c.name, act: 'cdh-open', id: c.id, icon: 'edit' })) : [{ label: 'No CDs started yet', disabled: true }])]); break; }
+    case 'cdh-more': { const r = el.getBoundingClientRect(); ctxMenu(r.left, r.bottom + 4, [{ head: (col(id) || {}).name }, { label: 'Open in Editor', act: 'cdh-open', id, icon: 'edit' }, { label: 'View Model', act: 'cdh-view', id, icon: 'cube' }, { label: 'Play CD', act: 'cdp-play', id, icon: 'play' }, { sep: 1 }, { label: 'Make Video', act: 'cdh-video', id, icon: 'play' }, { label: 'Export 3D CD…', act: 'ctx-export3d', id, icon: 'cube' }, { label: 'Export Disc…', act: 'ctx-disc', id, icon: 'save' }]); break; }
+    case 'cdh-video': viewerFor(id); setTimeout(exportShowcase, 600); break;
     case 'cd-lstyle': { const L = selLayer(); if (!L) break; UI.lsSnap = JSON.stringify(L); UI.lsSec = UI.lsSec || 'blend'; openModal('lstyle', L.id); break; }
     case 'ls-sec': UI.lsSec = k; { const keep = UI.lsSnap; UI.modal = null; openModal('lstyle', selLayer() && selLayer().id); UI.lsSnap = keep; } break;
     case 'ls-ok': UI.lsKeep = true; save(); closeModal(); break;
@@ -3884,11 +3938,11 @@ function act(a, el, e) {
     case 'set-st': { const t = trk(id); if (t) { t.status = k; refresh(); } break; }
     case 'ctx-deltrack': { const t = trk(id); if (!t) break; trashTrack(t); toast('Moved to Recently deleted (Settings)'); refresh(); break; }
     case 'ctx-viewcd': S.colId = id; S.cd.colId = id; openViewer('case'); break;
-    case 'ctx-editcd': closeDrawer(); S.cd.colId = id; S.view = 'cd'; UI.cdSel = null; refresh(); break;
+    case 'ctx-editcd': closeDrawer(); S.cd.colId = id; S.cd.home = false; cdTabs(col(id)); S.view = 'cd'; UI.cdSel = null; refresh(); break;
     case 'ctx-export3d': exportCD3D(id); break;
     case 'ctx-dlproj': { const c = col(id); if (c) downloadProject(c); break; }
     case 'ctx-delcol': trashProject(col(id)); break;
-    case 'nav': closeDrawer(); S.view = el.dataset.view; refresh(); break;
+    case 'nav': closeDrawer(); if (el.dataset.view === 'cd') S.cd.home = true; S.view = el.dataset.view; refresh(); break;
     case 'col': closeDrawer(); S.view = 'collection'; S.colId = id; refresh(); break;
     case 'libtab': S.libTab = k; refresh(); break;
     case 'ptab': S.projTab = k; UI.cdSel = null; refresh(); if (k === 'cd') requestAnimationFrame(() => { const ps = $('#ps'); if (ps) ps.scrollIntoView({ block: 'start', behavior: 'smooth' }); }); break;
@@ -4013,6 +4067,7 @@ document.addEventListener('change', e => {
   else if (t.dataset.incol) { const c = col(t.dataset.incol), id = S.editId; c.tracks = c.tracks.filter(x => x !== id); if (t.checked) c.tracks.push(id); refresh(); }
   else if (t.id === 'p-target') { const c = col(S.colId); c.targetDate = t.value || null; refresh(); }
   else if (t.id === 'm-ptype') { const b = $('#m-relbox'); if (b) b.classList.toggle('hide-folder', t.value === 'folder'); }
+  else if (t.id === 'cdh-sort') { UI.cdh.sort = t.value; renderMain(); }
   else if (t.dataset && t.dataset.spin) { S.cd[t.dataset.spin] = +t.value; save(); }
   else if (t.dataset && t.dataset.lsf) lsSet(t);
   else if (t.id === 'cd-col') { S.cd.colId = t.value; UI.cdSel = null; refresh(); }
@@ -4194,7 +4249,7 @@ function cdTrack() {
   if (H.col !== c.id) { H = { col: c.id, stack: [], redo: [], last: j, t: 0, mute: false }; return; }
   if (j === H.last) return; const now = Date.now();
   if (now - H.t > 700 || !H.stack.length) { H.stack.push(H.last); if (H.stack.length > 120) H.stack.shift(); }
-  H.last = j; H.t = now; H.redo = [];
+  H.last = j; H.t = now; H.redo = []; (S.cd.mod = S.cd.mod || {})[c.id] = now;
 }
 function cdRestore(json) {
   S.cd.designs[H.col] = JSON.parse(json); H.last = json; H.t = 0;

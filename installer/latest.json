@@ -1,11 +1,18 @@
 {
-  "version": "1.6.1",
+  "version": "1.6.2",
   "file": "Compass-Setup.exe",
-  "size": 82425003,
-  "sha256": "0d50ea97022fb9f6ff4fdaa7b4ce9ddfef88db220d383943addedf7862c28cec",
-  "notes": "Menu order: Library, Launcher, Music Store, Marketplace, CD Creator, Audio Editor, Settings. Launcher shows only the programs found on this computer. Add a program points Compass at one the scan missed, and Mac-only apps are hidden on Windows.",
+  "size": 82426740,
+  "sha256": "fbdfdf79d8962d69f66155511fee601c097d75a9327bf95fee6b2327f7b9690c",
+  "notes": "CD Creator opens on a start screen: New CD, Open, your CDs sorted by when you last changed them (grid or list, with a filter), and View models to look at finished CDs without editing. The grid button in the editor tabs brings you back.",
   "date": "2026-11-12",
   "changelog": [
+    {
+      "v": "1.6.2",
+      "d": "2026-11-12",
+      "items": [
+        "CD Creator opens on a start screen: New CD, Open, your CDs sorted by when you last changed them (grid or list, with a filter), and View models to look at finished CDs without editing. The grid button in the editor tabs brings you back."
+      ]
+    },
     {
       "v": "1.6.1",
       "d": "2026-11-12",
@@ -182,13 +189,6 @@
       "items": [
         "Duplicate project and make a sequel.",
         "The disc spins only in the viewer."
-      ]
-    },
-    {
-      "v": "1.0.3",
-      "d": "2026-11-09",
-      "items": [
-        "Project page cleanup; whole covers in the library."
       ]
     }
   ]

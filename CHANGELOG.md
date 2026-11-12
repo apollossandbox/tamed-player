@@ -2,6 +2,10 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.6.2 · 2026-11-12
+
+- CD Creator opens on a start screen: New CD, Open, your CDs sorted by when you last changed them (grid or list, with a filter), and View models to look at finished CDs without editing. The grid button in the editor tabs brings you back.
+
 ## 1.6.1 · 2026-11-12
 
 - Menu order: Library, Launcher, Music Store, Marketplace, CD Creator, Audio Editor, Settings.
