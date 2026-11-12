@@ -131,6 +131,7 @@ h1 { font-size: 36px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1
 .pick-opts button:hover { color: var(--ink); background: var(--hover); } .pick-opts button.on { color: var(--onink); background: var(--ink); }
 
 /* track rows */
+.row[data-row="col"] .c-add { font-size: 12px; color: var(--ink3); text-align: center; white-space: nowrap; overflow: hidden; }
 .colhead, .row { display: grid; grid-template-columns: 36px 44px minmax(0, 1fr) 104px 128px 50px 36px; gap: 12px; align-items: center; }
 .row .hov { overflow: hidden; text-overflow: ellipsis; text-align: right; opacity: 0; transform: translateX(6px); transition: opacity .2s, transform .3s var(--ease); white-space: nowrap; }
 .row:hover .hov, .row:focus-within .hov { opacity: 1; transform: none; }
@@ -140,6 +141,7 @@ h1 { font-size: 36px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1
 .row { padding: 7px 12px; border-radius: 18px; border: 1px solid transparent; transition: background .25s, border-color .25s, box-shadow .25s; }
 .row:hover { background: var(--hover); border-color: var(--lo); }
 .row.playing { background: linear-gradient(145deg, var(--g1), var(--g2)); border-color: var(--edge); box-shadow: inset 0 1px 0 var(--hi), inset 0 -1px 0 var(--lo); }
+.row.sel { background: var(--panel3); }
 .row.dragging { opacity: .35; } .row.over { box-shadow: 0 0 0 2px var(--ink); background: var(--hover); }
 .row[draggable="true"] { cursor: grab; }
 .rowplay { position: relative; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--field); color: var(--ink); transition: background .2s, color .2s, transform .3s var(--ease); }
@@ -227,7 +229,7 @@ textarea.field { resize: vertical; }
 .ver input[type=text] { background: none; border: 0; outline: 0; min-width: 0; font-weight: 700; }
 .radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--ink2); display: grid; place-items: center; }
 .ver.on .radio::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
-.drawer .crow { margin-top: 12px; }
+.drawer .crow { margin-top: 12px; } .drawer::after { content: ''; flex: none; height: 28px; }
 
 /* player bar */
 .bar { position: fixed; z-index: 20; left: 50%; transform: translateX(-50%); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); width: min(1000px, calc(100% - 32px)); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr); gap: 18px; align-items: center; padding: 10px 16px 10px 12px; border-radius: 999px; transition: opacity .4s, transform .5s var(--ease2), filter .4s; }
@@ -414,6 +416,7 @@ textarea.field { resize: vertical; }
 .sp-hero h2 { font-size: clamp(32px, 6vw, 84px); font-weight: 900; letter-spacing: -.04em; line-height: 1; overflow-wrap: anywhere; }
 .sp-by { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 14px; } .sp-by b { font-weight: 700; } .sp-by span { color: rgba(255,255,255,.75); }
 .sp-by .av { width: 24px; height: 24px; border-radius: 50%; }
+.sp-hero.has-bg { padding-top: 120px; } .sp-artbtns { display: flex; gap: 6px; margin-top: 10px; opacity: 0; transition: opacity .2s; } .sp-hero:hover .sp-artbtns { opacity: 1; } .sp-artbtns button { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 99px; background: rgba(0,0,0,.45); color: #fff; font-size: 12px; font-weight: 700; }
 .vf { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #4cb3ff; color: #fff; }
 .sp-body { padding: 0 24px 40px; background: linear-gradient(180deg, color-mix(in srgb, var(--hc) 22%, #121212), #121212 240px); }
 .sp-actions { display: flex; align-items: center; gap: 22px; padding: 22px 0; color: #b3b3b3; }
@@ -434,7 +437,7 @@ textarea.field { resize: vertical; }
 .sp-disco { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
 .sp-card { display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 8px; text-align: left; transition: background .25s; min-width: 0; }
 .sp-card:hover { background: #1f1f1f; }
-.sp-card .cv { aspect-ratio: 1; max-width: 100%; border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+.sp-card .cv { display: block; width: 100%; height: 0; padding-bottom: 100%; border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
 .sp-card b { font-weight: 700; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 4px; } .sp-card span { font-size: 13.5px; color: #b3b3b3; }
 .sp-bar { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr); gap: 12px; align-items: center; height: 72px; padding: 0 8px; padding-bottom: env(safe-area-inset-bottom, 0px); box-sizing: content-box; }
 .sp-bar .now { display: flex; align-items: center; gap: 12px; min-width: 0; } .sp-bar .cv { width: 56px; height: 56px; border-radius: 4px; flex: none; }
@@ -491,7 +494,7 @@ textarea.field { resize: vertical; }
 .am-sec { font-size: 20px; font-weight: 700; margin: 26px 0 12px; display: flex; align-items: center; gap: 4px; }
 .am-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 24px 20px; }
 .am-card { display: flex; flex-direction: column; gap: 4px; text-align: left; min-width: 0; }
-.am-card .cv { aspect-ratio: 1; max-width: 100%; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.14), 0 0 0 .5px rgba(0,0,0,.1); margin-bottom: 6px; transition: transform .35s var(--ease); }
+.am-card .cv { display: block; width: 100%; height: 0; padding-bottom: 100%; max-width: 100%; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.14), 0 0 0 .5px rgba(0,0,0,.1); margin-bottom: 6px; transition: transform .35s var(--ease); }
 .am-card:hover .cv { transform: translateY(-3px); }
 .am-card b { font-size: 13.5px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .am-card span { font-size: 12.5px; color: #8a8a8e; }
 .am-lyr { padding: 20px 0 60px; max-width: 760px; }
@@ -619,7 +622,7 @@ body.cx-on .bar { transform: none; }
 .acard { position: relative; min-width: 0; display: flex; flex-direction: column; gap: 4px; padding: 12px; border-radius: 10px; cursor: pointer; transition: background .25s; animation: pop .5s var(--ease) both; animation-delay: calc(var(--n) * 35ms); outline-offset: -2px; }
 .acard:hover, .acard:focus-visible { background: var(--panel2); }
 .acard-art { position: relative; display: block; width: 100%; height: 0; padding-bottom: 100%; margin-bottom: 8px; border-radius: 8px; overflow: hidden; background: #000; box-shadow: 0 10px 28px -14px var(--glow, #000), 0 8px 22px -12px var(--shadow); }
-.acard-art img, .acard-ph { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: contain; }
+.acard-art img, .acard-ph { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; }
 .acard-ph.plus { display: grid; place-items: center; background: var(--panel2); color: var(--ink2); }
 .acard-new .acard-art { background: var(--panel2); box-shadow: inset 0 0 0 1px var(--line); }
 .acard-play { position: absolute; right: 8px; bottom: 8px; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--onink); box-shadow: 0 8px 18px -6px rgba(0,0,0,.6); opacity: 0; transform: translateY(8px); transition: opacity .25s, transform .35s var(--ease); }
@@ -633,7 +636,8 @@ body.cx-on .bar { transform: none; }
 
 /* project header, pared down */
 .eyebrow .pick-btn { height: auto; padding: 0; background: none; border: 0; gap: 4px; font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); }
-.eyebrow .pick-btn small { display: none; } .eyebrow .pick-btn b { font-weight: 700; } .eyebrow .pick-btn:hover { color: var(--ink); background: none; }
+.eyebrow .pick-btn small { display: none; }
+.eyebrow .pick-opts button { background: none; border: 0; padding: 2px 8px; font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); } .eyebrow .pick-opts button:hover { background: none; color: var(--ink); } .eyebrow .pick-opts button.on { background: none; color: var(--ink); text-decoration: underline; text-underline-offset: 4px; } .eyebrow .pick-btn b { font-weight: 700; } .eyebrow .pick-btn:hover { color: var(--ink); background: none; }
 .pmeta { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0; font-size: 13.5px; color: var(--ink2); }
 .pmeta > * + *::before { content: "•"; margin: 0 8px; color: var(--ink3); } .pmeta .pm-art { font-weight: 700; color: var(--ink); font-size: 13.5px; } .pmeta .pm-art:hover { text-decoration: underline; }
 .pmeta button { color: inherit; font: inherit; } .pmeta span button:hover { text-decoration: underline; }
@@ -661,6 +665,8 @@ body.cx-on .bar { transform: none; }
 .clog-v.new { padding: 10px 12px; border-radius: 10px; background: var(--panel2); } .clog-v.new ul { color: var(--ink); }
 .clog-tag { font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--panel3); color: var(--ink2); } .clog-tag.up { background: var(--ink); color: var(--onink); }
 .toast.act { pointer-events: auto; display: flex; align-items: center; gap: 10px; }
+.pgrid, .list, .side, .acard, .colitem, .row { -webkit-user-select: none; user-select: none; }
+.brand > :first-child { animation: logospin 40s linear infinite; } .brand:hover > :first-child { animation-duration: 2.5s; } @keyframes logospin { to { transform: rotate(360deg); } }
 /* Audio Doctor */
 .doc-drop { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px; margin-bottom: 16px; border: 1.5px dashed var(--line); border-radius: 14px; color: var(--ink2); }
 .doc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 430px); gap: 16px; align-items: start; }
@@ -670,7 +676,8 @@ body.cx-on .bar { transform: none; }
 .dbpm, .dkey { font-variant-numeric: tabular-nums; font-weight: 700; text-align: right; } .dbpm small { font-weight: 400; color: var(--ink3); font-size: 12px; } .dkey { color: var(--ink2); }
 .dst { font-size: 11.5px; color: var(--ink3); } .dst.ok { color: #3fb950; } .dst.err { color: #e5484d; } .dst.wait { color: var(--ink2); } .dst.run { color: #f5a623; animation: blink 1s infinite alternate; }
 @keyframes blink { to { opacity: .3; } }
-.doc-insp { padding: 16px 18px; border-radius: 14px; display: flex; flex-direction: column; gap: 10px; position: sticky; top: 8px; min-width: 0; }
+.doc-insp { padding: 12px 14px; border-radius: 14px; display: flex; flex-direction: column; gap: 8px; position: sticky; top: 8px; min-width: 0; max-height: calc(100vh - 150px); overflow-y: auto; overscroll-behavior: contain; }
+.doc-insp .di-sec { gap: 6px; padding-top: 8px; } .doc-insp .ds { padding: 7px 9px; gap: 2px; } .doc-insp .di-cap { display: none; } .doc-insp .di-title { font-size: 18px; } .doc-insp .check { font-size: 12.5px; } .doc-insp .di-opt .seg > button { padding: 4px 8px; }
 .di-head { display: flex; align-items: center; gap: 8px; } .di-title { font-size: 22px; }
 .di-wave { display: flex; flex-direction: column; gap: 6px; } .di-wave canvas { width: 100%; display: block; border-radius: 8px; background: var(--panel2); }
 .di-cap { font-size: 12px; color: var(--ink3); }
@@ -924,6 +931,8 @@ body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after 
 <input type="file" id="file" accept="audio/*" multiple hidden>
 <input type="file" id="art" accept="image/*" hidden>
 <input type="file" id="mcoverfile" accept="image/*" hidden>
+<input type="file" id="zipfile" accept=".zip,application/zip" multiple hidden>
+<input type="file" id="artimg" accept="image/*" hidden>
 <input type="file" id="replaudio" accept="audio/*,.mp3,.wav,.flac,.m4a,.ogg,.opus,.aif,.aiff" hidden>
 <input type="file" id="replimg" accept="image/*" hidden>
 <input type="file" id="docfile" accept="audio/*,.mp3,.wav,.flac,.m4a,.ogg,.opus,.aif,.aiff" multiple hidden>
@@ -993,7 +1002,7 @@ const trk = id => S.tracks.find(t => t.id === id);
 const col = id => S.cols.find(c => c.id === id);
 const coverObj = c => c && c.covers && c.covers.find(x => x.id === c.cover);
 const artOf = c => { const cv = coverObj(c); return cv && srcs['art:' + cv.id]; };
-const pcovFit = c => artOf(c) ? `background:#000 url(${artOf(c)}) center/contain no-repeat` : cover(c.h1, c.h2);
+const pcovFit = c => artOf(c) ? `background:url(${artOf(c)}) center/cover no-repeat` : cover(c.h1, c.h2);
 const pcov = c => artOf(c) ? `background:url(${artOf(c)}) center/cover` : cover(c.h1, c.h2);
 const ownerCol = t => S.cols.find(c => artOf(c) && c.tracks.includes(t.id));
 const tcov = t => { const p = ownerCol(t); return p ? pcov(p) : cover(t.h1, t.h2); };
@@ -1004,7 +1013,7 @@ const dispTitle = t => t.title + (t.featInTitle && feats(t).length ? ` (feat. ${
 const artistOf = () => {
   const typed = (S.concept.artist || '').trim(); if (typed && typed !== 'Artist Name') return typed;
   const tally = {}; S.cols.forEach(c => (c.artists || []).filter(Boolean).forEach((a, i) => { tally[a] = (tally[a] || 0) + (i === 0 ? 2 : 1); }));
-  const best = Object.entries(tally).sort((a, b) => b[1] - a[1])[0]; return best ? best[0] : 'Artist Name';
+  const best = Object.entries(tally).sort((a, b) => b[1] - a[1])[0]; return best ? best[0] : '';
 };
 /* swap an old artist name for a new one in a project's CD text (also the upper-case spine version) */
 function cdRenameArtist(cid, from, to) {
@@ -1013,12 +1022,13 @@ function cdRenameArtist(cid, from, to) {
   return hit;
 }
 const projOf = t => S.cols.find(c => c.tracks.includes(t.id));
-const projArtists = c => (c && Array.isArray(c.artists) && c.artists.filter(Boolean).length ? c.artists.filter(Boolean) : [artistOf()]);
+const projArtists = c => (c && Array.isArray(c.artists) && c.artists.filter(Boolean).length ? c.artists.filter(Boolean) : []);
 const projArtist = c => projArtists(c).join(', ');
 const dispArtist = t => [t.artist || projArtist(projOf(t)), ...feats(t)].filter(Boolean).join(', ');
 const ROLES = ['Producer', 'Co-producer', 'Executive producer', 'Songwriter', 'Composer', 'Lyricist', 'Vocals', 'Background vocals', 'Mixing engineer', 'Mastering engineer', 'Recording engineer', 'Guitar', 'Bass', 'Keys', 'Drums', 'Programming', 'Arranger', 'Artwork', 'Label', 'Publisher'];
 const creditLine = t => { const g = {}; (t.credits || []).forEach(c => { if (c.role && c.name) (g[c.role] = g[c.role] || []).push(c.name); }); return Object.entries(g).map(([r, n]) => `${r}: ${n.join(', ')}`).join(' · '); };
-const save = () => { if (typeof cdTrack === 'function') cdTrack(); try { localStorage.setItem(KEY, JSON.stringify({ ...S, playing: false, q: '', editId: null, cx: { ...S.cx, open: false } })); } catch (e) { } };
+function stampAdds() { const now = Date.now(); for (const c of S.cols) { c.addedAt = c.addedAt || {}; for (const id of c.tracks) if (!c.addedAt[id]) { const t = trk(id); c.addedAt[id] = (t && t.added) || now; } } }
+const save = () => { stampAdds(); if (typeof cdTrack === 'function') cdTrack(); try { localStorage.setItem(KEY, JSON.stringify({ ...S, playing: false, q: '', editId: null, cx: { ...S.cx, open: false } })); } catch (e) { } };
 
 function load() {
   try { const r = JSON.parse(localStorage.getItem(KEY)); if (r && r.tracks) S = { ...S, ...r, playing: false, concept: { ...S.concept, ...r.concept } }; } catch (e) { }
@@ -1051,7 +1061,7 @@ function normalize() {
   delete S.cd.style; delete S.cd.label; delete S.cd.skip;
   S.tracks.forEach(t => { if (t.artist === 'Artist Name') t.artist = ''; });
   S.cx = { open: false, page: 'album', colId: null, ...(S.cx || {}), open: false };
-  if (!['library', 'collection', 'cd', 'concept', 'doctor', 'settings'].includes(S.view)) S.view = 'library';
+  if (!['library', 'collection', 'cd', 'concept', 'doctor', 'store', 'market', 'settings'].includes(S.view)) S.view = 'library';
   if (!['projects', 'tracks'].includes(S.libTab)) S.libTab = 'projects';
   if (!['tracks', 'cd'].includes(S.projTab)) S.projTab = 'tracks';
   if (S.filter !== 'all' && !ST[S.filter]) S.filter = 'all';
@@ -1066,19 +1076,22 @@ const DB = {
 };
 
 /* ---------- audio engine + EQ + analyser ---------- */
-const audio = new Audio(); audio.preload = 'auto';
-audio.addEventListener('ended', () => onEnd());
-audio.addEventListener('error', () => { if (audio.src) toast('That file could not be played'); });
+/* two players: the next song waits loaded in the second one, so it starts the instant the current one ends */
+const players = [new Audio(), new Audio()]; let audio = players[0];
+players.forEach(a => { a.preload = 'auto'; a.addEventListener('ended', () => { if (a === audio) onEnd(); }); a.addEventListener('error', () => { if (a === audio && a.src) toast('That file could not be played'); }); });
+const otherPlayer = () => players[1 - players.indexOf(audio)];
+function nextId() { if (S.rep) return null; const q = S.queue.length ? S.queue : S.tracks.map(t => t.id), i = q.indexOf(S.cur); return i < 0 || !q.length ? null : q[(i + 1) % q.length]; }
+function preloadNext() { const id = nextId(), t = id && trk(id), o = otherPlayer(); if (!t || !verSrc(t) || (o.dataset.tid === id && o.dataset.src === verSrc(t))) return; o.pause(); o.dataset.tid = id; o.dataset.src = verSrc(t); o.src = verSrc(t); o.load(); }
 let AC = null, filters = [], analyser = null, freq = null, wave = null;
 function ensureGraph() {
   if (AC) { if (AC.state === 'suspended') AC.resume(); return; }
   try {
     AC = new (window.AudioContext || window.webkitAudioContext)();
-    const src = AC.createMediaElementSource(audio);
+    const ins = players.map(p => AC.createMediaElementSource(p));
     filters = EQF.map((f, i) => { const b = AC.createBiquadFilter(); b.type = i === 0 ? 'lowshelf' : i === 4 ? 'highshelf' : 'peaking'; b.frequency.value = f; b.Q.value = 1.1; return b; });
     analyser = AC.createAnalyser(); analyser.fftSize = 512; analyser.smoothingTimeConstant = .78;
     freq = new Uint8Array(analyser.frequencyBinCount); wave = new Uint8Array(analyser.fftSize);
-    let n = src; filters.forEach(f => { n.connect(f); n = f; }); n.connect(analyser); analyser.connect(AC.destination);
+    ins.forEach(i => i.connect(filters[0])); let n = filters[0]; filters.slice(1).forEach(f => { n.connect(f); n = f; }); n.connect(analyser); analyser.connect(AC.destination);
     applyEq();
   } catch (e) { AC = null; }
 }
@@ -1086,7 +1099,7 @@ function applyEq() { filters.forEach((f, i) => { const v = S.eq.on ? S.eq.g[i] :
 const verSrc = t => srcs[t.ver] || srcs[t.id] || '';
 const verDur = t => { const v = t.versions.find(x => x.id === t.ver); return v ? v.dur : t.dur; };
 const Engine = {
-  load(t) { audio.pause(); audio.src = verSrc(t); audio.volume = S.vol; },
+  load(t) { audio.pause(); const o = otherPlayer(); if (o.dataset.tid === t.id && o.dataset.src === verSrc(t)) { audio = o; audio.currentTime = 0; } else { audio.src = verSrc(t); audio.dataset.tid = t.id; audio.dataset.src = verSrc(t); } audio.volume = S.vol; clearTimeout(Engine.pt); Engine.pt = setTimeout(preloadNext, 1200); },
   play() { ensureGraph(); audio.play().catch(() => toast('Press play again to start audio')); },
   pause() { audio.pause(); },
   pos() { return audio.currentTime || 0; },
@@ -1115,7 +1128,13 @@ function step(d) {
   let i = q.indexOf(S.cur); if (i < 0) i = 0;
   playTrack(q[(i + d + q.length) % q.length]);
 }
-function onEnd() { if (S.rep) { Engine.seek(0); Engine.play(); } else if (S.prefs.autoNext !== false) step(1); else { S.playing = false; refresh(); } }
+function onEnd() {
+  if (S.rep) { Engine.seek(0); Engine.play(); return; }
+  if (S.prefs.autoNext === false) { S.playing = false; refresh(); return; }
+  const id = nextId(), o = otherPlayer(), t = id && trk(id);
+  if (t && o.dataset.tid === id && o.dataset.src === verSrc(t)) { audio = o; audio.volume = S.vol; audio.currentTime = 0; audio.play().catch(() => { }); S.cur = id; S.playing = true; refresh(); swapAnim(); clearTimeout(Engine.pt); Engine.pt = setTimeout(preloadNext, 1200); return; }
+  step(1);
+}
 function tick() {
   if (!S.cur) return;
   const p = Engine.pos(), d = Engine.dur() || 1, pct = Math.min(100, p / d * 100);
@@ -1174,25 +1193,26 @@ function settlePick(el, k) { const p = el.closest('.pick'); if (!p) return; $$('
 function toast(msg) { const e = $('#toast'); e.textContent = msg; e.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove('show'), 2600); }
 
 function renderSide() {
-  const nav = [['library', 'grid', 'Library', S.cols.length], ['cd', 'disc', 'CD creator'], ['concept', 'phone', 'Concept player'], ['doctor', 'pulse', 'Audio Doctor'], ['settings', 'gear', 'Settings']];
+  const nav = [['library', 'grid', 'Library', S.cols.length], ['cd', 'disc', 'CD creator'], ['concept', 'phone', 'Concept player'], ['doctor', 'pulse', 'Audio Doctor'], ['store', 'disc', 'Music Store'], ['market', 'grid', 'Marketplace'], ['settings', 'gear', 'Settings']];
   $('#side').innerHTML = `
   <div class="brand">${logo(26)}<span>Tamed Player</span></div>
   <nav class="snav" data-slide="nav"><i class="thumb"></i>${nav.map(([v, i, l, n]) => `<button class="navbtn ${S.view === v ? 'on' : ''}" data-act="nav" data-view="${v}">${ico(i)}<span>${l}</span>${n !== undefined ? `<em>${n}</em>` : ''}</button>`).join('')}</nav>
   <div class="shead"><span>Projects</span><button class="ico" data-act="newcol" aria-label="New project" title="New project">${ico('plus', 16)}</button></div>
-  <div class="colswrap"><div class="cols" data-slide="cols"><i class="thumb"></i>${S.cols.map(c => `
+  <div class="colswrap"><div class="cols" data-slide="cols"><i class="thumb"></i>${S.cols.filter(c => !isFolder(c)).map(c => `
     <button class="colitem ${S.view === 'collection' && S.colId === c.id ? 'on' : ''}" data-act="col" data-id="${c.id}" data-drop="${c.id}">
       <span class="mini" style="${pcov(c)}"></span><span class="cn"><span class="cn-t">${esc(c.name)}</span><span class="cn-k">${KINDS[c.type] || ''}</span></span>
     </button>`).join('') || '<p class="faint pad small">No projects yet.</p>'}</div></div>
-  <div class="sfoot"><button class="credbtn" data-act="credits" aria-label="Credits" title="Credits">${ico('star', 14)}</button>${window.tpDesktop ? `<button class="credbtn upd" data-act="desk-update" aria-label="Check for updates" title="Version ${esc(tpDesktop.version)}. Check for updates">${ico('save', 14)}</button><span class="ver">v${esc(tpDesktop.version)}</span>` : ''}</div>`;
+  <div class="sfoot"><button class="credbtn" data-act="credits" aria-label="Credits" title="Credits">${ico('star', 14)}</button><button class="credbtn" data-act="nav" data-view="settings" aria-label="Settings" title="Settings">${ico('gear', 14)}</button>${window.tpDesktop ? `<button class="credbtn upd" data-act="desk-update" aria-label="Check for updates" title="Version ${esc(tpDesktop.version)}. Check for updates">${ico('save', 14)}</button><span class="ver">v${esc(tpDesktop.version)}</span>` : ''}</div>`;
 }
 
+const addedOn = t => { const c = S.view === 'collection' && col(S.colId), ts = (c && c.addedAt && c.addedAt[t.id]) || t.added; return ts ? new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: new Date(ts).getFullYear() === new Date().getFullYear() ? undefined : '2-digit' }) : ''; };
 function rowHTML(t, i, inCol) {
   const on = S.cur === t.id, nv = t.versions.length;
   const v = nv ? t.versions.find(x => x.id === t.ver) : null;
   return `<div class="row ${on ? 'playing' : ''}" draggable="true" data-id="${t.id}" data-row="${inCol ? 'col' : 'lib'}">
     <button class="rowplay ${inCol ? '' : 'nonum'}" data-act="play" data-id="${t.id}" aria-label="${on && S.playing ? 'Pause' : 'Play'} ${esc(t.title)}">${inCol ? `<span class="num">${i + 1}</span>` : ''}${ico(on && S.playing ? 'pause' : 'play', 16)}</button>
-    <span class="cov" style="${tcov(t)}"></span>
-    <span class="meta"><b>${esc(dispTitle(t))}${nv ? `<span class="vtag">${esc(v ? v.name : 'Original')} · ${nv + 1} versions</span>` : ''}</b><span>${esc(dispArtist(t))}${t.tags ? ' · ' + esc(t.tags) : ''}</span></span>
+    ${inCol ? `<span class="c-add mono" title="Added to this project">${addedOn(t)}</span>` : `<span class="cov" style="${tcov(t)}"></span>`}
+    <span class="meta"><b>${esc(dispTitle(t))}</b><span>${esc(dispArtist(t))}${t.tags ? ' · ' + esc(t.tags) : ''}</span></span>
     <button class="pill st-${t.status}" data-act="cycle-st" data-id="${t.id}" title="Click to change status">${ST[t.status]}</button>
     <span class="mono hov">${[t.bpm ? t.bpm + ' BPM' : '', t.key ? esc(t.key) : ''].filter(Boolean).join(' · ')}</span>
     <span class="mono c-dur">${fmt(verDur(t))}</span>
@@ -1208,7 +1228,7 @@ function renderList() {
   curListIds = arr.map(t => t.id);
   if (arr.length) { el.innerHTML = arr.map((t, i) => rowHTML(t, i, inCol)).join(''); return; }
   const filtered = S.tracks.length > 0;
-  el.innerHTML = `<div class="empty"><p><b>${inCol ? 'No tracks in this project' : filtered ? 'No matches' : 'Your library is empty'}</b></p><p class="faint">${inCol ? 'Upload audio here, or drag tracks onto this project in the sidebar.' : filtered ? 'Change the search or status filter.' : 'Drop audio files anywhere on this page, or import a downloaded Untitled project.'}</p>${filtered && !inCol ? '' : `<div class="crow"><button class="btn primary" data-act="add">Choose audio files</button>${inCol ? '' : `<button class="btn" data-act="import">${ico('import', 16)} Import from Untitled</button>`}</div>`}</div>`;
+  el.innerHTML = `<div class="empty"><p><b>${inCol ? 'No tracks in this project' : filtered ? 'No matches' : 'Your library is empty'}</b></p><p class="faint">${inCol ? 'Upload audio here, or drag tracks onto this project in the sidebar.' : filtered ? 'Change the search or status filter.' : 'Drop audio files anywhere on this page, or import a downloaded Untitled project.'}</p>${filtered && !inCol ? '' : `<div class="crow"><button class="btn primary" data-act="add">Choose audio files</button>${inCol ? '' : `<button class="btn" data-act="zip-add">${ico('import', 16)} Add from zip</button>`}</div>`}</div>`;
 }
 
 const albumArt = c => artOf(c) ? `<img src="${artOf(c)}" alt="" draggable="false" loading="lazy">` : `<span class="acard-ph" style="${cover(c.h1, c.h2)}"></span>`;
@@ -1217,7 +1237,7 @@ function projCard(c, n) {
   return `<div class="acard" role="button" tabindex="0" data-act="col" data-id="${c.id}" style="--n:${n};--glow:${k[0]}" aria-label="Open ${esc(c.name)}">
     <div class="acard-art">${albumArt(c)}<button class="acard-play" data-act="play-col" data-id="${c.id}" aria-label="Play ${esc(c.name)}" title="Play">${ico(S.playing && c.tracks.includes(S.cur) ? 'pause' : 'play', 20)}</button></div>
     <div class="acard-t" title="${esc(c.name)}">${esc(c.name)}</div>
-    <div class="acard-s">${esc(KINDS[c.type])} · ${esc(projArtist(c))} · ${ts.length} ${ts.length === 1 ? 'track' : 'tracks'}${year ? ' · ' + year : ''}</div>
+    <div class="acard-s">${[KINDS[c.type], projArtist(c), ts.length + ' ' + (ts.length === 1 ? 'track' : 'tracks'), year].filter(Boolean).map(esc).join(' · ')}</div>
   </div>`;
 }
 
@@ -1235,6 +1255,7 @@ function renderMain() {
   else if (S.view === 'collection') renderProject(m);
   else if (S.view === 'cd') renderCD(m);
   else if (S.view === 'doctor') renderDoctor(m);
+  else if (S.view === 'store' || S.view === 'market') m.innerHTML = `<header class="head"><div><h1>${S.view === 'store' ? 'Music Store' : 'Marketplace'}</h1></div></header>`;
   else if (S.view === 'settings') renderSettings(m);
   else renderConcept(m);
   renderList();
@@ -1247,7 +1268,7 @@ function renderLibrary(m) {
   const projects = S.libTab === 'projects';
   m.innerHTML = `<header class="head">
     <div><h1>Library</h1><p class="faint">${S.cols.length} ${S.cols.length === 1 ? 'project' : 'projects'} · ${S.tracks.length} ${S.tracks.length === 1 ? 'track' : 'tracks'}${S.tracks.length ? ' · ' + total(S.tracks) : ''}</p></div>
-    <div class="hact"><button class="btn" data-act="import">${ico('import', 16)} Import from Untitled</button><button class="btn primary" data-act="add">${ico('upload', 16)} Add music</button></div>
+    <div class="hact"><button class="btn" data-act="zip-add">${ico('import', 16)} Add from zip</button><button class="btn primary" data-act="add">${ico('upload', 16)} Add music</button></div>
   </header>
   <div class="tools">${seg('libtab', [['projects', 'Projects'], ['tracks', 'All tracks']], S.libTab, 'libtab')}
   ${projects ? '' : `<label class="search box">${ico('search', 16)}<input id="q" type="search" placeholder="Search title, artist, tag or key" value="${esc(S.q)}" autocomplete="off"></label>
@@ -1267,18 +1288,18 @@ function renderProject(m) {
     <div class="cinfo">
       <div class="eyebrow">${picker('ctype', '', KINDS, c.type, 'ctype')}</div>
       <div class="trow"><input class="title-in" id="p-name" data-cf="name" value="${esc(c.name)}" aria-label="Project name"></div>
-      <p class="pmeta"><button class="pm-art" data-act="proj-edit" data-id="${c.id}" title="Edit artists">${esc(projArtist(c))}</button><span>${ts.length} ${ts.length === 1 ? 'song' : 'songs'}${ts.length ? ', ' + total(ts) : ''}</span>${!fol && c.targetDate ? `<span>${esc(relText(c))}</span>` : ''}${c.sequelOf && col(c.sequelOf) ? `<span>Sequel to <button data-act="col" data-id="${c.sequelOf}">${esc(col(c.sequelOf).name)}</button></span>` : ''}</p>
-      ${ts.length && !fol ? `<p class="stat"><span><i class="pill st-final"></i>${nF} done</span><span><i class="pill st-demo"></i>${nD} ${nD === 1 ? 'demo' : 'demos'}</span>${nU ? `<span><i class="pill st-unmixed"></i>${nU} unmixed</span>` : ''}</p>` : ''}
+      <p class="pmeta">${projArtist(c) ? `<button class="pm-art" data-act="proj-edit" data-id="${c.id}" title="Edit artists">${esc(projArtist(c))}</button>` : `<button class="pm-art faint" data-act="proj-edit" data-id="${c.id}">Add artist</button>`}<span>${ts.length} ${ts.length === 1 ? 'song' : 'songs'}${ts.length ? ', ' + total(ts) : ''}</span>${!fol && c.targetDate ? `<span>${esc(relText(c))}</span>` : ''}${c.sequelOf && col(c.sequelOf) ? `<span>Sequel to <button data-act="col" data-id="${c.sequelOf}">${esc(col(c.sequelOf).name)}</button></span>` : ''}</p>
+      ${ts.length && !fol && !c.released ? `<p class="stat"><span><i class="pill st-final"></i>${nF} done</span><span><i class="pill st-demo"></i>${nD} ${nD === 1 ? 'demo' : 'demos'}</span>${nU ? `<span><i class="pill st-unmixed"></i>${nU} unmixed</span>` : ''}</p>` : ''}
       <div class="pact">
         <button class="playbig" data-act="play-col" data-id="${c.id}" aria-label="${playing ? 'Pause' : 'Play'}" title="${playing ? 'Pause' : 'Play'}">${ico(playing ? 'pause' : 'play', 22)}</button>
         <button class="ico pa" data-act="add" title="Upload songs" aria-label="Upload songs">${ico('upload', 20)}</button>
+        <button class="ico pa" data-act="dl-proj" title="Download project" aria-label="Download project">${ico('save', 20)}</button>
         <span class="pa-share"><button class="ico pa" data-act="share" aria-label="Share" title="Share">${ico('share', 20)}</button>
         <div class="pop glass share-pop" id="sharepop"><b>Share</b>
           ${seg('vis', [['private', 'Private'], ['link', 'Link only'], ['public', 'Public']], c.vis, 'vis', 'full')}
           <div class="link box ${c.vis === 'private' ? 'off' : ''}">${ico('link', 16)}<code>${esc(link)}</code><button class="btn sm" data-act="copy" data-link="${esc(link)}" ${c.vis === 'private' ? 'disabled' : ''}>${c.vis === 'private' ? 'Private' : 'Copy'}</button></div>
           ${c.source ? `<a class="btn sm" href="${esc(c.source)}" target="_blank" rel="noopener">${ico('link', 14)} Open the Untitled source</a>` : ''}
           <p class="faint small">Sample link. Nothing is published.</p></div></span>
-        <button class="ico pa" data-act="dl-proj" title="Download project" aria-label="Download project">${ico('save', 20)}</button>
         ${fol ? '' : `<button class="ico pa" data-act="vw-open-case" title="View CD" aria-label="View CD">${ico('disc', 20)}</button>`}
         <button class="ico pa" data-act="proj-more" data-id="${c.id}" title="More" aria-label="More options">${ico('dots', 22)}</button>
       </div>
@@ -1347,7 +1368,7 @@ function openModal(kind, id, x = {}) {
     h = `<h2>${x.seqName ? 'New sequel' : x.isNew ? 'New project' : 'Project details'}</h2>${x.seqName && c.sequelOf && col(c.sequelOf) ? `<p class="faint small" style="margin:0">Follows ${esc(col(c.sequelOf).name)}. Artists and type are carried over.</p>` : ''}
     <label class="lab" for="m-pname">Project name</label><input class="field" id="m-pname" value="${esc(x.seqName || (x.isNew ? '' : c.name))}" placeholder="${esc(x.isNew ? 'Name your project' : c.name)}" autocomplete="off">
     ${coverPickHTML(UI.mCoverDef, UI.mCoverHint)}
-    <label class="lab">Artists</label><p class="faint small" style="margin:0">Add one or more. Leave empty to use ${esc(artistOf())}.</p>
+    <label class="lab">Artists</label><p class="faint small" style="margin:0">Add one or more, or leave it empty.</p>
     <table class="mtable"><tbody data-list="partist">${arts.map(a => metaRow('partist', a)).join('')}</tbody></table>
     <button class="btn sm" data-act="meta-add" data-k="partist" style="align-self:flex-start">${ico('plus', 13)} Add artist</button>
     <div class="two"><div><label class="lab" for="m-ptype">Type</label><div class="sel box wide"><select id="m-ptype">${Object.entries(KINDS).map(([k, l]) => `<option value="${k}" ${c.type === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div></div>
@@ -1905,7 +1926,7 @@ function cdMount() {
   const three = S.cd.view === '3d', v = $('#cdview'); if (!v) return;
   if (three) {
     const g = init3D();
-    if (g) { v.appendChild(g.r.domElement); cdPaintTex(); if (!g.running) { g.running = true; requestAnimationFrame(loop3D); } }
+    if (g && !UI.vw) { v.appendChild(g.r.domElement); cdPaintTex(); if (!g.running) { g.running = true; requestAnimationFrame(loop3D); } }
     else v.innerHTML = `<div class="ps-empty"><b>3D isn't available in this browser</b><span>Use the print sheet to place your art.</span><button class="pso-btn" data-act="cd-view" data-k="2d">Open the print sheet</button></div>`;
   } else requestAnimationFrame(draw2D);
   renderCdPanel();
@@ -2575,9 +2596,9 @@ async function drawDocWaves() {
   const wave = (x, w, h, t0, t1, alpha) => { x.fillStyle = ink; x.globalAlpha = alpha; const s0 = Math.max(0, Math.floor(t0 * sr)), s1 = Math.min(buf.length, Math.ceil(t1 * sr)), per = Math.max(1, (s1 - s0) / w);
     for (let px = 0; px < w; px++) { const a = Math.floor(s0 + px * per), b = Math.min(s1, Math.floor(a + per)); let mn = 0, mx = 0; for (let i = a; i < b; i += Math.max(1, Math.floor(per / 64))) { const v = (ch0[i] + ch1[i]) / 2; if (v < mn) mn = v; if (v > mx) mx = v; } x.fillRect(px, h / 2 - mx * h / 2, 1, Math.max(1, (mx - mn) * h / 2)); } x.globalAlpha = 1; };
   // overview
-  { const [x, w] = prep(cv, 74), dur = buf.duration; wave(x, w, 74, 0, dur, .55);
-    if (an && an.bpm) { const T = 60 / an.bpm; for (let b = 0, tt = an.firstBeat; tt < dur; b++, tt += T) { if (b % 4) continue; x.fillStyle = b % 16 ? 'rgba(128,128,140,.35)' : 'rgba(128,128,140,.75)'; x.fillRect(tt / dur * w, 0, 1, 74); } x.fillStyle = '#e5484d'; x.fillRect(an.firstBeat / dur * w, 0, 2, 74); }
-    if (an && an.lead) { x.fillStyle = 'rgba(229,72,77,.12)'; x.fillRect(0, 0, an.lead / dur * w, 74); } }
+  { const [x, w] = prep(cv, 52), dur = buf.duration; wave(x, w, 52, 0, dur, .55);
+    if (an && an.bpm) { const T = 60 / an.bpm; for (let b = 0, tt = an.firstBeat; tt < dur; b++, tt += T) { if (b % 4) continue; x.fillStyle = b % 16 ? 'rgba(128,128,140,.35)' : 'rgba(128,128,140,.75)'; x.fillRect(tt / dur * w, 0, 1, 52); } x.fillStyle = '#e5484d'; x.fillRect(an.firstBeat / dur * w, 0, 2, 52); }
+    if (an && an.lead) { x.fillStyle = 'rgba(229,72,77,.12)'; x.fillRect(0, 0, an.lead / dur * w, 52); } }
   // zoom: two bars around the first beat, shown as they will be after export
   { const [x, w] = prep(cz, 90); if (!an || !an.bpm) { wave(x, w, 90, 0, Math.min(buf.duration, 4), .6); return; }
     const T = 60 / an.bpm, P = S.docPrefs, fb = an.firstBeat, bar = 4 * T; let mode = P.align; if (mode === 'auto') mode = (fb - (an.lead || 0) <= .08) ? 'trim' : 'pad';
@@ -2602,7 +2623,8 @@ async function docPreview(t) {
 async function docUpload(files) {
   const list = [...files].filter(f => (f.type || '').startsWith('audio/') || AUD.test(f.name)); if (!list.length) return toast('Choose audio files (MP3, WAV, FLAC, M4A or OGG)');
   const c = col(S.docPrefs.target), keys = [];
-  for (const f of list) { const t = newTrack(f, f.name.replace(/\.[^.]+$/, '').replace(/[_]+/g, ' ')); const url = URL.createObjectURL(f); t.dur = await probeDur(url); srcs[t.id] = url; S.tracks.push(t); await DB.put(t.id, f); if (c) c.tracks.push(t.id); keys.push(t.id); }
+  const seq = startsNumbered(list.map(f => f.name)); list.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+  for (const f of list) { const t = newTrack(f, parseName(f.name, { seq }).title); const url = URL.createObjectURL(f); t.dur = await probeDur(url); srcs[t.id] = url; S.tracks.push(t); await DB.put(t.id, f); if (c) c.tracks.push(t.id); keys.push(t.id); }
   DOC.sel = keys[0]; toast(`Added ${keys.length} file${keys.length > 1 ? 's' : ''}${c ? ' to ' + c.name : ''}. Reading tempo and key…`); refresh(); queueAnalysis(keys);
 }
 async function docAct(a, el) {
@@ -2738,7 +2760,7 @@ async function flMidi() {
   } catch (e) { FL.err = 'MIDI isn\'t available on this computer, so FL\'s tempo can\'t be set from here'; }
   return FL.access;
 }
-const flOuts = () => FL.access ? [...FL.access.outputs.values()] : [];
+const flOuts = () => FL.access && FL.want ? [...FL.access.outputs.values()] : [];
 function flPort() { const o = flOuts(), want = S.docPrefs.midiOut; return o.find(x => x.name === want) || o.find(x => /tamed|loopmidi|loopback|loopbe/i.test(x.name)) || null; }
 function flSend(cmd, body = []) { const o = flPort(); if (!o) return false; try { o.send([0xF0, 0x7D, 0x54, 0x50, cmd, ...body, 0xF7]); return true; } catch (e) { return false; } }
 function flTempo(bpm) { const v = Math.round(bpm * 1000); return flSend(1, [(v >> 21) & 127, (v >> 14) & 127, (v >> 7) & 127, v & 127]); }
@@ -2746,11 +2768,11 @@ function flIn(e) { const d = e.data; if (d && d[0] === 0xF0 && d[1] === 0x7D && 
 async function renderFlBox() {
   const el = $('#flbox'); if (!el) return;
   if (!window.tpDesktop || !tpDesktop.fl) { el.innerHTML = `<p class="faint small di-note">Sending to FL Studio works in the Tamed Player app for Windows. It sets FL's tempo to this song and lets you drag the WAV straight onto the playlist. You can get the FL Studio plugin here now.</p><div class="crow"><button class="btn" data-act="doc-fl-download">${ico('save', 14)} Download FL Studio plugin</button></div>`; return; }
-  await flMidi(); if (!FL.status) { try { FL.status = await tpDesktop.fl.status(); } catch (e) { FL.status = {}; } }
+  if (FL.want) await flMidi(); if (!FL.status) { try { FL.status = await tpDesktop.fl.status(); } catch (e) { FL.status = {}; } }
   if (!$('#flbox')) return;
   const t = S.tracks.find(x => keyOf(x) === DOC.sel), an = t && S.an[keyOf(t)], port = flPort(), outs = flOuts();
-  const linked = !!port, answered = FL.pong && Date.now() - FL.pong < 6e5;
-  el.innerHTML = `<div class="fl-stat"><span class="dst ${answered ? 'ok' : linked ? 'wait' : 'err'}">●</span><span>${answered ? 'Linked to FL Studio through <b>' + esc(port.name) + '</b>' : linked ? 'Using MIDI port <b>' + esc(port.name) + '</b>' : FL.err ? esc(FL.err) : 'No link port yet, so FL\'s tempo won\'t change on its own'}</span><button class="btn sm" data-act="doc-fl-setup">${DOC.flSetup ? 'Hide setup' : 'Set up'}</button></div>
+  const linked = !!port, answered = FL.pong && Date.now() - FL.pong < 6e5; if (!FL.want) FL.err = '';
+  el.innerHTML = `<div class="fl-stat"><span class="dst ${answered ? 'ok' : linked ? 'wait' : 'err'}">●</span><span>${!FL.want ? 'The link to FL Studio starts when you send a song or open setup' : answered ? 'Linked to FL Studio through <b>' + esc(port.name) + '</b>' : linked ? 'Using MIDI port <b>' + esc(port.name) + '</b>' : FL.err ? esc(FL.err) : 'No link port yet, so FL\'s tempo won\'t change on its own'}</span><button class="btn sm" data-act="doc-fl-setup">${DOC.flSetup ? 'Hide setup' : 'Set up'}</button></div>
     ${DOC.flSetup ? `<ol class="fl-steps">
       <li><b>Install the FL Studio plugin.</b> ${FL.status && FL.status.installed ? '<span class="dst ok">Installed</span>' : ''}<br><span class="crow"><button class="btn sm" data-act="doc-fl-install">${ico('save', 13)} ${FL.status && FL.status.installed ? 'Install again' : 'Install into FL Studio'}</button><button class="btn sm" data-act="doc-fl-download">Download plugin</button></span></li>
       <li><b>Make a virtual MIDI port.</b> Install <a href="https://www.tobias-erichsen.de/software/loopmidi.html" target="_blank" rel="noopener">loopMIDI</a> (free) and add a port named <b>Tamed Link</b>. On Windows 11 with Windows MIDI Services you can use its loopback port.</li>
@@ -2764,13 +2786,14 @@ async function renderFlBox() {
 }
 async function flAct(a, t, an) {
   switch (a) {
-    case 'doc-fl-setup': DOC.flSetup = !DOC.flSetup; renderFlBox(); break;
+    case 'doc-fl-setup': DOC.flSetup = !DOC.flSetup; FL.want = true; renderFlBox(); break;
     case 'doc-fl-download': flDownload(); break;
     case 'doc-fl-install': { const r = await tpDesktop.fl.install(); if (r && r.ok) { FL.status = null; FL.msg = 'Plugin installed in ' + r.dir + '. Restart FL Studio if it was open.'; } else if (r && r.error) FL.msg = 'The script could not be installed: ' + r.error; renderFlBox(); break; }
     case 'doc-fl-test': { if (!flSend(2)) { FL.msg = 'That port could not be used.'; renderFlBox(); break; } FL.msg = 'Sent. FL\'s hint bar should say "Tamed Player is connected".'; renderFlBox(); break; }
     case 'doc-fl-reveal': if (an && an.flPath) tpDesktop.fl.reveal(an.flPath); break;
     case 'doc-fl-send': {
       if (!t || !an || !an.bpm) return toast('Read the file first so the tempo is known');
+      FL.want = true; await flMidi();
       toast('Making the WAV for FL Studio…');
       try {
         const { blob, name, mode } = await makeWav(t), file = await tpDesktop.fl.save(name, await blob.arrayBuffer());
@@ -2845,7 +2868,6 @@ function renderSettings(m) {
     </section>
     <section class="set-card box"><h2>Playback</h2>
       ${setRow('Play the next track automatically', 'When a song ends, the next one in the list starts.', sw('autoNext', P.autoNext, 'Play the next track automatically'))}
-      ${setRow('Click a track to play it', 'Clicking anywhere on a song row plays or pauses it.', sw('clickToPlay', P.clickToPlay, 'Click a track to play it'))}
       ${setRow('Equalizer', S.eq.on ? 'On: ' + (EQP[S.eq.preset] ? EQP[S.eq.preset][0] : 'Custom') : 'Off', `<button class="btn sm" data-act="eq">${ico('eq', 14)} Open equalizer</button>`)}
     </section>
     <section class="set-card box"><h2>New projects</h2>
@@ -2939,20 +2961,25 @@ function cxCtx() {
   const c = col(S.cx.colId) || orderedProjects()[0], ts = colTracks(c), t = trk(S.cur);
   return { c, ts, t, playingHere: S.playing && c && c.tracks.includes(S.cur) };
 }
+const artistArt = (name, kind) => { const a = S.artists && S.artists[name]; return a && a[kind] && srcs['artist:' + kind + ':' + name] ? srcs['artist:' + kind + ':' + name] : ''; };
+const artistProjects = name => orderedProjects().filter(p => !name || projArtists(p).includes(name));
+const artistAv = name => { const pic = artistArt(name, 'pic'); if (pic) return `background:url(${pic}) center/cover`; const ps = artistProjects(name); return ps.length ? pcov(ps[ps.length - 1]) : cover(3, 9); };
 function spHTML() {
-  const { c, ts, t, playingHere } = cxCtx(), C = S.concept, X = S.cx, ord = orderedProjects();
+  const { c, ts, t, playingHere } = cxCtx(), C = S.concept, X = S.cx, aName = X.artist || (c && projArtists(c)[0]) || artistOf(), ordAll = orderedProjects(), ord = X.page === 'artist' ? (artistProjects(aName).length ? artistProjects(aName) : ordAll) : ordAll;
   const hc = X.page === 'artist' ? (ord[0] ? pcolors(ord[0])[0] : '#535353') : X.page === 'lyrics' && t ? pcolors(ownerCol(t) || c || { h1: 0, h2: 0 })[0] : c ? pcolors(c)[0] : '#535353';
   let body;
   if (X.page === 'artist') {
-    body = `<div class="sp-hero"><span class="cv round" style="${ord[0] ? pcov(ord[0]) : cover(3, 9)}"></span><div class="ht"><small>${C.verified ? vbadge(22) + ' Verified Artist' : 'Artist'}</small><h2>${esc(artistOf())}</h2><span class="sp-by"><span>${S.cols.length} projects · ${total(S.tracks)}</span></span></div></div>
+    const bg = artistArt(aName, 'bg'), aTracks = ord.flatMap(colTracks);
+    body = `<div class="sp-hero ${bg ? 'has-bg' : ''}" style="${bg ? `background:linear-gradient(transparent 30%, rgba(0,0,0,.7)), url(${bg}) center/cover` : ''}"><span class="cv round" style="${artistAv(aName)}"></span><div class="ht"><small>${C.verified ? vbadge(22) + ' Verified Artist' : 'Artist'}</small><h2>${esc(aName || 'Artist')}</h2><span class="sp-by"><span>${ord.length} ${ord.length === 1 ? 'project' : 'projects'} · ${total(aTracks)}</span></span>
+      <span class="sp-artbtns"><button data-act="cx-artpic" data-k="pic">${ico('image', 13)} Picture</button><button data-act="cx-artpic" data-k="bg">${ico('image', 13)} Background</button></span></div></div>
     <div class="sp-body"><div class="sp-actions"><button class="sp-big" data-act="cx-playall" data-id="${ord[0] ? ord[0].id : ''}" aria-label="Play">${ico(S.playing ? 'pause' : 'play', 24)}</button></div>
       ${ord.length ? `<h3 class="sp-sec">Latest release</h3><button class="sp-li" data-act="cx-album" data-id="${ord[ord.length - 1].id}" style="max-width:420px"><span class="cv" style="width:96px;height:96px;${pcov(ord[ord.length - 1])}"></span><span class="meta"><b style="font-weight:700">${esc(ord[ord.length - 1].name)}</b><span>${yearOf(ord[ord.length - 1])} · ${KINDS[ord[ord.length - 1].type]}</span></span></button>` : ''}
-      <h3 class="sp-sec">Discography</h3><div class="sp-disco">${ord.map(p => `<button class="sp-card" data-act="cx-album" data-id="${p.id}"><span class="cv" style="${pcov(p)}"></span><b>${esc(p.name)}</b><span>${yearOf(p)} · ${KINDS[p.type]}</span></button>`).join('')}</div></div>`;
+      <h3 class="sp-sec">Discography</h3><div class="sp-disco">${ord.map(p => `<div class="sp-card" role="button" tabindex="0" data-act="cx-album" data-id="${p.id}"><div class="cv" style="${pcov(p)}"></div><b>${esc(p.name)}</b><span>${yearOf(p)} · ${KINDS[p.type]}</span></div>`).join('')}</div></div>`;
   } else if (X.page === 'lyrics' && t) {
     body = `<div class="sp-lyrics">${lyricLines(t).map(l => `<p class="js-lyr">${esc(l)}</p>`).join('')}</div>`;
   } else if (c) {
     body = `<div class="sp-hero"><span class="cv" style="${pcov(c)}"></span><div class="ht"><small>${KINDS[c.type]}</small><h2>${esc(c.name)}</h2>
-      <span class="sp-by"><span class="av" style="${ord[0] ? pcov(ord[0]) : cover(3, 9)}"></span><button data-act="cx-artist"><b>${esc(projArtist(c))}</b></button>${C.verified ? vbadge(16) : ''}<span>• ${yearOf(c)} • ${ts.length} ${ts.length === 1 ? 'song' : 'songs'}, ${total(ts)}</span></span></div></div>
+      <span class="sp-by"><span class="av" style="${artistAv(projArtists(c)[0])}"></span><button data-act="cx-artist" data-k="${esc(projArtists(c)[0] || '')}"><b>${esc(projArtist(c))}</b></button>${C.verified ? vbadge(16) : ''}<span>• ${yearOf(c)} • ${ts.length} ${ts.length === 1 ? 'song' : 'songs'}, ${total(ts)}</span></span></div></div>
       <div class="sp-body"><div class="sp-actions"><button class="sp-big" data-act="cx-playall" data-id="${c.id}" aria-label="Play">${ico(playingHere ? 'pause' : 'play', 24)}</button><button class="ghost" data-act="noop" aria-label="Save">${ico('heart', 28)}</button><button class="ghost" data-act="noop" aria-label="More">${ico('dots', 28)}</button></div>
       <div class="sp-table"><div class="sp-th"><span style="text-align:right">#</span><span>Title</span><span style="text-align:right">${ico('time', 16)}</span></div>
       ${ts.map((x, i) => `<button class="sp-tr ${x.id === S.cur ? 'on' : ''}" data-act="cx-track" data-id="${x.id}"><span class="n">${x.id === S.cur && S.playing ? '<i class="eqi" style="justify-content:flex-end"><b></b><b></b><b></b></i>' : i + 1}</span><span class="meta"><b>${esc(dispTitle(x))}</b><span>${esc(dispArtist(x))}</span></span><span class="d">${fmt(verDur(x))}</span></button>`).join('')}</div>
@@ -3011,7 +3038,7 @@ function renderBar() {
       <button class="ico" data-act="prev" aria-label="Previous">${ico('prev', 20)}</button>
       <button class="pbtn" data-act="toggle" aria-label="${S.playing ? 'Pause' : 'Play'}">${ico(S.playing ? 'pause' : 'play', 22)}</button>
       <button class="ico" data-act="next" aria-label="Next">${ico('next', 20)}</button>
-      <button class="ico" data-act="to-concept-now" aria-label="Open in concept player" title="Concept player">${ico('phone', 18)}</button>
+
     </div>
     <div class="scrub"><span class="mono js-cur">0:00</span><div class="seek" data-seek><div class="rail"><div class="fill js-fill"></div></div></div><span class="mono js-dur">${t ? fmt(verDur(t)) : '0:00'}</span></div>
   </div>
@@ -3045,7 +3072,7 @@ function openDrawer(id) {
   <label class="lab" for="d-tags">Tags</label><input class="field" id="d-tags" data-f="tags" value="${esc(t.tags)}" placeholder="synth, late night">
   <label class="lab">Versions</label><div class="vers" id="d-vers">${versHTML(t)}</div>
   <div class="crow" style="margin-top:6px"><button class="btn sm" data-act="ver-add">${ico('plus', 14)} Add a version</button></div>
-  <label class="lab" for="d-lyr">Lyrics</label><textarea class="field" id="d-lyr" data-f="lyrics" rows="4" placeholder="One line per row. Shown in the concept player.">${esc(t.lyrics || '')}</textarea>
+  <label class="lab" for="d-lyr">Lyrics</label><textarea class="field" id="d-lyr" data-f="lyrics" rows="9" style="resize:vertical;min-height:160px" placeholder="One line per row. Shown in the concept player.">${esc(t.lyrics || '')}</textarea>
   <label class="lab">In projects</label>
   <div class="chk-list">${S.cols.map(c => `<label class="check"><input type="checkbox" data-incol="${c.id}" ${c.tracks.includes(id) ? 'checked' : ''}><span>${esc(c.name)}</span></label>`).join('') || '<p class="faint small">Create a project first.</p>'}</div>
   <div class="crow"><button class="btn sm" data-act="deltrack">${ico('trash', 14)} Delete track</button></div>`;
@@ -3096,6 +3123,20 @@ function refresh() {
 
 /* ---------- files ---------- */
 const probeDur = url => new Promise(res => { const a = new Audio(); a.preload = 'metadata'; a.onloadedmetadata = () => res(isFinite(a.duration) ? a.duration : 180); a.onerror = () => res(180); a.src = url; });
+/* "01-georgia-peach.mp3" -> georgia peach (track 1). A leading number counts as a track number when it is zero-padded,
+   followed by a separator, or every file in the batch starts with one ("7 rings" on its own stays "7 rings"). */
+function parseName(name, opt = {}) {
+  let s = String(name).replace(/\.[a-z0-9]{2,5}$/i, ''), num = null, disc = null, m;
+  if ((m = s.match(/^\s*(\d)[-.](\d{2,3})(?=[\s._-])[\s._-]*/))) { disc = +m[1]; num = +m[2]; s = s.slice(m[0].length); }
+  else if ((m = s.match(/^\s*(?:track\s*)?(\d{1,3})\s*[-._)\]]+\s*(?=\S)/i)) || (m = s.match(/^\s*(0\d{1,2})\s+(?=\S)/)) || (opt.seq && (m = s.match(/^\s*(\d{1,3})\s+(?=\S)/)))) { num = +m[1]; s = s.slice(m[0].length); }
+  s = s.replace(/_+/g, ' ');
+  if (!/\s/.test(s.trim()) && /-/.test(s)) s = s.replace(/-+/g, ' ');
+  for (const a of (opt.artists || []).filter(Boolean)) s = s.replace(new RegExp('^\\s*' + a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*[-–—]\\s+', 'i'), '');
+  s = s.replace(/\s*[\(\[](?:official\s*)?(?:music\s*)?(?:audio|video|lyrics?(?:\s*video)?|visuali[sz]er|explicit|clean|hq|hd|\d{2,3}\s?kbps|mp3|remaster(?:ed)?)[\)\]]/ig, '')
+       .replace(/\s*\(?\b(?:www\.)?[a-z0-9-]+\.(?:com|net|org|io|co)\b\)?/ig, '').replace(/\s+-\s*copy(?:\s*\(\d+\))?$/i, '').replace(/\s{2,}/g, ' ').trim();
+  return { title: s || String(name).replace(/\.[^.]+$/, ''), num, disc };
+}
+const startsNumbered = names => names.length > 1 && names.every(n => /^\s*\d{1,3}\b/.test(n));
 function newTrack(f, title, artist, extra = {}) {
   const id = uid(), h = hash(title + id); extra.ext = extra.ext || extOf(f);
   return { id, title, artist: artist || '', features: [], featInTitle: false, status: 'demo', bpm: 0, key: '', dur: 180, h1: h % 360, h2: (h >> 3) % 360, tags: '', lyrics: '', added: Date.now(), file: true, versions: [], ver: id, ...extra };
@@ -3103,10 +3144,11 @@ function newTrack(f, title, artist, extra = {}) {
 async function handleFiles(files) {
   const list = [...files].filter(f => (f.type || '').startsWith('audio/') || AUD.test(f.name));
   if (!list.length) return toast('Choose audio files (mp3, wav, m4a, flac, ogg)');
-  let n = 0; const c = S.view === 'collection' ? col(S.colId) : null;
-  for (const f of list) {
-    const name = f.name.replace(/\.[^.]+$/, '').replace(/[_]+/g, ' ');
-    const t = newTrack(f, name); const url = URL.createObjectURL(f); t.dur = await probeDur(url);
+  let n = 0; const c = S.view === 'collection' ? col(S.colId) : null, seq = startsNumbered(list.map(f => f.name));
+  const P = []; for (const f of list) { const tags = /\.mp3$/i.test(f.name) ? await readID3(f) : {}, pn = parseName(f.name, { seq, artists: [tags.TPE1, tags.TPE2] }); P.push({ f, tags, num: tags.TRCK ? parseInt(tags.TRCK, 10) : pn.num, title: tags.TIT2 ? parseName(tags.TIT2, { artists: [tags.TPE1] }).title : pn.title }); }
+  P.sort((a, b) => ((a.num ?? 999) - (b.num ?? 999)) || a.f.name.localeCompare(b.f.name, undefined, { numeric: true }));
+  for (const { f, tags, title } of P) {
+    const t = newTrack(f, title, (tags.TPE1 || '').split(/\s*(?:,|&|\bfeat\.?|\bft\.?)\s*/i)[0]); const url = URL.createObjectURL(f); t.dur = await probeDur(url);
     srcs[t.id] = url; S.tracks.push(t); await DB.put(t.id, f); n++; if (c) c.tracks.push(t.id);
   }
   toast(`Added ${n} track${n > 1 ? 's' : ''}${c ? ' to ' + c.name : ''}`); refresh(); queueAnalysis(S.tracks.slice(-n).map(keyOf));
@@ -3201,16 +3243,15 @@ async function importFiles(files) {
   const auds = ents.filter(e => AUD.test(e.name)), imgs = ents.filter(e => /\.(jpe?g|png|webp|gif)$/i.test(e.name));
   if (!auds.length) { st(''); return toast('No audio found in that download'); }
   st(`Reading ${auds.length} track${auds.length > 1 ? 's' : ''}…`);
-  const P = [];
+  const P = [], seq = startsNumbered(auds.map(a => a.name));
   for (const e of auds) {
     const tags = /\.mp3$/i.test(e.name) ? await readID3(e.blob) : {};
-    const base = e.name.replace(/\.[^.]+$/, ''), m = base.match(/^\s*(\d{1,3})[\s.\-_)]+(.+)$/);
-    const num = tags.TRCK ? parseInt(tags.TRCK, 10) : m ? +m[1] : null;
-    let title = (tags.TIT2 || (m ? m[2] : base)).replace(/_+/g, ' ').trim();
-    const ta = tags.TPE1 || ''; if (!tags.TIT2 && ta && title.toLowerCase().startsWith(ta.toLowerCase() + ' - ')) title = title.slice(ta.length + 3);
-    P.push({ e, tags, num, title });
+    const pn = parseName(e.name, { seq, artists: [tags.TPE1, tags.TPE2] });
+    const num = tags.TRCK ? parseInt(tags.TRCK, 10) : pn.num, disc = tags.TPOS ? parseInt(tags.TPOS, 10) : pn.disc;
+    const title = tags.TIT2 ? parseName(tags.TIT2, { artists: [tags.TPE1] }).title : pn.title;
+    P.push({ e, tags, num, disc, title });
   }
-  P.sort((a, b) => ((a.num ?? 999) - (b.num ?? 999)) || a.e.path.localeCompare(b.e.path));
+  P.sort((a, b) => ((a.disc || 1) - (b.disc || 1)) || ((a.num ?? 999) - (b.num ?? 999)) || a.e.path.localeCompare(b.e.path, undefined, { numeric: true }));
   const folder = (auds[0].path.includes('/') ? auds[0].path.split('/').slice(-2, -1)[0] : '') || '';
   const pname = modeOf(P.map(p => p.tags.TALB).filter(Boolean)) || zipName || folder || 'Imported project';
   const partist = modeOf(P.map(p => p.tags.TPE2 || p.tags.TPE1).filter(Boolean));
@@ -3220,7 +3261,7 @@ async function importFiles(files) {
   const chosen = await askName(pname, P.length, zname, found); if (chosen == null) { toast('Import cancelled'); return; }
   const c = newProject(chosen.name); c.type = P.length === 1 ? 'single' : P.length <= 6 ? 'ep' : 'album';
   if (UI.importLink) c.source = UI.importLink;
-  if (partist && (S.concept.artist === 'Artist Name' || !S.concept.artist)) S.concept.artist = partist.split(/,|&| feat\.? | ft\.? /i)[0].trim();
+  if (partist) c.artists = [partist.split(/\s*(?:,|&|\bfeat\.?|\bft\.?|\bfeaturing)\s*/i)[0].trim()];
   for (const p of P) {
     const people = (p.tags.TPE1 || partist || '').split(/\s*(?:,|&|\bfeat\.?|\bft\.?|\bfeaturing)\s*/i).map(s => s.trim()).filter(Boolean);
     let title = p.title, inT = [];
@@ -3310,6 +3351,7 @@ function act(a, el, e) {
     case 'm-cover-clear': if (UI.mCover && UI.mCover.url) URL.revokeObjectURL(UI.mCover.url); UI.mCover = false; refreshCoverPick(); break;
     case 'ctx-cover': UI.coverFor = id; $('#art').click(); break;
     case 'save-now': saveNow(); break;
+    case 'zip-add': $('#zipfile').click(); break;
     case 'changelog': openChangelog(); break;
     case 'changelog-new': $('#toast').classList.remove('show', 'act'); openChangelog(null, k); break;
     case 'ctx-disc': exportDisc(id); break;
@@ -3361,8 +3403,9 @@ function act(a, el, e) {
     case 'to-concept-now': { const c = S.cur ? (S.cols.find(x => x.tracks.includes(S.cur))) : null; S.cx = { ...S.cx, open: true, page: 'album', colId: c ? c.id : (S.cols[0] || {}).id }; closeDrawer(); refresh(); break; }
     case 'cx-exit': S.cx.open = false; refresh(); break;
     case 'cx-album': S.cx.page = 'album'; S.cx.colId = id; refresh(); { const sc = $('.sp-main, .am-main'); if (sc) sc.scrollTop = 0; } break;
-    case 'cx-artist': S.cx = { ...S.cx, open: true, page: 'artist' }; closeDrawer(); refresh(); { const sc = $('.sp-main, .am-main'); if (sc) sc.scrollTop = 0; } break;
+    case 'cx-artist': S.cx = { ...S.cx, open: true, page: 'artist', artist: k || S.cx.artist || '' }; closeDrawer(); refresh(); { const sc = $('.sp-main, .am-main'); if (sc) sc.scrollTop = 0; } break;
     case 'cx-back': S.cx.page = S.cx.page === 'album' ? 'artist' : 'album'; refresh(); break;
+    case 'cx-artpic': { const n = S.cx.artist || ((col(S.cx.colId) && projArtists(col(S.cx.colId))[0]) || artistOf()); UI.artFor = { name: n, kind: k }; $('#artimg').click(); break; }
     case 'cx-lyrics': if (!S.cur) { toast('Play a track to see its lyrics'); break; } S.cx.page = S.cx.page === 'lyrics' ? 'album' : 'lyrics'; refresh(); break;
     case 'cx-track': { const c = col(S.cx.colId) || orderedProjects()[0]; if (S.cur === id) toggle(); else playTrack(id, c.tracks.filter(trk)); break; }
     case 'cx-playall': { const c = col(id); if (!c) break; const ids = c.tracks.filter(trk); if (S.playing && ids.includes(S.cur)) toggle(); else playQueue(ids, false); break; }
@@ -3393,7 +3436,7 @@ function act(a, el, e) {
 }
 document.addEventListener('click', e => {
   if (UI.noClick && Date.now() - UI.noClick < 350) { e.preventDefault(); e.stopPropagation(); return; }
-  { const r = e.target.closest && e.target.closest('#list .row'); if (r && S.prefs.clickToPlay !== false && !e.target.closest('button, input, a, select, textarea, [data-act]')) { const id = r.dataset.id; if (S.cur === id) toggle(); else playTrack(id, curListIds.length ? curListIds : null); return; } }
+  { const r = e.target.closest && e.target.closest('#list .row'); if (r && !e.target.closest('button, input, a, select, textarea, [data-act]')) { $$('#list .row.sel').forEach(x => x !== r && x.classList.remove('sel')); r.classList.add('sel'); } if (false) { const id = r.dataset.id; if (S.cur === id) toggle(); else playTrack(id, curListIds.length ? curListIds : null); return; } }
   { const m = $('#ctx'); if (m) { const it = e.target.closest('.ctx-i'); if (!it || !(it.dataset.confirm && !it.dataset.armed)) setTimeout(closeCtx, 0); } }
   if (UI.fontOpen && !e.target.closest('#psfontdrop, [data-act="cd-fontpick"]')) { UI.fontOpen = false; renderFontDrop(); }
   const el = e.target.closest('[data-act]');
@@ -3437,6 +3480,8 @@ document.addEventListener('change', e => {
   else if (t.id === 'restorefile') { const f = t.files[0]; t.value = ''; if (f) restoreAll(f); }
   else if (t.id === 'set-deftype') { S.prefs.defType = t.value; save(); }
   else if (t.id === 'mcoverfile') { const f = t.files[0]; t.value = ''; if (f) setModalCover(f); }
+  else if (t.id === 'zipfile') { const fl = [...t.files]; t.value = ''; if (fl.length) importFiles(fl); }
+  else if (t.id === 'artimg') { const f = t.files[0], A = UI.artFor; t.value = ''; if (f && A) (async () => { const key = 'artist:' + A.kind + ':' + A.name; await DB.put(key, f); if (srcs[key]) URL.revokeObjectURL(srcs[key]); srcs[key] = URL.createObjectURL(f); S.artists = S.artists || {}; S.artists[A.name] = { ...(S.artists[A.name] || {}), [A.kind]: true }; save(); refresh(); toast(A.kind === 'pic' ? 'Artist picture updated' : 'Artist background updated'); })(); }
   else if (t.id === 'replaudio') { const f = t.files[0], tr = trk(UI.replFor); t.value = ''; if (f && tr) (async () => {
       const k = keyOf(tr), url = URL.createObjectURL(f), dur = await probeDur(url); await DB.put(k, f); if (srcs[k]) URL.revokeObjectURL(srcs[k]); srcs[k] = url;
       if (k === tr.id) tr.dur = dur; else { const v = tr.versions.find(x => x.id === k); if (v) v.dur = dur; }
@@ -3688,7 +3733,7 @@ function trackMenu(t, inCol) {
     { label: 'Rename…', act: 'meta-open', id: t.id, icon: 'type' }, { label: 'Metadata & Credits…', act: 'meta-open', id: t.id, icon: 'list' }, { label: 'Edit Track…', act: 'edit', id: t.id, icon: 'edit' }, { sep: 1 },
     { label: 'Replace Audio…', act: 'ctx-replaudio', id: t.id, icon: 'upload' }, { label: 'Add a Version…', act: 'ctx-addver', id: t.id, icon: 'plus' }, { label: 'Download Audio', act: 'ctx-dlaudio', id: t.id, icon: 'save' }, { sep: 1 },
     ...Object.entries(ST).map(([k, l]) => ({ label: 'Mark as ' + l, act: 'set-st', id: t.id, k, icon: t.status === k ? 'check' : null })), { sep: 1 },
-    ...(inCol ? [{ label: 'Change Project Cover…', act: 'ctx-cover', id: S.colId, icon: 'image' }, { label: 'Remove from Project', act: 'rm', id: t.id, icon: 'x' }] : []),
+    ...(inCol ? [{ label: 'Remove from Project', act: 'rm', id: t.id, icon: 'x' }] : []),
     { label: 'Delete Track', act: 'ctx-deltrack', id: t.id, icon: 'trash', danger: 1, confirm: 'Click again to delete' }];
 }
 function projectMenu(c) {
@@ -3730,6 +3775,7 @@ addEventListener('blur', closeCtx); addEventListener('resize', closeCtx);
   for (const t of S.tracks) { if (t.file) { const b = await DB.get(t.id); if (b) srcs[t.id] = URL.createObjectURL(b); else t.file = false; } for (const v of t.versions) { const b = await DB.get(v.id); if (b) srcs[v.id] = URL.createObjectURL(b); } if (t.ver !== t.id && !srcs[t.ver]) t.ver = t.id; }
   for (const c of S.cols) for (const cv of c.covers) { const b = await DB.get('art:' + cv.id); if (b) { srcs['art:' + cv.id] = URL.createObjectURL(b); if (!cv.colors) cv.colors = await extractColors(srcs['art:' + cv.id]); } }
   await loadCustomFonts();
+  for (const [n, a] of Object.entries(S.artists || {})) for (const k of ['pic', 'bg']) if (a[k]) { const b = await DB.get('artist:' + k + ':' + n); if (b) srcs['artist:' + k + ':' + n] = URL.createObjectURL(b); }
   for (const dd of Object.values(S.cd.designs || {})) for (const sd of Object.values(dd)) for (const l of (sd.layers || [])) if (l.src && l.src.startsWith('cdimg:') && !srcs[l.src]) { const b = await DB.get(l.src); if (b) srcs[l.src] = URL.createObjectURL(b); }
   S.cols.forEach(c => { c.covers = c.covers.filter(cv => srcs['art:' + cv.id]); if (!c.covers.some(cv => cv.id === c.cover)) c.cover = c.covers.length ? c.covers[0].id : null; });
   if (S.cur && !trk(S.cur)) S.cur = null;
