@@ -1,11 +1,26 @@
 {
-  "version": "1.4.0",
+  "version": "1.5.0",
   "file": "Compass-Setup.exe",
-  "size": 82398814,
-  "sha256": "2d7b3799bda908e3b91c1c8682f3bc3d67e178d948bf24338c4a49babdf6110c",
-  "notes": "Tamed Player is now Compass. Your projects carry over. Library: My Music tab for albums you bought. Drop the zip and it is named and ordered for you. Digital albums are read-only; Make My Version gives you an editable copy. Folders hold projects and show the four newest covers. Drag a project onto a folder, or onto another project to make a folder. Archive projects, and Recently deleted in Settings keeps deleted projects and songs for 30 days. Sidebar shows the artist and can be sorted, grouped by artist and filtered. Select songs with Shift or Ctrl and right-click to export, move, copy, duplicate, change status or delete them. Export Track for a single song. The Added date sits between Status and Time. Launcher finds FL Studio, Ableton, REAPER and other DAWs and opens them; locate any it misses. Music Store with Digital and Physical, and a first look at the Marketplace.",
+  "size": 82418746,
+  "sha256": "49a8e87c061d3e21c44ce9ee4de108d7eb17ca9a50c5ef61338b365956abb593",
+  "notes": "Projects can have several discs: Add a disc at the bottom of the song list, drag songs onto a disc, drag discs to reorder them, and number each disc from 1 or across the whole project. Zips dropped on a project become a new disc. Label, copyright, sound recording, UPC and catalog number in Edit Details, shown under the song list. Project logos show instead of the name in the CD viewer. Library › CD Player: every CD in a grid. Click to view, right-click to play. CD viewer: play, skip and pick songs, step between CDs, control case and disc spin speed, hide the controls, and keys for all of it (press ? to see them). Video: makes an 8-second MP4 of the case opening and the disc coming out, saved to Downloads. Library › Stats: plays and time listened for every song and project. Convert a project to a digital album and put it in the Store. Albums you imported can be played but not sold. Verified releases show a green badge next to their length.",
   "date": "2026-11-12",
   "changelog": [
+    {
+      "v": "1.5.0",
+      "d": "2026-11-12",
+      "items": [
+        "Projects can have several discs: Add a disc at the bottom of the song list, drag songs onto a disc, drag discs to reorder them, and number each disc from 1 or across the whole project. Zips dropped on a project become a new disc.",
+        "Label, copyright, sound recording, UPC and catalog number in Edit Details, shown under the song list.",
+        "Project logos show instead of the name in the CD viewer.",
+        "Library › CD Player: every CD in a grid. Click to view, right-click to play.",
+        "CD viewer: play, skip and pick songs, step between CDs, control case and disc spin speed, hide the controls, and keys for all of it (press ? to see them).",
+        "Video: makes an 8-second MP4 of the case opening and the disc coming out, saved to Downloads.",
+        "Library › Stats: plays and time listened for every song and project.",
+        "Convert a project to a digital album and put it in the Store. Albums you imported can be played but not sold.",
+        "Verified releases show a green badge next to their length."
+      ]
+    },
     {
       "v": "1.4.0",
       "d": "2026-11-12",
@@ -168,13 +183,6 @@
       "d": "2026-11-09",
       "items": [
         "Editor controls, credits and in-app updates."
-      ]
-    },
-    {
-      "v": "1.0.0",
-      "d": "2026-11-09",
-      "items": [
-        "First Windows release."
       ]
     }
   ]

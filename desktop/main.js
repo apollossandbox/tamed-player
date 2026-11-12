@@ -121,6 +121,8 @@ function dawScan() {
 
 app.whenReady().then(() => {
   ipcMain.handle('tp-daw-scan', () => dawScan());
+  // videos go straight to the Downloads folder, no dialog
+  ipcMain.handle('tp-save-downloads', (e, name, data) => { try { const dir = app.getPath('downloads'); let f = path.join(dir, cleanName(name)); const ext = path.extname(f), base = f.slice(0, -ext.length); for (let i = 2; fs.existsSync(f); i++) f = `${base} (${i})${ext}`; fs.writeFileSync(f, Buffer.from(data)); shell.showItemInFolder(f); return f; } catch (err) { return null; } });
   ipcMain.handle('tp-daw-open', async (e, file) => { if (typeof file !== 'string' || !fs.existsSync(file) || !/\.(exe|app|lnk)$/i.test(file)) return { ok: false, error: 'That program was not found' }; const err = await shell.openPath(file); return err ? { ok: false, error: err } : { ok: true }; });
   ipcMain.handle('tp-daw-locate', async (e, name) => { const r = await dialog.showOpenDialog(win, { title: 'Find ' + (name || 'your DAW'), properties: process.platform === 'darwin' ? ['openFile', 'treatPackageAsDirectory'] : ['openFile'], filters: process.platform === 'win32' ? [{ name: 'Programs', extensions: ['exe', 'lnk'] }] : [] }); return r.canceled ? null : r.filePaths[0]; });
   // Web MIDI (with SysEx) is how the app talks to the FL Studio script

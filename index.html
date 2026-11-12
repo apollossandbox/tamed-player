@@ -709,6 +709,28 @@ body.cx-on .bar { transform: none; }
 .vw-logo { max-height: 42px; max-width: 280px; object-fit: contain; display: block; margin-bottom: 4px; }
 .stats-k { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 6px 0 24px; } .stats-k > div { padding: 16px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; } .stats-k span { color: var(--ink2); font-size: 12.5px; } .stats-k b { font-size: 24px; }
 .stats-t { display: flex; flex-direction: column; gap: 2px; margin-bottom: 24px; } .stats-t > div { display: grid; grid-template-columns: 28px minmax(0, 1fr) 80px 90px 110px; gap: 12px; align-items: center; padding: 8px 10px; border-radius: 10px; } .stats-t > div:hover { background: var(--hover); } .stats-t .mono { color: var(--ink2); font-size: 13px; text-align: right; }
+
+/* viewer: songs, controls, hide UI; library CD player */
+.vw-list { position: absolute; right: 16px; top: 84px; bottom: 100px; width: 300px; overflow: auto; padding: 10px; border-radius: 14px; background: rgba(20,20,22,.88); border: 1px solid rgba(255,255,255,.1); color: #eee; z-index: 2; }
+.vw-list header { display: flex; align-items: center; justify-content: space-between; padding: 4px 6px 8px; } .vw-list header .ico { color: #ccc; }
+.vwl-d { margin: 10px 6px 4px; font-size: 12px; font-weight: 700; color: rgba(255,255,255,.7); display: flex; align-items: center; gap: 6px; }
+.vwl-t { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 8px; align-items: center; width: 100%; padding: 7px 8px; border-radius: 8px; color: rgba(255,255,255,.88); text-align: left; } .vwl-t:hover { background: rgba(255,255,255,.08); } .vwl-t.on { background: rgba(255,255,255,.16); color: #fff; }
+.vwl-t span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .vwl-n { color: rgba(255,255,255,.6); font-size: 12px; text-align: center; } .vwl-t em { font-style: normal; font-size: 12px; color: rgba(255,255,255,.6); }
+.vw-ib { width: 34px; height: 34px; border-radius: 9px; display: inline-grid; place-items: center; color: rgba(255,255,255,.92); } .vw-ib:hover { background: rgba(255,255,255,.1); } .vw-ib.play { background: #fff; color: #111; border-radius: 50%; }
+.vw-spd { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: rgba(255,255,255,.85); padding: 0 6px; } .vw-spd input { width: 70px; accent-color: #fff; }
+.vw-cd { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: rgba(255,255,255,.1); } .vw-cd:hover { background: rgba(255,255,255,.2); }
+.vw-unhide { display: none; position: absolute; right: 16px; bottom: 16px; padding: 6px 12px; border-radius: 99px; background: rgba(0,0,0,.4); color: rgba(255,255,255,.8); font-size: 12px; font-weight: 700; z-index: 3; }
+.viewer.bare .vw-top, .viewer.bare .vw-bar, .viewer.bare .vw-hint, .viewer.bare .vw-list { opacity: 0; pointer-events: none; } .viewer.bare .vw-unhide { display: block; opacity: .55; } .viewer.bare .vw-unhide:hover { opacity: 1; }
+.vw-top, .vw-bar, .vw-hint, .vw-list { transition: opacity .3s; } .vw-hint kbd, .vw-unhide kbd { font: inherit; padding: 0 5px; border-radius: 4px; background: rgba(255,255,255,.14); }
+.cdgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 30px 24px; padding: 8px 4px; }
+.cdcard { position: relative; display: flex; flex-direction: column; gap: 4px; cursor: pointer; min-width: 0; animation: pop .5s var(--ease) both; animation-delay: calc(var(--n) * 35ms); } .cdcard b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .cdcard > span { color: var(--ink2); font-size: 13px; }
+.cdjewel { position: relative; width: 100%; padding-bottom: 88%; border-radius: 4px; background: linear-gradient(135deg, rgba(255,255,255,.5), rgba(255,255,255,.12)); box-shadow: 0 14px 30px -12px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.35); transition: transform .35s var(--ease); margin-bottom: 8px; }
+.cdcard:hover .cdjewel { transform: translateY(-4px) rotate(-1deg); }
+.cdj-art { position: absolute; top: 4%; bottom: 4%; left: 9%; right: 3%; overflow: hidden; } .cdj-art img, .cdj-art > span { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cdj-hinge { position: absolute; left: 2%; top: 3%; bottom: 3%; width: 5%; border-radius: 2px; background: linear-gradient(90deg, rgba(255,255,255,.55), rgba(255,255,255,.15)); }
+.cdj-gloss { position: absolute; inset: 0; background: linear-gradient(115deg, rgba(255,255,255,.35), transparent 38%, transparent 70%, rgba(255,255,255,.1)); pointer-events: none; }
+.cdcard .acard-play { bottom: auto; top: calc(88% - 54px); right: 10px; } .cdcard:hover .acard-play { opacity: 1; transform: none; }
+.vbadge { display: inline-grid; place-items: center; width: 17px; height: 17px; margin-left: 6px; border-radius: 50%; background: #1db954; color: #fff; vertical-align: -3px; cursor: help; }
 /* Audio Doctor */
 .doc-drop { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px; margin-bottom: 16px; border: 1.5px dashed var(--line); border-radius: 14px; color: var(--ink2); }
 .doc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 430px); gap: 16px; align-items: start; }
@@ -965,7 +987,9 @@ body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after 
   <div class="vw-stage" id="vwstage"></div>
   <header class="vw-top"><div class="vw-title" id="vwtitle"></div><button class="vw-x" data-act="vw-close" aria-label="Close viewer">Close <kbd>Esc</kbd></button></header>
   <div class="vw-bar" id="vwbar"></div>
-  <p class="vw-hint">Drag to turn · Scroll to zoom</p>
+  <aside class="vw-list" id="vwlist" hidden></aside>
+  <button class="vw-unhide" data-act="vw-ui" title="Show controls (H)">Show controls <kbd>H</kbd></button>
+  <p class="vw-hint">Drag to turn · Scroll to zoom · <kbd>?</kbd> shortcuts</p>
 </section>
 <section class="credits" id="credits" aria-label="Credits" data-act="credits-close" inert><canvas id="crcv"></canvas><div class="cr-inner" id="crinner"></div><p class="cr-hint">Click anywhere to go back</p></section>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -1442,7 +1466,10 @@ function renderMain() {
   if (enter) { m.scrollTop = 0; clearTimeout(renderMain.t); renderMain.t = setTimeout(() => m.classList.remove('enter'), 800); }
 }
 
-const LIBTABS_EXTRA = [['stats', 'Stats']], LIBVIEWS = {};
+const LIBTABS_EXTRA = [['cds', 'CD Player'], ['stats', 'Stats']], LIBVIEWS = {};
+const cdList = () => S.cols.filter(c => !isFolder(c) && !c.archived);
+LIBVIEWS.cds = () => { const a = cdList(); return `<p class="faint small lib-note">Every CD you've made. Click one to look at it, or right-click to play it. In the player: Space plays, ←/→ change songs, [ ] change CDs, H hides the controls.</p>
+  <div class="cdgrid">${a.map((c, n) => `<div class="cdcard" role="button" tabindex="0" data-act="cdp-view" data-id="${c.id}" style="--n:${n}"><div class="cdjewel"><span class="cdj-art">${albumArt(c)}</span><i class="cdj-hinge"></i><i class="cdj-gloss"></i></div><b>${esc(c.name)}</b><span>${esc(projArtist(c) || (KINDS[c.type] || ''))}</span><button class="acard-play" data-act="cdp-play" data-id="${c.id}" aria-label="Play ${esc(c.name)}">${ico('play', 18)}</button></div>`).join('') || '<p class="faint">No CDs yet. Make a project and design its CD in the CD Creator.</p>'}</div>`; };
 LIBVIEWS.stats = () => {
   const ts = S.tracks.filter(t => t.plays || t.listened), plays = ts.reduce((a, t) => a + (t.plays || 0), 0), secs = ts.reduce((a, t) => a + (t.listened || 0), 0);
   const hm = x => { x = Math.round(x); const h = Math.floor(x / 3600), m = Math.floor(x % 3600 / 60); return h ? `${h} hr ${m} min` : m ? `${m} min` : `${x} sec`; };
@@ -1487,8 +1514,8 @@ function renderProject(m) {
     <div class="cinfo">
       <div class="eyebrow">${isMine(c) ? '<span class="eb-ro">Digital album</span>' : picker('ctype', '', KINDS, c.type, 'ctype')}</div>
       <div class="trow"><input class="title-in" id="p-name" data-cf="name" value="${esc(c.name)}" aria-label="Project name" ${isMine(c) ? 'readonly' : ''}></div>
-      <p class="pmeta">${projArtist(c) ? `<button class="pm-art" data-act="proj-edit" data-id="${c.id}" title="Edit artists">${esc(projArtist(c))}</button>` : `<button class="pm-art faint" data-act="proj-edit" data-id="${c.id}">Add artist</button>`}<span>${ts.length} ${ts.length === 1 ? 'song' : 'songs'}${ts.length ? ', ' + total(ts) : ''}</span>${!fol && c.targetDate ? `<span>${esc(relText(c))}</span>` : ''}${c.sequelOf && col(c.sequelOf) ? `<span>Sequel to <button data-act="col" data-id="${c.sequelOf}">${esc(col(c.sequelOf).name)}</button></span>` : ''}</p>
-      ${ts.length && !fol && !c.released ? `<p class="stat"><span><i class="pill st-final"></i>${nF} done</span><span><i class="pill st-demo"></i>${nD} ${nD === 1 ? 'demo' : 'demos'}</span>${nU ? `<span><i class="pill st-unmixed"></i>${nU} unmixed</span>` : ''}</p>` : ''}
+      <p class="pmeta">${projArtist(c) ? `<button class="pm-art" data-act="proj-edit" data-id="${c.id}" title="Edit artists">${esc(projArtist(c))}</button>` : `<button class="pm-art faint" data-act="proj-edit" data-id="${c.id}">Add artist</button>`}<span>${ts.length} ${ts.length === 1 ? 'song' : 'songs'}${ts.length ? ', ' + total(ts) : ''}${c.verified ? `<button class="vbadge" data-act="verified-info" title="This album is verified by its distributors and is an official release. Your digital token is irreplicable and you retain sole ownership of this copy of this release." aria-label="Verified release">${ico('check', 11)}</button>` : ''}</span>${!fol && c.targetDate ? `<span>${esc(relText(c))}</span>` : ''}${c.sequelOf && col(c.sequelOf) ? `<span>Sequel to <button data-act="col" data-id="${c.sequelOf}">${esc(col(c.sequelOf).name)}</button></span>` : ''}</p>
+      ${ts.length && !fol && !c.released && !isMine(c) ? `<p class="stat"><span><i class="pill st-final"></i>${nF} done</span><span><i class="pill st-demo"></i>${nD} ${nD === 1 ? 'demo' : 'demos'}</span>${nU ? `<span><i class="pill st-unmixed"></i>${nU} unmixed</span>` : ''}</p>` : ''}
       <div class="pact">
         <button class="playbig" data-act="play-col" data-id="${c.id}" aria-label="${playing ? 'Pause' : 'Play'}" title="${playing ? 'Pause' : 'Play'}">${ico(playing ? 'pause' : 'play', 22)}</button>
         ${isMine(c) ? '' : `<button class="ico pa" data-act="add" title="Upload songs" aria-label="Upload songs">${ico('upload', 20)}</button>`}
@@ -1731,7 +1758,7 @@ function trayToStrip(side, tx, ty) { const ex = stripEdge(side); return side ===
 function stripXform(x, side, p) { const ex = stripEdge(side); if (side === 'R') { x.translate(ex * p, 0); x.rotate(Math.PI / 2); } else { x.translate((ex - SHEETS.tray.spine) * p, SHEETS.tray.h * p); x.rotate(-Math.PI / 2); } }
 const toHex = c => { if (!c) return '#111111'; if (c[0] === '#') return c.length === 7 ? c : '#111111'; const m = c.match(/\d+(\.\d+)?/g); return m ? '#' + m.slice(0, 3).map(n => Math.round(+n).toString(16).padStart(2, '0')).join('') : '#111111'; };
 const shade = (hex, k) => '#' + [1, 3, 5].map(i => Math.min(255, Math.round(parseInt(hex.slice(i, i + 2), 16) * k)).toString(16).padStart(2, '0')).join('');
-function cdCol() { const ok = x => x && !isFolder(x) ? x : null; const c = ok(UI.cdForce && col(UI.cdForce)) || ok(S.view === 'collection' && col(S.colId)) || ok(col(S.cd.colId)) || S.cols.find(x => !isFolder(x)); if (c) S.cd.colId = c.id; return c; }
+function cdCol() { const ok = x => x && !isFolder(x) ? x : null; const c = ok(UI.cdForce && col(UI.cdForce)) || ok(UI.vw && UI.vwCol && col(UI.vwCol)) || ok(S.view === 'collection' && col(S.colId)) || ok(col(S.cd.colId)) || S.cols.find(x => !isFolder(x)); if (c) S.cd.colId = c.id; return c; }
 function design(c) {
   if (!S.cd.designs) S.cd.designs = {};
   const D = S.cd.designs[c.id] || (S.cd.designs[c.id] = autoDesign(c));
@@ -2027,13 +2054,13 @@ function buildCase() {
 function cdPaintTex() { const c = cdCol(); if (!C3 || !c) return; const d = design(c); Object.keys(SHEETS).forEach(k => { if (!d[k] || SHEETS[k].strip) return; const t = C3.tex[k]; paintSheet(t.cv.getContext('2d'), k, d[k], TEXMM, d); t.tex.needsUpdate = true; }); }
 function loop3D() {
   if (!C3 || !C3.r.domElement.isConnected) { if (C3) C3.running = false; return; }
-  requestAnimationFrame(loop3D);
+  requestAnimationFrame(loop3D); if (C3.rec) return;
   const cv = C3.r.domElement, box = cv.parentElement, w = box.clientWidth, h = box.clientHeight;
   if (w && h && (C3.w !== w || C3.h !== h)) { C3.w = w; C3.h = h; C3.r.setSize(w, h, false); C3.cam.aspect = w / h; C3.cam.updateProjectionMatrix(); }
   const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
   C3.rx += (C3.tx - C3.rx) * .14; C3.ry += (C3.ty - C3.ry) * .14; C3.z += (C3.tz - C3.z) * .12;
   const V = UI.vw, discOnly = V && V.mode === 'disc';
-  if (V && V.auto) C3.ty += .004;
+  if (V && V.auto) C3.ty += .004 * (S.cd.spinCase ?? 1);
   C3.root.rotation.set(C3.rx, C3.ry, 0);
   /* when the disc is out, pull back and pan right so the case and the disc both fit */
   const dOut = discOnly ? 0 : ease(Math.min(1, Math.max(0, C3.discA))), lOut = discOnly ? 0 : ease(Math.min(1, Math.max(0, C3.lidA))), pan = dOut * 6.5 - lOut * 2.5, back = dOut * 16 + lOut * 8;
@@ -2045,7 +2072,7 @@ function loop3D() {
   if (discOnly) C3.disc.position.set(0, 0, 0); else C3.disc.position.set(da * 15, 0, C3.discZ + Math.sin(da * Math.PI) * 2.6 + da * .4);
   C3.shadow.scale.set(discOnly ? .55 : S.cd.discOut && !discOnly ? 1.9 : 1, 1, discOnly ? .6 : 1); C3.shadow.position.x = discOnly ? 0 : da * 6;
   const c = col(S.cd.colId), syncing = V && V.spin !== false && S.playing && c && c.tracks.includes(S.cur);
-  if (syncing) C3.disc.rotation.z -= .04; else if (!V) C3.disc.rotation.z = 0;
+  if (syncing || (V && V.playing && S.playing)) C3.disc.rotation.z -= .04 * (S.cd.spinDisc ?? 1); else if (!V) C3.disc.rotation.z = 0;
   C3.r.render(C3.scene, C3.cam);
 }
 /* ---------- CD viewer: the package in its own studio ---------- */
@@ -2057,11 +2084,25 @@ function openViewer(mode = 'case') {
   const v = $('#viewer'); $('#vwstage').appendChild(g.r.domElement); C3.w = 0; buildCase();
   v.inert = false; v.classList.add('open'); renderViewerBar();
   { const d = design(c), ls = Object.values(d).flatMap(sd => (sd && sd.layers) || []); ls.filter(l => l.type === 'img').forEach(l => getImg(l.src)); waitFonts(ls).then(() => { if (UI.vw) cdPaintTex(); }); }
-  $('#vwtitle').innerHTML = `${logo(28)}<span>${c.logo && srcs[c.logo] ? `<img class="vw-logo" src="${srcs[c.logo]}" alt="${esc(c.name)}">` : `<b>${esc(c.name)}</b>`}<small>${esc(projArtist(c))} · ${S.cd.caseType === 'slim' ? 'Slim jewel case' : 'Jewel case'}, ${S.cd.tray} tray</small></span>`;
+  vwTitle();
   if (!g.running) { g.running = true; requestAnimationFrame(loop3D); }
 }
+function viewerFor(id, opts = {}) {
+  const c = col(id); if (!c) return; UI.vwList = opts.list || UI.vwList || S.cols.filter(x => !isFolder(x) && !x.archived).map(x => x.id);
+  if (UI.vw) { UI.vwCol = id; S.cd.colId = id; buildCase(); vwTitle(); renderVwList(); } else { UI.vwCol = id; S.cd.colId = id; openViewer('case'); }
+  if (opts.play) { UI.vw.auto = true; UI.vw.playing = true; const ts = colTracks(c); if (ts.length && !(S.playing && c.tracks.includes(S.cur))) playTrack(ts[0].id, ts.map(t => t.id)); renderViewerBar(); }
+  { const d = design(c), ls = Object.values(d).flatMap(sd => (sd && sd.layers) || []); ls.filter(l => l.type === 'img').forEach(l => getImg(l.src)); waitFonts(ls).then(() => { if (UI.vw) cdPaintTex(); }); }
+}
+function vwStepCD(k) { const L = UI.vwList || [], i = L.indexOf(UI.vwCol || (cdCol() || {}).id), n = L[(i + k + L.length) % L.length]; if (n && L.length > 1) viewerFor(n, { play: UI.vw && UI.vw.playing }); }
+function vwTitle() { const c = cdCol(); if (!c) return; $('#vwtitle').innerHTML = `${(UI.vwList || []).length > 1 ? `<button class="vw-cd" data-act="vw-prevcd" title="Previous CD ([)" aria-label="Previous CD">${ico('chevL', 18)}</button>` : logo(28)}<span>${c.logo && srcs[c.logo] ? `<img class="vw-logo" src="${srcs[c.logo]}" alt="${esc(c.name)}">` : `<b>${esc(c.name)}</b>`}<small>${esc(projArtist(c))}${projArtist(c) ? ' · ' : ''}${colTracks(c).length} songs</small></span>${(UI.vwList || []).length > 1 ? `<button class="vw-cd" data-act="vw-nextcd" title="Next CD (])" aria-label="Next CD">${ico('chevR', 18)}</button>` : ''}`; }
+function renderVwList() {
+  const el = $('#vwlist'), c = cdCol(); if (!el || !c) return; el.hidden = !(UI.vw && UI.vw.list); if (el.hidden) return;
+  el.innerHTML = `<header><b>${esc(c.name)}</b><button class="ico" data-act="vw-list" aria-label="Hide songs">${ico('x', 15)}</button></header>${discGroups(c).map(g => `${g.disc ? `<p class="vwl-d">${ico('disc', 13)} ${esc(discLabel(c, g.disc))}</p>` : ''}${g.tracks.map(t => `<button class="vwl-t ${S.cur === t.id ? 'on' : ''}" data-act="vw-track" data-id="${t.id}"><span class="vwl-n">${S.cur === t.id && S.playing ? ico('pause', 12) : colTracks(c).indexOf(t) + 1}</span><span>${esc(dispTitle(t))}</span><em>${fmt(verDur(t))}</em></button>`).join('')}`).join('')}`;
+}
+function vwTrack(k) { const c = cdCol(); if (!c) return; const ts = colTracks(c), i = ts.findIndex(t => t.id === S.cur), n = ts[i < 0 ? 0 : (i + k + ts.length) % ts.length]; if (n) { playTrack(n.id, ts.map(t => t.id)); if (UI.vw) UI.vw.playing = true; renderViewerBar(); renderVwList(); } }
+function vwHelp() { toast('Space play · ←/→ song · [ ] CD · O open · D disc · A spin · -/= speed · R reset · L songs · H hide · V video · Esc close'); }
 function closeViewer() {
-  if (!UI.vw) return; const sv = UI.vw.saved; UI.vw = null;
+  if (!UI.vw) return; const sv = UI.vw.saved; UI.vw = null; UI.vwCol = null; $('#viewer').classList.remove('bare'); const vl = $('#vwlist'); if (vl) vl.hidden = true;
   const v = $('#viewer'); v.classList.remove('open'); v.inert = true;
   if (C3) { C3.tx = sv.tx; C3.ty = sv.ty; C3.tz = sv.tz; S.cd.open = sv.open; S.cd.discOut = sv.disc; C3.r.domElement.remove(); C3.w = 0; buildCase(); }
   refresh();
@@ -2071,7 +2112,9 @@ function renderViewerBar() {
   b.innerHTML = `${seg('vwmode', [['case', 'Case'], ['disc', 'Disc only']], V.mode, 'vw-mode')}<span class="vw-sep"></span>
     ${V.mode === 'case' ? `<button class="vw-b ${S.cd.open ? 'on' : ''}" data-act="vw-open">${S.cd.open ? 'Close case' : 'Open case'}</button><button class="vw-b ${S.cd.discOut ? 'on' : ''}" data-act="vw-disc">${S.cd.discOut ? 'Put disc back' : 'Remove disc'}</button>`
       : `<button class="vw-b" data-act="vw-flip">Flip disc</button><button class="vw-b ${V.spin ? 'on' : ''}" data-act="vw-spin" aria-pressed="${V.spin}" title="The disc spins while this project is playing">Spin with music</button>`}
-    <span class="vw-sep"></span><button class="vw-b ${V.auto ? 'on' : ''}" data-act="vw-auto" aria-pressed="${V.auto}">Auto-rotate</button><button class="vw-b" data-act="vw-reset">Reset view</button><span class="vw-sep"></span><button class="vw-b" data-act="vw-export">${ico('cube', 14)} Export 3D</button>`;
+    <span class="vw-sep"></span><button class="vw-ib" data-act="vw-prev" title="Previous song (←)" aria-label="Previous song">${ico('prev', 16)}</button><button class="vw-ib play" data-act="vw-pp" title="Play or pause (Space)" aria-label="Play or pause">${ico(S.playing ? 'pause' : 'play', 16)}</button><button class="vw-ib" data-act="vw-next" title="Next song (→)" aria-label="Next song">${ico('next', 16)}</button><button class="vw-b ${V.list ? 'on' : ''}" data-act="vw-list" title="Songs (L)">${ico('list', 14)} Songs</button>
+    <span class="vw-sep"></span><button class="vw-b ${V.auto ? 'on' : ''}" data-act="vw-auto" aria-pressed="${V.auto}" title="Auto-rotate (A)">Auto-rotate</button><label class="vw-spd" title="Case spin speed (- and =)">Case<input type="range" min="0" max="4" step=".25" value="${S.cd.spinCase ?? 1}" data-spin="spinCase" aria-label="Case spin speed"></label><label class="vw-spd" title="Disc spin speed">Disc<input type="range" min="0" max="4" step=".25" value="${S.cd.spinDisc ?? 1}" data-spin="spinDisc" aria-label="Disc spin speed"></label><button class="vw-b" data-act="vw-reset" title="Reset view (R)">Reset</button>
+    <span class="vw-sep"></span><button class="vw-b" data-act="vw-video" title="Make a showcase video (V)">${ico('play', 13)} Video</button><button class="vw-b" data-act="vw-export">${ico('cube', 14)} 3D</button><button class="vw-ib" data-act="vw-ui" title="Hide controls (H)" aria-label="Hide controls">${ico('expand', 15)}</button>`;
   applySlides();
 }
 let cdQueued = false;
@@ -2413,6 +2456,53 @@ async function cdPrint() {
 }
 /* ---------- 3D export: one zip with the case as a .glb (art built in, lid + disc animations), print files and a preview ---------- */
 const GLTF_URL = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/exporters/GLTFExporter.js';
+const MUXER_URL = 'https://cdn.jsdelivr.net/npm/mp4-muxer@5.1.3/build/mp4-muxer.js';
+function loadMuxer() { if (window.Mp4Muxer) return Promise.resolve(true); return new Promise(res => { const sc = document.createElement('script'); sc.src = MUXER_URL; sc.onload = () => res(!!window.Mp4Muxer); sc.onerror = () => res(false); document.head.appendChild(sc); }); }
+async function encodeMP4(N, FPS, W, H, draw, onProg) {
+  if (!window.VideoEncoder || !(await loadMuxer())) return null;
+  let codec = null; for (const c of ['avc1.640028', 'avc1.4d0028', 'avc1.42001f']) { try { const r = await VideoEncoder.isConfigSupported({ codec: c, width: W, height: H, bitrate: 8e6, framerate: FPS }); if (r.supported) { codec = c; break; } } catch (e) { } }
+  if (!codec) return null;
+  const muxer = new Mp4Muxer.Muxer({ target: new Mp4Muxer.ArrayBufferTarget(), video: { codec: 'avc', width: W, height: H }, fastStart: 'in-memory' }); let err = null;
+  const enc = new VideoEncoder({ output: (ch, meta) => muxer.addVideoChunk(ch, meta), error: e => { err = e; } });
+  enc.configure({ codec, width: W, height: H, bitrate: 8e6, framerate: FPS, avc: { format: 'avc' } });
+  for (let i = 0; i < N && !err; i++) {
+    const f = new VideoFrame(draw(i), { timestamp: Math.round(i * 1e6 / FPS), duration: Math.round(1e6 / FPS) }); enc.encode(f, { keyFrame: i % (FPS * 2) === 0 }); f.close();
+    if (enc.encodeQueueSize > 8) await new Promise(r => enc.addEventListener('dequeue', r, { once: true })); if (onProg && i % 15 === 0) onProg(i / N);
+  }
+  await enc.flush(); if (err) throw err; muxer.finalize(); return new Blob([muxer.target.buffer], { type: 'video/mp4' });
+}
+async function recordRealtime(N, FPS, draw) { // fallback when WebCodecs H.264 isn't available
+  const cv = C3.r.domElement, st = cv.captureStream(FPS), mt = ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm'].find(t => window.MediaRecorder && MediaRecorder.isTypeSupported(t)); if (!mt) return null;
+  const rec = new MediaRecorder(st, { mimeType: mt, videoBitsPerSecond: 8e6 }), parts = []; rec.ondataavailable = e => e.data.size && parts.push(e.data);
+  const done = new Promise(r => rec.onstop = r); rec.start(); for (let i = 0; i < N; i++) { draw(i); await new Promise(r => setTimeout(r, 1000 / FPS)); } rec.stop(); await done; return new Blob(parts, { type: mt.split(';')[0] });
+}
+// a short showcase: turn the case, open it, slide the disc out and spin it
+function showcasePose(t) {
+  const ease = x => { x = Math.max(0, Math.min(1, x)); return x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }, seg = (a, b) => ease((t - a) / (b - a));
+  const lid = seg(1.8, 3), disc = seg(3.1, 4.6), ry = -.7 + 1 * seg(0, 1.8) - .3 * seg(1.8, 3) - .2 * seg(4.6, 8), rx = -.12 + .12 * seg(0, 2);
+  C3.root.rotation.set(rx, ry, 0); C3.lid.rotation.y = -1.95 * lid;
+  C3.disc.position.set(disc * 15, 0, C3.discZ + Math.sin(disc * Math.PI) * 2.6 + disc * .4); C3.disc.rotation.z = -Math.max(0, t - 3.6) * 2.2;
+  const pan = disc * 6.5 - lid * 2.5, back = disc * 16 + lid * 8; C3.cam.position.set(pan, 0, 40 + back); C3.cam.lookAt(pan, 0, 0);
+  C3.shadow.scale.set(disc > .5 ? 1.9 : 1, 1, 1); C3.shadow.position.x = disc * 6; C3.studio.visible = true; C3.scene.background = C3.bgTex; C3.root.children.forEach(o => { o.visible = true; });
+}
+async function exportShowcase() {
+  if (UI.recBusy) return; const c = cdCol(); if (!c) return toast('Make a project first');
+  if (!UI.vw) openViewer('case'); if (!C3) return; UI.recBusy = true;
+  const d = design(c), ls = Object.values(d).flatMap(sd => (sd && sd.layers) || []); await waitFonts(ls); await Promise.all(ls.filter(l => l.type === 'img' && srcs[l.src]).map(l => { getImg(l.src); const im = imgCache[l.src]; return im && im.decode ? im.decode().catch(() => { }) : null; })); cdPaintTex();
+  const W = 1280, H = 720, FPS = 30, N = FPS * 8, r = C3.r, keep = { pr: r.getPixelRatio(), aspect: C3.cam.aspect };
+  C3.rec = true; r.setPixelRatio(1); r.setSize(W, H, false); C3.cam.aspect = W / H; C3.cam.updateProjectionMatrix();
+  const draw = i => { showcasePose(i / FPS); r.render(C3.scene, C3.cam); return r.domElement; };
+  const t0 = performance.now(); let blob = null; toast('Making the video…');
+  try { blob = await encodeMP4(N, FPS, W, H, draw, p => toast(`Making the video… ${Math.round(p * 100)}%`)); if (!blob) blob = await recordRealtime(N, FPS, draw); }
+  catch (e) { try { blob = await recordRealtime(N, FPS, draw); } catch (e2) { blob = null; } }
+  finally { C3.rec = false; UI.recBusy = false; r.setPixelRatio(keep.pr); C3.w = 0; C3.cam.aspect = keep.aspect; C3.cam.updateProjectionMatrix(); }
+  if (!blob) return toast("This browser can't make videos. Try the Compass app for Windows.");
+  const ext = /mp4/.test(blob.type) ? 'mp4' : 'webm', name = `${safeName(c.name)} - CD showcase.${ext}`; UI.lastVideo = { ms: performance.now() - t0, type: blob.type, size: blob.size };
+  if (window.tpDesktop && tpDesktop.saveToDownloads) { const fp = await tpDesktop.saveToDownloads(name, await blob.arrayBuffer()); toast(fp ? 'Saved to Downloads: ' + name : 'The video could not be saved'); return; }
+  let dl = null; try { dl = await claude.use('downloads'); } catch (e) { } if (!dl) return toast('Saving files is not available in this view');
+  try { await dl.save({ filename: name, data: blob }); toast('Saved ' + name); }
+  catch (e) { if (e && e.code === 'declined') return; try { const z = new JSZip(); z.file(name, blob); await dl.save({ filename: name.replace(/\.\w+$/, '.zip'), data: await z.generateAsync({ type: 'blob', compression: 'STORE' }) }); toast('Saved ' + name + ' (zipped)'); } catch (e2) { toast('The video could not be saved'); } }
+}
 function loadGLTFExporter() {
   if (window.THREE && THREE.GLTFExporter) return Promise.resolve(true);
   return new Promise(res => { const sc = document.createElement('script'); sc.src = GLTF_URL; sc.onload = () => res(!!(window.THREE && THREE.GLTFExporter)); sc.onerror = () => res(false); document.head.appendChild(sc); });
@@ -3018,6 +3108,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.5.0', d: '2026-11-12', items: ['Projects can have several discs: Add a disc at the bottom of the song list, drag songs onto a disc, drag discs to reorder them, and number each disc from 1 or across the whole project. Zips dropped on a project become a new disc.', 'Label, copyright, sound recording, UPC and catalog number in Edit Details, shown under the song list.', 'Project logos show instead of the name in the CD viewer.', 'Library › CD Player: every CD in a grid. Click to view, right-click to play.', 'CD viewer: play, skip and pick songs, step between CDs, control case and disc spin speed, hide the controls, and keys for all of it (press ? to see them).', 'Video: makes an 8-second MP4 of the case opening and the disc coming out, saved to Downloads.', 'Library › Stats: plays and time listened for every song and project.', 'Convert a project to a digital album and put it in the Store. Albums you imported can be played but not sold.', 'Verified releases show a green badge next to their length.'] },
   { v: '1.4.0', d: '2026-11-12', items: ['Tamed Player is now Compass. Your projects carry over.', 'Library: My Music tab for albums you bought. Drop the zip and it is named and ordered for you. Digital albums are read-only; Make My Version gives you an editable copy.', 'Folders hold projects and show the four newest covers. Drag a project onto a folder, or onto another project to make a folder.', 'Archive projects, and Recently deleted in Settings keeps deleted projects and songs for 30 days.', 'Sidebar shows the artist and can be sorted, grouped by artist and filtered.', 'Select songs with Shift or Ctrl and right-click to export, move, copy, duplicate, change status or delete them. Export Track for a single song.', 'The Added date sits between Status and Time.', 'Launcher finds FL Studio, Ableton, REAPER and other DAWs and opens them; locate any it misses.', 'Music Store with Digital and Physical, and a first look at the Marketplace.'] },
   { v: '1.3.0', d: '2026-11-12', items: ['Menu: Library, CD Creator, Launcher, Music Store, Marketplace, Audio Editor, Settings. Launcher and the stores are placeholders for now.', 'Songs play straight into the next one with no gap.', 'Imported file names are cleaned up ("01-georgia-peach" becomes "georgia peach") and numbers set the track order. The artist comes from the files; nothing is filled in by default.', 'Add from zip replaces Import from Untitled.', 'The 3D CD no longer disappears from the viewer when the playlist ends or repeats.', 'Audio Editor no longer starts the FL Studio MIDI link on its own, and its side panel is compact and scrolls.', 'Released projects show just the track count. Download comes before Share. Project rows show the date each song was added.', 'One click selects a song, double-click plays it. Version labels, the row cover and the player bar phone button are gone.', 'Concept player: album covers show on artist pages, each artist has their own page, picture and background.', 'Covers fill their squares, the type picker has no boxes, the lyrics box is bigger, a settings button sits next to credits, and the logo disc turns.'] },
   { v: '1.2.5', d: '2026-11-09', items: ['Changelog: see what changed in every version from Settings, after an update, and when checking for updates.'] },
@@ -3056,13 +3147,13 @@ if (window.tpDesktop && tpDesktop.onChangelog) tpDesktop.onChangelog(d => openCh
 
 /* ---------- Music Store: a storefront for music, digital and physical ---------- */
 function renderStore(m) {
-  const tab = UI.storeTab || 'digital', rel = S.cols.filter(c => !isFolder(c) && !c.archived && (c.released || isMine(c) || colTracks(c).length));
+  const tab = UI.storeTab || 'digital', rel = S.cols.filter(c => c.store && c.own && !c.archived);
   const card = (c, n) => `<div class="scard" style="--n:${n}" data-act="col" data-id="${c.id}" role="button" tabindex="0"><div class="acard-art">${tab === 'physical' ? `<span class="scd" style="${pcov(c)}"><i></i></span>` : albumArt(c)}</div><b>${esc(c.name)}</b><span>${esc(projArtist(c) || 'Unknown artist')}</span><em>${tab === 'physical' ? 'CD · Jewel case' : (KINDS[c.type] || 'Album') + ' · ' + colTracks(c).length + ' songs'}</em><button class="btn sm" disabled>${tab === 'physical' ? 'Pre-order soon' : 'Buy soon'}</button></div>`;
   const hero = rel.find(c => artOf(c)) || rel[0];
   m.innerHTML = `<header class="head"><div><h1>Music Store</h1><p class="faint">Buy music straight from artists. Checkout opens when accounts arrive; this is how the shop will look.</p></div></header>
     <div class="tools">${seg('storetab', [['digital', 'Digital'], ['physical', 'Physical']], tab, 'store-tab')}</div>
     ${hero ? `<section class="shero" style="${pcov(hero)}"><div><small>Featured ${tab === 'physical' ? 'CD' : 'release'}</small><h2>${esc(hero.name)}</h2><p>${esc(projArtist(hero) || '')}</p><button class="btn primary" data-act="play-col" data-id="${hero.id}">${ico('play', 15)} Listen</button></div></section>` : ''}
-    <h3 class="srow-h">${tab === 'physical' ? 'CDs' : 'New releases'}</h3><div class="sgrid">${rel.map(card).join('') || '<p class="faint">Nothing to show yet. Release a project to see it here.</p>'}</div>`;
+    <h3 class="srow-h">${tab === 'physical' ? 'CDs' : 'New releases'}</h3><div class="sgrid">${rel.map(card).join('') || '<p class="faint">Nothing in the Store yet. Right-click one of your projects and choose <b>Convert to Digital Album</b>, then <b>Put in the Store</b>. Only your own music can be sold; albums you imported stay in My Music.</p>'}</div>`;
 }
 /* ---------- Marketplace (in progress): beats, kits and loops, laid out like a beat store ---------- */
 function renderMarket(m) {
@@ -3590,6 +3681,15 @@ function act(a, el, e) {
     else if (a === 'vw-spin') { V.spin = !V.spin; renderViewerBar(); }
     else if (a === 'vw-auto') { V.auto = !V.auto; S.cd.vwAuto = V.auto; save(); renderViewerBar(); }
     else if (a === 'vw-export') exportCD3D();
+    else if (a === 'vw-prevcd') vwStepCD(-1);
+    else if (a === 'vw-nextcd') vwStepCD(1);
+    else if (a === 'vw-prev') vwTrack(-1);
+    else if (a === 'vw-next') vwTrack(1);
+    else if (a === 'vw-pp') { const c = cdCol(); if (S.cur && c && c.tracks.includes(S.cur)) toggle(); else vwTrack(0); V.playing = true; setTimeout(() => { renderViewerBar(); renderVwList(); }, 30); }
+    else if (a === 'vw-track') { const c = cdCol(); playTrack(el.dataset.id, colTracks(c).map(t => t.id)); V.playing = true; renderViewerBar(); renderVwList(); }
+    else if (a === 'vw-list') { V.list = !V.list; renderViewerBar(); renderVwList(); }
+    else if (a === 'vw-ui') { $('#viewer').classList.toggle('bare'); }
+    else if (a === 'vw-video') exportShowcase();
     else if (a === 'vw-reset') { C3.tx = 0; C3.ty = Math.round(C3.ry / (Math.PI * 2)) * Math.PI * 2; C3.tz = V.mode === 'disc' ? 34 : 42; renderViewerBar(); }
     return;
   }
@@ -3607,6 +3707,11 @@ function act(a, el, e) {
     case 'm-cover-clear': if (UI.mCover && UI.mCover.url) URL.revokeObjectURL(UI.mCover.url); UI.mCover = false; refreshCoverPick(); break;
     case 'ctx-cover': UI.coverFor = id; $('#art').click(); break;
     case 'save-now': saveNow(); break;
+    case 'verified-info': toast('Verified: This album is verified by its distributors and is an official release. Your digital token is irreplicable and you retain sole ownership of this copy of this release.'); break;
+    case 'ctx-todigital': { const c = col(id); if (!c) break; if (!colTracks(c).length) { toast('Add songs before making it a digital album'); break; } c.mine = true; c.own = true; if (!c.released) { c.released = true; c.targetDate = c.targetDate || today(); } save(); refresh(); toast(c.name + ' is now a digital album in My Music. You can put it in the Store.'); break; }
+    case 'ctx-store': { const c = col(id); if (!c || !c.own) break; c.store = !c.store; save(); refresh(); toast(c.store ? c.name + ' is in the Store. Sales open when accounts arrive.' : 'Removed ' + c.name + ' from the Store'); break; }
+    case 'cdp-view': viewerFor(id, { list: cdList().map(c => c.id) }); break;
+    case 'cdp-play': viewerFor(id, { list: cdList().map(c => c.id), play: true }); break;
     case 'disc-add': { const c = col(S.colId); if (!c || isMine(c)) break; const d = addDisc(c); save(); renderList(); toast('Added ' + discLabel(c, d) + '. Drag songs onto it.'); break; }
     case 'disc-menu': { const c = col(S.colId), d = c && c.discs.find(x => x.id === k); if (!d) break; const r = el.getBoundingClientRect(); ctxMenu(r.left, r.bottom + 4, [{ head: discLabel(c, d) }, { label: 'Rename Disc…', act: 'disc-ren', k }, { label: 'Play This Disc', act: 'disc-play', k, icon: 'play' }, { sep: 1 }, { label: 'Number each disc from 1', act: 'disc-num', k: 'per', icon: c.discNum !== 'all' ? 'check' : null }, { label: 'Number across all discs', act: 'disc-num', k: 'all', icon: c.discNum === 'all' ? 'check' : null }, { sep: 1 }, { label: 'Remove Disc (keep songs)', act: 'disc-rm', k, icon: 'x' }]); break; }
     case 'disc-ren': { const c = col(S.colId), d = c.discs.find(x => x.id === k), n = prompt('Disc name', discLabel(c, d)); if (n != null) { d.name = n.trim() === 'Disc ' + (c.discs.indexOf(d) + 1) ? '' : n.trim(); save(); renderList(); } break; }
@@ -3786,6 +3891,7 @@ document.addEventListener('change', e => {
   else if (t.dataset.incol) { const c = col(t.dataset.incol), id = S.editId; c.tracks = c.tracks.filter(x => x !== id); if (t.checked) c.tracks.push(id); refresh(); }
   else if (t.id === 'p-target') { const c = col(S.colId); c.targetDate = t.value || null; refresh(); }
   else if (t.id === 'm-ptype') { const b = $('#m-relbox'); if (b) b.classList.toggle('hide-folder', t.value === 'folder'); }
+  else if (t.dataset && t.dataset.spin) { S.cd[t.dataset.spin] = +t.value; save(); }
   else if (t.id === 'cd-col') { S.cd.colId = t.value; UI.cdSel = null; refresh(); }
   else if (t.id === 'cdimg') { const f = t.files[0]; if (f) cdAddImage(f); t.value = ''; }
   else if (t.dataset.cdl && (t.tagName === 'SELECT' || t.type === 'checkbox')) { const L = selLayer(); if (L) { L[t.dataset.cdl] = t.type === 'checkbox' ? t.checked : t.dataset.cdl === 'weight' ? +t.value : t.value; cdDirty(); save(); } }
@@ -3794,6 +3900,16 @@ document.addEventListener('change', e => {
 });
 function saveNow() { save(); toast('Saved'); const b = $('[data-act="save-now"]'); if (b) { b.classList.add('saved'); setTimeout(() => b.classList.remove('saved'), 900); } }
 document.addEventListener('keydown', e => {
+  if (UI.vw && !e.ctrlKey && !e.metaKey && !e.altKey && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) {
+    const V = UI.vw, k = e.key, go = a => { e.preventDefault(); act(a, { dataset: {} }, e); };
+    if (k === ' ') return go('vw-pp'); if (k === 'ArrowRight') return go('vw-next'); if (k === 'ArrowLeft') return go('vw-prev');
+    if (k === '[') return go('vw-prevcd'); if (k === ']') return go('vw-nextcd');
+    if (k === 'o' || k === 'O') return go('vw-open'); if (k === 'd' || k === 'D') return go('vw-disc'); if (k === 'a' || k === 'A') return go('vw-auto');
+    if (k === 'r' || k === 'R') return go('vw-reset'); if (k === 'l' || k === 'L') return go('vw-list'); if (k === 'h' || k === 'H') return go('vw-ui'); if (k === 'v' || k === 'V') return go('vw-video');
+    if (k === '-' || k === '_' || k === '=' || k === '+') { e.preventDefault(); S.cd.spinCase = Math.max(0, Math.min(4, (S.cd.spinCase ?? 1) + (k === '-' || k === '_' ? -.25 : .25))); S.cd.spinDisc = Math.max(0, Math.min(4, (S.cd.spinDisc ?? 1) + (k === '-' || k === '_' ? -.25 : .25))); if (!V.auto && (k === '=' || k === '+')) V.auto = true; save(); renderViewerBar(); toast('Spin speed ' + S.cd.spinCase + '×'); return; }
+    if (k === '?' || k === '/') { e.preventDefault(); return vwHelp(); }
+    if (k === 'Escape' && $('#viewer').classList.contains('bare')) { e.preventDefault(); $('#viewer').classList.remove('bare'); return; }
+  }
   if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === 's' || e.key === 'S')) { e.preventDefault(); saveNow(); return; }
   if ((e.key === 'Enter' || e.key === ' ') && e.target.getAttribute && e.target.getAttribute('role') === 'button' && e.target.dataset.act) { e.preventDefault(); e.target.click(); return; }
   if (UI.modal && (UI.modal.kind === 'proj' || UI.modal.kind === 'meta') && e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'checkbox') { e.preventDefault(); saveDetails(); return; }
@@ -4048,7 +4164,8 @@ function projectMenu(c) {
     ...(c.cover ? [{ label: 'Remove This Cover', act: 'ctx-rmcover', id: c.id, icon: 'x' }] : []), { sep: 1 },
     ...(isFolder(c) ? [] : [{ label: 'Concept Player', act: 'to-concept', id: c.id, icon: 'phone' }, { label: 'View CD', act: 'ctx-viewcd', id: c.id, icon: 'disc' }, { label: 'Edit CD', act: 'ctx-editcd', id: c.id, icon: 'edit' }, { label: 'Export 3D CD…', act: 'ctx-export3d', id: c.id, icon: 'cube' }]),
     { label: isFolder(c) ? 'Export Folder (Art, Tracks, Tracklist)…' : 'Export Disc (Art, 3D, Tracks, Tracklist)…', act: 'ctx-disc', id: c.id, icon: 'save' }, { label: 'Download Project', act: 'ctx-dlproj', id: c.id, icon: 'save' }, { sep: 1 },
-    ...(isMine(c) ? [{ label: 'Make My Version', act: 'ctx-myver', id: c.id, icon: 'copy' }] : []),
+    ...(isMine(c) ? [{ label: 'Make My Version', act: 'ctx-myver', id: c.id, icon: 'copy' }] : isFolder(c) ? [] : [{ label: 'Convert to Digital Album', act: 'ctx-todigital', id: c.id, icon: 'disc' }]),
+    ...(isMine(c) && !isFolder(c) ? (c.own ? [{ label: c.store ? 'Remove from Store' : 'Put in the Store', act: 'ctx-store', id: c.id, icon: 'upload' }] : [{ label: "Can't sell: not your release", disabled: true, icon: 'lock' }]) : []),
     ...(c.parent ? [{ label: 'Move Out of Folder', act: 'ctx-unfold', id: c.id, icon: 'back' }] : []),
     ...S.cols.filter(f => isFolder(f) && f.id !== c.id && f.id !== c.parent && !f.archived).slice(0, 8).map(f => ({ label: 'Move to ' + f.name, act: 'ctx-tofold', id: c.id, k: f.id, icon: 'folder' })),
     { label: c.archived ? 'Unarchive' : 'Archive', act: 'ctx-arch', id: c.id, icon: 'save' }, { sep: 1 },
@@ -4068,6 +4185,7 @@ function onContext(e) {
   else if (t.closest('.ps-canvas, .ps-scroll')) menu = S.cd.lock ? viewOnlyMenu() : panelMenu(S.cd.sheet);
   else if (t.closest('#list .row')) { const r = t.closest('.row'), tr = trk(r.dataset.id); if (UI.sel.size > 1 && UI.sel.has(r.dataset.id)) menu = bulkMenu([...UI.sel].filter(trk)); else if (tr) { if (!UI.sel.has(tr.id)) selectRow(tr.id, {}); menu = trackMenu(tr, r.dataset.row === 'col'); } }
   else if (t.closest('.chero') && S.view === 'collection') { const c = col(S.colId); if (c) menu = projectMenu(c); }
+  else if (t.closest('.cdcard')) { const id = t.closest('.cdcard').dataset.id, c = col(id); if (c) menu = [{ head: c.name }, { label: 'Play CD', act: 'cdp-play', id, icon: 'play' }, { label: 'View Only', act: 'cdp-view', id, icon: 'cube' }, { sep: 1 }, { label: 'Edit CD', act: 'ctx-editcd', id, icon: 'edit' }, { label: 'Open Project', act: 'col', id, icon: 'grid' }]; }
   else if (t.closest('.acard:not(.acard-new), .colitem, .lcard')) { const n = t.closest('.acard, .colitem, .lcard'), id = (n.dataset.id || (n.querySelector('[data-id]') || {}).dataset?.id); const c = col(id); if (c) menu = projectMenu(c); }
   if (!menu) return;
   e.preventDefault(); ctxMenu(e.clientX, e.clientY, menu);

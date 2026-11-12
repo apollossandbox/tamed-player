@@ -2,6 +2,18 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.5.0 · 2026-11-12
+
+- Projects can have several discs: Add a disc at the bottom of the song list, drag songs onto a disc, drag discs to reorder them, and number each disc from 1 or across the whole project. Zips dropped on a project become a new disc.
+- Label, copyright, sound recording, UPC and catalog number in Edit Details, shown under the song list.
+- Project logos show instead of the name in the CD viewer.
+- Library › CD Player: every CD in a grid. Click to view, right-click to play.
+- CD viewer: play, skip and pick songs, step between CDs, control case and disc spin speed, hide the controls, and keys for all of it (press ? to see them).
+- Video: makes an 8-second MP4 of the case opening and the disc coming out, saved to Downloads.
+- Library › Stats: plays and time listened for every song and project.
+- Convert a project to a digital album and put it in the Store. Albums you imported can be played but not sold.
+- Verified releases show a green badge next to their length.
+
 ## 1.4.0 · 2026-11-12
 
 - Tamed Player is now Compass. Your projects carry over.
