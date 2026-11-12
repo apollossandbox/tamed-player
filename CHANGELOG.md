@@ -2,6 +2,19 @@
 
 Every Tamed Player release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.3.0 · 2026-11-12
+
+- Menu: Library, CD Creator, Launcher, Music Store, Marketplace, Audio Editor, Settings. Launcher and the stores are placeholders for now.
+- Songs play straight into the next one with no gap.
+- Imported file names are cleaned up ("01-georgia-peach" becomes "georgia peach") and numbers set the track order. The artist comes from the files; nothing is filled in by default.
+- Add from zip replaces Import from Untitled.
+- The 3D CD no longer disappears from the viewer when the playlist ends or repeats.
+- Audio Editor no longer starts the FL Studio MIDI link on its own, and its side panel is compact and scrolls.
+- Released projects show just the track count. Download comes before Share. Project rows show the date each song was added.
+- One click selects a song, double-click plays it. Version labels, the row cover and the player bar phone button are gone.
+- Concept player: album covers show on artist pages, each artist has their own page, picture and background.
+- Covers fill their squares, the type picker has no boxes, the lyrics box is bigger, a settings button sits next to credits, and the logo disc turns.
+
 ## 1.2.5 · 2026-11-09
 
 - Changelog: see what changed in every version from Settings, after an update, and when checking for updates.

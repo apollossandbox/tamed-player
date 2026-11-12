@@ -1,11 +1,27 @@
 {
-  "version": "1.2.5",
+  "version": "1.3.0",
   "file": "TamedPlayer-Setup.exe",
-  "size": 82388638,
-  "sha256": "4d174e56e4cba4f2dd2bc7a599e4fc6517ef4f4d624a603877ea8696434421ca",
-  "notes": "Changelog: see what changed in every version from Settings, after an update, and when checking for updates.",
-  "date": "2026-11-09",
+  "size": 82391150,
+  "sha256": "7d9a4337e2678f6418e3834411f524f1d6ede9b21b1b59f5423f33e5ab5d0487",
+  "notes": "Menu: Library, CD Creator, Launcher, Music Store, Marketplace, Audio Editor, Settings. Launcher and the stores are placeholders for now. Songs play straight into the next one with no gap. Imported file names are cleaned up (\"01-georgia-peach\" becomes \"georgia peach\") and numbers set the track order. The artist comes from the files; nothing is filled in by default. Add from zip replaces Import from Untitled. The 3D CD no longer disappears from the viewer when the playlist ends or repeats. Audio Editor no longer starts the FL Studio MIDI link on its own, and its side panel is compact and scrolls. Released projects show just the track count. Download comes before Share. Project rows show the date each song was added. One click selects a song, double-click plays it. Version labels, the row cover and the player bar phone button are gone. Concept player: album covers show on artist pages, each artist has their own page, picture and background. Covers fill their squares, the type picker has no boxes, the lyrics box is bigger, a settings button sits next to credits, and the logo disc turns.",
+  "date": "2026-11-12",
   "changelog": [
+    {
+      "v": "1.3.0",
+      "d": "2026-11-12",
+      "items": [
+        "Menu: Library, CD Creator, Launcher, Music Store, Marketplace, Audio Editor, Settings. Launcher and the stores are placeholders for now.",
+        "Songs play straight into the next one with no gap.",
+        "Imported file names are cleaned up (\"01-georgia-peach\" becomes \"georgia peach\") and numbers set the track order. The artist comes from the files; nothing is filled in by default.",
+        "Add from zip replaces Import from Untitled.",
+        "The 3D CD no longer disappears from the viewer when the playlist ends or repeats.",
+        "Audio Editor no longer starts the FL Studio MIDI link on its own, and its side panel is compact and scrolls.",
+        "Released projects show just the track count. Download comes before Share. Project rows show the date each song was added.",
+        "One click selects a song, double-click plays it. Version labels, the row cover and the player bar phone button are gone.",
+        "Concept player: album covers show on artist pages, each artist has their own page, picture and background.",
+        "Covers fill their squares, the type picker has no boxes, the lyrics box is bigger, a settings button sits next to credits, and the logo disc turns."
+      ]
+    },
     {
       "v": "1.2.5",
       "d": "2026-11-09",

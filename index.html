@@ -1061,7 +1061,7 @@ function normalize() {
   delete S.cd.style; delete S.cd.label; delete S.cd.skip;
   S.tracks.forEach(t => { if (t.artist === 'Artist Name') t.artist = ''; });
   S.cx = { open: false, page: 'album', colId: null, ...(S.cx || {}), open: false };
-  if (!['library', 'collection', 'cd', 'concept', 'doctor', 'store', 'market', 'settings'].includes(S.view)) S.view = 'library';
+  if (!['library', 'collection', 'cd', 'concept', 'doctor', 'store', 'market', 'launcher', 'settings'].includes(S.view)) S.view = 'library';
   if (!['projects', 'tracks'].includes(S.libTab)) S.libTab = 'projects';
   if (!['tracks', 'cd'].includes(S.projTab)) S.projTab = 'tracks';
   if (S.filter !== 'all' && !ST[S.filter]) S.filter = 'all';
@@ -1193,7 +1193,7 @@ function settlePick(el, k) { const p = el.closest('.pick'); if (!p) return; $$('
 function toast(msg) { const e = $('#toast'); e.textContent = msg; e.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove('show'), 2600); }
 
 function renderSide() {
-  const nav = [['library', 'grid', 'Library', S.cols.length], ['cd', 'disc', 'CD creator'], ['concept', 'phone', 'Concept player'], ['doctor', 'pulse', 'Audio Doctor'], ['store', 'disc', 'Music Store'], ['market', 'grid', 'Marketplace'], ['settings', 'gear', 'Settings']];
+  const nav = [['library', 'grid', 'Library', S.cols.length], ['cd', 'disc', 'CD Creator'], ['launcher', 'cube', 'Launcher'], ['store', 'disc', 'Music Store'], ['market', 'grid', 'Marketplace'], ['doctor', 'pulse', 'Audio Editor'], ['settings', 'gear', 'Settings']];
   $('#side').innerHTML = `
   <div class="brand">${logo(26)}<span>Tamed Player</span></div>
   <nav class="snav" data-slide="nav"><i class="thumb"></i>${nav.map(([v, i, l, n]) => `<button class="navbtn ${S.view === v ? 'on' : ''}" data-act="nav" data-view="${v}">${ico(i)}<span>${l}</span>${n !== undefined ? `<em>${n}</em>` : ''}</button>`).join('')}</nav>
@@ -1255,7 +1255,7 @@ function renderMain() {
   else if (S.view === 'collection') renderProject(m);
   else if (S.view === 'cd') renderCD(m);
   else if (S.view === 'doctor') renderDoctor(m);
-  else if (S.view === 'store' || S.view === 'market') m.innerHTML = `<header class="head"><div><h1>${S.view === 'store' ? 'Music Store' : 'Marketplace'}</h1></div></header>`;
+  else if (S.view === 'store' || S.view === 'market' || S.view === 'launcher') m.innerHTML = `<header class="head"><div><h1>${{ store: 'Music Store', market: 'Marketplace', launcher: 'Launcher' }[S.view]}</h1></div></header>`;
   else if (S.view === 'settings') renderSettings(m);
   else renderConcept(m);
   renderList();
@@ -2532,7 +2532,7 @@ const fmtDb = v => v == null ? '–' : (v <= -119 ? '-∞' : v.toFixed(1)) + ' d
 const fmtBytes = b => b > 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.round(b / 1024) + ' KB';
 function renderDoctor(m) {
   const P = S.docPrefs;
-  m.innerHTML = `<header class="head"><div><h1>Audio Doctor</h1><p class="faint">Reads tempo, key and levels, converts MP3 to WAV, and lines songs up to the beat for FL Studio and other DAWs. Everything runs on this device.</p></div>
+  m.innerHTML = `<header class="head"><div><h1>Audio Editor</h1><p class="faint">Reads tempo, key and levels, converts MP3 to WAV, and lines songs up to the beat for FL Studio and other DAWs. Everything runs on this device.</p></div>
     <div class="hact"><label class="sel box"><span class="faint">Add uploads to</span><select id="doc-target" aria-label="Add uploads to">${['<option value="">Library only</option>', ...S.cols.map(c => `<option value="${c.id}" ${P.target === c.id ? 'selected' : ''}>${esc(c.name)}</option>`)].join('')}</select></label>
     <label class="sel box" title="A beat can be counted at half or double speed. Pick the range your genre usually uses."><span class="faint">Tempo range</span><select id="doc-range" aria-label="Tempo range">${Object.entries(TEMPO_RANGES).map(([k, v]) => `<option value="${k}" ${+P.range === +k ? 'selected' : ''}>${v} BPM</option>`).join('')}</select></label>
     <button class="btn primary" data-act="doc-upload">${ico('upload', 16)} Upload audio</button></div></header>
@@ -2810,6 +2810,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.3.0', d: '2026-11-12', items: ['Menu: Library, CD Creator, Launcher, Music Store, Marketplace, Audio Editor, Settings. Launcher and the stores are placeholders for now.', 'Songs play straight into the next one with no gap.', 'Imported file names are cleaned up ("01-georgia-peach" becomes "georgia peach") and numbers set the track order. The artist comes from the files; nothing is filled in by default.', 'Add from zip replaces Import from Untitled.', 'The 3D CD no longer disappears from the viewer when the playlist ends or repeats.', 'Audio Editor no longer starts the FL Studio MIDI link on its own, and its side panel is compact and scrolls.', 'Released projects show just the track count. Download comes before Share. Project rows show the date each song was added.', 'One click selects a song, double-click plays it. Version labels, the row cover and the player bar phone button are gone.', 'Concept player: album covers show on artist pages, each artist has their own page, picture and background.', 'Covers fill their squares, the type picker has no boxes, the lyrics box is bigger, a settings button sits next to credits, and the logo disc turns.'] },
   { v: '1.2.5', d: '2026-11-09', items: ['Changelog: see what changed in every version from Settings, after an update, and when checking for updates.'] },
   { v: '1.2.4', d: '2026-11-09', items: ['Both CD spines now face the front cover, like a real jewel case.'] },
   { v: '1.2.3', d: '2026-11-09', items: ['The CD viewer and 3D export show artwork in the exact colours from the editor.', 'Art that finishes loading while the viewer is open now shows up.'] },
