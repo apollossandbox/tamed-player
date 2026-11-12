@@ -2,6 +2,10 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.7.7 · 2026-11-12
+
+- The logo no longer spins as a whole or speeds up on hover. Only the record turns, slowly, under the tonearm.
+
 ## 1.7.6 · 2026-11-12
 
 - Logo centred, with the red tonearm pinned exactly north-east of the record and its needle on the W. A thin rim keeps it visible on dark backgrounds.

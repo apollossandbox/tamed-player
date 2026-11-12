@@ -1,11 +1,18 @@
 {
-  "version": "1.7.6",
+  "version": "1.7.7",
   "file": "Compass-Setup.exe",
-  "size": 82244287,
-  "sha256": "765d000e810b406971689eef06926057c18d32a3d969dce2c05470ff36bcc82e",
-  "notes": "Logo centred, with the red tonearm pinned exactly north-east of the record and its needle on the W. A thin rim keeps it visible on dark backgrounds.",
+  "size": 82244252,
+  "sha256": "774e9af786320e17340de1a7afd8862e3b764a28a877618d1bb972ea18225696",
+  "notes": "The logo no longer spins as a whole or speeds up on hover. Only the record turns, slowly, under the tonearm.",
   "date": "2026-11-12",
   "changelog": [
+    {
+      "v": "1.7.7",
+      "d": "2026-11-12",
+      "items": [
+        "The logo no longer spins as a whole or speeds up on hover. Only the record turns, slowly, under the tonearm."
+      ]
+    },
     {
       "v": "1.7.6",
       "d": "2026-11-12",
@@ -179,13 +186,6 @@
         "Replace audio or images and add versions from right-click menus. Double-click a song to play. Ctrl+S saves.",
         "CD creator: project tabs, several designs per project linked to covers, installed fonts work without importing, Shift+drag to stretch, spines editable on the tray card.",
         "CD viewer opens still and facing front. Arial throughout."
-      ]
-    },
-    {
-      "v": "1.1.1",
-      "d": "2026-11-09",
-      "items": [
-        "Download the FL Studio plugin from Audio Doctor or Settings."
       ]
     }
   ]
