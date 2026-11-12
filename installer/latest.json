@@ -1,11 +1,19 @@
 {
-  "version": "1.7.4",
+  "version": "1.7.5",
   "file": "Compass-Setup.exe",
-  "size": 82328938,
-  "sha256": "37b629961c96827211784978bf9e425a4441250f1665837d33ceca5a20572215",
-  "notes": "New Compass logo: a compass-faced record spinning on a turntable, with a red tonearm pinned at its pivot and the needle resting on the W.",
+  "size": 82221667,
+  "sha256": "313ea3a31f39e890cbc0e1e55c3a7695ac19f06a9a0c9fdd3dccd2b5297c664a",
+  "notes": "Simpler logo: a plain compass record with the red tonearm on the W. New projects start with the artist name from Settings › Profile.",
   "date": "2026-11-12",
   "changelog": [
+    {
+      "v": "1.7.5",
+      "d": "2026-11-12",
+      "items": [
+        "Simpler logo: a plain compass record with the red tonearm on the W.",
+        "New projects start with the artist name from Settings › Profile."
+      ]
+    },
     {
       "v": "1.7.4",
       "d": "2026-11-12",
@@ -180,14 +188,6 @@
         "Audio Doctor: reads tempo, key and first beat, converts MP3 to WAV, exports beat-aligned WAVs.",
         "Send to FL Studio from the Windows app.",
         "Uploaded versions keep their file name."
-      ]
-    },
-    {
-      "v": "1.0.9",
-      "d": "2026-11-09",
-      "items": [
-        "Project gradient setting.",
-        "Status column lines up; no remove button on rows."
       ]
     }
   ]

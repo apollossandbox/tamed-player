@@ -2,6 +2,11 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.7.5 · 2026-11-12
+
+- Simpler logo: a plain compass record with the red tonearm on the W.
+- New projects start with the artist name from Settings › Profile.
+
 ## 1.7.4 · 2026-11-12
 
 - New Compass logo: a compass-faced record spinning on a turntable, with a red tonearm pinned at its pivot and the needle resting on the W.
