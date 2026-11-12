@@ -1,11 +1,19 @@
 {
-  "version": "1.6.0",
+  "version": "1.6.1",
   "file": "Compass-Setup.exe",
-  "size": 82424560,
-  "sha256": "ac3dc8e63a230e1584f76b8647c48781239fba32c2578ec6ccc737d3a1422c53",
-  "notes": "CD editor: Shift-click to select several layers, then move them together or change font, size, spacing and color for all of them at once. Alt-drag duplicates. Layer Style (fx): blend mode, opacity, fill, stroke, drop shadow, outer glow, color overlay and gradient overlay. Blend mode, opacity and fill also sit at the top of the Layers panel. New tools: Hand (H), Zoom (Z), Rectangle and Ellipse (U, Shift+U) and Eyedropper (I). Place image moved to Ctrl+Shift+P. Smart guides snap layers to the middle and edges of the panel and to each other; hold Ctrl to skip. Grid with Ctrl+' and snapping with Ctrl+;. Launcher shows each program's own icon. The verified badge in Settings now shows only next to your own artist name and turns off straight away.",
+  "size": 82425003,
+  "sha256": "0d50ea97022fb9f6ff4fdaa7b4ce9ddfef88db220d383943addedf7862c28cec",
+  "notes": "Menu order: Library, Launcher, Music Store, Marketplace, CD Creator, Audio Editor, Settings. Launcher shows only the programs found on this computer. Add a program points Compass at one the scan missed, and Mac-only apps are hidden on Windows.",
   "date": "2026-11-12",
   "changelog": [
+    {
+      "v": "1.6.1",
+      "d": "2026-11-12",
+      "items": [
+        "Menu order: Library, Launcher, Music Store, Marketplace, CD Creator, Audio Editor, Settings.",
+        "Launcher shows only the programs found on this computer. Add a program points Compass at one the scan missed, and Mac-only apps are hidden on Windows."
+      ]
+    },
     {
       "v": "1.6.0",
       "d": "2026-11-12",
@@ -181,13 +189,6 @@
       "d": "2026-11-09",
       "items": [
         "Project page cleanup; whole covers in the library."
-      ]
-    },
-    {
-      "v": "1.0.2",
-      "d": "2026-11-09",
-      "items": [
-        "Change cover art from right-click and from the naming dialog."
       ]
     }
   ]

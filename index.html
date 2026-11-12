@@ -699,6 +699,7 @@ body.cx-on .bar { transform: none; }
 .daw-i { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; background: linear-gradient(145deg, color-mix(in srgb, var(--b) 88%, #fff), var(--b)); color: var(--f); font-weight: 800; font-size: 17px; letter-spacing: -.02em; box-shadow: 0 6px 16px -8px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.12); }
 .daw-i.img { background: none; box-shadow: none; } .daw-i.img img { width: 56px; height: 56px; object-fit: contain; image-rendering: auto; }
 .daw:not(.ok) .daw-i { filter: grayscale(1); opacity: .55; }
+.daw-add { align-items: center; justify-content: center; text-align: center; border-style: dashed; opacity: 1; color: var(--ink2); min-height: 150px; } .daw-add:hover { color: var(--ink); border-color: var(--ink3); }
 .daw small { color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 @media (max-width: 760px) { .mk-row { grid-template-columns: 34px 44px minmax(0, 1fr) 84px; } .mk-row .mk-n, .mk-row .mono { display: none; } }
 
@@ -1364,7 +1365,7 @@ function settlePick(el, k) { const p = el.closest('.pick'); if (!p) return; $$('
 function toast(msg) { const e = $('#toast'); e.textContent = msg; e.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove('show'), 2600); }
 
 function renderSide() {
-  const nav = [['library', 'grid', 'Library', S.cols.length], ['cd', 'disc', 'CD Creator'], ['launcher', 'cube', 'Launcher'], ['store', 'disc', 'Music Store'], ['market', 'grid', 'Marketplace'], ['doctor', 'pulse', 'Audio Editor'], ['settings', 'gear', 'Settings']];
+  const nav = [['library', 'grid', 'Library', S.cols.length], ['launcher', 'cube', 'Launcher'], ['store', 'disc', 'Music Store'], ['market', 'grid', 'Marketplace'], ['cd', 'disc', 'CD Creator'], ['doctor', 'pulse', 'Audio Editor'], ['settings', 'gear', 'Settings']];
   $('#side').innerHTML = `
   <div class="brand">${logo(26)}<span>Compass</span></div>
   <nav class="snav" data-slide="nav"><i class="thumb"></i>${nav.map(([v, i, l, n]) => `<button class="navbtn ${S.view === v ? 'on' : ''}" data-act="nav" data-view="${v}">${ico(i)}<span>${l}</span>${n !== undefined ? `<em>${n}</em>` : ''}</button>`).join('')}</nav>
@@ -3212,6 +3213,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.6.1', d: '2026-11-12', items: ['Menu order: Library, Launcher, Music Store, Marketplace, CD Creator, Audio Editor, Settings.', 'Launcher shows only the programs found on this computer. Add a program points Compass at one the scan missed, and Mac-only apps are hidden on Windows.'] },
   { v: '1.6.0', d: '2026-11-12', items: ['CD editor: Shift-click to select several layers, then move them together or change font, size, spacing and color for all of them at once. Alt-drag duplicates.', 'Layer Style (fx): blend mode, opacity, fill, stroke, drop shadow, outer glow, color overlay and gradient overlay. Blend mode, opacity and fill also sit at the top of the Layers panel.', 'New tools: Hand (H), Zoom (Z), Rectangle and Ellipse (U, Shift+U) and Eyedropper (I). Place image moved to Ctrl+Shift+P.', 'Smart guides snap layers to the middle and edges of the panel and to each other; hold Ctrl to skip. Grid with Ctrl+\' and snapping with Ctrl+;.', 'Launcher shows each program\'s own icon.', 'The verified badge in Settings now shows only next to your own artist name and turns off straight away.'] },
   { v: '1.5.0', d: '2026-11-12', items: ['Projects can have several discs: Add a disc at the bottom of the song list, drag songs onto a disc, drag discs to reorder them, and number each disc from 1 or across the whole project. Zips dropped on a project become a new disc.', 'Label, copyright, sound recording, UPC and catalog number in Edit Details, shown under the song list.', 'Project logos show instead of the name in the CD viewer.', 'Library › CD Player: every CD in a grid. Click to view, right-click to play.', 'CD viewer: play, skip and pick songs, step between CDs, control case and disc spin speed, hide the controls, and keys for all of it (press ? to see them).', 'Video: makes an 8-second MP4 of the case opening and the disc coming out, saved to Downloads.', 'Library › Stats: plays and time listened for every song and project.', 'Convert a project to a digital album and put it in the Store. Albums you imported can be played but not sold.', 'Verified releases show a green badge next to their length.'] },
   { v: '1.4.0', d: '2026-11-12', items: ['Tamed Player is now Compass. Your projects carry over.', 'Library: My Music tab for albums you bought. Drop the zip and it is named and ordered for you. Digital albums are read-only; Make My Version gives you an editable copy.', 'Folders hold projects and show the four newest covers. Drag a project onto a folder, or onto another project to make a folder.', 'Archive projects, and Recently deleted in Settings keeps deleted projects and songs for 30 days.', 'Sidebar shows the artist and can be sorted, grouped by artist and filtered.', 'Select songs with Shift or Ctrl and right-click to export, move, copy, duplicate, change status or delete them. Export Track for a single song.', 'The Added date sits between Status and Time.', 'Launcher finds FL Studio, Ableton, REAPER and other DAWs and opens them; locate any it misses.', 'Music Store with Digital and Physical, and a first look at the Marketplace.'] },
@@ -3281,12 +3283,15 @@ async function renderLauncher(m) {
   const desk = window.tpDesktop && tpDesktop.daw; S.daws = S.daws || {};
   if (desk && !UI.dawScan) { UI.dawScan = 'busy'; tpDesktop.daw.scan().then(r => { UI.dawScan = r || {}; if (S.view === 'launcher') renderMain(); }).catch(() => { UI.dawScan = {}; }); }
   const found = id => S.daws[id] || (UI.dawScan && UI.dawScan !== 'busy' && UI.dawScan[id]);
-  const list = DAWS.map(([id, n]) => ({ id, n, path: found(id) })).sort((a, b) => !!b.path - !!a.path);
+  const macOnly = ['logic', 'garageband'], onMac = /Mac/i.test(navigator.platform || navigator.userAgent);
+  const all = DAWS.filter(([id]) => onMac || !macOnly.includes(id)).map(([id, n]) => ({ id, n, path: found(id) })), list = desk ? all.filter(d => d.path) : all, missing = all.filter(d => !d.path);
   if (desk && tpDesktop.daw.icon) list.filter(d => d.path && !(d.path in UI.dawIcons)).forEach(d => { UI.dawIcons[d.path] = null; tpDesktop.daw.icon(d.path).then(u => { if (u) { UI.dawIcons[d.path] = u; if (S.view === 'launcher') renderMain(); } }); });
   m.innerHTML = `<header class="head"><div><h1>Launcher</h1><p class="faint">${desk ? (UI.dawScan === 'busy' ? 'Looking for music software on this computer…' : `Found ${list.filter(x => x.path).length} on this computer. Locate any that weren't found.`) : 'Opening DAWs works in the Compass app for Windows. Download it from Settings.'}</p></div>
     ${desk ? `<div class="hact"><button class="btn" data-act="daw-rescan">${ico('repeat', 15)} Scan again</button></div>` : ''}</header>
     <div class="dawgrid">${list.map(d => `<div class="daw ${d.path ? 'ok' : ''}">${dawTile(d.id, d.path)}<b>${esc(d.n)}</b><small title="${esc(d.path || '')}">${d.path ? esc(d.path.split(/[\\/]/).pop()) : 'Not found'}</small>
-      <div class="crow">${d.path ? `<button class="btn sm primary" data-act="daw-open" data-k="${d.id}" ${desk ? '' : 'disabled'}>${ico('play', 13)} Open</button>` : ''}<button class="btn sm" data-act="daw-locate" data-k="${d.id}" ${desk ? '' : 'disabled'}>Locate…</button></div></div>`).join('')}</div>`;
+      <div class="crow">${d.path ? `<button class="btn sm primary" data-act="daw-open" data-k="${d.id}" ${desk ? '' : 'disabled'}>${ico('play', 13)} Open</button>` : ''}${desk ? `<button class="btn sm" data-act="daw-forget" data-k="${d.id}" title="Remove from the Launcher">${ico('x', 13)}</button>` : ''}</div></div>`).join('')}
+      ${desk && missing.length ? `<button class="daw daw-add" data-act="daw-add">${ico('plus', 26)}<b>Add a program</b><small>Point Compass at a DAW the scan missed</small></button>` : ''}</div>
+    ${desk && UI.dawScan !== 'busy' && !list.length ? '<p class="faint">No DAWs found in the usual install folders. Use Add a program to point Compass at yours.</p>' : ''}`;
 }
 
 /* ---------- settings ---------- */
@@ -3835,7 +3840,9 @@ function act(a, el, e) {
     case 'm-logo': $('#logofile').click(); break;
     case 'm-logo-clear': UI.mLogo = false; { const b = $('.mlogo-pv'); if (b) { b.style.backgroundImage = ''; b.innerHTML = ico('image', 20); } } el.remove(); break;
     case 'store-tab': UI.storeTab = k; renderMain(); break;
-    case 'daw-rescan': UI.dawScan = null; renderMain(); break;
+    case 'daw-rescan': UI.dawScan = null; S.dawHidden = []; save(); renderMain(); break;
+    case 'daw-add': { const r = el.getBoundingClientRect(), onMac = /Mac/i.test(navigator.platform || navigator.userAgent), have = id => (S.daws || {})[id] || (UI.dawScan && UI.dawScan[id]); ctxMenu(r.left, r.top + 40, [{ head: 'Which program?' }, ...DAWS.filter(([id]) => (onMac || !['logic', 'garageband'].includes(id)) && !have(id)).map(([id, n]) => ({ label: n + '…', act: 'daw-locate', k: id }))]); break; }
+    case 'daw-forget': { if (S.daws) delete S.daws[k]; if (UI.dawScan && UI.dawScan !== 'busy') delete UI.dawScan[k]; save(); renderMain(); break; }
     case 'daw-open': { const p = (S.daws || {})[k] || (UI.dawScan || {})[k]; if (p && window.tpDesktop) tpDesktop.daw.open(p).then(r => toast(r && r.ok ? 'Opening ' + (DAWS.find(d => d[0] === k) || [, k])[1] + '…' : 'It could not be opened: ' + ((r && r.error) || 'unknown error'))); break; }
     case 'daw-locate': if (window.tpDesktop) tpDesktop.daw.locate((DAWS.find(d => d[0] === k) || [, k])[1]).then(p => { if (p) { (S.daws = S.daws || {})[k] = p; save(); renderMain(); toast('Saved'); } }); break;
     case 'bulk-play': { const ids = k.split(','); playTrack(ids[0], ids); break; }

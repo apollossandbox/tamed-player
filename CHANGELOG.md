@@ -2,6 +2,11 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.6.1 · 2026-11-12
+
+- Menu order: Library, Launcher, Music Store, Marketplace, CD Creator, Audio Editor, Settings.
+- Launcher shows only the programs found on this computer. Add a program points Compass at one the scan missed, and Mac-only apps are hidden on Windows.
+
 ## 1.6.0 · 2026-11-12
 
 - CD editor: Shift-click to select several layers, then move them together or change font, size, spacing and color for all of them at once. Alt-drag duplicates.
