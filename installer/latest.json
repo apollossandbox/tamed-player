@@ -1,11 +1,18 @@
 {
-  "version": "1.7.5",
+  "version": "1.7.6",
   "file": "Compass-Setup.exe",
-  "size": 82221667,
-  "sha256": "313ea3a31f39e890cbc0e1e55c3a7695ac19f06a9a0c9fdd3dccd2b5297c664a",
-  "notes": "Simpler logo: a plain compass record with the red tonearm on the W. New projects start with the artist name from Settings › Profile.",
+  "size": 82244287,
+  "sha256": "765d000e810b406971689eef06926057c18d32a3d969dce2c05470ff36bcc82e",
+  "notes": "Logo centred, with the red tonearm pinned exactly north-east of the record and its needle on the W. A thin rim keeps it visible on dark backgrounds.",
   "date": "2026-11-12",
   "changelog": [
+    {
+      "v": "1.7.6",
+      "d": "2026-11-12",
+      "items": [
+        "Logo centred, with the red tonearm pinned exactly north-east of the record and its needle on the W. A thin rim keeps it visible on dark backgrounds."
+      ]
+    },
     {
       "v": "1.7.5",
       "d": "2026-11-12",
@@ -179,15 +186,6 @@
       "d": "2026-11-09",
       "items": [
         "Download the FL Studio plugin from Audio Doctor or Settings."
-      ]
-    },
-    {
-      "v": "1.1.0",
-      "d": "2026-11-09",
-      "items": [
-        "Audio Doctor: reads tempo, key and first beat, converts MP3 to WAV, exports beat-aligned WAVs.",
-        "Send to FL Studio from the Windows app.",
-        "Uploaded versions keep their file name."
       ]
     }
   ]
