@@ -2,6 +2,10 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.7.1 · 2026-11-12
+
+- Right-clicking a digital album shows only Make My Version and Put in the Store, plus Make Sequel when the album is by your own artist name (Settings › Profile).
+
 ## 1.7.0 · 2026-11-12
 
 - Importing a zip asks: Add project, or Add digital product (album, mixtape, EP or single). Digital products live only in Library › Digital Albums, never in the project list, CD Creator or CD Player.

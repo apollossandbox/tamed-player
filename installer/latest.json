@@ -1,11 +1,18 @@
 {
-  "version": "1.7.0",
+  "version": "1.7.1",
   "file": "Compass-Setup.exe",
-  "size": 82427490,
-  "sha256": "9aa458622cd7edce31c3baace6528ed81b54b63f9bd103f5e3c70a1e701edd20",
-  "notes": "Importing a zip asks: Add project, or Add digital product (album, mixtape, EP or single). Digital products live only in Library › Digital Albums, never in the project list, CD Creator or CD Player. Release… in the right-click menu puts a project or digital album in the Music Store as digital only, CD only, or both, at the prices you set. Release Settings changes them, and Take out of Store removes it. The Store and Marketplace show only real releases; the sample items are gone.",
+  "size": 82427855,
+  "sha256": "daa7437d302b18183924d470ec654e5e8360b1307f7926a3d189a19bb7627fac",
+  "notes": "Right-clicking a digital album shows only Make My Version and Put in the Store, plus Make Sequel when the album is by your own artist name (Settings › Profile).",
   "date": "2026-11-12",
   "changelog": [
+    {
+      "v": "1.7.1",
+      "d": "2026-11-12",
+      "items": [
+        "Right-clicking a digital album shows only Make My Version and Put in the Store, plus Make Sequel when the album is by your own artist name (Settings › Profile)."
+      ]
+    },
     {
       "v": "1.7.0",
       "d": "2026-11-12",
@@ -183,13 +190,6 @@
         "Settings page.",
         "Under-the-tray artwork.",
         "Artist name shows correctly."
-      ]
-    },
-    {
-      "v": "1.0.5",
-      "d": "2026-11-09",
-      "items": [
-        "Drag images onto CD panels in 3D and on the print sheet."
       ]
     }
   ]
