@@ -132,7 +132,8 @@ h1 { font-size: 36px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1
 
 /* track rows */
 .row[data-row="col"] .c-add { font-size: 12px; color: var(--ink3); text-align: center; white-space: nowrap; overflow: hidden; }
-.colhead, .row { display: grid; grid-template-columns: 36px 44px minmax(0, 1fr) 104px 128px 50px 36px; gap: 12px; align-items: center; }
+.colhead, .row { display: grid; grid-template-columns: 36px minmax(0, 1fr) 128px 104px 64px 50px 36px; gap: 12px; align-items: center; }
+.row .c-add { font-size: 12px; color: var(--ink3); text-align: left; white-space: nowrap; overflow: hidden; }
 .row .hov { overflow: hidden; text-overflow: ellipsis; text-align: right; opacity: 0; transform: translateX(6px); transition: opacity .2s, transform .3s var(--ease); white-space: nowrap; }
 .row:hover .hov, .row:focus-within .hov { opacity: 1; transform: none; }
 .row { cursor: pointer; }
@@ -1288,20 +1289,58 @@ function renderSide() {
 }
 
 const addedOn = t => { const c = S.view === 'collection' && col(S.colId), ts = (c && c.addedAt && c.addedAt[t.id]) || t.added; return ts ? new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: new Date(ts).getFullYear() === new Date().getFullYear() ? undefined : '2-digit' }) : ''; };
+UI.sel = new Set();
+function selectRow(id, e) {
+  const ids = curListIds.length ? curListIds : S.tracks.map(t => t.id);
+  if (e.shiftKey && UI.selAnchor && ids.includes(UI.selAnchor)) { const a = ids.indexOf(UI.selAnchor), b = ids.indexOf(id); if (!(e.ctrlKey || e.metaKey)) UI.sel.clear(); ids.slice(Math.min(a, b), Math.max(a, b) + 1).forEach(x => UI.sel.add(x)); }
+  else if (e.ctrlKey || e.metaKey) { UI.sel.has(id) ? UI.sel.delete(id) : UI.sel.add(id); UI.selAnchor = id; }
+  else { UI.sel.clear(); UI.sel.add(id); UI.selAnchor = id; }
+  $$('#list .row').forEach(x => x.classList.toggle('sel', UI.sel.has(x.dataset.id)));
+}
+/* export, move and copy songs, one or many */
+async function exportTracks(ids) {
+  const ts = ids.map(trk).filter(Boolean); if (!ts.length) return;
+  if (ts.length === 1) { const t = ts[0], b = await DB.get(keyOf(t)); if (!b) return toast('The audio file is missing'); return saveBlob(safeName(dispTitle(t)) + '.' + (t.ext || extOf(b)), b); }
+  if (!window.JSZip) return toast('Zip support did not load'); let dl = null; try { dl = await claude.use('downloads'); } catch (e) { } if (!dl) return toast('Saving files is not available in this view');
+  toast(`Packing ${ts.length} songs…`); const z = new JSZip();
+  for (const [i, t] of ts.entries()) { const b = await DB.get(keyOf(t)); if (b) z.file(`${String(i + 1).padStart(2, '0')} ${safeName(dispTitle(t))}.${t.ext || extOf(b)}`, b); }
+  const c = S.view === 'collection' && col(S.colId);
+  try { await dl.save({ filename: `${safeName(c ? c.name : 'Compass')} - ${ts.length} songs.zip`, data: await z.generateAsync({ type: 'blob', compression: 'STORE' }) }); toast(`Saved ${ts.length} songs`); } catch (e) { if (e && e.code !== 'declined') toast('The songs could not be saved'); }
+}
+function sendTracks(ids, to, move) {
+  const c = col(to), from = S.view === 'collection' ? col(S.colId) : null; if (!c) return;
+  if (isMine(c)) return toast("Digital albums can't be changed");
+  let n = 0; ids.forEach(id => { if (!c.tracks.includes(id)) { c.tracks.push(id); (c.addedAt = c.addedAt || {})[id] = Date.now(); n++; } });
+  if (move && from && from !== c && !isMine(from)) from.tracks = from.tracks.filter(x => !ids.includes(x));
+  UI.sel.clear(); save(); refresh(); toast(`${move && from ? 'Moved' : 'Added'} ${ids.length} ${ids.length === 1 ? 'song' : 'songs'} to ${c.name}${n < ids.length ? ` (${ids.length - n} already there)` : ''}`);
+}
+async function dupTracks(ids) {
+  const c = S.view === 'collection' ? col(S.colId) : null; let n = 0;
+  for (const id of ids) { const t = trk(id); if (!t) continue; const b = await DB.get(keyOf(t)); const nt = { ...JSON.parse(JSON.stringify(t)), id: uid(), title: t.title + ' (copy)', versions: [], ver: null, added: Date.now() }; nt.ver = nt.id; if (b) { await DB.put(nt.id, b); srcs[nt.id] = URL.createObjectURL(b); } S.tracks.push(nt); if (c && !isMine(c)) c.tracks.splice(c.tracks.indexOf(id) + 1, 0, nt.id); n++; }
+  UI.sel.clear(); save(); refresh(); toast(`Duplicated ${n} ${n === 1 ? 'song' : 'songs'}`);
+}
+const targetsMenu = (ids, act, label) => S.cols.filter(c => !isMine(c) && !c.archived && !(S.view === 'collection' && c.id === S.colId)).slice(0, 14).map(c => ({ label: (label ? label + ' ' : '') + c.name, act, id: c.id, k: ids.join(','), icon: isFolder(c) ? 'folder' : 'disc' }));
+function bulkMenu(ids) {
+  const fromMine = S.view === 'collection' && isMine(col(S.colId));
+  return [{ head: ids.length + ' songs selected' }, { label: 'Play Selected', act: 'bulk-play', k: ids.join(','), icon: 'play' }, { label: 'Export ' + ids.length + ' Songs', act: 'bulk-export', k: ids.join(','), icon: 'save' }, { label: 'Duplicate', act: 'bulk-dup', k: ids.join(','), icon: 'copy' }, { sep: 1 },
+    ...(S.view === 'collection' && !fromMine ? [{ head: 'Move to' }, ...targetsMenu(ids, 'bulk-move', '')] : []), { head: 'Add a copy to' }, ...targetsMenu(ids, 'bulk-copy', ''), { sep: 1 },
+    ...Object.entries(ST).map(([k, l]) => ({ label: 'Mark as ' + l, act: 'bulk-st', id: k, k: ids.join(','), icon: null })), { sep: 1 },
+    ...(S.view === 'collection' && !fromMine ? [{ label: 'Remove from Project', act: 'bulk-rm', k: ids.join(','), icon: 'x' }] : []), { label: 'Delete ' + ids.length + ' Songs', act: 'bulk-del', k: ids.join(','), icon: 'trash', danger: 1 }];
+}
 function rowHTML(t, i, inCol) {
   const on = S.cur === t.id, nv = t.versions.length;
   const v = nv ? t.versions.find(x => x.id === t.ver) : null;
-  return `<div class="row ${on ? 'playing' : ''}" draggable="true" data-id="${t.id}" data-row="${inCol ? 'col' : 'lib'}">
+  return `<div class="row ${on ? 'playing' : ''} ${UI.sel && UI.sel.has(t.id) ? 'sel' : ''}" draggable="true" data-id="${t.id}" data-row="${inCol ? 'col' : 'lib'}">
     <button class="rowplay ${inCol ? '' : 'nonum'}" data-act="play" data-id="${t.id}" aria-label="${on && S.playing ? 'Pause' : 'Play'} ${esc(t.title)}">${inCol ? `<span class="num">${i + 1}</span>` : ''}${ico(on && S.playing ? 'pause' : 'play', 16)}</button>
-    ${inCol ? `<span class="c-add mono" title="Added to this project">${addedOn(t)}</span>` : `<span class="cov" style="${tcov(t)}"></span>`}
     <span class="meta"><b>${esc(dispTitle(t))}</b><span>${esc(dispArtist(t))}${t.tags ? ' · ' + esc(t.tags) : ''}</span></span>
-    <button class="pill st-${t.status}" data-act="cycle-st" data-id="${t.id}" title="Click to change status">${ST[t.status]}</button>
     <span class="mono hov">${[t.bpm ? t.bpm + ' BPM' : '', t.key ? esc(t.key) : ''].filter(Boolean).join(' · ')}</span>
+    <button class="pill st-${t.status}" data-act="cycle-st" data-id="${t.id}" title="Click to change status">${ST[t.status]}</button>
+    <span class="c-add mono" title="${inCol ? 'Added to this project' : 'Added'}">${addedOn(t)}</span>
     <span class="mono c-dur">${fmt(verDur(t))}</span>
     <span class="acts"><button class="ico" data-act="edit" data-id="${t.id}" aria-label="Edit ${esc(t.title)}">${ico('dots', 18)}</button></span>
   </div>`;
 }
-const colhead = `<div class="colhead"><span></span><span></span><span>Title</span><span>Status</span><span></span><span class="c-dur">Time</span><span></span></div>`;
+const colhead = `<div class="colhead"><span></span><span>Title</span><span></span><span>Status</span><span>Added</span><span class="c-dur">Time</span><span></span></div>`;
 
 function renderList() {
   const el = $('#list'); if (!el) return;
@@ -3451,6 +3490,14 @@ function act(a, el, e) {
     case 'm-cover-clear': if (UI.mCover && UI.mCover.url) URL.revokeObjectURL(UI.mCover.url); UI.mCover = false; refreshCoverPick(); break;
     case 'ctx-cover': UI.coverFor = id; $('#art').click(); break;
     case 'save-now': saveNow(); break;
+    case 'bulk-play': { const ids = k.split(','); playTrack(ids[0], ids); break; }
+    case 'bulk-export': exportTracks(k.split(',')); break;
+    case 'bulk-dup': dupTracks(k.split(',')); break;
+    case 'bulk-move': sendTracks(k.split(','), id, true); break;
+    case 'bulk-copy': sendTracks(k.split(','), id, false); break;
+    case 'bulk-st': k.split(',').forEach(x => { const t = trk(x); if (t) t.status = id; }); save(); refresh(); break;
+    case 'bulk-rm': { const c = col(S.colId); if (c) { const ids = k.split(','); c.tracks = c.tracks.filter(x => !ids.includes(x)); UI.sel.clear(); save(); refresh(); toast(`Removed ${ids.length} from ${c.name}`); } break; }
+    case 'bulk-del': { const ids = k.split(','); ids.forEach(x => trashTrack(trk(x))); UI.sel.clear(); toast(`Moved ${ids.length} ${ids.length === 1 ? 'song' : 'songs'} to Recently deleted (Settings)`); refresh(); break; }
     case 'side-menu': { const r = el.getBoundingClientRect(); sideMenu(r.left, r.bottom + 4); break; }
     case 'side-sort': S.side.sort = k; save(); renderSide(); applySlides(); break;
     case 'side-type': S.side.type = k; save(); renderSide(); applySlides(); break;
@@ -3549,7 +3596,7 @@ function act(a, el, e) {
 }
 document.addEventListener('click', e => {
   if (UI.noClick && Date.now() - UI.noClick < 350) { e.preventDefault(); e.stopPropagation(); return; }
-  { const r = e.target.closest && e.target.closest('#list .row'); if (r && !e.target.closest('button, input, a, select, textarea, [data-act]')) { $$('#list .row.sel').forEach(x => x !== r && x.classList.remove('sel')); r.classList.add('sel'); } if (false) { const id = r.dataset.id; if (S.cur === id) toggle(); else playTrack(id, curListIds.length ? curListIds : null); return; } }
+  { const r = e.target.closest && e.target.closest('#list .row'); if (r && !e.target.closest('button, input, a, select, textarea, [data-act]')) selectRow(r.dataset.id, e); else if (!r && !e.target.closest('#ctx') && UI.sel && UI.sel.size && !e.target.closest('.bar, #modal, #drawer')) { UI.sel.clear(); $$('#list .row.sel').forEach(x => x.classList.remove('sel')); } if (false) { const id = r.dataset.id; if (S.cur === id) toggle(); else playTrack(id, curListIds.length ? curListIds : null); return; } }
   { const m = $('#ctx'); if (m) { const it = e.target.closest('.ctx-i'); if (!it || !(it.dataset.confirm && !it.dataset.armed)) setTimeout(closeCtx, 0); } }
   if (UI.fontOpen && !e.target.closest('#psfontdrop, [data-act="cd-fontpick"]')) { UI.fontOpen = false; renderFontDrop(); }
   const el = e.target.closest('[data-act]');
@@ -3849,7 +3896,8 @@ function trackMenu(t, inCol) {
   const on = S.cur === t.id && S.playing;
   return [{ head: dispTitle(t) }, { label: on ? 'Pause' : 'Play', act: 'play', id: t.id, icon: on ? 'pause' : 'play' }, { sep: 1 },
     { label: 'Rename…', act: 'meta-open', id: t.id, icon: 'type' }, { label: 'Metadata & Credits…', act: 'meta-open', id: t.id, icon: 'list' }, { label: 'Edit Track…', act: 'edit', id: t.id, icon: 'edit' }, { sep: 1 },
-    { label: 'Replace Audio…', act: 'ctx-replaudio', id: t.id, icon: 'upload' }, { label: 'Add a Version…', act: 'ctx-addver', id: t.id, icon: 'plus' }, { label: 'Download Audio', act: 'ctx-dlaudio', id: t.id, icon: 'save' }, { sep: 1 },
+    { label: 'Replace Audio…', act: 'ctx-replaudio', id: t.id, icon: 'upload' }, { label: 'Add a Version…', act: 'ctx-addver', id: t.id, icon: 'plus' }, { label: 'Export Track', act: 'bulk-export', k: t.id, icon: 'save' }, { label: 'Duplicate', act: 'bulk-dup', k: t.id, icon: 'copy' }, { sep: 1 },
+    ...(inCol && !isMine(col(S.colId)) ? [{ head: 'Move to' }, ...targetsMenu([t.id], 'bulk-move', '')] : []), { head: 'Add to' }, ...targetsMenu([t.id], 'bulk-copy', ''), { sep: 1 },
     ...Object.entries(ST).map(([k, l]) => ({ label: 'Mark as ' + l, act: 'set-st', id: t.id, k, icon: t.status === k ? 'check' : null })), { sep: 1 },
     ...(inCol ? [{ label: 'Remove from Project', act: 'rm', id: t.id, icon: 'x' }] : []),
     { label: 'Delete Track', act: 'ctx-deltrack', id: t.id, icon: 'trash', danger: 1, confirm: 'Click again to delete' }];
@@ -3881,7 +3929,7 @@ function onContext(e) {
     const f = findLayer(t.closest('[data-psl]').dataset.psl); if (f) { S.cd.sheet = f.sheet; UI.cdSel = { sheet: f.sheet, id: f.L.id }; renderCdPanel(); cdDirty(); menu = layerMenu(f.L); }
   } else if (t.closest('.psg-h, .psbg')) { const k = (t.closest('.psg-h') || t.closest('.psbg').querySelector('[data-k]')).dataset.k; menu = panelMenu(k); }
   else if (t.closest('.ps-canvas, .ps-scroll')) menu = S.cd.lock ? viewOnlyMenu() : panelMenu(S.cd.sheet);
-  else if (t.closest('#list .row')) { const r = t.closest('.row'), tr = trk(r.dataset.id); if (tr) menu = trackMenu(tr, r.dataset.row === 'col'); }
+  else if (t.closest('#list .row')) { const r = t.closest('.row'), tr = trk(r.dataset.id); if (UI.sel.size > 1 && UI.sel.has(r.dataset.id)) menu = bulkMenu([...UI.sel].filter(trk)); else if (tr) { if (!UI.sel.has(tr.id)) selectRow(tr.id, {}); menu = trackMenu(tr, r.dataset.row === 'col'); } }
   else if (t.closest('.chero') && S.view === 'collection') { const c = col(S.colId); if (c) menu = projectMenu(c); }
   else if (t.closest('.acard:not(.acard-new), .colitem, .lcard')) { const n = t.closest('.acard, .colitem, .lcard'), id = (n.dataset.id || (n.querySelector('[data-id]') || {}).dataset?.id); const c = col(id); if (c) menu = projectMenu(c); }
   if (!menu) return;
