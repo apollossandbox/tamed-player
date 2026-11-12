@@ -2,6 +2,10 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.7.4 · 2026-11-12
+
+- New Compass logo: a compass-faced record spinning on a turntable, with a red tonearm pinned at its pivot and the needle resting on the W.
+
 ## 1.7.3 · 2026-11-12
 
 - Convert to Digital Album is back in the project right-click menu. The project moves to Library › Digital Albums and becomes read-only.
