@@ -1,11 +1,18 @@
 {
-  "version": "1.7.2",
+  "version": "1.7.3",
   "file": "Compass-Setup.exe",
-  "size": 82428120,
-  "sha256": "beaf8a412baaf45f3695025a4062e415b2224b9a739f77342ecb1b6beddafef1",
-  "notes": "Library counts match the tab you are on: projects and their songs, digital albums and their songs, or all songs. Folders, digital albums and archived projects no longer count as projects, and the Library badge shows your project count.",
+  "size": 82428231,
+  "sha256": "229711a4a10892a0224293530d8ddee1c51924658de9eaeeb08356fa36df8472",
+  "notes": "Convert to Digital Album is back in the project right-click menu. The project moves to Library › Digital Albums and becomes read-only.",
   "date": "2026-11-12",
   "changelog": [
+    {
+      "v": "1.7.3",
+      "d": "2026-11-12",
+      "items": [
+        "Convert to Digital Album is back in the project right-click menu. The project moves to Library › Digital Albums and becomes read-only."
+      ]
+    },
     {
       "v": "1.7.2",
       "d": "2026-11-12",
@@ -181,13 +188,6 @@
       "d": "2026-11-09",
       "items": [
         "Export the 3D CD as a GLB with art, animations and print files."
-      ]
-    },
-    {
-      "v": "1.0.7",
-      "d": "2026-11-09",
-      "items": [
-        "Album grid like Spotify; fixed covers that collapsed in the Windows app."
       ]
     }
   ]

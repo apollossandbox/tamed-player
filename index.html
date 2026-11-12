@@ -3286,6 +3286,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.7.3', d: '2026-11-12', items: ['Convert to Digital Album is back in the project right-click menu. The project moves to Library › Digital Albums and becomes read-only.'] },
   { v: '1.7.2', d: '2026-11-12', items: ['Library counts match the tab you are on: projects and their songs, digital albums and their songs, or all songs. Folders, digital albums and archived projects no longer count as projects, and the Library badge shows your project count.'] },
   { v: '1.7.1', d: '2026-11-12', items: ['Right-clicking a digital album shows only Make My Version and Put in the Store, plus Make Sequel when the album is by your own artist name (Settings › Profile).'] },
   { v: '1.7.0', d: '2026-11-12', items: ['Importing a zip asks: Add project, or Add digital product (album, mixtape, EP or single). Digital products live only in Library › Digital Albums, never in the project list, CD Creator or CD Player.', 'Release… in the right-click menu puts a project or digital album in the Music Store as digital only, CD only, or both, at the prices you set. Release Settings changes them, and Take out of Store removes it.', 'The Store and Marketplace show only real releases; the sample items are gone.'] },
@@ -3916,6 +3917,7 @@ function act(a, el, e) {
     case 'cd-snapt': S.cd.snap = S.cd.snap === false; save(); renderPsStatus(); toast(S.cd.snap === false ? 'Snapping off' : 'Snapping on'); break;
     case 'verified-info': toast('Verified: This album is verified by its distributors and is an official release. Your digital token is irreplicable and you retain sole ownership of this copy of this release.'); break;
     case 'ctx-release': { const c = col(id); if (c) openModal('release', c.id); break; }
+    case 'ctx-todigital': { const c = col(id); if (!c || isFolder(c)) break; if (!colTracks(c).length) { toast('Add songs before making it a digital album'); break; } c.mine = true; if (c.parent) { const f = col(c.parent); if (f) f.kids = f.kids.filter(x => x !== c.id); delete c.parent; } if (!c.released) { c.released = true; c.targetDate = c.targetDate || today(); } S.cd.tabs = (S.cd.tabs || []).filter(x => x !== c.id); if (S.view === 'collection' && S.colId === c.id || S.view === 'cd') { S.view = 'library'; } S.libTab = 'mine'; save(); refresh(); toast(c.name + ' is now a digital album in Library › Digital Albums. Make My Version gives you an editable copy.'); break; }
     case 'rel-fmt': $$('[data-act="rel-fmt"]', el.parentElement).forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el); }); $('#rel-dig').classList.toggle('hide-folder', k === 'cd'); $('#rel-cd').classList.toggle('hide-folder', k === 'digital'); applySlides(); break;
     case 'rel-ok': releaseSave(); break;
     case 'rel-pull': { const c = col(UI.modal && UI.modal.id); if (c) { delete c.release; save(); closeModal(); refresh(); toast(c.name + ' was taken out of the Store'); } break; }
@@ -4391,7 +4393,7 @@ function projectMenu(c) {
     ...(isFolder(c) || isMine(c) ? [] : [{ label: 'Concept Player', act: 'to-concept', id: c.id, icon: 'phone' }, { label: 'View CD', act: 'ctx-viewcd', id: c.id, icon: 'disc' }, { label: 'Edit CD', act: 'ctx-editcd', id: c.id, icon: 'edit' }, { label: 'Export 3D CD…', act: 'ctx-export3d', id: c.id, icon: 'cube' }]),
     { label: isFolder(c) ? 'Export Folder (Art, Tracks, Tracklist)…' : 'Export Disc (Art, 3D, Tracks, Tracklist)…', act: 'ctx-disc', id: c.id, icon: 'save' }, { label: 'Download Project', act: 'ctx-dlproj', id: c.id, icon: 'save' }, { sep: 1 },
     ...(isMine(c) ? [{ label: 'Make My Version', act: 'ctx-myver', id: c.id, icon: 'copy' }] : []),
-    ...(isFolder(c) ? [] : [{ label: c.release ? 'Release Settings…' : 'Release…', act: 'ctx-release', id: c.id, icon: 'upload' }]),
+    ...(isFolder(c) ? [] : [{ label: c.release ? 'Release Settings…' : 'Release…', act: 'ctx-release', id: c.id, icon: 'upload' }, { label: 'Convert to Digital Album', act: 'ctx-todigital', id: c.id, icon: 'disc', confirm: 'Click again: it becomes read-only' }]),
     ...(c.parent ? [{ label: 'Move Out of Folder', act: 'ctx-unfold', id: c.id, icon: 'back' }] : []),
     ...S.cols.filter(f => isFolder(f) && f.id !== c.id && f.id !== c.parent && !f.archived).slice(0, 8).map(f => ({ label: 'Move to ' + f.name, act: 'ctx-tofold', id: c.id, k: f.id, icon: 'folder' })),
     { label: c.archived ? 'Unarchive' : 'Archive', act: 'ctx-arch', id: c.id, icon: 'save' }, { sep: 1 },

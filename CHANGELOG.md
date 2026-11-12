@@ -2,6 +2,10 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.7.3 · 2026-11-12
+
+- Convert to Digital Album is back in the project right-click menu. The project moves to Library › Digital Albums and becomes read-only.
+
 ## 1.7.2 · 2026-11-12
 
 - Library counts match the tab you are on: projects and their songs, digital albums and their songs, or all songs. Folders, digital albums and archived projects no longer count as projects, and the Library badge shows your project count.
