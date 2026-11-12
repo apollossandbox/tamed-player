@@ -1,11 +1,18 @@
 {
-  "version": "1.7.1",
+  "version": "1.7.2",
   "file": "Compass-Setup.exe",
-  "size": 82427855,
-  "sha256": "daa7437d302b18183924d470ec654e5e8360b1307f7926a3d189a19bb7627fac",
-  "notes": "Right-clicking a digital album shows only Make My Version and Put in the Store, plus Make Sequel when the album is by your own artist name (Settings › Profile).",
+  "size": 82428120,
+  "sha256": "beaf8a412baaf45f3695025a4062e415b2224b9a739f77342ecb1b6beddafef1",
+  "notes": "Library counts match the tab you are on: projects and their songs, digital albums and their songs, or all songs. Folders, digital albums and archived projects no longer count as projects, and the Library badge shows your project count.",
   "date": "2026-11-12",
   "changelog": [
+    {
+      "v": "1.7.2",
+      "d": "2026-11-12",
+      "items": [
+        "Library counts match the tab you are on: projects and their songs, digital albums and their songs, or all songs. Folders, digital albums and archived projects no longer count as projects, and the Library badge shows your project count."
+      ]
+    },
     {
       "v": "1.7.1",
       "d": "2026-11-12",
@@ -181,15 +188,6 @@
       "d": "2026-11-09",
       "items": [
         "Album grid like Spotify; fixed covers that collapsed in the Windows app."
-      ]
-    },
-    {
-      "v": "1.0.6",
-      "d": "2026-11-09",
-      "items": [
-        "Settings page.",
-        "Under-the-tray artwork.",
-        "Artist name shows correctly."
       ]
     }
   ]
