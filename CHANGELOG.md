@@ -2,30 +2,49 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.8.0 · 2026-11-13
+
+- Make deluxe: copies a project and adds a Deluxe disc. It sits above New sequel.
+- Discs now sit side by side. Drag songs between discs, onto a song or anywhere in a disc.
+- Selected songs no longer squash their rows.
+- Menus fit on screen and scroll when long. Icons line up.
+- Removed the Audio Editor. Tempo and key are still read in the background and shown on songs.
+- Digital albums can be deleted (they go to Recently deleted).
+- Projects you turned into digital albums or put in the Store stay in the CD Creator.
+- Faster page switches: smaller cover images in grids and quicker animations.
+
+## 1.7.8 · 2026-11-12
+
+- Click a CD in the Store to see it spinning in 3D, preview any song for 30 seconds, and find the Buy button.
+- Repeat now cycles: off, repeat album, repeat one song. The CD Player plays the whole album instead of looping one song.
+- Audio Editor leaves out songs from digital albums until you make your own version of the album.
+
 ## 1.7.7 · 2026-11-12
 
-- The logo no longer spins as a whole or speeds up on hover. Only the record turns, slowly, under the tonearm.
+- Logo: only the record turns now, slowly. No more spinning or speeding up on hover.
 
 ## 1.7.6 · 2026-11-12
 
-- Logo centred, with the red tonearm pinned exactly north-east of the record and its needle on the W. A thin rim keeps it visible on dark backgrounds.
+- Logo centered, tonearm moved to the top right, and a thin rim so it shows on dark backgrounds.
 
 ## 1.7.5 · 2026-11-12
 
-- Simpler logo: a plain compass record with the red tonearm on the W.
-- New projects start with the artist name from Settings › Profile.
+- Simpler logo.
+- New projects use your artist name from Settings › Profile.
 
 ## 1.7.4 · 2026-11-12
 
-- New Compass logo: a compass-faced record spinning on a turntable, with a red tonearm pinned at its pivot and the needle resting on the W.
+- New logo: a compass record on a turntable with a red tonearm.
 
 ## 1.7.3 · 2026-11-12
 
-- Convert to Digital Album is back in the project right-click menu. The project moves to Library › Digital Albums and becomes read-only.
+- Convert to Digital Album is back in the right-click menu. Converted albums move to Library › Digital Albums and are read-only.
 
 ## 1.7.2 · 2026-11-12
 
-- Library counts match the tab you are on: projects and their songs, digital albums and their songs, or all songs. Folders, digital albums and archived projects no longer count as projects, and the Library badge shows your project count.
+- Library counts match the tab you are on.
+- Folders, digital albums and archived projects no longer count as projects.
+- The Library badge shows your project count.
 
 ## 1.7.1 · 2026-11-12
 
@@ -33,9 +52,9 @@ Every Compass release, newest first. The app shows the same list under Settings 
 
 ## 1.7.0 · 2026-11-12
 
-- Importing a zip asks: Add project, or Add digital product (album, mixtape, EP or single). Digital products live only in Library › Digital Albums, never in the project list, CD Creator or CD Player.
-- Release… in the right-click menu puts a project or digital album in the Music Store as digital only, CD only, or both, at the prices you set. Release Settings changes them, and Take out of Store removes it.
-- The Store and Marketplace show only real releases; the sample items are gone.
+- Importing a zip asks: project or digital product (album, mixtape, EP or single). Digital products only show in Library › Digital Albums.
+- Release… in the right-click menu sells a project or album in the Music Store as digital, CD or both. Edit it with Release Settings, remove it with Take out of Store.
+- Sample items removed from the Store and Marketplace.
 
 ## 1.6.2 · 2026-11-12
 
@@ -43,58 +62,58 @@ Every Compass release, newest first. The app shows the same list under Settings 
 
 ## 1.6.1 · 2026-11-12
 
-- Menu order: Library, Launcher, Music Store, Marketplace, CD Creator, Audio Editor, Settings.
-- Launcher shows only the programs found on this computer. Add a program points Compass at one the scan missed, and Mac-only apps are hidden on Windows.
+- New menu order: Library, Launcher, Music Store, Marketplace, CD Creator, Audio Editor, Settings.
+- Launcher only shows DAWs found on this computer. Use Add DAW for any the scan missed. Mac-only apps are hidden on Windows.
 
 ## 1.6.0 · 2026-11-12
 
-- CD editor: Shift-click to select several layers, then move them together or change font, size, spacing and color for all of them at once. Alt-drag duplicates.
-- Layer Style (fx): blend mode, opacity, fill, stroke, drop shadow, outer glow, color overlay and gradient overlay. Blend mode, opacity and fill also sit at the top of the Layers panel.
-- New tools: Hand (H), Zoom (Z), Rectangle and Ellipse (U, Shift+U) and Eyedropper (I). Place image moved to Ctrl+Shift+P.
-- Smart guides snap layers to the middle and edges of the panel and to each other; hold Ctrl to skip. Grid with Ctrl+' and snapping with Ctrl+;.
-- Launcher shows each program's own icon.
-- The verified badge in Settings now shows only next to your own artist name and turns off straight away.
+- CD editor: Shift-click to select several layers and move or restyle them together. Alt-drag to duplicate.
+- Layer Style (fx): blend mode, opacity, fill, stroke, drop shadow, outer glow, color and gradient overlay. Blend mode, opacity and fill are also at the top of the Layers panel.
+- New tools: Hand (H), Zoom (Z), Rectangle and Ellipse (U, Shift+U), Eyedropper (I). Place image is now Ctrl+Shift+P.
+- Smart guides snap to panel edges, centers and other layers (hold Ctrl to skip). Grid: Ctrl+'. Snapping: Ctrl+;.
+- Launcher shows real program icons.
+- Verified badge only shows next to your own artist name and updates right away.
 
 ## 1.5.0 · 2026-11-12
 
-- Projects can have several discs: Add a disc at the bottom of the song list, drag songs onto a disc, drag discs to reorder them, and number each disc from 1 or across the whole project. Zips dropped on a project become a new disc.
-- Label, copyright, sound recording, UPC and catalog number in Edit Details, shown under the song list.
-- Project logos show instead of the name in the CD viewer.
-- Library › CD Player: every CD in a grid. Click to view, right-click to play.
-- CD viewer: play, skip and pick songs, step between CDs, control case and disc spin speed, hide the controls, and keys for all of it (press ? to see them).
-- Video: makes an 8-second MP4 of the case opening and the disc coming out, saved to Downloads.
-- Library › Stats: plays and time listened for every song and project.
-- Convert a project to a digital album and put it in the Store. Albums you imported can be played but not sold.
-- Verified releases show a green badge next to their length.
+- Multi-disc projects: add discs, drag songs between them, reorder discs, and number per disc or across the project. Dropping a zip on a project adds a disc.
+- Label, copyright, sound recording, UPC and catalog number in Edit Details.
+- CD viewer shows the project logo instead of the name.
+- Library › CD Player: all your CDs in a grid. Click to view, right-click to play.
+- CD viewer: playback controls, next and previous CD, spin speed, hide controls. Press ? for shortcuts.
+- Export an 8-second MP4 of the case opening, saved to Downloads.
+- Library › Stats: plays and listening time per song and project.
+- Convert a project to a digital album and sell it in the Store. Imported albums can be played, not sold.
+- Green badge on verified releases.
 
 ## 1.4.0 · 2026-11-12
 
 - Tamed Player is now Compass. Your projects carry over.
-- Library: My Music tab for albums you bought. Drop the zip and it is named and ordered for you. Digital albums are read-only; Make My Version gives you an editable copy.
-- Folders hold projects and show the four newest covers. Drag a project onto a folder, or onto another project to make a folder.
-- Archive projects, and Recently deleted in Settings keeps deleted projects and songs for 30 days.
-- Sidebar shows the artist and can be sorted, grouped by artist and filtered.
-- Select songs with Shift or Ctrl and right-click to export, move, copy, duplicate, change status or delete them. Export Track for a single song.
-- The Added date sits between Status and Time.
-- Launcher finds FL Studio, Ableton, REAPER and other DAWs and opens them; locate any it misses.
-- Music Store with Digital and Physical, and a first look at the Marketplace.
+- Library › My Music for albums you bought. Drop the zip and it gets named and ordered. Digital albums are read-only; Make My Version makes an editable copy.
+- Folders: drag a project onto a folder, or onto another project to make one.
+- Archive projects. Deleted projects and songs stay in Settings › Recently deleted for 30 days.
+- Sidebar: sort, filter and group by artist.
+- Select songs with Shift or Ctrl, then right-click to export, move, copy, duplicate, change status or delete. Export Track for one song.
+- Added column moved between Status and Time.
+- Launcher finds and opens FL Studio, Ableton, REAPER and other DAWs.
+- Music Store (Digital and Physical) and an early Marketplace.
 
 ## 1.3.0 · 2026-11-12
 
-- Menu: Library, CD Creator, Launcher, Music Store, Marketplace, Audio Editor, Settings. Launcher and the stores are placeholders for now.
-- Songs play straight into the next one with no gap.
-- Imported file names are cleaned up ("01-georgia-peach" becomes "georgia peach") and numbers set the track order. The artist comes from the files; nothing is filled in by default.
+- New menu with Launcher, Music Store and Marketplace (placeholders for now).
+- Gapless playback.
+- Imports clean up file names ("01-georgia-peach" becomes "georgia peach") and use the numbers for song order. Artist comes from the files.
 - Add from zip replaces Import from Untitled.
-- The 3D CD no longer disappears from the viewer when the playlist ends or repeats.
-- Audio Editor no longer starts the FL Studio MIDI link on its own, and its side panel is compact and scrolls.
-- Released projects show just the track count. Download comes before Share. Project rows show the date each song was added.
-- One click selects a song, double-click plays it. Version labels, the row cover and the player bar phone button are gone.
-- Concept player: album covers show on artist pages, each artist has their own page, picture and background.
-- Covers fill their squares, the type picker has no boxes, the lyrics box is bigger, a settings button sits next to credits, and the logo disc turns.
+- Fixed: 3D CD disappearing when the playlist ends or repeats.
+- Audio Editor no longer starts the FL Studio link by itself. Side panel is smaller and scrolls.
+- Released projects show only the song count. Download is before Share. Rows show the date added.
+- Click to select, double-click to play. Removed version labels, row covers and the phone button.
+- Concept player: each artist gets a page with picture, background and album covers.
+- Covers fill their squares, bigger lyrics box, settings button next to credits, spinning logo disc.
 
 ## 1.2.5 · 2026-11-09
 
-- Changelog: see what changed in every version from Settings, after an update, and when checking for updates.
+- Changelog in Settings, after updates, and when checking for updates.
 
 ## 1.2.4 · 2026-11-09
 
@@ -102,8 +121,8 @@ Every Compass release, newest first. The app shows the same list under Settings 
 
 ## 1.2.3 · 2026-11-09
 
-- The CD viewer and 3D export show artwork in the exact colours from the editor.
-- Art that finishes loading while the viewer is open now shows up.
+- CD viewer and 3D export match the editor colors.
+- Fixed: late-loading art not showing in the viewer.
 
 ## 1.2.2 · 2026-11-09
 
@@ -111,7 +130,7 @@ Every Compass release, newest first. The app shows the same list under Settings 
 
 ## 1.2.1 · 2026-11-09
 
-- Easier to read everywhere: stronger contrast for grey text, no tiny text.
+- Better contrast for grey text; no tiny text.
 
 ## 1.2.0 · 2026-11-09
 
@@ -145,7 +164,7 @@ Every Compass release, newest first. The app shows the same list under Settings 
 
 ## 1.0.7 · 2026-11-09
 
-- Album grid like Spotify; fixed covers that collapsed in the Windows app.
+- Album grid; fixed collapsed covers in the Windows app.
 
 ## 1.0.6 · 2026-11-09
 
