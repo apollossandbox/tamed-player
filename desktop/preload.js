@@ -3,7 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('tpDesktop', {
   version: ipcRenderer.sendSync('tp-version') || '',
   checkForUpdates: () => ipcRenderer.invoke('tp-check-updates'),
-  flp: { recent: (dirs, opened, n) => ipcRenderer.invoke('tp-fl-recent', dirs, opened, n), open: (file, exe) => ipcRenderer.invoke('tp-fl-open', file, exe), pick: what => ipcRenderer.invoke('tp-fl-pick', what) },
+  flp: { recent: (dirs, opened, n) => ipcRenderer.invoke('tp-fl-recent', dirs, opened, n), all: dirs => ipcRenderer.invoke('tp-fl-all', dirs), open: (file, exe) => ipcRenderer.invoke('tp-fl-open', file, exe), pick: what => ipcRenderer.invoke('tp-fl-pick', what) },
   daw: { scan: () => ipcRenderer.invoke('tp-daw-scan'), icon: f => ipcRenderer.invoke('tp-daw-icon', f), open: f => ipcRenderer.invoke('tp-daw-open', f), locate: n => ipcRenderer.invoke('tp-daw-locate', n) },
   saveToDownloads: (name, data) => ipcRenderer.invoke('tp-save-downloads', name, data),
   openCameraSettings: () => ipcRenderer.invoke('tp-camera-settings'),

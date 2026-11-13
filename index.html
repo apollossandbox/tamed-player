@@ -664,6 +664,16 @@ h1 { font-weight: 800; font-size: 34px; letter-spacing: -.02em; }
 .qr-cov { width: 84px; height: 84px; flex: none; border-radius: 8px; box-shadow: 0 8px 20px -8px var(--shadow); }
 
 /* FL Studio projects screen */
+.fl-h, .fl-all h2 { font-size: 17px; margin: 6px 0 10px; }
+.fl-all { margin-top: 30px; }
+.fl-allhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; } .fl-allhead h2 { margin: 0; }
+.fl-tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; } .fl-tools .sel { min-width: 140px; }
+.fl-search { display: flex; align-items: center; gap: 8px; padding: 0 12px; height: 40px; min-width: 220px; } .fl-search input { border: 0; background: none; outline: none; font: inherit; color: var(--ink); width: 100%; }
+.fl-count { margin: 6px 0 10px; }
+.flpg { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 18px; flex-wrap: wrap; }
+.flpg-n { min-width: 34px; height: 34px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); font-weight: 700; cursor: pointer; } .flpg-n:hover { border-color: var(--ink3); } .flpg-n.on { background: var(--ink); color: var(--onink); border-color: var(--ink); }
+.flpg-gap { color: var(--ink3); padding: 0 2px; }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--ink); font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
 .daw-fl { cursor: pointer; } .daw-fl:hover { border-color: var(--ink3); }
 .fl-back { margin: 0 0 8px -6px; }
 .flgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 12px; margin-top: 4px; }
@@ -3272,6 +3282,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.8.6', d: '2026-11-13', items: ['FL Studio screen: All projects lists every project in your project folders, 12 per page with numbered pages. Search by name or folder, sort (recently saved, oldest, A–Z, Z–A, largest) and filter by folder or when it was saved.'] },
   { v: '1.8.5', d: '2026-11-13', items: ['Removed the Concept player. Your artist name and verified setting stay in Settings.', 'Launcher: click FL Studio (or Projects) to see your 6 most recent FL projects and open one straight into FL Studio. Open other project… picks any .flp from your files, and you can add the folders where you keep projects.', 'Text no longer highlights when you click or drag around the app. Typing fields still work as normal.', 'QR scanner finds cameras more reliably: it lists every camera Windows reports, and tries each one if the default fails.', 'When the camera can\'t start, it says why (blocked by Windows, busy in another app, or none found), with a button to open Windows camera settings.'] },
   { v: '1.8.4', d: '2026-11-13', items: ['CD Creator: Update tracklist rewrites the tracklist text on the tray card and booklet from the project\'s current songs, with disc headings for multi-disc projects. Fonts, colours and positions stay; credits and © lines are kept. Undo works.'] },
   { v: '1.8.3', d: '2026-11-13', items: ['Renaming discs works: double-click a disc name, or use Rename Disc in its menu, type, and press Enter. Clear the name to go back to "Disc 1".', 'Renaming CD designs works in the Windows app too.'] },
@@ -3359,6 +3370,7 @@ const flExe = () => (S.daws || {}).fl || (UI.dawScan && UI.dawScan !== 'busy' &&
 const flAgo = t => { const d = (Date.now() - t) / 864e5; return d < 1 / 24 ? 'just now' : d < 1 ? Math.round(d * 24) + ' h ago' : d < 2 ? 'yesterday' : d < 30 ? Math.round(d) + ' days ago' : new Date(t).toLocaleDateString(); };
 function flLoad() {
   if (!(window.tpDesktop && tpDesktop.flp)) return; UI.flRecent = 'busy';
+  if (tpDesktop.flp.all) { UI.flAll = UI.flAll && UI.flAll !== 'busy' ? UI.flAll : 'busy'; tpDesktop.flp.all(S.flDirs || []).then(r => { UI.flAll = r || []; flAllPaint(); }).catch(() => { UI.flAll = []; flAllPaint(); }); }
   tpDesktop.flp.recent(S.flDirs || [], S.flOpened || [], 6).then(r => { UI.flRecent = r || []; if (S.view === 'launcher' && UI.flScreen) renderMain(); }).catch(() => { UI.flRecent = []; if (S.view === 'launcher' && UI.flScreen) renderMain(); });
 }
 async function flOpen(file) {
@@ -3367,17 +3379,64 @@ async function flOpen(file) {
   S.flOpened = [{ path: file, time: Date.now() }, ...(S.flOpened || []).filter(x => x.path !== file)].slice(0, 20); save();
   toast('Opening ' + file.split(/[\\/]/).pop().replace(/\.flp$/i, '') + ' in FL Studio'); flLoad();
 }
+/* All projects: 12 per page, with search, sort and filters */
+const FL_PER = 12;
+const FL_SORTS = [['new', 'Recently saved'], ['old', 'Oldest first'], ['az', 'Name A–Z'], ['za', 'Name Z–A'], ['big', 'Largest first']];
+const FL_WHEN = [['any', 'Any time'], ['7', 'Last 7 days'], ['30', 'Last 30 days'], ['365', 'Last 12 months'], ['older', 'Older than a year']];
+const flSize = b => b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
+function flFiltered() {
+  const A = Array.isArray(UI.flAll) ? UI.flAll : [], F = S.flView = S.flView || {}, q = (UI.flQ || '').trim().toLowerCase(), day = 864e5, now = Date.now();
+  let r = A.filter(p => (!q || p.name.toLowerCase().includes(q) || p.folder.toLowerCase().includes(q))
+    && (!F.folder || p.folder === F.folder)
+    && (!F.when || F.when === 'any' || (F.when === 'older' ? now - p.time > 365 * day : now - p.time <= +F.when * day)));
+  const by = { new: (a, b) => b.time - a.time, old: (a, b) => a.time - b.time, az: (a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }), za: (a, b) => b.name.localeCompare(a.name, undefined, { numeric: true, sensitivity: 'base' }), big: (a, b) => b.size - a.size };
+  return r.sort(by[F.sort] || by.new);
+}
+function flPager(page, pages) {
+  if (pages <= 1) return '';
+  const nums = new Set([1, pages, page - 1, page, page + 1].filter(n => n >= 1 && n <= pages)), list = [...nums].sort((a, b) => a - b); let out = '', prev = 0;
+  for (const n of list) { if (n - prev > 1) out += '<span class="flpg-gap">…</span>'; out += `<button class="flpg-n ${n === page ? 'on' : ''}" data-act="fl-page" data-k="${n}" ${n === page ? 'aria-current="page"' : ''}>${n}</button>`; prev = n; }
+  return `<nav class="flpg" aria-label="Pages"><button class="btn sm" data-act="fl-page" data-k="${page - 1}" ${page <= 1 ? 'disabled' : ''}>${ico('prev', 12)} Prev</button>${out}<button class="btn sm" data-act="fl-page" data-k="${page + 1}" ${page >= pages ? 'disabled' : ''}>Next ${ico('next', 12)}</button></nav>`;
+}
+function flAllListHTML() {
+  const A = UI.flAll; if (A === 'busy' || !A) return '<p class="faint">Looking through your project folders…</p>';
+  if (!A.length) return '<p class="faint">No .flp files in your project folders yet.</p>';
+  const r = flFiltered(), pages = Math.max(1, Math.ceil(r.length / FL_PER)); UI.flPage = Math.min(Math.max(1, UI.flPage || 1), pages);
+  const from = (UI.flPage - 1) * FL_PER, part = r.slice(from, from + FL_PER), exe = flExe(), icon = exe && UI.dawIcons[exe];
+  if (!r.length) return `<p class="faint">No projects match. <button class="linkbtn" data-act="fl-clear">Clear search and filters</button></p>`;
+  return `<p class="faint small fl-count">${from + 1}–${from + part.length} of ${r.length} project${r.length === 1 ? '' : 's'}${r.length !== A.length ? ` (filtered from ${A.length})` : ''}</p>
+    <div class="flgrid">${part.map((p, i) => `<button class="flp" data-act="fl-proj" data-k="${esc(p.path)}" title="${esc(p.path)}" style="--n:${i}">
+      <span class="flp-ic">${icon ? `<img src="${icon}" alt="" draggable="false">` : ico('disc', 26)}</span>
+      <span class="flp-t"><b>${esc(p.name)}</b><small>${esc(p.folder)}</small><small class="faint">Saved ${flAgo(p.time)} · ${flSize(p.size)}</small></span>
+      <span class="flp-go">${ico('play', 14)}</span></button>`).join('')}</div>${flPager(UI.flPage, pages)}`;
+}
+function flAllPaint() { const el = $('#fl-all-list'); if (el) { el.innerHTML = flAllListHTML(); const f = $('#fl-folder'); if (f && Array.isArray(UI.flAll)) f.outerHTML = flFolderSel(); } }
+function flFolderSel() {
+  const F = S.flView || {}, folders = Array.isArray(UI.flAll) ? [...new Set(UI.flAll.map(p => p.folder))].sort((a, b) => a.localeCompare(b)) : [];
+  return `<div class="sel box" id="fl-folder"><select data-flv="folder" aria-label="Folder"><option value="">All folders</option>${folders.map(f => `<option value="${esc(f)}" ${F.folder === f ? 'selected' : ''}>${esc(f)}</option>`).join('')}</select></div>`;
+}
+function flAllHTML() {
+  const F = S.flView || {};
+  return `<section class="fl-all"><div class="fl-allhead"><h2>All projects</h2>
+      <div class="fl-tools"><label class="search box fl-search">${ico('search', 15)}<input id="fl-q" type="search" placeholder="Search projects" value="${esc(UI.flQ || '')}" autocomplete="off" aria-label="Search projects"></label>
+        <div class="sel box"><select data-flv="sort" aria-label="Sort">${FL_SORTS.map(([k, l]) => `<option value="${k}" ${(F.sort || 'new') === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+        ${flFolderSel()}
+        <div class="sel box"><select data-flv="when" aria-label="Saved">${FL_WHEN.map(([k, l]) => `<option value="${k}" ${(F.when || 'any') === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div></div></div>
+    <div id="fl-all-list">${flAllListHTML()}</div></section>`;
+}
 function renderFlScreen(m) {
   if (!UI.flRecent) flLoad(); const R = UI.flRecent, exe = flExe(), icon = exe && UI.dawIcons[exe];
   const card = (p, i) => `<button class="flp" data-act="fl-proj" data-k="${esc(p.path)}" title="${esc(p.path)}" style="--n:${i}">
       <span class="flp-ic">${icon ? `<img src="${icon}" alt="" draggable="false">` : ico('disc', 26)}</span>
       <span class="flp-t"><b>${esc(p.name)}</b><small>${esc(p.dir)}</small><small class="faint">${p.how === 'opened' ? 'Opened' : 'Saved'} ${flAgo(p.time)}</small></span>
       <span class="flp-go">${ico('play', 14)}</span></button>`;
-  m.innerHTML = `<header class="head"><div><button class="btn sm ghost fl-back" data-act="fl-back">${ico('back', 14)} Launcher</button><h1>FL Studio</h1><p class="faint">Your 6 most recent projects. Click one to open it in FL Studio.</p></div>
+  m.innerHTML = `<header class="head"><div><button class="btn sm ghost fl-back" data-act="fl-back">${ico('back', 14)} Launcher</button><h1>FL Studio</h1><p class="faint">Click a project to open it in FL Studio.</p></div>
     <div class="hact"><button class="btn" data-act="fl-pick">${ico('folder', 15)} Open other project…</button><button class="btn primary" data-act="daw-open" data-k="fl">${ico('play', 14)} Open FL Studio</button></div></header>
+    <h2 class="fl-h">Recent</h2>
     ${R === 'busy' ? '<p class="faint">Looking for projects…</p>' : R && R.length ? `<div class="flgrid">${R.map(card).join('')}</div>` : `<div class="fl-empty"><p><b>No recent projects found</b></p><p class="faint small">Compass looks in Windows' recent files and in Documents › Image-Line › FL Studio › Projects. Open a project with the button above, or add the folder where you keep them.</p></div>`}
     <div class="fl-dirs"><p class="faint small">Also looking in: ${(S.flDirs || []).length ? S.flDirs.map((d, i) => `<span class="tag">${esc(d.split(/[\\/]/).pop() || d)}<button class="ico" data-act="fl-dir-rm" data-k="${i}" aria-label="Stop looking in ${esc(d)}">${ico('x', 11)}</button></span>`).join(' ') : 'FL\'s Projects folder only'}</p>
       <button class="btn sm" data-act="fl-dir-add">${ico('plus', 13)} Add a project folder</button></div>`;
+  const dirs = $('.fl-dirs', m); if (dirs) dirs.insertAdjacentHTML('beforebegin', flAllHTML());
 }
 async function renderLauncher(m) {
   const desk = window.tpDesktop && tpDesktop.daw; S.daws = S.daws || {};
@@ -3933,9 +3992,11 @@ function act(a, el, e) {
     case 'store-buy': toast('Checkout coming soon'); break;
     case 'store-cd': viewerFor(id, { store: true, list: S.cols.filter(c => c.release && c.release.cd != null && !c.archived).map(c => c.id) }); break;
     case 'daw-rescan': UI.dawScan = null; S.dawHidden = []; save(); renderMain(); break;
-    case 'fl-screen': UI.flScreen = true; UI.flRecent = null; renderMain(); break;
+    case 'fl-screen': UI.flScreen = true; UI.flRecent = null; UI.flAll = null; UI.flPage = 1; renderMain(); break;
     case 'fl-back': UI.flScreen = false; renderMain(); break;
     case 'fl-proj': flOpen(k); break;
+    case 'fl-page': { UI.flPage = +k; flAllPaint(); const h = $('.fl-all'); if (h) h.scrollIntoView({ block: 'start', behavior: 'smooth' }); break; }
+    case 'fl-clear': UI.flQ = ''; S.flView = { sort: (S.flView || {}).sort }; UI.flPage = 1; save(); renderMain(); break;
     case 'fl-pick': if (window.tpDesktop && tpDesktop.flp) tpDesktop.flp.pick('file').then(f => { if (f) flOpen(f); }); break;
     case 'fl-dir-add': if (window.tpDesktop && tpDesktop.flp) tpDesktop.flp.pick('folder').then(d => { if (d && !(S.flDirs || []).includes(d)) { S.flDirs = [...(S.flDirs || []), d]; save(); flLoad(); renderMain(); } }); break;
     case 'fl-dir-rm': { S.flDirs = (S.flDirs || []).filter((x, i) => i !== +k); save(); flLoad(); renderMain(); break; }
@@ -4055,6 +4116,7 @@ document.addEventListener('click', e => {
   act(el.dataset.act, el, e);
 });
 document.addEventListener('input', e => {
+  if (e.target.id === 'fl-q') { UI.flQ = e.target.value; UI.flPage = 1; flAllPaint(); return; }
   const t = e.target;
   if (t.id === 'q') { S.q = t.value; renderList(); }
   else if (t.id === 'cdl-name') { const L = selLayer(); if (L) { L.name = t.value.trim() || undefined; const b = $('#pslayers .psl.on .nm'); if (b) b.textContent = layerName(L); save(); } }
@@ -4074,6 +4136,7 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => {
   const t = e.target;
+  if (t.dataset.flv) { S.flView = { ...(S.flView || {}), [t.dataset.flv]: t.value }; UI.flPage = 1; save(); flAllPaint(); return; }
   if (t.id === 'qr-cam') { qrStart(t.value); return; }
   if (t.id === 'sort') { S.sort = t.value; renderList(); save(); }
   else if (t.id === 'file') { handleFiles(t.files); t.value = ''; }

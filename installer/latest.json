@@ -1,11 +1,18 @@
 {
-  "version": "1.8.5",
+  "version": "1.8.6",
   "file": "Compass-Setup.exe",
-  "size": 82277165,
-  "sha256": "118024468c099839fcff6b42a62310ee7274eaa456a7253a4db53f61d0cd7a3c",
-  "notes": "FL Studio recent projects, camera fixes, no text highlighting, Concept player removed",
+  "size": 82278822,
+  "sha256": "127c58f974bfb583e43ab43e6c5f1e42d723a2f7e4367e36bcccde79d4dffcc4",
+  "notes": "FL Studio: all projects with pages, search, sort, filters",
   "date": "2026-11-13",
   "changelog": [
+    {
+      "v": "1.8.6",
+      "d": "2026-11-13",
+      "items": [
+        "FL Studio screen: All projects lists every project in your project folders, 12 per page with numbered pages. Search by name or folder, sort (recently saved, oldest, A–Z, Z–A, largest) and filter by folder or when it was saved."
+      ]
+    },
     {
       "v": "1.8.5",
       "d": "2026-11-13",
@@ -170,21 +177,6 @@
         "Library › Stats: plays and listening time per song and project.",
         "Convert a project to a digital album and sell it in the Store. Imported albums can be played, not sold.",
         "Green badge on verified releases."
-      ]
-    },
-    {
-      "v": "1.4.0",
-      "d": "2026-11-12",
-      "items": [
-        "Tamed Player is now Compass. Your projects carry over.",
-        "Library › My Music for albums you bought. Drop the zip and it gets named and ordered. Digital albums are read-only; Make My Version makes an editable copy.",
-        "Folders: drag a project onto a folder, or onto another project to make one.",
-        "Archive projects. Deleted projects and songs stay in Settings › Recently deleted for 30 days.",
-        "Sidebar: sort, filter and group by artist.",
-        "Select songs with Shift or Ctrl, then right-click to export, move, copy, duplicate, change status or delete. Export Track for one song.",
-        "Added column moved between Status and Time.",
-        "Launcher finds and opens FL Studio, Ableton, REAPER and other DAWs.",
-        "Music Store (Digital and Physical) and an early Marketplace."
       ]
     }
   ]
