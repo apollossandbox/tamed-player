@@ -1,16 +1,16 @@
 {
-  "version": "1.8.7",
+  "version": "1.8.8",
   "file": "Compass-Setup.exe",
-  "size": 82279196,
-  "sha256": "4f7b40499b312a36909ed4250c40ca21de25075ffaf1f2c6789e1f50beb3d249",
-  "notes": "Real .flp icons on FL project cards",
+  "size": 82278888,
+  "sha256": "9039ad19a61f9ee4d1c7e198a3ee62689fa3d17ce9a63fec6edcf49375b75e54",
+  "notes": "More space between songs; FL icon change rolled back",
   "date": "2026-11-13",
   "changelog": [
     {
-      "v": "1.8.7",
+      "v": "1.8.8",
       "d": "2026-11-13",
       "items": [
-        "FL Studio project cards use the real Windows icon for FL project files."
+        "More space between songs in disc lists. Each song is still one line."
       ]
     },
     {

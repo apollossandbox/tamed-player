@@ -2,9 +2,9 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
-## 1.8.7 · 2026-11-13
+## 1.8.8 · 2026-11-13
 
-- FL Studio project cards use the real Windows icon for FL project files.
+- More space between songs in disc lists. Each song is still one line.
 
 ## 1.8.6 · 2026-11-13
 

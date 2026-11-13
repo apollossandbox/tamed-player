@@ -679,7 +679,7 @@ h1 { font-weight: 800; font-size: 34px; letter-spacing: -.02em; }
 .flgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 12px; margin-top: 4px; }
 .flp { display: flex; align-items: center; gap: 14px; padding: 14px; text-align: left; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); cursor: pointer; min-width: 0; transition: border-color .2s, background .2s; animation: pop .3s var(--ease) both; animation-delay: calc(var(--n) * 30ms); }
 .flp:hover { border-color: var(--ink3); background: var(--panel2); }
-.flp-ic { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border-radius: 10px; background: var(--field); overflow: hidden; } .flp-ic img { width: 40px; height: 40px; object-fit: contain; image-rendering: -webkit-optimize-contrast; }
+.flp-ic { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border-radius: 10px; background: var(--field); overflow: hidden; } .flp-ic img { width: 40px; height: 40px; object-fit: contain; }
 .flp-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; } .flp-t b, .flp-t small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .flp-t b { font-size: 14.5px; } .flp-t small { font-size: 12px; color: var(--ink2); }
 .flp-go { width: 32px; height: 32px; flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--field); color: var(--ink); opacity: 0; transition: opacity .2s; } .flp:hover .flp-go { opacity: 1; background: var(--ink); color: var(--onink); }
 .fl-empty { padding: 28px; border-radius: 14px; border: 1px dashed var(--line); text-align: center; } .fl-empty p { margin: 4px 0; }
@@ -696,9 +696,9 @@ img { -webkit-user-drag: none; }
 .discol .dischead { margin-top: 0; }
 .discol .row { grid-template-columns: 36px minmax(0, 1fr) 92px 46px 32px; } .discol .row .hov, .discol .row .c-add { display: none; }
 .colhead:has(+ .list.discs-on) { display: none; }
-.discol { gap: 0; } /* compact one-line rows so a whole disc fits without scrolling */
-.discol .row { padding: 2px 10px; min-height: 0; }
-.discol .rowplay { width: 24px; height: 24px; } .discol .acts > * { height: 24px; min-height: 0; padding-top: 0; padding-bottom: 0; } .discol .rowplay .ic { width: 13px; height: 13px; }
+.discol { gap: 3px; } /* one line per song in disc columns */
+.discol .row { padding: 7px 10px; min-height: 0; }
+.discol .rowplay { width: 28px; height: 28px; } .discol .acts > * { height: 24px; min-height: 0; padding-top: 0; padding-bottom: 0; } .discol .rowplay .ic { width: 13px; height: 13px; }
 .discol .meta { flex-direction: row; align-items: baseline; gap: 8px; } .discol .meta b { flex: 0 1 auto; font-size: 13.5px; } .discol .meta span { flex: 1 1 0; min-width: 40px; font-size: 12px; }
 .discol .pill { padding-top: 2px; padding-bottom: 2px; }
 .inl-edit { font: inherit; font-size: 15px; font-weight: 700; color: var(--ink); background: var(--field); border: 1px solid var(--line); border-radius: 6px; padding: 2px 6px; min-width: 0; width: 220px; outline: none; } .inl-edit:focus { border-color: var(--ink2); }
@@ -3282,7 +3282,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
-  { v: '1.8.7', d: '2026-11-13', items: ['FL Studio project cards use the real Windows icon for FL project files.'] },
+  { v: '1.8.8', d: '2026-11-13', items: ['More space between songs in disc lists. Each song is still one line.'] },
   { v: '1.8.6', d: '2026-11-13', items: ['FL Studio screen: All projects lists every project in your project folders, 12 per page with numbered pages. Search by name or folder, sort (recently saved, oldest, A–Z, Z–A, largest) and filter by folder or when it was saved.'] },
   { v: '1.8.5', d: '2026-11-13', items: ['Removed the Concept player. Your artist name and verified setting stay in Settings.', 'Launcher: click FL Studio (or Projects) to see your 6 most recent FL projects and open one straight into FL Studio. Open other project… picks any .flp from your files, and you can add the folders where you keep projects.', 'Text no longer highlights when you click or drag around the app. Typing fields still work as normal.', 'QR scanner finds cameras more reliably: it lists every camera Windows reports, and tries each one if the default fails.', 'When the camera can\'t start, it says why (blocked by Windows, busy in another app, or none found), with a button to open Windows camera settings.'] },
   { v: '1.8.4', d: '2026-11-13', items: ['CD Creator: Update tracklist rewrites the tracklist text on the tray card and booklet from the project\'s current songs, with disc headings for multi-disc projects. Fonts, colours and positions stay; credits and © lines are kept. Undo works.'] },
@@ -3367,20 +3367,12 @@ const DAWS = [['fl', 'FL Studio'], ['ableton', 'Ableton Live'], ['logic', 'Logic
 const DAWLOOK = { fl: ['FL', '#ff8a00', '#2b2b2b'], ableton: ['Live', '#111111', '#f2f2f2'], logic: ['Lp', '#3a3a3c', '#e8e8ea'], studioone: ['S1', '#0a5ad4', '#ffffff'], reaper: ['R', '#2f6f50', '#ffffff'], cubase: ['Cu', '#c4122f', '#ffffff'], bitwig: ['Bw', '#ff5a00', '#1b1b1b'], protools: ['Pt', '#6a1fd8', '#ffffff'], reason: ['Rs', '#d81f26', '#ffffff'], garageband: ['Gb', '#f79400', '#ffffff'] };
 UI.dawIcons = UI.dawIcons || {};
 const dawTile = (id, path) => { const ic = path && UI.dawIcons[path]; if (ic) return `<span class="daw-i img"><img src="${ic}" alt="" draggable="false"></span>`; const [t, bg, fg] = DAWLOOK[id] || ['?', '#444', '#fff']; return `<span class="daw-i" style="--b:${bg};--f:${fg}">${t}</span>`; };
-function flIcon() {
-  const exe = flExe(), any = (Array.isArray(UI.flRecent) && UI.flRecent[0]) || (Array.isArray(UI.flAll) && UI.flAll[0]);
-  if (window.tpDesktop && tpDesktop.daw && tpDesktop.daw.icon) {
-    if (any && UI.flpIcon === undefined) { UI.flpIcon = null; tpDesktop.daw.icon(any.path).then(u => { UI.flpIcon = u || ''; if (u && S.view === 'launcher' && UI.flScreen) renderMain(); }); }
-    if (exe && !(exe in UI.dawIcons)) { UI.dawIcons[exe] = null; tpDesktop.daw.icon(exe).then(u => { if (u) { UI.dawIcons[exe] = u; if (S.view === 'launcher') renderMain(); } }); }
-  }
-  return UI.flpIcon || (exe && UI.dawIcons[exe]) || '';
-}
 const flExe = () => (S.daws || {}).fl || (UI.dawScan && UI.dawScan !== 'busy' && UI.dawScan.fl) || '';
 const flAgo = t => { const d = (Date.now() - t) / 864e5; return d < 1 / 24 ? 'just now' : d < 1 ? Math.round(d * 24) + ' h ago' : d < 2 ? 'yesterday' : d < 30 ? Math.round(d) + ' days ago' : new Date(t).toLocaleDateString(); };
 function flLoad() {
   if (!(window.tpDesktop && tpDesktop.flp)) return; UI.flRecent = 'busy';
   if (tpDesktop.flp.all) { UI.flAll = UI.flAll && UI.flAll !== 'busy' ? UI.flAll : 'busy'; tpDesktop.flp.all(S.flDirs || []).then(r => { UI.flAll = r || []; flAllPaint(); }).catch(() => { UI.flAll = []; flAllPaint(); }); }
-  tpDesktop.flp.recent(S.flDirs || [], S.flOpened || [], 6).then(r => { UI.flRecent = r || []; flIcon(); if (S.view === 'launcher' && UI.flScreen) renderMain(); }).catch(() => { UI.flRecent = []; if (S.view === 'launcher' && UI.flScreen) renderMain(); });
+  tpDesktop.flp.recent(S.flDirs || [], S.flOpened || [], 6).then(r => { UI.flRecent = r || []; if (S.view === 'launcher' && UI.flScreen) renderMain(); }).catch(() => { UI.flRecent = []; if (S.view === 'launcher' && UI.flScreen) renderMain(); });
 }
 async function flOpen(file) {
   if (!file || !(window.tpDesktop && tpDesktop.flp)) return; const r = await tpDesktop.flp.open(file, flExe());
@@ -3411,7 +3403,7 @@ function flAllListHTML() {
   const A = UI.flAll; if (A === 'busy' || !A) return '<p class="faint">Looking through your project folders…</p>';
   if (!A.length) return '<p class="faint">No .flp files in your project folders yet.</p>';
   const r = flFiltered(), pages = Math.max(1, Math.ceil(r.length / FL_PER)); UI.flPage = Math.min(Math.max(1, UI.flPage || 1), pages);
-  const from = (UI.flPage - 1) * FL_PER, part = r.slice(from, from + FL_PER), icon = flIcon();
+  const from = (UI.flPage - 1) * FL_PER, part = r.slice(from, from + FL_PER), exe = flExe(), icon = exe && UI.dawIcons[exe];
   if (!r.length) return `<p class="faint">No projects match. <button class="linkbtn" data-act="fl-clear">Clear search and filters</button></p>`;
   return `<p class="faint small fl-count">${from + 1}–${from + part.length} of ${r.length} project${r.length === 1 ? '' : 's'}${r.length !== A.length ? ` (filtered from ${A.length})` : ''}</p>
     <div class="flgrid">${part.map((p, i) => `<button class="flp" data-act="fl-proj" data-k="${esc(p.path)}" title="${esc(p.path)}" style="--n:${i}">
@@ -3434,7 +3426,7 @@ function flAllHTML() {
     <div id="fl-all-list">${flAllListHTML()}</div></section>`;
 }
 function renderFlScreen(m) {
-  if (!UI.flRecent) flLoad(); const R = UI.flRecent, icon = flIcon();
+  if (!UI.flRecent) flLoad(); const R = UI.flRecent, exe = flExe(), icon = exe && UI.dawIcons[exe];
   const card = (p, i) => `<button class="flp" data-act="fl-proj" data-k="${esc(p.path)}" title="${esc(p.path)}" style="--n:${i}">
       <span class="flp-ic">${icon ? `<img src="${icon}" alt="" draggable="false">` : ico('disc', 26)}</span>
       <span class="flp-t"><b>${esc(p.name)}</b><small>${esc(p.dir)}</small><small class="faint">${p.how === 'opened' ? 'Opened' : 'Saved'} ${flAgo(p.time)}</small></span>
