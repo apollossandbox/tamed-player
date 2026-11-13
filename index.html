@@ -800,6 +800,8 @@ body.cx-on .bar { transform: none; }
 .discol .rowplay { width: 24px; height: 24px; } .discol .acts > * { height: 24px; min-height: 0; padding-top: 0; padding-bottom: 0; } .discol .rowplay .ic { width: 13px; height: 13px; }
 .discol .meta { flex-direction: row; align-items: baseline; gap: 8px; } .discol .meta b { flex: 0 1 auto; font-size: 13.5px; } .discol .meta span { flex: 1 1 0; min-width: 40px; font-size: 12px; }
 .discol .pill { padding-top: 2px; padding-bottom: 2px; }
+.inl-edit { font: inherit; font-size: 15px; font-weight: 700; color: var(--ink); background: var(--field); border: 1px solid var(--line); border-radius: 6px; padding: 2px 6px; min-width: 0; width: 220px; outline: none; } .inl-edit:focus { border-color: var(--ink2); }
+[data-discname] { cursor: text; }
 .discol .dischead { padding-top: 6px; padding-bottom: 4px; margin-bottom: 2px; }
 /* Audio Doctor */
 .doc-drop { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px; margin-bottom: 16px; border: 1.5px dashed var(--line); border-radius: 14px; color: var(--ink2); }
@@ -1505,7 +1507,7 @@ function renderList() {
   const addBtn = pc && !ro && !isFolder(pc) ? `<button class="disc-add" data-act="disc-add">${ico('plus', 15)} Add disc</button>` : '';
   if (arr.length && pc && hasDiscs(pc)) {
     let n = 0; el.classList.add('discs-on'); el.innerHTML = discGroups(pc).map(g => { const per = pc.discNum !== 'all'; if (per) n = 0;
-      return `<section class="discol" data-disc="${g.disc.id}"><div class="dischead" ${ro ? '' : 'draggable="true"'} data-disc="${g.disc.id}">${ico('disc', 18)}<b>${esc(discLabel(pc, g.disc))}</b><small>${g.tracks.length} ${g.tracks.length === 1 ? 'song' : 'songs'}${g.tracks.length ? ' · ' + total(g.tracks) : ''}</small>${ro ? '' : `<button class="ico" data-act="disc-menu" data-k="${g.disc.id}" aria-label="Disc options">${ico('dots', 16)}</button>`}</div>`
+      return `<section class="discol" data-disc="${g.disc.id}"><div class="dischead" ${ro ? '' : 'draggable="true"'} data-disc="${g.disc.id}">${ico('disc', 18)}<b ${ro ? '' : `data-discname="${g.disc.id}" title="Double-click to rename"`}>${esc(discLabel(pc, g.disc))}</b><small>${g.tracks.length} ${g.tracks.length === 1 ? 'song' : 'songs'}${g.tracks.length ? ' · ' + total(g.tracks) : ''}</small>${ro ? '' : `<button class="ico" data-act="disc-menu" data-k="${g.disc.id}" aria-label="Disc options">${ico('dots', 16)}</button>`}</div>`
         + (g.tracks.map(t => rowHTML(t, n++, true)).join('') || `<p class="faint small disc-empty">Drag songs here.</p>`) + '</section>'; }).join('') + addBtn + metaFoot(pc);
     return;
   }
@@ -1755,6 +1757,8 @@ function openModal(kind, id, x = {}) {
   } else if (kind === 'changelog') {
     const C = UI.clog || { list: CHANGELOG };
     h = `<h2>What's new</h2><p class="faint small" style="margin:0">Version ${esc(APP_VERSION)}</p><div class="clog">${changelogHTML(C.list, C.since)}</div>`;
+  } else if (kind === 'ask') {
+    h = `<h2>${esc(x.title)}</h2><input class="field" id="m-ask" value="${esc(x.value || '')}" maxlength="60" autocomplete="off">`;
   } else if (kind === 'qr') {
     h = `<h2>Scan a QR code</h2><p class="faint small" style="margin:0">Point the camera at the QR code on the back of an album.</p>
     <div class="qrbox"><video id="qr-video" playsinline muted></video><div class="qr-frame"><i></i></div><p class="qr-msg" id="qr-msg">Starting camera…</p></div>
@@ -1769,7 +1773,7 @@ function openModal(kind, id, x = {}) {
     <div class="dropzone" id="m-drop">${ico('import', 26)}<b>Drop the .zip here</b><span class="faint small">or loose audio and image files</span><button class="btn sm primary" data-act="zip-pick">Choose files</button></div>
     <p class="faint small" id="m-status" role="status"></p>`;
   }
-  md.innerHTML = h + `<div class="crow" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-act="close-modal">${kind === 'import' || kind === 'changelog' || kind === 'qr' ? 'Close' : 'Cancel'}</button>${kind === 'name' ? '<button class="btn primary" data-act="name-ok">Import</button>' : ''}${kind === 'lstyle' ? '<button class="btn primary" data-act="ls-ok">OK</button>' : ''}${kind === 'release' ? `${(col(id) || {}).release ? '<button class="btn" data-act="rel-pull">Remove from Store</button>' : ''}<button class="btn primary" data-act="rel-ok">${(col(id) || {}).release ? 'Save' : 'Release'}</button>` : ''}${kind === 'proj' || kind === 'meta' ? `<button class="btn primary" data-act="modal-save">${x.isNew ? 'Create project' : 'Save'}</button>` : ''}</div>`;
+  md.innerHTML = h + `<div class="crow" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-act="close-modal">${kind === 'import' || kind === 'changelog' || kind === 'qr' ? 'Close' : 'Cancel'}</button>${kind === 'name' ? '<button class="btn primary" data-act="name-ok">Import</button>' : ''}${kind === 'ask' ? '<button class="btn primary" data-act="ask-ok">Save</button>' : ''}${kind === 'lstyle' ? '<button class="btn primary" data-act="ls-ok">OK</button>' : ''}${kind === 'release' ? `${(col(id) || {}).release ? '<button class="btn" data-act="rel-pull">Remove from Store</button>' : ''}<button class="btn primary" data-act="rel-ok">${(col(id) || {}).release ? 'Save' : 'Release'}</button>` : ''}${kind === 'proj' || kind === 'meta' ? `<button class="btn primary" data-act="modal-save">${x.isNew ? 'Create project' : 'Save'}</button>` : ''}</div>`;
   md.classList.toggle('wide', kind === 'meta' || kind === 'lstyle'); md.classList.toggle('clogm', kind === 'changelog' || kind === 'qr');
   if (kind === 'qr') qrStart();
   md.inert = false; $('#scrim').classList.add('open'); requestAnimationFrame(() => { md.classList.add('open'); applySlides(); const f = $('input,select', md); if (f) { f.focus(); if (f.select) f.select(); } });
@@ -2618,7 +2622,7 @@ function cdAct(a, el) {
       const nd = a === 'cd-dsg-dup' ? JSON.parse(JSON.stringify(D)) : autoDesign(c); nd.$ = { id: uid(), name: a === 'cd-dsg-dup' ? D.$.name + ' copy' : 'Design ' + n, n, cover: null };
       alts.push(nd); switchDesign(c, nd.$.id); toast(a === 'cd-dsg-dup' ? 'Design duplicated' : 'New design'); break; }
     case 'cd-dsg-link': { const { D, all } = designSet(c); if (D.$.cover === c.cover) D.$.cover = null; else { all.forEach(x => { if (x.$.cover === c.cover) x.$.cover = null; }); D.$.cover = c.cover; } save(); renderCdPanel(); break; }
-    case 'cd-dsg-ren': { const { D } = designSet(c), n = prompt('Design name', D.$.name); if (n && n.trim()) { D.$.name = n.trim().slice(0, 40); save(); renderCdPanel(); } break; }
+    case 'cd-dsg-ren': { const { D } = designSet(c); askText('Rename design', D.$.name).then(n => { if (n && n.trim()) { D.$.name = n.trim().slice(0, 40); save(); renderCdPanel(); } }); break; }
     case 'cd-dsg-del': { if (!confirmBtn(el, 'Click again to delete')) break; const { D, alts } = designSet(c); if (!alts.length) break; const gone = D.$.name; S.cd.designs[c.id] = alts.shift(); UI.cdSel = null; H.col = null; save(); refresh(); if (C3) { buildCase(); cdDirty(); } toast('Deleted ' + gone); break; }
     case 'cd-tabx': { const t = cdTabs(c), i = t.indexOf(id); if (t.length < 2 || i < 0) break; t.splice(i, 1); S.cd.tabs = t; if (id === c.id) cdOpenTab(t[Math.min(i, t.length - 1)]); else refresh(); break; }
     case 'cd-tabadd': { const r = el.getBoundingClientRect(), open = cdTabs(c); ctxMenu(r.left, r.bottom + 4, [{ head: 'Open a project' }, ...cdList().filter(x => !open.includes(x.id)).map(x => ({ label: x.name, act: 'cd-tabopen', id: x.id, icon: 'disc' }))]); break; }
@@ -3349,6 +3353,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.8.3', d: '2026-11-13', items: ['Renaming discs works: double-click a disc name, or use Rename Disc in its menu, type, and press Enter. Clear the name to go back to "Disc 1".', 'Renaming CD designs works in the Windows app too.'] },
   { v: '1.8.2', d: '2026-11-13', items: ['Disc lists are compact (one line per song), so a whole disc fits on screen without scrolling.'] },
   { v: '1.8.1', d: '2026-11-13', items: ['Scan QR in the Library: scan the code on the back of an album to add it. For now any code unlocks sxteen ways – Movie. Pick which camera to use, or scan from a photo.'] },
   { v: '1.8.0', d: '2026-11-13', items: ['Make deluxe: copies a project and adds a Deluxe disc. It sits above New sequel.', 'Discs now sit side by side. Drag songs between discs, onto a song or anywhere in a disc.', 'Selected songs no longer squash their rows.', 'Menus fit on screen and scroll when long. Icons line up.', 'Removed the Audio Editor. Tempo and key are still read in the background and shown on songs.', 'Digital albums can be deleted (they go to Recently deleted).', 'Projects you turned into digital albums or put in the Store stay in the CD Creator.', 'Faster page switches: smaller cover images in grids and quicker animations.'] },
@@ -4054,7 +4059,7 @@ function act(a, el, e) {
     case 'cdp-play': viewerFor(id, { list: cdList().map(c => c.id), play: true }); break;
     case 'disc-add': { const c = col(S.colId); if (!c || isMine(c)) break; const d = addDisc(c); save(); renderList(); toast('Added ' + discLabel(c, d) + '. Drag songs onto it.'); break; }
     case 'disc-menu': { const c = col(S.colId), d = c && c.discs.find(x => x.id === k); if (!d) break; const r = el.getBoundingClientRect(); ctxMenu(r.left, r.bottom + 4, [{ head: discLabel(c, d) }, { label: 'Rename Disc…', act: 'disc-ren', k }, { label: 'Play This Disc', act: 'disc-play', k, icon: 'play' }, { sep: 1 }, { label: 'Number each disc from 1', act: 'disc-num', k: 'per', icon: c.discNum !== 'all' ? 'check' : null }, { label: 'Number across all discs', act: 'disc-num', k: 'all', icon: c.discNum === 'all' ? 'check' : null }, { sep: 1 }, { label: 'Remove Disc (keep songs)', act: 'disc-rm', k, icon: 'x' }]); break; }
-    case 'disc-ren': { const c = col(S.colId), d = c.discs.find(x => x.id === k), n = prompt('Disc name', discLabel(c, d)); if (n != null) { d.name = n.trim() === 'Disc ' + (c.discs.indexOf(d) + 1) ? '' : n.trim(); save(); renderList(); } break; }
+    case 'disc-ren': renameDisc(k); break;
     case 'disc-play': { const c = col(S.colId), g = discGroups(c).find(x => x.disc && x.disc.id === k); if (g && g.tracks.length) playTrack(g.tracks[0].id, g.tracks.map(t => t.id)); break; }
     case 'disc-num': { const c = col(S.colId); c.discNum = k; save(); renderList(); break; }
     case 'disc-rm': { const c = col(S.colId), i = c.discs.findIndex(x => x.id === k); if (i < 0) break; const to = c.discs[i ? i - 1 : 1]; Object.keys(c.discOf || {}).forEach(id => { if (c.discOf[id] === k) c.discOf[id] = to.id; }); c.discs.splice(i, 1); if (c.discs.length < 2) { delete c.discs; delete c.discOf; } save(); renderList(); break; }
@@ -4170,6 +4175,7 @@ function act(a, el, e) {
     case 'credits': openCredits(); break;
     case 'credits-close': closeCredits(); break;
     case 'close-modal': closeModal(); break;
+    case 'ask-ok': closeModal($('#m-ask').value); break;
     case 'name-ok': { const i = $('#m-name'), d = $('#modal [data-act="m-dest"].on'); closeModal({ name: i.value.trim() || i.placeholder, cover: UI.mCover, mine: !!(d && d.dataset.k === 'mine'), dtype: ($('#m-dtype') || {}).value }); break; }
     case 'target-clear': col(S.colId).targetDate = null; refresh(); break;
     case 'dl-proj': downloadProject(col(S.colId)); break;
@@ -4252,6 +4258,7 @@ document.addEventListener('change', e => {
 });
 function saveNow() { save(); toast('Saved'); const b = $('[data-act="save-now"]'); if (b) { b.classList.add('saved'); setTimeout(() => b.classList.remove('saved'), 900); } }
 document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.id === 'm-ask') { e.preventDefault(); closeModal(e.target.value); return; }
   if (UI.vw && !e.ctrlKey && !e.metaKey && !e.altKey && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) {
     const V = UI.vw, k = e.key, go = a => { e.preventDefault(); act(a, { dataset: {} }, e); };
     if (k === ' ') return go('vw-pp'); if (k === 'ArrowRight') return go('vw-next'); if (k === 'ArrowLeft') return go('vw-prev');
@@ -4403,6 +4410,7 @@ document.addEventListener('dblclick', e => {
   { // double-click a song anywhere to play it
     const r = e.target.closest('#list .row, .doc-row'); if (r && !e.target.closest('input, textarea, select, [data-rename]')) { const id = r.dataset.id; if (id && trk(id)) { if (S.cur !== id || !S.playing) playTrack(id); return; } }
   }
+  const dn = e.target.closest('[data-discname]'); if (dn) return renameDisc(dn.dataset.discname);
   const n = e.target.closest('[data-rename]'); if (n) return startRename(n.dataset.rename); if (true) return; const f = null;
   const inp = document.createElement('input'); inp.className = 'ps-in rename'; inp.value = layerName(f.L); n.replaceWith(inp); inp.focus(); inp.select();
   const done = ok => { if (ok) f.L.name = inp.value.trim() || undefined; renderPsLayers(); renderPsProps(); save(); };
@@ -4435,6 +4443,22 @@ function cdRestore(json) {
 function cdUndo() { if (!H.stack.length) return toast('Nothing to undo'); H.redo.push(H.last); cdRestore(H.stack.pop()); }
 function cdRedo() { if (!H.redo.length) return toast('Nothing to redo'); H.stack.push(H.last); cdRestore(H.redo.pop()); }
 const lockedToast = () => toast('Layer is locked');
+/* type over a label in place: Enter or clicking away saves, Escape cancels */
+function inlineEdit(el, value, done, max = 60) {
+  const inp = document.createElement('input'); inp.className = 'inl-edit'; inp.value = value; inp.maxLength = max; inp.setAttribute('aria-label', 'Name');
+  const host = el.closest('[draggable="true"]'); if (host) host.draggable = false;
+  el.replaceWith(inp); inp.focus(); inp.select(); let fin = false;
+  const end = ok => { if (fin) return; fin = true; if (host) host.draggable = true; done(ok ? inp.value.trim() : null); };
+  inp.addEventListener('keydown', k => { k.stopPropagation(); if (k.key === 'Enter') { k.preventDefault(); end(true); } if (k.key === 'Escape') end(false); });
+  ['mousedown', 'click', 'dblclick', 'dragstart'].forEach(t => inp.addEventListener(t, ev => ev.stopPropagation()));
+  inp.addEventListener('blur', () => end(true), { once: true });
+}
+function renameDisc(id) {
+  const c = col(S.colId), d = c && c.discs && c.discs.find(x => x.id === id); if (!d || isMine(c)) return;
+  const b = $(`[data-discname="${id}"]`); if (!b) return;
+  inlineEdit(b, discLabel(c, d), n => { if (n != null) { d.name = !n || n === 'Disc ' + (c.discs.indexOf(d) + 1) ? '' : n; save(); } renderList(); });
+}
+function askText(title, value) { return new Promise(res => { openModal('ask', null, { title, value }); UI.nameResolve = res; }); }
 function startRename(id) {
   const n = $(`[data-rename="${id}"]`); if (!n) return; const f = findLayer(id); if (!f) return;
   const inp = document.createElement('input'); inp.className = 'ps-in rename'; inp.value = layerName(f.L); n.replaceWith(inp); inp.focus(); inp.select();

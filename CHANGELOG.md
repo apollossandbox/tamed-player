@@ -2,6 +2,11 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.8.3 · 2026-11-13
+
+- Renaming discs works: double-click a disc name, or use Rename Disc in its menu, type, and press Enter. Clear the name to go back to "Disc 1".
+- Renaming CD designs works in the Windows app too.
+
 ## 1.8.2 · 2026-11-13
 
 - Disc lists are compact (one line per song), so a whole disc fits on screen without scrolling.

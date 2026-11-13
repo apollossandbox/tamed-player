@@ -1,11 +1,19 @@
 {
-  "version": "1.8.2",
+  "version": "1.8.3",
   "file": "Compass-Setup.exe",
-  "size": 82277874,
-  "sha256": "fd757cab02b3fed7cb6d942e9fea614dd1f098258bfb1126aabd6aa89e283f93",
-  "notes": "Compact disc lists",
+  "size": 82278275,
+  "sha256": "cab77a1977eb0ae440cef9982d371d4ca1c3b34e60b3a34f25d342f9a06962a8",
+  "notes": "Disc renaming works",
   "date": "2026-11-13",
   "changelog": [
+    {
+      "v": "1.8.3",
+      "d": "2026-11-13",
+      "items": [
+        "Renaming discs works: double-click a disc name, or use Rename Disc in its menu, type, and press Enter. Clear the name to go back to \"Disc 1\".",
+        "Renaming CD designs works in the Windows app too."
+      ]
+    },
     {
       "v": "1.8.2",
       "d": "2026-11-13",
@@ -182,13 +190,6 @@
       "d": "2026-11-09",
       "items": [
         "Changelog in Settings, after updates, and when checking for updates."
-      ]
-    },
-    {
-      "v": "1.2.4",
-      "d": "2026-11-09",
-      "items": [
-        "Both CD spines now face the front cover, like a real jewel case."
       ]
     }
   ]
