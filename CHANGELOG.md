@@ -2,6 +2,15 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.9.0 · 2026-11-14
+
+- Cleaner, less cluttered app. Buttons that did the same thing are merged:
+- Library: one Add music button (it takes .zip downloads too). Scan QR is a small icon. The sidebar footer is just credits and the version (click it to check for updates).
+- Project page: the header is Play, Add songs, Share and ⋯. Rename and Edit details are one item. A song's ⋯ opens the same menu as right-click, starting with Edit song.
+- CD Creator: one Export menu (print files, 3D model, picture). One Viewer button. Opacity, fill and text options each live in one place instead of two or three.
+- Settings: Desktop app and About are one row. The EQ lives in the player bar only. CD Creator shortcuts are tucked under their own heading.
+- Menus use the same capitalisation everywhere, and the nav icons are all different.
+
 ## 1.8.9 · 2026-11-14
 
 - FL Studio screen: a separate Zipped loop projects tab lists FL zipped loop packages (.zip files with a project inside) from your project folders and Downloads. Click one to open it in FL Studio. Open other project… accepts them too.
