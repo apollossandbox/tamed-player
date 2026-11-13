@@ -2,6 +2,10 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.8.4 · 2026-11-13
+
+- CD Creator: Update tracklist rewrites the tracklist text on the tray card and booklet from the project's current songs, with disc headings for multi-disc projects. Fonts, colours and positions stay; credits and © lines are kept. Undo works.
+
 ## 1.8.3 · 2026-11-13
 
 - Renaming discs works: double-click a disc name, or use Rename Disc in its menu, type, and press Enter. Clear the name to go back to "Disc 1".

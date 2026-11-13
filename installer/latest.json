@@ -1,11 +1,18 @@
 {
-  "version": "1.8.3",
+  "version": "1.8.4",
   "file": "Compass-Setup.exe",
-  "size": 82278275,
-  "sha256": "cab77a1977eb0ae440cef9982d371d4ca1c3b34e60b3a34f25d342f9a06962a8",
-  "notes": "Disc renaming works",
+  "size": 82279359,
+  "sha256": "3b3ec19b90264bd96e2b797689795e5364c5c5139a8d1e5a53658ca1552e5384",
+  "notes": "Update tracklist in CD Creator",
   "date": "2026-11-13",
   "changelog": [
+    {
+      "v": "1.8.4",
+      "d": "2026-11-13",
+      "items": [
+        "CD Creator: Update tracklist rewrites the tracklist text on the tray card and booklet from the project's current songs, with disc headings for multi-disc projects. Fonts, colours and positions stay; credits and © lines are kept. Undo works."
+      ]
+    },
     {
       "v": "1.8.3",
       "d": "2026-11-13",
@@ -183,13 +190,6 @@
         "Click to select, double-click to play. Removed version labels, row covers and the phone button.",
         "Concept player: each artist gets a page with picture, background and album covers.",
         "Covers fill their squares, bigger lyrics box, settings button next to credits, spinning logo disc."
-      ]
-    },
-    {
-      "v": "1.2.5",
-      "d": "2026-11-09",
-      "items": [
-        "Changelog in Settings, after updates, and when checking for updates."
       ]
     }
   ]

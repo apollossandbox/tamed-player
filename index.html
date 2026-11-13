@@ -1901,18 +1901,46 @@ function design(c) {
   }
   return D;
 }
+function tracklistText(c, credits) {
+  const line = (t, n) => credits ? (() => { const cl = creditLine(t); return `${String(n).padStart(2, '0')}  ${dispTitle(t)}${feats(t).length && !t.featInTitle ? ' (feat. ' + andList(feats(t)) + ')' : ''}${cl ? '\n      ' + cl : ''}`; })() : `${String(n).padStart(2, '0')}  ${dispTitle(t)}  ${fmt(verDur(t))}`;
+  if (!hasDiscs(c)) return colTracks(c).map((t, i) => line(t, i + 1)).join('\n') || 'Tracklist';
+  let n = 0; return discGroups(c).filter(g => g.tracks.length).map(g => { if (c.discNum !== 'all') n = 0; return discLabel(c, g.disc).toUpperCase() + '\n' + g.tracks.map(t => line(t, ++n)).join('\n'); }).join('\n\n') || 'Tracklist';
+}
+/* "Update tracklist" in the CD Creator: rewrite the tracklist text on every panel of this design from the project's
+   current songs, keeping each layer's font, size, colour and position. Text around the list (credits, ©) is kept. */
+function updateTracklist(c) {
+  const D = design(c); let hit = 0, locked = 0; const where = new Set();
+  const isNum = x => /^\d{2}\s{2}\S/.test(x), isCont = x => /^\s{4,}\S/.test(x);
+  for (const [key, sd] of Object.entries(D)) { if (key === '$' || !sd || !sd.layers) continue;
+    for (const L of sd.layers) { if (L.type !== 'text' || typeof L.text !== 'string') continue;
+      let mode = L.tl, start = -1, end = -1;
+      if (L.tlText && L.text.includes(L.tlText)) { start = L.text.indexOf(L.tlText); end = start + L.tlText.length; }
+      else { const ls = L.text.split('\n'), i0 = ls.findIndex(isNum); if (i0 < 0) continue;
+        let i1 = i0; for (let i = i0; i < ls.length; i++) { if (isNum(ls[i]) || isCont(ls[i])) i1 = i; else if (ls[i].trim() && !(ls[i + 1] && isNum(ls[i + 1]))) break; }
+        let a = i0; if (a > 0 && ls[a - 1].trim() && /^\d{2}\s{2}/.test(ls[i0]) && /^0?1\s/.test(ls[i0]) && (a === 1 || !ls[a - 2].trim())) a--; // a disc heading just above
+        start = ls.slice(0, a).join('\n').length + (a ? 1 : 0); end = ls.slice(0, i1 + 1).join('\n').length;
+        if (!mode) mode = ls.slice(i0, i1 + 1).some(x => isNum(x) && /\d+:\d{2}\s*$/.test(x)) ? 'simple' : 'credits'; }
+      if (L.locked) { locked++; continue; }
+      const t = tracklistText(c, mode === 'credits'); L.text = L.text.slice(0, start) + t + L.text.slice(end); L.tl = mode; L.tlText = t; hit++; where.add(SHEETS[key] ? SHEETS[key].short : key); } }
+  if (!hit && !locked) { const sp = SHEETS.tray.spine, tw = SHEETS.tray.w, th = SHEETS.tray.h, t = tracklistText(c, false);
+    D.tray = D.tray || { bg: '#111111', layers: [] };
+    const L = { id: uid(), op: 1, rot: 0, type: 'text', text: t, size: 3.3, color: '#ffffff', font: 'Archivo', weight: 400, lh: 1.3, ls: 0, align: 'left', x: tw / 2, y: th / 2 + 6, w: tw - 2 * sp - 30, name: 'Tracklist', tl: 'simple', tlText: t };
+    D.tray.layers.push(L); S.cd.sheet = 'tray'; UI.cdSel = L.id; hit = 1; where.add('Tray card (new layer)'); }
+  save(); cdDirty(); renderCdPanel();
+  const n = colTracks(c).length; toast(hit ? `Tracklist updated on ${[...where].join(', ')} · ${n} ${n === 1 ? 'song' : 'songs'}${locked ? ` · ${locked} locked layer${locked > 1 ? 's' : ''} skipped` : ''}` : 'Tracklist layers are locked. Unlock them to update.');
+}
 function autoDesign(c) {
   const ts = colTracks(c), A = projArtist(c), cov = c.cover && srcs['art:' + c.cover] ? 'art:' + c.cover : null;
   const dark = shade(toHex(pcolors(c)[2] || pcolors(c)[0]), .45);
   const L = o => ({ id: uid(), op: 1, rot: 0, ...o });
   const T = (text, o) => L({ type: 'text', text, size: 4, color: '#ffffff', font: 'Archivo', weight: 400, lh: 1.3, ls: 0, align: 'center', w: 100, ...o });
-  const lines = ts.map((t, i) => `${String(i + 1).padStart(2, '0')}  ${dispTitle(t)}  ${fmt(verDur(t))}`).join('\n') || 'Tracklist';
-  const creditLines = ts.map((t, i) => { const cl = creditLine(t); return `${String(i + 1).padStart(2, '0')}  ${dispTitle(t)}${feats(t).length && !t.featInTitle ? ' (feat. ' + andList(feats(t)) + ')' : ''}${cl ? '\n      ' + cl : ''}`; }).join('\n') || 'Tracklist';
+  const lines = tracklistText(c, false);
+  const creditLines = tracklistText(c, true);
   const fw = SHEETS.front.w, tw = SHEETS.tray.w, th = SHEETS.tray.h, sp = SHEETS.tray.spine, spineTxt = `${A}  ·  ${c.name}`.toUpperCase();
   return {
     front: { bg: dark, layers: cov ? [L({ type: 'img', src: cov, name: 'Project cover', ar: 1, x: fw / 2, y: fw / 2, w: fw + 6 })] : [T(c.name, { size: 10, weight: 700, x: fw / 2, y: fw / 2 - 6, w: fw - 16 }), T(A, { size: 5, x: fw / 2, y: fw / 2 + 8, w: fw - 16 })] },
-    inside: { bg: '#f4f4f2', layers: [T(c.name, { size: 5.5, weight: 700, color: '#111111', x: fw / 2, y: 16, w: fw - 20 }), T(creditLines + `\n\nAll songs by ${A}\n© ${yearOf(c)} ${A}`, { size: 3, color: '#222222', align: 'left', x: fw / 2, y: fw / 2 + 12, w: fw - 24 })] },
-    tray: { bg: dark, layers: [T(c.name.toUpperCase(), { size: 5, weight: 800, ls: .08, x: tw / 2, y: 16, w: tw - 2 * sp - 20 }), T(lines, { size: 3.3, align: 'left', x: tw / 2, y: th / 2 + 6, w: tw - 2 * sp - 30 })] },
+    inside: { bg: '#f4f4f2', layers: [T(c.name, { size: 5.5, weight: 700, color: '#111111', x: fw / 2, y: 16, w: fw - 20 }), T(creditLines + `\n\nAll songs by ${A}\n© ${yearOf(c)} ${A}`, { tl: 'credits', tlText: creditLines, size: 3, color: '#222222', align: 'left', x: fw / 2, y: fw / 2 + 12, w: fw - 24 })] },
+    tray: { bg: dark, layers: [T(c.name.toUpperCase(), { size: 5, weight: 800, ls: .08, x: tw / 2, y: 16, w: tw - 2 * sp - 20 }), T(lines, { name: 'Tracklist', tl: 'simple', tlText: lines, size: 3.3, align: 'left', x: tw / 2, y: th / 2 + 6, w: tw - 2 * sp - 30 })] },
     trayIn: { bg: '#f4f4f2', layers: [] },
     spineL: { bg: 'none', layers: [T(spineTxt, { size: 3, weight: 700, x: th / 2, y: sp / 2, w: th - 12 })] },
     spineR: { bg: 'none', layers: [T(spineTxt, { size: 3, weight: 700, x: th / 2, y: sp / 2, w: th - 12 })] },
@@ -2468,7 +2496,7 @@ function renderPsOpts() {
   const hist = `<button class="pso-ib" data-act="save-now" title="Save (${MOD}S)" aria-label="Save">${ico('save', 15)}</button><button class="pso-ib" data-act="cd-undo" title="Undo (${MOD}Z)" aria-label="Undo" ${H.stack.length ? '' : 'disabled'}>${ico('undo', 15)}</button><button class="pso-ib" data-act="cd-redo" title="Redo (${MOD}Shift+Z)" aria-label="Redo" ${H.redo.length ? '' : 'disabled'}>${ico('redo', 15)}</button>${sep}`;
   const lockNote = L && L.locked ? `<button class="pso-btn on" data-act="cd-lockl" data-id="${L.id}" title="Unlock layer (${MOD}/)">${ico('lock', 13)} Locked</button>${sep}` : '';
   const viewCtl = three ? `<button class="pso-btn ${S.cd.open ? 'on' : ''}" data-act="cd-open">${S.cd.open ? 'Close case' : 'Open case'}</button><button class="pso-btn ${S.cd.discOut ? 'on' : ''}" data-act="cd-disc">${S.cd.discOut ? 'Put disc back' : 'Remove disc'}</button><button class="pso-btn" data-act="cd-resetview">Reset view</button>${sep}` : '';
-  el.innerHTML = `<span class="pso-tool" title="Current tool">${ico(t === 'orbit' ? 'orbit' : t === 'text' ? 'type' : 'move', 16)}</span>${sep}${hist}${lockNote}<fieldset class="pso-fs" ${L && L.locked ? 'disabled' : ''}>${mid}</fieldset><span class="grow"></span>${viewCtl}`
+  el.innerHTML = `<span class="pso-tool" title="Current tool">${ico(t === 'orbit' ? 'orbit' : t === 'text' ? 'type' : 'move', 16)}</span>${sep}${hist}${lockNote}<fieldset class="pso-fs" ${L && L.locked ? 'disabled' : ''}>${mid}</fieldset><span class="grow"></span><button class="pso-btn" data-act="cd-tracklist" title="Rewrite the tracklist text from this project's current songs. Fonts, colours and positions stay the same.">${ico('list', 14)} Update tracklist</button>${viewCtl}`
     + (UI.canDl ? `${three ? `<button class="pso-btn" data-act="cd-snap">${ico('image', 14)} Save PNG</button>` : ''}<button class="pso-btn" data-act="cd-export3d" title="3D model (.glb) with print files">${ico('cube', 14)} Export 3D</button><button class="pso-btn primary" data-act="cd-print">${ico('save', 14)} Print files</button>` : '');
 }
 function renderPsProps() {
@@ -2493,7 +2521,7 @@ function renderPsProps() {
         <div class="meter ${over ? 'over' : ''}"><p><span>${fmt(sec)} of 80:00</span><span>${over ? 'Over by ' + fmt(sec - cap) : fmt(cap - sec) + ' left'}</span></p><div class="rail"><div class="fill" style="width:${Math.min(100, sec / cap * 100)}%"></div></div></div></div>
       <div class="psp-sec"><h4>Print</h4><dl class="dl specs"><dt>Files</dt><dd>300 dpi PNG per panel</dd><dt>Bleed</dt><dd>3 mm (0.125 in)</dd><dt>Safe area</dt><dd>3 mm inside the trim</dd></dl>
         <p class="psp-note">Check your printer's template before ordering.</p>
-        <div class="crow"><button class="pso-btn" data-act="cd-reset">${ico('repeat', 13)} Reset to project art</button></div></div>`;
+        <div class="crow"><button class="pso-btn" data-act="cd-tracklist">${ico('list', 13)} Update tracklist</button><button class="pso-btn" data-act="cd-reset">${ico('repeat', 13)} Reset to project art</button></div></div>`;
     return;
   }
   fixText(L);
@@ -2672,6 +2700,7 @@ function cdAct(a, el) {
     case 'cd-fill': if (L && L.locked) { lockedToast(); break; } if (L) { const W = sh.w + 6, H = sh.h + 6, turned = Math.abs(Math.round(L.rot / 90)) % 2 === 1; L.x = sh.w / 2; L.y = sh.h / 2; L.w = L.type === 'img' ? (turned ? Math.max(H, W / L.ar * 1) * 1 : Math.max(W, H * L.ar)) : sh.w - 12; if (turned && L.type === 'img') L.w = Math.max(H, W * L.ar); syncProps(); cdDirty(); save(); } break;
     case 'cd-center': if (L && L.locked) { lockedToast(); break; } if (L) { L.x = sh.w / 2; L.y = sh.h / 2; syncProps(); cdDirty(); save(); } break;
     case 'cd-rot90': if (L && L.locked) { lockedToast(); break; } if (L) { L.rot = ((L.rot + 90 + 180) % 360) - 180; syncProps(); cdDirty(); save(); } break;
+    case 'cd-tracklist': updateTracklist(c); break;
     case 'cd-reset': if (!confirmBtn(el, 'Click again to replace all panels')) break; S.cd.designs[c.id] = autoDesign(c); UI.cdSel = null; refresh(); toast('Reset to ' + c.name + ' art'); break;
     case 'cd-print': cdPrint(); break;
     case 'cd-snap': cdSnap(); break;
@@ -3353,6 +3382,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.8.4', d: '2026-11-13', items: ['CD Creator: Update tracklist rewrites the tracklist text on the tray card and booklet from the project\'s current songs, with disc headings for multi-disc projects. Fonts, colours and positions stay; credits and © lines are kept. Undo works.'] },
   { v: '1.8.3', d: '2026-11-13', items: ['Renaming discs works: double-click a disc name, or use Rename Disc in its menu, type, and press Enter. Clear the name to go back to "Disc 1".', 'Renaming CD designs works in the Windows app too.'] },
   { v: '1.8.2', d: '2026-11-13', items: ['Disc lists are compact (one line per song), so a whole disc fits on screen without scrolling.'] },
   { v: '1.8.1', d: '2026-11-13', items: ['Scan QR in the Library: scan the code on the back of an album to add it. For now any code unlocks sxteen ways – Movie. Pick which camera to use, or scan from a photo.'] },
