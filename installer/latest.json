@@ -1,11 +1,18 @@
 {
-  "version": "1.8.1",
+  "version": "1.8.2",
   "file": "Compass-Setup.exe",
-  "size": 82277482,
-  "sha256": "3320bb0684a2c73f6685fc6b2ce3739aa48c3cc3b7b06665fca3f0ded2218706",
-  "notes": "Scan QR to unlock albums",
+  "size": 82277874,
+  "sha256": "fd757cab02b3fed7cb6d942e9fea614dd1f098258bfb1126aabd6aa89e283f93",
+  "notes": "Compact disc lists",
   "date": "2026-11-13",
   "changelog": [
+    {
+      "v": "1.8.2",
+      "d": "2026-11-13",
+      "items": [
+        "Disc lists are compact (one line per song), so a whole disc fits on screen without scrolling."
+      ]
+    },
     {
       "v": "1.8.1",
       "d": "2026-11-13",
@@ -182,14 +189,6 @@
       "d": "2026-11-09",
       "items": [
         "Both CD spines now face the front cover, like a real jewel case."
-      ]
-    },
-    {
-      "v": "1.2.3",
-      "d": "2026-11-09",
-      "items": [
-        "CD viewer and 3D export match the editor colors.",
-        "Fixed: late-loading art not showing in the viewer."
       ]
     }
   ]

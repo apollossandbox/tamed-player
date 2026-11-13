@@ -795,6 +795,12 @@ body.cx-on .bar { transform: none; }
 .discol .dischead { margin-top: 0; }
 .discol .row { grid-template-columns: 36px minmax(0, 1fr) 92px 46px 32px; } .discol .row .hov, .discol .row .c-add { display: none; }
 .colhead:has(+ .list.discs-on) { display: none; }
+.discol { gap: 0; } /* compact one-line rows so a whole disc fits without scrolling */
+.discol .row { padding: 2px 10px; min-height: 0; }
+.discol .rowplay { width: 24px; height: 24px; } .discol .acts > * { height: 24px; min-height: 0; padding-top: 0; padding-bottom: 0; } .discol .rowplay .ic { width: 13px; height: 13px; }
+.discol .meta { flex-direction: row; align-items: baseline; gap: 8px; } .discol .meta b { flex: 0 1 auto; font-size: 13.5px; } .discol .meta span { flex: 1 1 0; min-width: 40px; font-size: 12px; }
+.discol .pill { padding-top: 2px; padding-bottom: 2px; }
+.discol .dischead { padding-top: 6px; padding-bottom: 4px; margin-bottom: 2px; }
 /* Audio Doctor */
 .doc-drop { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px; margin-bottom: 16px; border: 1.5px dashed var(--line); border-radius: 14px; color: var(--ink2); }
 .doc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 430px); gap: 16px; align-items: start; }
@@ -3343,6 +3349,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.8.2', d: '2026-11-13', items: ['Disc lists are compact (one line per song), so a whole disc fits on screen without scrolling.'] },
   { v: '1.8.1', d: '2026-11-13', items: ['Scan QR in the Library: scan the code on the back of an album to add it. For now any code unlocks sxteen ways – Movie. Pick which camera to use, or scan from a photo.'] },
   { v: '1.8.0', d: '2026-11-13', items: ['Make deluxe: copies a project and adds a Deluxe disc. It sits above New sequel.', 'Discs now sit side by side. Drag songs between discs, onto a song or anywhere in a disc.', 'Selected songs no longer squash their rows.', 'Menus fit on screen and scroll when long. Icons line up.', 'Removed the Audio Editor. Tempo and key are still read in the background and shown on songs.', 'Digital albums can be deleted (they go to Recently deleted).', 'Projects you turned into digital albums or put in the Store stay in the CD Creator.', 'Faster page switches: smaller cover images in grids and quicker animations.'] },
   { v: '1.7.8', d: '2026-11-12', items: ['Click a CD in the Store to see it spinning in 3D, preview any song for 30 seconds, and find the Buy button.', 'Repeat now cycles: off, repeat album, repeat one song. The CD Player plays the whole album instead of looping one song.', 'Audio Editor leaves out songs from digital albums until you make your own version of the album.'] },

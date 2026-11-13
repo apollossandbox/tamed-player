@@ -2,6 +2,10 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.8.2 · 2026-11-13
+
+- Disc lists are compact (one line per song), so a whole disc fits on screen without scrolling.
+
 ## 1.8.1 · 2026-11-13
 
 - Scan QR in the Library: scan the code on the back of an album to add it. For now any code unlocks sxteen ways – Movie. Pick which camera to use, or scan from a photo.
