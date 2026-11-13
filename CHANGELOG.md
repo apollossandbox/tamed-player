@@ -2,6 +2,10 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.8.9 · 2026-11-14
+
+- FL Studio screen: a separate Zipped loop projects tab lists FL zipped loop packages (.zip files with a project inside) from your project folders and Downloads. Click one to open it in FL Studio. Open other project… accepts them too.
+
 ## 1.8.8 · 2026-11-13
 
 - More space between songs in disc lists. Each song is still one line.

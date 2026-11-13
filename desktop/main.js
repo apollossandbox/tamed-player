@@ -122,16 +122,31 @@ function dawScan() {
 /* ---------- FL Studio projects for the Launcher ----------
    Recent = .flp files Windows lists under Recent Items (what you opened lately), plus the newest .flp files in
    FL's Projects folder and any folders you added. FL's own autosave "Backup" folder is skipped. */
-function flpWalk(dir, depth, out) {
+function flpWalk(dir, depth, out, re = /\.flp$/i) {
   let ents = []; try { ents = fs.readdirSync(dir, { withFileTypes: true }); } catch (e) { return; }
   for (const d of ents) { const f = path.join(dir, d.name);
-    if (d.isDirectory()) { if (depth > 0 && !/^(backup|autosave)s?$/i.test(d.name) && !d.name.startsWith('.')) flpWalk(f, depth - 1, out); }
-    else if (/\.flp$/i.test(d.name)) { try { out.push({ path: f, time: fs.statSync(f).mtimeMs, how: 'saved' }); } catch (e) {} } }
+    if (d.isDirectory()) { if (depth > 0 && !/^(backup|autosave)s?$/i.test(d.name) && !d.name.startsWith('.')) flpWalk(f, depth - 1, out, re); }
+    else if (re.test(d.name)) { try { out.push({ path: f, time: fs.statSync(f).mtimeMs, how: 'saved' }); } catch (e) {} } }
 }
-function flAll(extraDirs) {
-  const roots = [path.join(flUserDir(), 'Projects'), ...(Array.isArray(extraDirs) ? extraDirs.filter(d => typeof d === 'string') : [])], seen = new Set(), out = [];
-  for (const root of roots) { const found = []; flpWalk(root, 5, found);
-    for (const x of found) { const k = x.path.toLowerCase(); if (seen.has(k) || out.length >= 5000) continue; seen.add(k);
+/* A zipped loop package (FL Studio: File > Export > Project data files) is a .zip with an .flp inside.
+   Only the zip's file list (its central directory, at the end of the file) is read, so this stays fast. */
+function zipHasFlp(file) {
+  let fd; try { fd = fs.openSync(file, 'r'); const size = fs.fstatSync(fd).size; if (size < 22) return false;
+    const tail = Math.min(size, 65557), buf = Buffer.alloc(tail); fs.readSync(fd, buf, 0, tail, size - tail);
+    let e = -1; for (let i = tail - 22; i >= 0; i--) if (buf.readUInt32LE(i) === 0x06054b50) { e = i; break; } if (e < 0) return false;
+    const cdSize = buf.readUInt32LE(e + 12), cdOff = buf.readUInt32LE(e + 16); if (!cdSize || cdSize > 16 * 1048576 || cdOff + cdSize > size) return false;
+    const cd = Buffer.alloc(cdSize); fs.readSync(fd, cd, 0, cdSize, cdOff);
+    for (let p = 0; p + 46 <= cd.length && cd.readUInt32LE(p) === 0x02014b50;) { const n = cd.readUInt16LE(p + 28), x = cd.readUInt16LE(p + 30), c = cd.readUInt16LE(p + 32);
+      if (/\.flp$/i.test(cd.toString('utf8', p + 46, p + 46 + n))) return true; p += 46 + n + x + c; }
+    return false;
+  } catch (err) { return false; } finally { if (fd !== undefined) try { fs.closeSync(fd); } catch (e) {} }
+}
+function flAll(extraDirs, kind) {
+  const zip = kind === 'zip', extra = Array.isArray(extraDirs) ? extraDirs.filter(d => typeof d === 'string') : [];
+  // loop packages from other people usually land in Downloads, so zipped ones are looked for there too
+  const roots = [path.join(flUserDir(), 'Projects'), ...extra, ...(zip ? [app.getPath('downloads')] : [])], seen = new Set(), out = [];
+  for (const root of roots) { const found = []; flpWalk(root, zip && root === app.getPath('downloads') ? 1 : 5, found, zip ? /\.zip$/i : /\.flp$/i);
+    for (const x of found) { const k = x.path.toLowerCase(); if (seen.has(k) || out.length >= 5000) continue; seen.add(k); if (zip && !zipHasFlp(x.path)) continue;
       let size = 0; try { size = fs.statSync(x.path).size; } catch (e) {}
       const rel = path.relative(root, path.dirname(x.path)); out.push({ path: x.path, name: path.basename(x.path, path.extname(x.path)), folder: [path.basename(root), ...(rel ? rel.split(/[\\/]+/) : [])].join(' › '), time: x.time, size }); } }
   return out;
@@ -149,16 +164,18 @@ function flRecent(extraDirs, opened, n) {
 app.whenReady().then(() => {
   ipcMain.handle('tp-daw-scan', () => dawScan());
   ipcMain.handle('tp-fl-recent', (e, dirs, opened, n) => flRecent(dirs, opened, n));
-  ipcMain.handle('tp-fl-all', (e, dirs) => flAll(dirs));
+  ipcMain.handle('tp-fl-all', (e, dirs, kind) => flAll(dirs, kind));
   // open a project in FL Studio: with the FL program Compass found when there is one, otherwise whatever opens .flp files
   ipcMain.handle('tp-fl-open', async (e, file, exe) => {
-    if (typeof file !== 'string' || !/\.flp$/i.test(file) || !fs.existsSync(file)) return { ok: false, error: 'That project file is gone' };
+    if (typeof file !== 'string' || !/\.(flp|zip)$/i.test(file) || !fs.existsSync(file)) return { ok: false, error: 'That project file is gone' };
+    const zipped = /\.zip$/i.test(file); if (zipped && !zipHasFlp(file)) return { ok: false, error: 'That zip has no FL Studio project in it' };
     if (typeof exe === 'string' && /\.exe$/i.test(exe) && fs.existsSync(exe)) { try { require('child_process').spawn(exe, [file], { detached: true, stdio: 'ignore', cwd: path.dirname(exe) }).unref(); return { ok: true }; } catch (err) {} }
+    if (zipped) return { ok: false, error: "Compass can't find FL Studio. Use Add DAW in the Launcher, then try again." }; // Windows would open the zip in Explorer instead
     const err = await shell.openPath(file); return err ? { ok: false, error: err } : { ok: true };
   });
   ipcMain.handle('tp-fl-pick', async (e, what) => {
     const dir = path.join(flUserDir(), 'Projects'), folder = what === 'folder';
-    const r = await dialog.showOpenDialog(win, { title: folder ? 'Add a folder with FL Studio projects' : 'Open an FL Studio project', defaultPath: fs.existsSync(dir) ? dir : app.getPath('documents'), properties: folder ? ['openDirectory'] : ['openFile'], filters: folder ? [] : [{ name: 'FL Studio projects', extensions: ['flp'] }] });
+    const r = await dialog.showOpenDialog(win, { title: folder ? 'Add a folder with FL Studio projects' : 'Open an FL Studio project', defaultPath: fs.existsSync(dir) ? dir : app.getPath('documents'), properties: folder ? ['openDirectory'] : ['openFile'], filters: folder ? [] : [{ name: 'FL Studio projects and zipped loop packages', extensions: ['flp', 'zip'] }] });
     return r.canceled ? null : r.filePaths[0];
   });
   // the program's own icon, as Windows or macOS shows it
