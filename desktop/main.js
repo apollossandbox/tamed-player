@@ -119,8 +119,39 @@ function dawScan() {
   return out;
 }
 
+/* ---------- FL Studio projects for the Launcher ----------
+   Recent = .flp files Windows lists under Recent Items (what you opened lately), plus the newest .flp files in
+   FL's Projects folder and any folders you added. FL's own autosave "Backup" folder is skipped. */
+function flpWalk(dir, depth, out) {
+  let ents = []; try { ents = fs.readdirSync(dir, { withFileTypes: true }); } catch (e) { return; }
+  for (const d of ents) { const f = path.join(dir, d.name);
+    if (d.isDirectory()) { if (depth > 0 && !/^(backup|autosave)s?$/i.test(d.name) && !d.name.startsWith('.')) flpWalk(f, depth - 1, out); }
+    else if (/\.flp$/i.test(d.name)) { try { out.push({ path: f, time: fs.statSync(f).mtimeMs, how: 'saved' }); } catch (e) {} } }
+}
+function flRecent(extraDirs, opened, n) {
+  const seen = new Map(), add = x => { const k = x.path.toLowerCase(); const o = seen.get(k); if (!o || x.time > o.time) seen.set(k, o && o.how === 'opened' && x.how !== 'opened' ? { ...x, how: 'opened', time: Math.max(x.time, o.time) } : x); };
+  if (process.platform === 'win32') { const rec = path.join(app.getPath('appData'), 'Microsoft', 'Windows', 'Recent');
+    try { for (const f of fs.readdirSync(rec)) { if (!/\.flp\.lnk$/i.test(f)) continue; try { const lnk = path.join(rec, f), t = shell.readShortcutLink(lnk).target; if (t && /\.flp$/i.test(t) && fs.existsSync(t)) add({ path: t, time: fs.statSync(lnk).mtimeMs, how: 'opened' }); } catch (e) {} } } catch (e) {} }
+  for (const o of (Array.isArray(opened) ? opened : [])) if (o && typeof o.path === 'string' && /\.flp$/i.test(o.path) && fs.existsSync(o.path)) add({ path: o.path, time: +o.time || 0, how: 'opened' });
+  const found = []; for (const d of [path.join(flUserDir(), 'Projects'), ...(Array.isArray(extraDirs) ? extraDirs : [])]) if (typeof d === 'string') flpWalk(d, 3, found);
+  found.forEach(add);
+  return [...seen.values()].sort((a, b) => b.time - a.time).slice(0, n || 6).map(x => ({ ...x, name: path.basename(x.path, path.extname(x.path)), dir: path.basename(path.dirname(x.path)) }));
+}
+
 app.whenReady().then(() => {
   ipcMain.handle('tp-daw-scan', () => dawScan());
+  ipcMain.handle('tp-fl-recent', (e, dirs, opened, n) => flRecent(dirs, opened, n));
+  // open a project in FL Studio: with the FL program Compass found when there is one, otherwise whatever opens .flp files
+  ipcMain.handle('tp-fl-open', async (e, file, exe) => {
+    if (typeof file !== 'string' || !/\.flp$/i.test(file) || !fs.existsSync(file)) return { ok: false, error: 'That project file is gone' };
+    if (typeof exe === 'string' && /\.exe$/i.test(exe) && fs.existsSync(exe)) { try { require('child_process').spawn(exe, [file], { detached: true, stdio: 'ignore', cwd: path.dirname(exe) }).unref(); return { ok: true }; } catch (err) {} }
+    const err = await shell.openPath(file); return err ? { ok: false, error: err } : { ok: true };
+  });
+  ipcMain.handle('tp-fl-pick', async (e, what) => {
+    const dir = path.join(flUserDir(), 'Projects'), folder = what === 'folder';
+    const r = await dialog.showOpenDialog(win, { title: folder ? 'Add a folder with FL Studio projects' : 'Open an FL Studio project', defaultPath: fs.existsSync(dir) ? dir : app.getPath('documents'), properties: folder ? ['openDirectory'] : ['openFile'], filters: folder ? [] : [{ name: 'FL Studio projects', extensions: ['flp'] }] });
+    return r.canceled ? null : r.filePaths[0];
+  });
   // the program's own icon, as Windows or macOS shows it
   ipcMain.handle('tp-daw-icon', async (e, file) => { try { if (typeof file !== 'string' || !fs.existsSync(file)) return null; const im = await app.getFileIcon(file, { size: 'large' }); return im.isEmpty() ? null : im.toDataURL(); } catch (err) { return null; } });
   // videos go straight to the Downloads folder, no dialog
@@ -128,7 +159,9 @@ app.whenReady().then(() => {
   ipcMain.handle('tp-daw-open', async (e, file) => { if (typeof file !== 'string' || !fs.existsSync(file) || !/\.(exe|app|lnk)$/i.test(file)) return { ok: false, error: 'That program was not found' }; const err = await shell.openPath(file); return err ? { ok: false, error: err } : { ok: true }; });
   ipcMain.handle('tp-daw-locate', async (e, name) => { const r = await dialog.showOpenDialog(win, { title: 'Find ' + (name || 'your DAW'), properties: process.platform === 'darwin' ? ['openFile', 'treatPackageAsDirectory'] : ['openFile'], filters: process.platform === 'win32' ? [{ name: 'Programs', extensions: ['exe', 'lnk'] }] : [] }); return r.canceled ? null : r.filePaths[0]; });
   // Web MIDI (with SysEx) is how the app talks to the FL Studio script
-  session.defaultSession.setPermissionRequestHandler((wc, perm, cb, details) => cb(perm === 'media' ? (details.mediaTypes || []).every(t => t === 'video') : ['midi', 'midiSysex', 'clipboard-sanitized-write', 'local-fonts'].includes(perm))); // camera only (QR scanner), never the microphone
+  // camera yes (QR scanner), microphone no
+  session.defaultSession.setPermissionRequestHandler((wc, perm, cb, details) => cb(perm === 'media' ? !(details && details.mediaTypes || []).includes('audio') : ['midi', 'midiSysex', 'clipboard-sanitized-write', 'local-fonts'].includes(perm)));
+  ipcMain.handle('tp-camera-settings', () => process.platform === 'win32' ? shell.openExternal('ms-settings:privacy-webcam') : false);
   session.defaultSession.setPermissionCheckHandler((wc, perm) => ['midi', 'midiSysex', 'clipboard-sanitized-write', 'local-fonts', 'media'].includes(perm));
   ipcMain.handle('tp-fl-install', () => installFlScript().catch(e => ({ ok: false, error: e.message })));
   ipcMain.handle('tp-fl-status', () => { const f = path.join(flUserDir(), 'Settings', 'Hardware', 'Compass', 'device_Compass.py'); return { flFound: fs.existsSync(flUserDir()), installed: fs.existsSync(f) }; });

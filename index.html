@@ -51,8 +51,6 @@ h1, h2, h3 { font-family: var(--f); margin: 0; text-wrap: balance; }
 .glass { border-radius: 28px; } .box { border-radius: 16px; box-shadow: inset 0 1px 0 var(--hi), inset 0 -1px 0 var(--lo), 0 8px 24px -12px var(--shadow); }
 
 .app { position: relative; z-index: 1; height: 100%; display: grid; grid-template-columns: var(--side) minmax(0, 1fr); gap: 16px; padding-top: 16px; padding-bottom: 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); transition: opacity .4s var(--ease2), transform .5s var(--ease2), filter .4s; }
-body.cx-on .app, body.cx-on .bar { opacity: 0; transform: scale(.97); filter: blur(6px); pointer-events: none; }
-body.cx-on .bar { transform: translateX(-50%) scale(.97); }
 
 /* sidebar */
 .side { display: flex; flex-direction: column; gap: 4px; padding: 16px 8px 10px; margin-bottom: 16px; overflow: hidden; min-height: 0; }
@@ -384,130 +382,9 @@ textarea.field { resize: vertical; }
 
 @media (prefers-reduced-motion: reduce) { .blob, .logo .spin, .disc .face { animation: none !important; } *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-delay: 0s !important; } }
 
-/* ================= concept takeover ================= */
-.cx { position: fixed; inset: 0; z-index: 70; display: none; overflow: hidden; }
-.cx.open { display: block; animation: cxin .6s var(--ease2) both; }
-@keyframes cxin { from { opacity: 0; transform: scale(1.03); filter: blur(8px); } }
-:where(.cx) button { color: inherit; }
-.cx .exit { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 99px; font-size: 12.5px; font-weight: 700; }
-.cx .meta b { font-weight: 700; } .cx .meta span { color: inherit; opacity: .65; }
-.cx .seek .fill::after { opacity: 0; } .cx .seek:hover .fill::after { opacity: 1; transform: none; }
-
-/* spotify-style */
-.cx-sp { background: #000; color: #fff; font-family: Arial, Helvetica, sans-serif; display: none; height: 100%; padding: 8px 8px 0; padding-top: calc(8px + env(safe-area-inset-top, 0px)); padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)); grid-template-columns: 280px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; gap: 8px; }
-.cx.sp .cx-sp { display: grid; }
-.sp-lib, .sp-main { background: #121212; border-radius: 8px; overflow: hidden; min-height: 0; }
-.sp-lib { display: flex; flex-direction: column; padding: 16px 8px; gap: 4px; }
-.sp-lib h4 { margin: 0 8px 12px; font-size: 16px; display: flex; align-items: center; gap: 10px; color: #b3b3b3; }
-.sp-lib .chipset { display: flex; gap: 8px; margin: 0 8px 10px; } .sp-lib .chipset span { padding: 6px 12px; border-radius: 99px; background: #232323; font-size: 13px; }
-.sp-li { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 6px; text-align: left; width: 100%; transition: background .2s; }
-.sp-li:hover { background: #1f1f1f; } .sp-li.on { background: #2a2a2a; }
-.sp-li .cv { width: 48px; height: 48px; border-radius: 4px; flex: none; } .sp-li .cv.round { border-radius: 50%; }
-.sp-li .meta b { font-size: 15px; font-weight: 400; } .sp-li.on .meta b { color: #1ed760; } .sp-li .meta span { font-size: 13px; color: #b3b3b3; opacity: 1; }
-.sp-main { position: relative; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #555 transparent; }
-.sp-top { position: sticky; top: 0; z-index: 3; display: flex; align-items: center; gap: 8px; padding: 14px 20px; background: color-mix(in srgb, var(--hc) 60%, #121212); }
-.sp-top .circ { width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,.6); display: grid; place-items: center; }
-.sp-top .grow { flex: 1; }
-.sp-top .exit { background: #fff; color: #000; }
-.sp-hero { display: flex; align-items: flex-end; gap: 24px; padding: 16px 24px 24px; background: linear-gradient(180deg, color-mix(in srgb, var(--hc) 85%, #121212), color-mix(in srgb, var(--hc) 45%, #121212)); }
-.sp-hero .cv { width: 232px; height: 232px; max-width: 38vw; max-height: 38vw; flex: none; border-radius: 4px; box-shadow: 0 8px 40px rgba(0,0,0,.5); }
-.sp-hero .cv.round { border-radius: 50%; }
-.sp-hero .ht { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.sp-hero small { font-size: 13px; }
-.sp-hero h2 { font-size: clamp(32px, 6vw, 84px); font-weight: 900; letter-spacing: -.04em; line-height: 1; overflow-wrap: anywhere; }
-.sp-by { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 14px; } .sp-by b { font-weight: 700; } .sp-by span { color: rgba(255,255,255,.75); }
-.sp-by .av { width: 24px; height: 24px; border-radius: 50%; }
-.sp-hero.has-bg { padding-top: 120px; } .sp-artbtns { display: flex; gap: 6px; margin-top: 10px; opacity: 0; transition: opacity .2s; } .sp-hero:hover .sp-artbtns { opacity: 1; } .sp-artbtns button { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 99px; background: rgba(0,0,0,.45); color: #fff; font-size: 12px; font-weight: 700; }
-.vf { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #4cb3ff; color: #fff; }
-.sp-body { padding: 0 24px 40px; background: linear-gradient(180deg, color-mix(in srgb, var(--hc) 22%, #121212), #121212 240px); }
-.sp-actions { display: flex; align-items: center; gap: 22px; padding: 22px 0; color: #b3b3b3; }
-.sp-big { width: 56px; height: 56px; border-radius: 50%; background: #1ed760; color: #000; display: grid; place-items: center; transition: transform .25s var(--ease); }
-.sp-big:hover { transform: scale(1.06); background: #3be477; } .sp-big:active { transform: scale(.95); }
-.sp-actions .ghost { color: #b3b3b3; transition: color .2s, transform .25s; } .sp-actions .ghost:hover { color: #fff; transform: scale(1.05); }
-.sp-table { display: flex; flex-direction: column; }
-.sp-th, .sp-tr { display: grid; grid-template-columns: 32px minmax(0, 1fr) 70px; gap: 16px; align-items: center; padding: 0 16px; }
-.sp-th { height: 36px; border-bottom: 1px solid #2a2a2a; margin-bottom: 8px; color: #b3b3b3; font-size: 13px; }
-.sp-tr { height: 56px; border-radius: 4px; text-align: left; width: 100%; color: #b3b3b3; transition: background .15s; }
-.sp-tr:hover { background: #2a2a2a; }
-.sp-tr .n { text-align: right; font-variant-numeric: tabular-nums; font-size: 15px; }
-.sp-tr .meta { gap: 2px; } .sp-tr .meta b { color: #fff; font-weight: 400; font-size: 16px; } .sp-tr .meta span { font-size: 14px; color: #b3b3b3; opacity: 1; }
-.sp-tr.on .meta b, .sp-tr.on .n { color: #1ed760; }
-.sp-tr .d { text-align: right; font-variant-numeric: tabular-nums; font-size: 14px; }
-.sp-foot { margin-top: 26px; color: #b3b3b3; font-size: 12.5px; display: flex; flex-direction: column; gap: 4px; }
-.sp-sec { font-size: 24px; font-weight: 700; margin: 26px 0 14px; }
-.sp-disco { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
-.sp-card { display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 8px; text-align: left; transition: background .25s; min-width: 0; }
-.sp-card:hover { background: #1f1f1f; }
-.sp-card .cv { display: block; width: 100%; height: 0; padding-bottom: 100%; border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
-.sp-card b { font-weight: 700; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 4px; } .sp-card span { font-size: 13.5px; color: #b3b3b3; }
-.sp-bar { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr); gap: 12px; align-items: center; height: 72px; padding: 0 8px; padding-bottom: env(safe-area-inset-bottom, 0px); box-sizing: content-box; }
-.sp-bar .now { display: flex; align-items: center; gap: 12px; min-width: 0; } .sp-bar .cv { width: 56px; height: 56px; border-radius: 4px; flex: none; }
-.sp-bar .meta b { font-size: 14px; font-weight: 400; } .sp-bar .meta span { font-size: 12.5px; color: #b3b3b3; opacity: 1; }
-.sp-ctr { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.sp-btns { display: flex; align-items: center; gap: 18px; color: #b3b3b3; } .sp-btns button:hover { color: #fff; } .sp-btns .lit { color: #1ed760; }
-.sp-pp { width: 32px; height: 32px; border-radius: 50%; background: #fff; color: #000 !important; display: grid; place-items: center; transition: transform .2s; } .sp-pp:hover { transform: scale(1.06); }
-.sp-scrub { display: flex; align-items: center; gap: 8px; width: 100%; font-size: 12px; color: #b3b3b3; font-variant-numeric: tabular-nums; }
-.sp-scrub .rail { height: 4px; background: #4d4d4d; box-shadow: none; } .sp-scrub .fill { background: #fff; } .sp-scrub .seek:hover .fill { background: #1ed760; }
-.sp-right { display: flex; justify-content: flex-end; align-items: center; gap: 10px; color: #b3b3b3; } .sp-right input { width: 96px; accent-color: #fff; } .sp-right .lit { color: #1ed760; }
-.sp-lyrics { padding: 30px 24px 60px; min-height: 100%; background: var(--hc); }
-.sp-lyrics p { margin: 0 0 14px; font-size: clamp(22px, 3vw, 32px); font-weight: 700; line-height: 1.25; color: rgba(0,0,0,.55); transition: color .4s; }
-.sp-lyrics p.on { color: #fff; }
-
-/* apple-music-style */
-.cx-am { display: none; height: 100%; background: #fff; color: #1d1d1f; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif; grid-template-columns: 250px minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); padding-top: env(safe-area-inset-top, 0px); }
-.cx.am .cx-am { display: grid; }
-.am-side { grid-row: 1 / span 2; background: #f4f4f6; border-right: 1px solid #e3e3e6; padding: 18px 10px; padding-left: max(10px, env(safe-area-inset-left, 0px)); display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
-.am-search { display: flex; align-items: center; gap: 6px; padding: 6px 10px; margin: 0 4px 14px; border-radius: 8px; background: #e6e6ea; color: #8a8a8e; font-size: 13px; }
-.am-h { margin: 14px 10px 4px; font-size: 12px; font-weight: 600; color: #8a8a8e; }
-.am-si { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 7px; font-size: 13.5px; text-align: left; width: 100%; transition: background .15s; }
-.am-si:hover { background: #e7e7ea; } .am-si.on { background: #dcdce0; }
-.am-si .ac { color: #fa2d48; } .am-si .cv { width: 22px; height: 22px; border-radius: 4px; flex: none; }
-.am-si span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.am-top { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 18px; align-items: center; padding: 10px 20px; padding-right: max(20px, env(safe-area-inset-right, 0px)); border-bottom: 1px solid #e3e3e6; background: rgba(250,250,252,.92); }
-.am-tc { display: flex; align-items: center; gap: 16px; color: #3a3a3c; } .am-tc .lit { color: #fa2d48; }
-.am-lcd { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 0 0 0; border-radius: 6px; background: #f2f2f4; border: 1px solid #e3e3e6; overflow: hidden; max-width: 560px; width: 100%; justify-self: center; position: relative; }
-.am-lcd .cv { width: 48px; height: 48px; flex: none; }
-.am-lcd .meta { flex: 1; text-align: center; padding-right: 10px; } .am-lcd .meta b { font-size: 13px; font-weight: 500; } .am-lcd .meta span { font-size: 12.5px; color: #6e6e73; opacity: 1; }
-.am-lcd .seek { position: absolute; left: 48px; right: 0; bottom: 0; height: 6px; } .am-lcd .rail { height: 3px; border-radius: 0; background: #d8d8dc; box-shadow: none; } .am-lcd .fill { background: #8e8e93; border-radius: 0; }
-.am-tr { display: flex; align-items: center; gap: 12px; color: #3a3a3c; } .am-tr input { width: 90px; accent-color: #8e8e93; } .am-tr .lit { color: #fa2d48; }
-.am-tr .exit { background: #1d1d1f; color: #fff; }
-.am-main { overflow-y: auto; padding: 34px 40px 60px; padding-right: max(40px, env(safe-area-inset-right, 0px)); }
-.am-album { display: flex; gap: 34px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 28px; }
-.am-album .cv { width: 270px; height: 270px; max-width: 100%; border-radius: 8px; box-shadow: 0 14px 40px rgba(0,0,0,.18), 0 0 0 .5px rgba(0,0,0,.12); flex: none; }
-.am-album .ht { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1 1 260px; }
-.am-album h2 { font-size: 28px; font-weight: 700; letter-spacing: -.01em; }
-.am-album .ar { font-size: 24px; color: #fa2d48; text-align: left; }
-.am-album .sub { font-size: 12.5px; font-weight: 600; color: #8a8a8e; text-transform: uppercase; letter-spacing: .02em; margin-top: 4px; }
-.am-album .desc { margin: 12px 0 0; font-size: 13px; color: #6e6e73; max-width: 60ch; }
-.am-btns { display: flex; gap: 10px; margin-top: 16px; }
-.am-btns button { display: inline-flex; align-items: center; gap: 6px; padding: 8px 22px; border-radius: 8px; background: #fa2d48; color: #fff; font-weight: 600; font-size: 14px; transition: filter .2s, transform .2s; }
-.am-btns button:hover { filter: brightness(1.08); } .am-btns button:active { transform: scale(.97); }
-.am-rows { display: flex; flex-direction: column; }
-.am-row { display: grid; grid-template-columns: 30px minmax(0, 1fr) 60px; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 6px; text-align: left; width: 100%; font-size: 13.5px; }
-.am-row:nth-child(odd) { background: #f6f6f8; } .am-row:hover { background: #ececf0; }
-.am-row .n { color: #8a8a8e; text-align: center; font-variant-numeric: tabular-nums; display: grid; place-items: center; }
-.am-row .meta span { font-size: 12.5px; color: #8a8a8e; opacity: 1; } .am-row .meta b { font-weight: 400; }
-.am-row.on .meta b { color: #fa2d48; } .am-row .d { text-align: right; color: #8a8a8e; font-variant-numeric: tabular-nums; }
-.am-foot { margin-top: 18px; font-size: 12.5px; color: #8a8a8e; display: flex; flex-direction: column; gap: 3px; }
-.am-artist { position: relative; height: 320px; margin: -34px -40px 26px; display: flex; align-items: flex-end; padding: 30px 40px; background-size: cover; background-position: center; color: #fff; }
-.am-artist::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,.6)); }
-.am-artist h2 { position: relative; z-index: 1; font-size: clamp(34px, 5vw, 56px); font-weight: 800; display: flex; align-items: center; gap: 12px; }
-.am-sec { font-size: 20px; font-weight: 700; margin: 26px 0 12px; display: flex; align-items: center; gap: 4px; }
-.am-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 24px 20px; }
-.am-card { display: flex; flex-direction: column; gap: 4px; text-align: left; min-width: 0; }
-.am-card .cv { display: block; width: 100%; height: 0; padding-bottom: 100%; max-width: 100%; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.14), 0 0 0 .5px rgba(0,0,0,.1); margin-bottom: 6px; transition: transform .35s var(--ease); }
-.am-card:hover .cv { transform: translateY(-3px); }
-.am-card b { font-size: 13.5px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .am-card span { font-size: 12.5px; color: #8a8a8e; }
-.am-lyr { padding: 20px 0 60px; max-width: 760px; }
-.am-lyr p { margin: 0 0 18px; font-size: clamp(24px, 3.2vw, 36px); font-weight: 700; line-height: 1.2; color: #c7c7cc; transition: color .4s, transform .5s var(--ease); transform-origin: left; }
-.am-lyr p.on { color: #1d1d1f; transform: scale(1.02); }
-.eqi { display: flex; align-items: flex-end; gap: 2px; height: 12px; } .eqi b { width: 3px; background: currentColor; border-radius: 1px; animation: eqb .9s ease-in-out infinite alternate; } .eqi b:nth-child(2) { animation-delay: -.3s; } .eqi b:nth-child(3) { animation-delay: -.6s; } @keyframes eqb { from { height: 3px; } to { height: 12px; } }
-.cx .paused .eqi b { animation-play-state: paused; }
-
 /* responsive */
 @media (max-width: 1080px) { .cwrap, .cdwrap { grid-template-columns: 1fr; } .volw input { display: none; } }
 @media (max-width: 980px) { .bar { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) auto; } }
-@media (max-width: 860px) { .cx-sp { grid-template-columns: minmax(0, 1fr); } .sp-lib { display: none; } .cx-am { grid-template-columns: minmax(0, 1fr); } .am-side { display: none; } .am-top { grid-template-columns: minmax(0, 1fr) auto; } .am-tc { display: none; } .am-main { padding: 24px 18px 50px; } .am-artist { margin: -24px -18px 22px; padding: 24px 18px; } }
 @media (max-width: 760px) {
   body { overflow: auto; } html, body { height: auto; min-height: 100%; }
   .app { display: block; height: auto; padding-top: 12px; }
@@ -518,9 +395,6 @@ textarea.field { resize: vertical; }
   .colhead { display: none; } .row { grid-template-columns: 34px 40px minmax(0, 1fr) 44px 34px; gap: 10px; } .row .pill, .row .hov, .row .acts .rmb { display: none; }
   .bar { grid-template-columns: minmax(0, 1fr) auto; border-radius: 28px; gap: 4px 10px; padding: 10px 14px 12px; } .now { display: none; } .volw { grid-column: 2; grid-row: 1; }
   .pgrid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 30px 18px; padding: 10px 0; }
-  .sp-bar { grid-template-columns: minmax(0, 1fr) auto; height: 64px; } .sp-ctr .sp-scrub, .sp-right input, .sp-btns .hide-s { display: none; }
-  .sp-hero { flex-direction: column; align-items: flex-start; } .sp-hero .cv { width: 180px; height: 180px; max-width: 60vw; max-height: 60vw; }
-  .am-lcd .meta span { display: none; } .am-tr input { display: none; }
   .dl { grid-template-columns: 96px minmax(0, 1fr); }
 }
 
@@ -581,7 +455,6 @@ h1 { font-weight: 800; font-size: 34px; letter-spacing: -.02em; }
 .modal, .eqpop, .pop, .tl-detail { border-radius: 16px; background: var(--panel); border: 1px solid var(--line); box-shadow: 0 30px 80px -24px var(--shadow); -webkit-backdrop-filter: none; backdrop-filter: none; }
 .dropzone { border-radius: 12px; border-color: var(--line); }
 .bar { left: var(--side); right: 0; width: auto; transform: none; bottom: 0; border-radius: 0; border: 0; border-top: 1px solid var(--line); background: var(--panel); padding: 10px max(20px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) 20px; box-shadow: none; }
-body.cx-on .bar { transform: none; }
 .pbtn { box-shadow: none; }
 .rail { background: var(--panel3); box-shadow: none; }
 .eqpop { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); right: max(20px, env(safe-area-inset-right, 0px)); }
@@ -785,9 +658,27 @@ body.cx-on .bar { transform: none; }
 .qr-frame i { position: absolute; width: 50%; height: 2px; background: #ff3b30; box-shadow: 0 0 12px #ff3b30; animation: qrline 2.2s ease-in-out infinite alternate; }
 @keyframes qrline { from { transform: translateY(-120px); } to { transform: translateY(120px); } }
 .qr-msg { position: absolute; left: 0; right: 0; bottom: 12px; margin: 0; text-align: center; color: #fff; font-size: 13px; font-weight: 700; text-shadow: 0 1px 4px rgba(0,0,0,.6); }
+.qr-help { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; padding: 12px; border-radius: 12px; background: var(--panel2); border: 1px solid var(--line); } .qr-help p { margin: 0; }
 .qr-won { display: flex; gap: 14px; align-items: center; margin-top: 12px; padding: 12px; border-radius: 14px; background: var(--panel2); border: 1px solid var(--line); animation: pop .35s var(--ease) both; }
 .qr-won > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; } .qr-won b { font-size: 15px; }
 .qr-cov { width: 84px; height: 84px; flex: none; border-radius: 8px; box-shadow: 0 8px 20px -8px var(--shadow); }
+
+/* FL Studio projects screen */
+.daw-fl { cursor: pointer; } .daw-fl:hover { border-color: var(--ink3); }
+.fl-back { margin: 0 0 8px -6px; }
+.flgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 12px; margin-top: 4px; }
+.flp { display: flex; align-items: center; gap: 14px; padding: 14px; text-align: left; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); cursor: pointer; min-width: 0; transition: border-color .2s, background .2s; animation: pop .3s var(--ease) both; animation-delay: calc(var(--n) * 30ms); }
+.flp:hover { border-color: var(--ink3); background: var(--panel2); }
+.flp-ic { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border-radius: 10px; background: var(--field); overflow: hidden; } .flp-ic img { width: 40px; height: 40px; object-fit: contain; }
+.flp-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; } .flp-t b, .flp-t small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .flp-t b { font-size: 14.5px; } .flp-t small { font-size: 12px; color: var(--ink2); }
+.flp-go { width: 32px; height: 32px; flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--field); color: var(--ink); opacity: 0; transition: opacity .2s; } .flp:hover .flp-go { opacity: 1; background: var(--ink); color: var(--onink); }
+.fl-empty { padding: 28px; border-radius: 14px; border: 1px dashed var(--line); text-align: center; } .fl-empty p { margin: 4px 0; }
+.fl-dirs { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 22px; } .fl-dirs p { margin: 0; } .fl-dirs .tag .ico { margin-left: 2px; }
+
+/* desktop app: nothing highlights when you click or drag, except places you type */
+body, body * { -webkit-user-select: none; user-select: none; }
+input, textarea, select, [contenteditable], [contenteditable] *, .inl-edit { -webkit-user-select: text; user-select: text; }
+img { -webkit-user-drag: none; }
 /* discs side by side */
 .list.discs-on { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr)); gap: 8px 28px; align-items: start; }
 .list.discs-on > .disc-add, .list.discs-on > .pfoot { grid-column: 1 / -1; }
@@ -1055,7 +946,6 @@ body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after 
 <aside class="drawer glass" id="drawer" aria-label="Edit track" inert></aside>
 <div class="scrim" id="scrim" data-act="close-modal"></div>
 <section class="modal glass" id="modal" role="dialog" aria-modal="true" inert></section>
-<section class="cx" id="cx" aria-label="Concept player"></section>
 <section class="viewer" id="viewer" aria-label="CD viewer" inert>
   <div class="vw-stage" id="vwstage"></div>
   <header class="vw-top"><div class="vw-title" id="vwtitle"></div><button class="vw-x" data-act="vw-close" aria-label="Close viewer">Close <kbd>Esc</kbd></button></header>
@@ -1209,7 +1099,7 @@ function normalize() {
   delete S.cd.style; delete S.cd.label; delete S.cd.skip;
   S.tracks.forEach(t => { if (t.artist === 'Artist Name') t.artist = ''; });
   S.cx = { open: false, page: 'album', colId: null, ...(S.cx || {}), open: false };
-  if (!['library', 'collection', 'cd', 'concept', 'store', 'market', 'launcher', 'settings'].includes(S.view)) S.view = 'library';
+  if (!['library', 'collection', 'cd', 'store', 'market', 'launcher', 'settings'].includes(S.view)) S.view = 'library';
   if (!['projects', 'tracks', 'mine', 'archived', 'cds', 'stats'].includes(S.libTab)) S.libTab = 'projects';
   S.trash = Array.isArray(S.trash) ? S.trash.filter(x => x && Date.now() - x.at < 30 * DAY) : [];
   if (S.rep === true) S.rep = 'all'; if (!['all', 'one'].includes(S.rep)) S.rep = false;
@@ -1536,6 +1426,7 @@ function renderMain() {
   const m = $('#main'); m.dataset.cd = S.view === 'cd' ? 'page' : '';
   const vkey = S.view + ':' + (S.view === 'collection' ? S.colId : S.view === 'library' ? S.libTab : '');
   const enter = renderMain.last !== vkey; renderMain.last = vkey;
+  if (S.view !== 'launcher') UI.flScreen = false; // leaving the Launcher closes the FL Studio screen
   m.classList.toggle('enter', enter);
   if (S.view === 'library') renderLibrary(m);
   else if (S.view === 'collection') renderProject(m);
@@ -1544,7 +1435,6 @@ function renderMain() {
   else if (S.view === 'market') renderMarket(m);
   else if (S.view === 'launcher') renderLauncher(m);
   else if (S.view === 'settings') renderSettings(m);
-  else renderConcept(m);
   renderList();
   projGradient();
   if (enter) { m.scrollTop = 0; clearTimeout(renderMain.t); renderMain.t = setTimeout(() => m.classList.remove('enter'), 800); }
@@ -3382,6 +3272,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.8.5', d: '2026-11-13', items: ['Removed the Concept player. Your artist name and verified setting stay in Settings.', 'Launcher: click FL Studio (or Projects) to see your 6 most recent FL projects and open one straight into FL Studio. Open other project… picks any .flp from your files, and you can add the folders where you keep projects.', 'Text no longer highlights when you click or drag around the app. Typing fields still work as normal.', 'QR scanner finds cameras more reliably: it lists every camera Windows reports, and tries each one if the default fails.', 'When the camera can\'t start, it says why (blocked by Windows, busy in another app, or none found), with a button to open Windows camera settings.'] },
   { v: '1.8.4', d: '2026-11-13', items: ['CD Creator: Update tracklist rewrites the tracklist text on the tray card and booklet from the project\'s current songs, with disc headings for multi-disc projects. Fonts, colours and positions stay; credits and © lines are kept. Undo works.'] },
   { v: '1.8.3', d: '2026-11-13', items: ['Renaming discs works: double-click a disc name, or use Rename Disc in its menu, type, and press Enter. Clear the name to go back to "Disc 1".', 'Renaming CD designs works in the Windows app too.'] },
   { v: '1.8.2', d: '2026-11-13', items: ['Disc lists are compact (one line per song), so a whole disc fits on screen without scrolling.'] },
@@ -3464,8 +3355,33 @@ const DAWS = [['fl', 'FL Studio'], ['ableton', 'Ableton Live'], ['logic', 'Logic
 const DAWLOOK = { fl: ['FL', '#ff8a00', '#2b2b2b'], ableton: ['Live', '#111111', '#f2f2f2'], logic: ['Lp', '#3a3a3c', '#e8e8ea'], studioone: ['S1', '#0a5ad4', '#ffffff'], reaper: ['R', '#2f6f50', '#ffffff'], cubase: ['Cu', '#c4122f', '#ffffff'], bitwig: ['Bw', '#ff5a00', '#1b1b1b'], protools: ['Pt', '#6a1fd8', '#ffffff'], reason: ['Rs', '#d81f26', '#ffffff'], garageband: ['Gb', '#f79400', '#ffffff'] };
 UI.dawIcons = UI.dawIcons || {};
 const dawTile = (id, path) => { const ic = path && UI.dawIcons[path]; if (ic) return `<span class="daw-i img"><img src="${ic}" alt="" draggable="false"></span>`; const [t, bg, fg] = DAWLOOK[id] || ['?', '#444', '#fff']; return `<span class="daw-i" style="--b:${bg};--f:${fg}">${t}</span>`; };
+const flExe = () => (S.daws || {}).fl || (UI.dawScan && UI.dawScan !== 'busy' && UI.dawScan.fl) || '';
+const flAgo = t => { const d = (Date.now() - t) / 864e5; return d < 1 / 24 ? 'just now' : d < 1 ? Math.round(d * 24) + ' h ago' : d < 2 ? 'yesterday' : d < 30 ? Math.round(d) + ' days ago' : new Date(t).toLocaleDateString(); };
+function flLoad() {
+  if (!(window.tpDesktop && tpDesktop.flp)) return; UI.flRecent = 'busy';
+  tpDesktop.flp.recent(S.flDirs || [], S.flOpened || [], 6).then(r => { UI.flRecent = r || []; if (S.view === 'launcher' && UI.flScreen) renderMain(); }).catch(() => { UI.flRecent = []; if (S.view === 'launcher' && UI.flScreen) renderMain(); });
+}
+async function flOpen(file) {
+  if (!file || !(window.tpDesktop && tpDesktop.flp)) return; const r = await tpDesktop.flp.open(file, flExe());
+  if (!r || !r.ok) return toast((r && r.error) || "Couldn't open that project");
+  S.flOpened = [{ path: file, time: Date.now() }, ...(S.flOpened || []).filter(x => x.path !== file)].slice(0, 20); save();
+  toast('Opening ' + file.split(/[\\/]/).pop().replace(/\.flp$/i, '') + ' in FL Studio'); flLoad();
+}
+function renderFlScreen(m) {
+  if (!UI.flRecent) flLoad(); const R = UI.flRecent, exe = flExe(), icon = exe && UI.dawIcons[exe];
+  const card = (p, i) => `<button class="flp" data-act="fl-proj" data-k="${esc(p.path)}" title="${esc(p.path)}" style="--n:${i}">
+      <span class="flp-ic">${icon ? `<img src="${icon}" alt="" draggable="false">` : ico('disc', 26)}</span>
+      <span class="flp-t"><b>${esc(p.name)}</b><small>${esc(p.dir)}</small><small class="faint">${p.how === 'opened' ? 'Opened' : 'Saved'} ${flAgo(p.time)}</small></span>
+      <span class="flp-go">${ico('play', 14)}</span></button>`;
+  m.innerHTML = `<header class="head"><div><button class="btn sm ghost fl-back" data-act="fl-back">${ico('back', 14)} Launcher</button><h1>FL Studio</h1><p class="faint">Your 6 most recent projects. Click one to open it in FL Studio.</p></div>
+    <div class="hact"><button class="btn" data-act="fl-pick">${ico('folder', 15)} Open other project…</button><button class="btn primary" data-act="daw-open" data-k="fl">${ico('play', 14)} Open FL Studio</button></div></header>
+    ${R === 'busy' ? '<p class="faint">Looking for projects…</p>' : R && R.length ? `<div class="flgrid">${R.map(card).join('')}</div>` : `<div class="fl-empty"><p><b>No recent projects found</b></p><p class="faint small">Compass looks in Windows' recent files and in Documents › Image-Line › FL Studio › Projects. Open a project with the button above, or add the folder where you keep them.</p></div>`}
+    <div class="fl-dirs"><p class="faint small">Also looking in: ${(S.flDirs || []).length ? S.flDirs.map((d, i) => `<span class="tag">${esc(d.split(/[\\/]/).pop() || d)}<button class="ico" data-act="fl-dir-rm" data-k="${i}" aria-label="Stop looking in ${esc(d)}">${ico('x', 11)}</button></span>`).join(' ') : 'FL\'s Projects folder only'}</p>
+      <button class="btn sm" data-act="fl-dir-add">${ico('plus', 13)} Add a project folder</button></div>`;
+}
 async function renderLauncher(m) {
   const desk = window.tpDesktop && tpDesktop.daw; S.daws = S.daws || {};
+  if (UI.flScreen) return renderFlScreen(m);
   if (desk && !UI.dawScan) { UI.dawScan = 'busy'; tpDesktop.daw.scan().then(r => { UI.dawScan = r || {}; if (S.view === 'launcher') renderMain(); }).catch(() => { UI.dawScan = {}; }); }
   const found = id => S.daws[id] || (UI.dawScan && UI.dawScan !== 'busy' && UI.dawScan[id]);
   const macOnly = ['logic', 'garageband'], onMac = /Mac/i.test(navigator.platform || navigator.userAgent);
@@ -3473,8 +3389,8 @@ async function renderLauncher(m) {
   if (desk && tpDesktop.daw.icon) list.filter(d => d.path && !(d.path in UI.dawIcons)).forEach(d => { UI.dawIcons[d.path] = null; tpDesktop.daw.icon(d.path).then(u => { if (u) { UI.dawIcons[d.path] = u; if (S.view === 'launcher') renderMain(); } }); });
   m.innerHTML = `<header class="head"><div><h1>Launcher</h1><p class="faint">${desk ? (UI.dawScan === 'busy' ? 'Scanning for DAWs…' : `${list.filter(x => x.path).length} found on this computer`) : 'Opening DAWs needs the Compass app for Windows.'}</p></div>
     ${desk ? `<div class="hact"><button class="btn" data-act="daw-rescan">${ico('repeat', 15)} Scan again</button></div>` : ''}</header>
-    <div class="dawgrid">${list.map(d => `<div class="daw ${d.path ? 'ok' : ''}">${dawTile(d.id, d.path)}<b>${esc(d.n)}</b><small title="${esc(d.path || '')}">${d.path ? esc(d.path.split(/[\\/]/).pop()) : 'Not found'}</small>
-      <div class="crow">${d.path ? `<button class="btn sm primary" data-act="daw-open" data-k="${d.id}" ${desk ? '' : 'disabled'}>${ico('play', 13)} Open</button>` : ''}${desk ? `<button class="btn sm" data-act="daw-forget" data-k="${d.id}" title="Remove">${ico('x', 13)}</button>` : ''}</div></div>`).join('')}
+    <div class="dawgrid">${list.map(d => `<div class="daw ${d.path ? 'ok' : ''} ${d.id === 'fl' && d.path && desk && tpDesktop.flp ? 'daw-fl' : ''}" ${d.id === 'fl' && d.path && desk && tpDesktop.flp ? 'data-act="fl-screen" role="button" tabindex="0" title="Recent FL Studio projects"' : ''}>${dawTile(d.id, d.path)}<b>${esc(d.n)}</b><small title="${esc(d.path || '')}">${d.path ? esc(d.path.split(/[\\/]/).pop()) : 'Not found'}</small>
+      <div class="crow">${d.path ? `<button class="btn sm primary" data-act="daw-open" data-k="${d.id}" ${desk ? '' : 'disabled'}>${ico('play', 13)} Open</button>` : ''}${d.id === 'fl' && d.path && desk && tpDesktop.flp ? `<button class="btn sm" data-act="fl-screen">${ico('folder', 13)} Projects</button>` : ''}${desk ? `<button class="btn sm" data-act="daw-forget" data-k="${d.id}" title="Remove">${ico('x', 13)}</button>` : ''}</div></div>`).join('')}
       ${desk && missing.length ? `<button class="daw daw-add" data-act="daw-add">${ico('plus', 26)}<b>Add DAW</b><small>Not listed? Find it</small></button>` : ''}</div>
     ${desk && UI.dawScan !== 'busy' && !list.length ? '<p class="faint">No DAWs found. Use Add DAW to find yours.</p>' : ''}`;
 }
@@ -3494,7 +3410,7 @@ function renderSettings(m) {
   <div class="settings">
     <section class="set-card box"><h2>Profile</h2>
       ${setRow('Main artist name', 'Used when a project has no artist.', `<input class="field" id="set-artist" data-cc="artist" value="${esc(S.concept.artist === 'Artist Name' ? '' : S.concept.artist || '')}" placeholder="${esc(artistOf())}" autocomplete="off">`)}
-      ${setRow('Verified badge', 'Check mark next to your name in the concept player.', `<label class="check"><input type="checkbox" data-cc="verified" ${S.concept.verified ? 'checked' : ''}><span>Verified artist</span></label>`)}
+      ${setRow('Verified badge', 'Check mark next to your name.', `<label class="check"><input type="checkbox" data-cc="verified" ${S.concept.verified ? 'checked' : ''}><span>Verified artist</span></label>`)}
     </section>
     <section class="set-card box"><h2>Appearance</h2>
       ${setRow('Theme', '', seg('settheme', [['system', 'System'], ['light', 'Light'], ['dark', 'Dark']], P.theme, 'pref-theme'))}
@@ -3561,108 +3477,7 @@ async function restoreAll(file) {
   } catch (e) { toast('That backup could not be read'); }
 }
 
-/* ---------- concept settings ---------- */
-function renderConcept(m) {
-  const C = S.concept, ord = orderedProjects();
-  m.innerHTML = `<header class="head"><div><h1>Concept player</h1><p class="faint">Preview your projects in a streaming-style player.</p></div></header>
-  <div class="cwrap">
-    <section class="cpanel box">
-      <label class="lab">Style</label>${seg('skin', [['sp', 'Spotify-style'], ['am', 'Apple Music-style']], C.skin, 'skin', 'full')}
-      <label class="lab" for="c-artist">Artist name</label><input class="field" id="c-artist" data-cc="artist" value="${esc(S.concept.artist === 'Artist Name' ? '' : S.concept.artist || '')}" placeholder="${esc(artistOf())}">
-      <label class="check"><input type="checkbox" id="c-verified" data-cc="verified" ${C.verified ? 'checked' : ''}><span>Verified artist</span></label>
-      <p class="faint small">Mockup only. Not connected to any streaming service.</p>
-    </section>
-    <section>
-      <button class="artist-card glass" data-act="cx-artist"><span class="av" style="${ord[0] ? pcov(ord[0]) : cover(3, 9)}"></span><span class="meta"><b style="font-size:17px">${esc(artistOf())}</b><span>Artist page · ${S.cols.length} projects</span></span>${ico('chevR', 18)}</button>
-      ${S.cols.length ? `<div class="launch">${ord.map((c, n) => `<div class="lcard" role="button" tabindex="0" data-act="to-concept" data-id="${c.id}" style="--n:${n};--g:${pgrad(c)};--glow:${pcolors(c)[0]}"><div class="acard-art">${albumArt(c)}</div><b title="${esc(c.name)}">${esc(c.name)}</b><span>${KINDS[c.type]} · ${total(colTracks(c))}</span></div>`).join('')}</div>`
-      : '<div class="empty"><p><b>No projects yet</b></p><p class="faint">Create an album, EP or mixtape to preview it here.</p><div class="crow"><button class="btn primary" data-act="newcol">New project</button></div></div>'}
-    </section></div>`;
-}
-
-/* ---------- concept takeover ---------- */
 const vbadge = sz => S.concept.verified ? `<i class="vf" style="width:${sz}px;height:${sz}px">${ico('check', Math.round(sz * .6))}</i>` : '';
-const lyricLines = t => { const l = (t.lyrics || '').split('\n').map(x => x.trim()).filter(Boolean); return l.length ? l : ['No lyrics yet', 'Add them from the song menu']; };
-function renderCx() {
-  const box = $('#cx'), X = S.cx;
-  document.body.classList.toggle('cx-on', X.open);
-  if (!X.open) { box.className = 'cx'; box.innerHTML = ''; return; }
-  const scroller = $('.sp-main, .am-main', box), y = scroller ? scroller.scrollTop : 0, same = renderCx.last === X.page + X.colId;
-  renderCx.last = X.page + X.colId;
-  box.className = 'cx open ' + S.concept.skin + (S.playing ? '' : ' paused');
-  if (same) box.style.animation = 'none'; else box.style.animation = '';
-  box.innerHTML = S.concept.skin === 'sp' ? spHTML() : amHTML();
-  const sc = $('.sp-main, .am-main', box); if (sc && same) sc.scrollTop = y;
-}
-function cxCtx() {
-  const c = col(S.cx.colId) || orderedProjects()[0], ts = colTracks(c), t = trk(S.cur);
-  return { c, ts, t, playingHere: S.playing && c && c.tracks.includes(S.cur) };
-}
-const artistArt = (name, kind) => { const a = S.artists && S.artists[name]; return a && a[kind] && srcs['artist:' + kind + ':' + name] ? srcs['artist:' + kind + ':' + name] : ''; };
-const artistProjects = name => orderedProjects().filter(p => !name || projArtists(p).includes(name));
-const artistAv = name => { const pic = artistArt(name, 'pic'); if (pic) return `background:url(${pic}) center/cover`; const ps = artistProjects(name); return ps.length ? pcov(ps[ps.length - 1]) : cover(3, 9); };
-function spHTML() {
-  const { c, ts, t, playingHere } = cxCtx(), C = S.concept, X = S.cx, aName = X.artist || (c && projArtists(c)[0]) || artistOf(), ordAll = orderedProjects(), ord = X.page === 'artist' ? (artistProjects(aName).length ? artistProjects(aName) : ordAll) : ordAll;
-  const hc = X.page === 'artist' ? (ord[0] ? pcolors(ord[0])[0] : '#535353') : X.page === 'lyrics' && t ? pcolors(ownerCol(t) || c || { h1: 0, h2: 0 })[0] : c ? pcolors(c)[0] : '#535353';
-  let body;
-  if (X.page === 'artist') {
-    const bg = artistArt(aName, 'bg'), aTracks = ord.flatMap(colTracks);
-    body = `<div class="sp-hero ${bg ? 'has-bg' : ''}" style="${bg ? `background:linear-gradient(transparent 30%, rgba(0,0,0,.7)), url(${bg}) center/cover` : ''}"><span class="cv round" style="${artistAv(aName)}"></span><div class="ht"><small>${meVerified(aName) ? vbadge(22) + ' Verified Artist' : 'Artist'}</small><h2>${esc(aName || 'Artist')}</h2><span class="sp-by"><span>${ord.length} ${ord.length === 1 ? 'project' : 'projects'} · ${total(aTracks)}</span></span>
-      <span class="sp-artbtns"><button data-act="cx-artpic" data-k="pic">${ico('image', 13)} Picture</button><button data-act="cx-artpic" data-k="bg">${ico('image', 13)} Background</button></span></div></div>
-    <div class="sp-body"><div class="sp-actions"><button class="sp-big" data-act="cx-playall" data-id="${ord[0] ? ord[0].id : ''}" aria-label="Play">${ico(S.playing ? 'pause' : 'play', 24)}</button></div>
-      ${ord.length ? `<h3 class="sp-sec">Latest release</h3><button class="sp-li" data-act="cx-album" data-id="${ord[ord.length - 1].id}" style="max-width:420px"><span class="cv" style="width:96px;height:96px;${pcov(ord[ord.length - 1])}"></span><span class="meta"><b style="font-weight:700">${esc(ord[ord.length - 1].name)}</b><span>${yearOf(ord[ord.length - 1])} · ${KINDS[ord[ord.length - 1].type]}</span></span></button>` : ''}
-      <h3 class="sp-sec">Discography</h3><div class="sp-disco">${ord.map(p => `<div class="sp-card" role="button" tabindex="0" data-act="cx-album" data-id="${p.id}"><div class="cv" style="${pcov(p)}"></div><b>${esc(p.name)}</b><span>${yearOf(p)} · ${KINDS[p.type]}</span></div>`).join('')}</div></div>`;
-  } else if (X.page === 'lyrics' && t) {
-    body = `<div class="sp-lyrics">${lyricLines(t).map(l => `<p class="js-lyr">${esc(l)}</p>`).join('')}</div>`;
-  } else if (c) {
-    body = `<div class="sp-hero"><span class="cv" style="${pcovFull(c)}"></span><div class="ht"><small>${KINDS[c.type]}</small><h2>${esc(c.name)}</h2>
-      <span class="sp-by"><span class="av" style="${artistAv(projArtists(c)[0])}"></span><button data-act="cx-artist" data-k="${esc(projArtists(c)[0] || '')}"><b>${esc(projArtist(c))}</b></button>${projArtists(c).some(meVerified) ? vbadge(16) : ''}<span>• ${yearOf(c)} • ${ts.length} ${ts.length === 1 ? 'song' : 'songs'}, ${total(ts)}</span></span></div></div>
-      <div class="sp-body"><div class="sp-actions"><button class="sp-big" data-act="cx-playall" data-id="${c.id}" aria-label="Play">${ico(playingHere ? 'pause' : 'play', 24)}</button><button class="ghost" data-act="noop" aria-label="Save">${ico('heart', 28)}</button><button class="ghost" data-act="noop" aria-label="More">${ico('dots', 28)}</button></div>
-      <div class="sp-table"><div class="sp-th"><span style="text-align:right">#</span><span>Title</span><span style="text-align:right">${ico('time', 16)}</span></div>
-      ${ts.map((x, i) => `<button class="sp-tr ${x.id === S.cur ? 'on' : ''}" data-act="cx-track" data-id="${x.id}"><span class="n">${x.id === S.cur && S.playing ? '<i class="eqi" style="justify-content:flex-end"><b></b><b></b><b></b></i>' : i + 1}</span><span class="meta"><b>${esc(dispTitle(x))}</b><span>${esc(dispArtist(x))}</span></span><span class="d">${fmt(verDur(x))}</span></button>`).join('')}</div>
-      <div class="sp-foot"><span>${fdate(relDate(c) || new Date(c.created).toISOString().slice(0, 10))}</span><span>${c.desc ? esc(c.desc) : '© ' + yearOf(c) + ' ' + esc(projArtist(c))}</span></div></div>`;
-  } else body = `<div class="sp-body" style="padding-top:40px"><h2>No projects yet</h2></div>`;
-  return `<div class="cx-sp">
-    <aside class="sp-lib"><h4>${ico('lib', 22)} Your Library</h4><div class="chipset"><span>Albums</span><span>Artists</span></div>
-      <button class="sp-li ${X.page === 'artist' ? 'on' : ''}" data-act="cx-artist"><span class="cv round" style="${ord[0] ? pcov(ord[0]) : cover(3, 9)}"></span><span class="meta"><b>${esc(artistOf())}</b><span>Artist</span></span></button>
-      ${ord.map(p => `<button class="sp-li ${X.page === 'album' && c && p.id === c.id ? 'on' : ''}" data-act="cx-album" data-id="${p.id}"><span class="cv" style="${pcov(p)}"></span><span class="meta"><b>${esc(p.name)}</b><span>${KINDS[p.type]} • ${esc(projArtist(p))}</span></span></button>`).join('')}</aside>
-    <main class="sp-main" style="--hc:${hc}"><div class="sp-top"><button class="circ" data-act="cx-back" aria-label="Back">${ico('chevL', 18)}</button><span class="grow"></span><button class="exit" data-act="cx-exit">${ico('x', 14)} Exit concept</button></div>${body}</main>
-    <footer class="sp-bar">
-      <div class="now">${t ? `<span class="cv" style="${tcov(t)}"></span><span class="meta"><b>${esc(dispTitle(t))}</b><span>${esc(dispArtist(t))}</span></span><button class="hide-s" data-act="noop" style="color:#b3b3b3" aria-label="Save">${ico('heart', 16)}</button>` : ''}</div>
-      <div class="sp-ctr"><div class="sp-btns"><button class="hide-s" data-act="cx-shuffle" aria-label="Shuffle">${ico('shuffle', 16)}</button><button data-act="prev" aria-label="Previous">${ico('prev', 18)}</button><button class="sp-pp" data-act="toggle" aria-label="Play or pause">${ico(S.playing ? 'pause' : 'play', 16)}</button><button data-act="next" aria-label="Next">${ico('next', 18)}</button><button class="hide-s ${S.rep ? 'lit' : ''}" data-act="rep" aria-label="Repeat">${ico('repeat', 16)}</button></div>
-        <div class="sp-scrub"><span class="js-cur">0:00</span><div class="seek" data-seek><div class="rail"><div class="fill js-fill"></div></div></div><span class="js-dur">${t ? fmt(verDur(t)) : '0:00'}</span></div></div>
-      <div class="sp-right"><button class="${X.page === 'lyrics' ? 'lit' : ''}" data-act="cx-lyrics" aria-label="Lyrics">${ico('mic', 16)}</button>${ico('vol', 16)}<input type="range" min="0" max="1" step="0.01" value="${S.vol}" data-vol aria-label="Volume"></div>
-    </footer></div>`;
-}
-function amHTML() {
-  const { c, ts, t, playingHere } = cxCtx(), C = S.concept, X = S.cx, ord = orderedProjects();
-  let body;
-  if (X.page === 'artist') {
-    const latest = ord[ord.length - 1];
-    body = `<div class="am-artist" style="${latest ? pcov(latest) : cover(3, 9)}"><h2>${esc(artistOf())}${meVerified(artistOf()) ? vbadge(26) : ''}</h2></div>
-    <div class="am-btns" style="margin-top:0"><button data-act="cx-playall" data-id="${ord[0] ? ord[0].id : ''}">${ico(S.playing ? 'pause' : 'play', 14)} ${S.playing ? 'Pause' : 'Play'}</button></div>
-    <p class="am-foot">${S.cols.length} projects · ${total(S.tracks)}</p>
-    ${latest ? `<h3 class="am-sec">Latest Release</h3><button class="am-card" data-act="cx-album" data-id="${latest.id}" style="max-width:220px"><span class="cv" style="${pcov(latest)}"></span><b>${esc(latest.name)}</b><span>${yearOf(latest)}</span></button>` : ''}
-    <h3 class="am-sec">Albums ${ico('chevR', 16)}</h3><div class="am-grid">${ord.map(p => `<button class="am-card" data-act="cx-album" data-id="${p.id}"><span class="cv" style="${pcov(p)}"></span><b>${esc(p.name)}</b><span>${yearOf(p)} · ${KINDS[p.type]}</span></button>`).join('')}</div>`;
-  } else if (X.page === 'lyrics' && t) {
-    body = `<div class="am-lyr">${lyricLines(t).map(l => `<p class="js-lyr">${esc(l)}</p>`).join('')}</div>`;
-  } else if (c) {
-    const genre = c.tags[0] || KINDS[c.type];
-    body = `<div class="am-album"><span class="cv" style="${pcov(c)}"></span><div class="ht"><h2>${esc(c.name)}</h2><button class="ar" data-act="cx-artist">${esc(projArtist(c))}</button><span class="sub">${esc(genre)} · ${yearOf(c)}</span>
-      ${c.desc ? `<p class="desc">${esc(c.desc)}</p>` : ''}<div class="am-btns"><button data-act="cx-playall" data-id="${c.id}">${ico(playingHere ? 'pause' : 'play', 14)} ${playingHere ? 'Pause' : 'Play'}</button><button data-act="cx-shuffle">${ico('shuffle', 14)} Shuffle</button></div></div></div>
-      <div class="am-rows">${ts.map((x, i) => `<button class="am-row ${x.id === S.cur ? 'on' : ''}" data-act="cx-track" data-id="${x.id}"><span class="n">${x.id === S.cur && S.playing ? '<i class="eqi" style="color:#fa2d48"><b></b><b></b><b></b></i>' : i + 1}</span><span class="meta"><b>${esc(dispTitle(x))}</b>${feats(x).length && !x.featInTitle ? `<span>${esc(dispArtist(x))}</span>` : ''}</span><span class="d">${fmt(verDur(x))}</span></button>`).join('')}</div>
-      <div class="am-foot"><span>${fdate(relDate(c) || new Date(c.created).toISOString().slice(0, 10))}</span><span>${ts.length} ${ts.length === 1 ? 'song' : 'songs'}, ${total(ts)}</span></div>`;
-  } else body = '<h2>No projects yet</h2>';
-  return `<div class="cx-am">
-    <aside class="am-side"><div class="am-search">${ico('search', 14)} Search</div>
-      <button class="am-si" data-act="noop"><span class="ac">${ico('home', 16)}</span><span>Home</span></button><button class="am-si" data-act="noop"><span class="ac">${ico('grid', 16)}</span><span>New</span></button>
-      <p class="am-h">Library</p><button class="am-si ${X.page === 'artist' ? 'on' : ''}" data-act="cx-artist"><span class="ac">${ico('user', 16)}</span><span>Artists</span></button><button class="am-si" data-act="noop"><span class="ac">${ico('disc', 16)}</span><span>Albums</span></button>
-      <p class="am-h">${esc(artistOf())}</p>${ord.map(p => `<button class="am-si ${X.page === 'album' && c && p.id === c.id ? 'on' : ''}" data-act="cx-album" data-id="${p.id}"><span class="cv" style="${pcov(p)}"></span><span>${esc(p.name)}</span></button>`).join('')}</aside>
-    <header class="am-top"><div class="am-tc"><button class="" data-act="cx-shuffle" aria-label="Shuffle">${ico('shuffle', 16)}</button><button data-act="prev" aria-label="Previous">${ico('prev', 20)}</button><button data-act="toggle" aria-label="Play or pause">${ico(S.playing ? 'pause' : 'play', 24)}</button><button data-act="next" aria-label="Next">${ico('next', 20)}</button><button class="${S.rep ? 'lit' : ''}" data-act="rep" aria-label="Repeat">${ico('repeat', 16)}</button></div>
-      <div class="am-lcd">${t ? `<span class="cv" style="${tcov(t)}"></span><span class="meta"><b>${esc(dispTitle(t))}</b><span>${esc(dispArtist(t))} — ${esc((ownerCol(t) || c || { name: '' }).name)}</span></span>` : `<span class="cv" style="background:#e3e3e6"></span><span class="meta"><b style="color:#8a8a8e">Not playing</b></span>`}<div class="seek" data-seek><div class="rail"><div class="fill js-fill"></div></div></div></div>
-      <div class="am-tr"><button class="${X.page === 'lyrics' ? 'lit' : ''}" data-act="cx-lyrics" aria-label="Lyrics">${ico('quote', 18)}</button><input type="range" min="0" max="1" step="0.01" value="${S.vol}" data-vol aria-label="Volume"><button class="exit" data-act="cx-exit">${ico('x', 14)} Exit</button></div></header>
-    <main class="am-main">${body}</main></div>`;
-}
-
 /* ---------- player bar & EQ ---------- */
 function renderBar() {
   const t = trk(S.cur), b = $('#bar');
@@ -3752,7 +3567,7 @@ function crLoop() {
 /* ---------- refresh ---------- */
 function refresh() {
   const sc = $('#main'), y = sc.scrollTop;
-  renderSide(); renderMain(); renderBar(); renderCx();
+  renderSide(); renderMain(); renderBar();
   if (!renderMain.justEntered) sc.scrollTop = y;
   applySlides(); save();
 }
@@ -3820,18 +3635,37 @@ const QR = { stream: null, timer: 0, busy: false, done: false };
 function loadJsQR() { if (window.jsQR) return Promise.resolve(true); return new Promise(res => { const sc = document.createElement('script'); sc.src = JSQR_URL; sc.onload = () => res(!!window.jsQR); sc.onerror = () => res(false); document.head.appendChild(sc); }); }
 const qrMsg = t => { const m = $('#qr-msg'); if (m) { m.textContent = t; m.hidden = !t; } };
 function qrStop() { clearInterval(QR.timer); QR.timer = 0; if (QR.stream) QR.stream.getTracks().forEach(t => t.stop()); QR.stream = null; const v = $('#qr-video'); if (v) v.srcObject = null; }
+async function qrCams() { try { return (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput'); } catch (e) { return []; } }
+function qrFillCams(cams, curId) {
+  const sel = $('#qr-cam'); if (!sel) return;
+  sel.innerHTML = `<option value="">Default camera${cams.length ? ` (${cams.length} found)` : ''}</option>` + cams.filter(d => d.deviceId).map((d, i) => `<option value="${esc(d.deviceId)}" ${curId && d.deviceId === curId ? 'selected' : ''}>${esc(d.label || 'Camera ' + (i + 1))}</option>`).join('');
+}
+function qrFail(e, cams) {
+  const n = e && e.name || '', win = !!(window.tpDesktop && tpDesktop.openCameraSettings), box = $('#qr-result');
+  const why = n === 'NotAllowedError' || n === 'SecurityError' ? 'Windows blocked the camera for Compass.'
+    : n === 'NotReadableError' || n === 'AbortError' || n === 'TrackStartError' ? 'The camera is busy or blocked. Close apps that use it (Zoom, Discord, OBS, Teams) and check Windows camera privacy.'
+    : !cams.length ? 'Windows reports no cameras. Check the camera is plugged in and turned on, and that Windows camera privacy allows desktop apps.'
+    : "Couldn't start the camera.";
+  qrMsg(why); const qb = $('.qrbox'); if (qb) qb.hidden = true; // the help box below says it; no dead camera window
+  if (box) box.innerHTML = `<div class="qr-help"><p class="small">${why}</p>${win ? `<p class="faint small">In Windows Settings › Privacy &amp; security › Camera, turn on <b>Camera access</b> and <b>Let desktop apps access your camera</b>.</p>` : ''}
+    <div class="crow">${win ? `<button class="btn sm" data-act="qr-winset">Open camera settings</button>` : ''}<button class="btn sm" data-act="qr-again">Try again</button></div>
+    <p class="faint small mono">${esc(n || 'Error')}${e && e.message ? ': ' + esc(e.message) : ''} · ${cams.length} camera${cams.length === 1 ? '' : 's'} listed</p></div>`;
+}
 async function qrStart(deviceId) {
   qrStop(); QR.done = false; $('#qr-result') && ($('#qr-result').innerHTML = ''); const qb = $('.qrbox'); if (qb) qb.hidden = false; loadJsQR();
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return qrMsg('No camera access here. Use a photo instead.');
   qrMsg('Starting camera…');
-  try { QR.stream = await navigator.mediaDevices.getUserMedia({ video: deviceId ? { deviceId: { exact: deviceId } } : true, audio: false }); }
-  catch (e) { return qrMsg(e && e.name === 'NotAllowedError' ? 'Camera access was blocked. Allow it, or use a photo.' : 'No camera found. Use a photo instead.'); }
+  let cams = await qrCams(); qrFillCams(cams, deviceId);
+  // the chosen camera first, then the default, then each camera Windows lists
+  const tries = [...(deviceId ? [{ deviceId: { exact: deviceId } }] : []), true, ...cams.filter(d => d.deviceId && d.deviceId !== deviceId).map(d => ({ deviceId: { exact: d.deviceId } }))];
+  let err = null;
+  for (const v of tries) { try { QR.stream = await navigator.mediaDevices.getUserMedia({ video: v, audio: false }); break; } catch (e) { err = err && err.name === 'NotReadableError' ? err : e; if (e && (e.name === 'NotAllowedError' || e.name === 'SecurityError')) break; } }
+  if (!QR.stream) { cams = await qrCams(); qrFillCams(cams, deviceId); return qrFail(err, cams); }
   if (!UI.modal || UI.modal.kind !== 'qr') return qrStop();
   const v = $('#qr-video'); v.srcObject = QR.stream; try { await v.play(); } catch (e) {}
   qrMsg('Looking for a QR code…');
   const cur = QR.stream.getVideoTracks()[0], curId = cur && cur.getSettings ? cur.getSettings().deviceId : '';
-  try { const cams = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput'), sel = $('#qr-cam');
-    if (sel) sel.innerHTML = `<option value="">Default camera</option>` + cams.map((d, i) => `<option value="${esc(d.deviceId)}" ${deviceId && d.deviceId === deviceId ? 'selected' : ''}>${esc(d.label || 'Camera ' + (i + 1))}</option>`).join(''); } catch (e) {}
+  qrFillCams(await qrCams(), deviceId || curId); // names show up once the camera is allowed
   QR.timer = setInterval(() => { if (!QR.busy && v.videoWidth) qrRead(v, v.videoWidth, v.videoHeight); }, 220);
 }
 async function qrDecode(src, w, h) {
@@ -4099,6 +3933,12 @@ function act(a, el, e) {
     case 'store-buy': toast('Checkout coming soon'); break;
     case 'store-cd': viewerFor(id, { store: true, list: S.cols.filter(c => c.release && c.release.cd != null && !c.archived).map(c => c.id) }); break;
     case 'daw-rescan': UI.dawScan = null; S.dawHidden = []; save(); renderMain(); break;
+    case 'fl-screen': UI.flScreen = true; UI.flRecent = null; renderMain(); break;
+    case 'fl-back': UI.flScreen = false; renderMain(); break;
+    case 'fl-proj': flOpen(k); break;
+    case 'fl-pick': if (window.tpDesktop && tpDesktop.flp) tpDesktop.flp.pick('file').then(f => { if (f) flOpen(f); }); break;
+    case 'fl-dir-add': if (window.tpDesktop && tpDesktop.flp) tpDesktop.flp.pick('folder').then(d => { if (d && !(S.flDirs || []).includes(d)) { S.flDirs = [...(S.flDirs || []), d]; save(); flLoad(); renderMain(); } }); break;
+    case 'fl-dir-rm': { S.flDirs = (S.flDirs || []).filter((x, i) => i !== +k); save(); flLoad(); renderMain(); break; }
     case 'daw-add': { const r = el.getBoundingClientRect(), onMac = /Mac/i.test(navigator.platform || navigator.userAgent), have = id => (S.daws || {})[id] || (UI.dawScan && UI.dawScan[id]); ctxMenu(r.left, r.top + 40, [{ head: 'Which DAW?' }, ...DAWS.filter(([id]) => (onMac || !['logic', 'garageband'].includes(id)) && !have(id)).map(([id, n]) => ({ label: n + '…', act: 'daw-locate', k: id }))]); break; }
     case 'daw-forget': { if (S.daws) delete S.daws[k]; if (UI.dawScan && UI.dawScan !== 'busy') delete UI.dawScan[k]; save(); renderMain(); break; }
     case 'daw-open': { const p = (S.daws || {})[k] || (UI.dawScan || {})[k]; if (p && window.tpDesktop) tpDesktop.daw.open(p).then(r => toast(r && r.ok ? 'Opening ' + (DAWS.find(d => d[0] === k) || [, k])[1] + '…' : 'Could not open: ' + ((r && r.error) || 'unknown error'))); break; }
@@ -4125,6 +3965,7 @@ function act(a, el, e) {
     case 'trash-empty': if (!confirmBtn(el, 'Click again to empty')) break; while (S.trash.length) purgeTrash(0); break;
     case 'm-dest': $$('[data-act="m-dest"]', el.parentElement).forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el); }); { const bx = $('#m-dtypebox'); if (bx) bx.classList.toggle('hide-folder', k !== 'mine'); } applySlides(); break;
     case 'qr-scan': openModal('qr'); break;
+    case 'qr-winset': if (window.tpDesktop && tpDesktop.openCameraSettings) tpDesktop.openCameraSettings(); break;
     case 'qr-again': qrStart($('#qr-cam') && $('#qr-cam').value); break;
     case 'qr-open': closeModal(); S.view = 'collection'; S.colId = id; refresh(); break;
     case 'qr-photo': { const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*'; inp.onchange = () => qrPhoto(inp.files[0]); inp.click(); break; }
@@ -4176,18 +4017,6 @@ function act(a, el, e) {
     case 'ver-set': { const t = trk(S.editId); t.ver = id; const wasCur = S.cur === t.id; if (wasCur) { const p = Engine.pos(); Engine.load(t); if (S.playing) Engine.play(); audio.addEventListener('loadedmetadata', () => { try { audio.currentTime = Math.min(p, audio.duration - .5); } catch (e) { } }, { once: true }); } $('#d-vers').innerHTML = versHTML(t); renderList(); renderBar(); save(); toast('Now using ' + (id === t.id ? 'Original' : t.versions.find(v => v.id === id).name)); break; }
     case 'ver-rm': { if (!confirmBtn(el, 'Delete?')) break; const t = trk(S.editId); t.versions = t.versions.filter(v => v.id !== id); DB.del(id); delete srcs[id]; if (t.ver === id) { t.ver = t.id; if (S.cur === t.id) { Engine.load(t); if (S.playing) Engine.play(); } } $('#d-vers').innerHTML = versHTML(t); renderList(); save(); break; }
     case 'play-col': { const c = col(id); const ids = c.tracks.filter(trk); if (S.playing && ids.includes(S.cur)) toggle(); else playQueue(ids, false); break; }
-    case 'to-concept': S.cx = { ...S.cx, open: true, page: 'album', colId: id }; closeDrawer(); refresh(); break;
-    case 'to-concept-now': { const c = S.cur ? (S.cols.find(x => x.tracks.includes(S.cur))) : null; S.cx = { ...S.cx, open: true, page: 'album', colId: c ? c.id : (S.cols[0] || {}).id }; closeDrawer(); refresh(); break; }
-    case 'cx-exit': S.cx.open = false; refresh(); break;
-    case 'cx-album': S.cx.page = 'album'; S.cx.colId = id; refresh(); { const sc = $('.sp-main, .am-main'); if (sc) sc.scrollTop = 0; } break;
-    case 'cx-artist': S.cx = { ...S.cx, open: true, page: 'artist', artist: k || S.cx.artist || '' }; closeDrawer(); refresh(); { const sc = $('.sp-main, .am-main'); if (sc) sc.scrollTop = 0; } break;
-    case 'cx-back': S.cx.page = S.cx.page === 'album' ? 'artist' : 'album'; refresh(); break;
-    case 'cx-artpic': { const n = S.cx.artist || ((col(S.cx.colId) && projArtists(col(S.cx.colId))[0]) || artistOf()); UI.artFor = { name: n, kind: k }; $('#artimg').click(); break; }
-    case 'cx-lyrics': if (!S.cur) { toast('Play a track to see its lyrics'); break; } S.cx.page = S.cx.page === 'lyrics' ? 'album' : 'lyrics'; refresh(); break;
-    case 'cx-track': { const c = col(S.cx.colId) || orderedProjects()[0]; if (S.cur === id) toggle(); else playTrack(id, c.tracks.filter(trk)); break; }
-    case 'cx-playall': { const c = col(id); if (!c) break; const ids = c.tracks.filter(trk); if (S.playing && ids.includes(S.cur)) toggle(); else playQueue(ids, false); break; }
-    case 'cx-shuffle': { const c = col(S.cx.colId) || orderedProjects()[0]; if (c) playQueue(c.tracks.filter(trk), true); break; }
-    case 'cx-artist-play': break;
     case 'proj-more': { const c = col(id), r = el.getBoundingClientRect(); if (c) ctxMenu(r.left, r.bottom + 6, projectMenu(c)); break; }
     case 'share': { const p = $('#sharepop'); p.classList.toggle('open'); if (p.classList.contains('open')) applySlides(); break; }
     case 'vis': { col(S.colId).vis = k; refresh(); $('#sharepop').classList.add('open'); applySlides(); break; }
@@ -4198,7 +4027,6 @@ function act(a, el, e) {
     case 'untag': { const c = col(S.colId); c.tags.splice(+el.dataset.i, 1); refresh(); break; }
     case 'delcol': { if (!confirmBtn(el, 'Click again to delete the project')) break; trashProject(col(S.colId)); break; }
     case 'rm': { const c = col(S.colId); c.tracks = c.tracks.filter(x => x !== id); refresh(); break; }
-    case 'skin': S.concept.skin = k; refresh(); break;
     case 'eq': UI.eqOpen = !UI.eqOpen; $('#eqpop').classList.toggle('open', UI.eqOpen); el.setAttribute('aria-expanded', UI.eqOpen); if (UI.eqOpen) { renderEq(); } break;
     case 'eq-on': S.eq.on = !S.eq.on; if (AC) applyEq(); renderEq(); renderBar(); save(); break;
     case 'eq-preset': { if (k === 'custom') { S.eq.preset = 'custom'; renderEq(); break; } S.eq.preset = k; S.eq.g = [...EQP[k][1]]; S.eq.on = true; if (AC) applyEq(); renderEq(); renderBar(); save(); break; }
@@ -4284,7 +4112,7 @@ document.addEventListener('change', e => {
   else if (t.id === 'cdimg') { const f = t.files[0]; if (f) cdAddImage(f); t.value = ''; }
   else if (t.dataset.cdl && (t.tagName === 'SELECT' || t.type === 'checkbox')) { const L = selLayer(); if (L) { const val = t.type === 'checkbox' ? t.checked : t.dataset.cdl === 'weight' ? +t.value : t.value; sameKind(L, l => { l[t.dataset.cdl] = val; }); cdDirty(); save(); } }
   else if (t.id === 'cdfont') { const f = t.files[0]; t.value = ''; if (f) addCustomFont(f).then(n => { const L = selLayer(); if (n && L) { L.font = n; L.weight = 400; UI.fontCat = 'Yours'; UI.fontOpen = false; renderCdPanel(); cdDirty(); save(); toast('Added ' + n); } }); }
-  else if (t.dataset.cc) { if (t.type === 'checkbox') { S.concept[t.dataset.cc] = t.checked; save(); refresh(); if (typeof renderCx === 'function') renderCx(); toast(t.checked ? 'Verified badge on for ' + (S.concept.artist || 'you') : 'Verified badge off'); } else { S.concept[t.dataset.cc] = t.value; save(); } }
+  else if (t.dataset.cc) { if (t.type === 'checkbox') { S.concept[t.dataset.cc] = t.checked; save(); refresh(); toast(t.checked ? 'Verified badge on for ' + (S.concept.artist || 'you') : 'Verified badge off'); } else { S.concept[t.dataset.cc] = t.value; save(); } }
 });
 function saveNow() { save(); toast('Saved'); const b = $('[data-act="save-now"]'); if (b) { b.classList.add('saved'); setTimeout(() => b.classList.remove('saved'), 900); } }
 document.addEventListener('keydown', e => {
@@ -4314,7 +4142,6 @@ document.addEventListener('keydown', e => {
     if (UI.eqOpen) { UI.eqOpen = false; return $('#eqpop').classList.remove('open'); }
     if ($('.pick.open, #sharepop.open')) { $$('.pick.open, #sharepop.open').forEach(p => p.classList.remove('open')); return; }
     if (S.editId) return closeDrawer();
-    if (S.cx.open) { S.cx.open = false; return refresh(); }
   }
   if (UI.vw) { if (e.code === 'Space' && !/INPUT|TEXTAREA|SELECT|BUTTON/.test(e.target.tagName)) { e.preventDefault(); toggle(); } return; }
   if (cdActive() && !S.cd.lock && !UI.vw && (e.ctrlKey || e.metaKey) && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) {
@@ -4583,7 +4410,7 @@ function projectMenu(c) {
     { label: c.cover ? 'Change cover…' : 'Add cover…', act: 'ctx-cover', id: c.id, icon: 'image' },
     ...(c.covers.length > 1 ? c.covers.map((cv, i) => ({ label: (cv.id === c.cover ? 'Using cover ' : 'Use cover ') + (i + 1), act: 'ctx-usecover', id: c.id, k: cv.id, icon: cv.id === c.cover ? 'check' : null, disabled: cv.id === c.cover })) : []),
     ...(c.cover ? [{ label: 'Remove cover', act: 'ctx-rmcover', id: c.id, icon: 'x' }] : []), { sep: 1 },
-    ...(isFolder(c) || isMine(c) ? [] : [{ label: 'Concept Player', act: 'to-concept', id: c.id, icon: 'phone' }, { label: 'View CD', act: 'ctx-viewcd', id: c.id, icon: 'disc' }, { label: 'Edit CD', act: 'ctx-editcd', id: c.id, icon: 'edit' }, { label: 'Export 3D CD', act: 'ctx-export3d', id: c.id, icon: 'cube' }]),
+    ...(isFolder(c) || isMine(c) ? [] : [{ label: 'View CD', act: 'ctx-viewcd', id: c.id, icon: 'disc' }, { label: 'Edit CD', act: 'ctx-editcd', id: c.id, icon: 'edit' }, { label: 'Export 3D CD', act: 'ctx-export3d', id: c.id, icon: 'cube' }]),
     { label: isFolder(c) ? 'Export folder' : 'Export CD package', act: 'ctx-disc', id: c.id, icon: 'save' }, { label: 'Download', act: 'ctx-dlproj', id: c.id, icon: 'save' }, { sep: 1 },
     ...(isMine(c) ? [{ label: 'Make My Version', act: 'ctx-myver', id: c.id, icon: 'copy' }] : []),
     ...(isFolder(c) ? [] : [{ label: c.release ? 'Release settings…' : 'Release…', act: 'ctx-release', id: c.id, icon: 'upload' }, { label: 'Convert to Digital Album', act: 'ctx-todigital', id: c.id, icon: 'disc', confirm: 'Click again: it becomes read-only' }]),

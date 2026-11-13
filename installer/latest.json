@@ -1,11 +1,22 @@
 {
-  "version": "1.8.4",
+  "version": "1.8.5",
   "file": "Compass-Setup.exe",
-  "size": 82279359,
-  "sha256": "3b3ec19b90264bd96e2b797689795e5364c5c5139a8d1e5a53658ca1552e5384",
-  "notes": "Update tracklist in CD Creator",
+  "size": 82277165,
+  "sha256": "118024468c099839fcff6b42a62310ee7274eaa456a7253a4db53f61d0cd7a3c",
+  "notes": "FL Studio recent projects, camera fixes, no text highlighting, Concept player removed",
   "date": "2026-11-13",
   "changelog": [
+    {
+      "v": "1.8.5",
+      "d": "2026-11-13",
+      "items": [
+        "Removed the Concept player. Your artist name and verified setting stay in Settings.",
+        "Launcher: click FL Studio (or Projects) to see your 6 most recent FL projects and open one straight into FL Studio. Open other project… picks any .flp from your files, and you can add the folders where you keep projects.",
+        "Text no longer highlights when you click or drag around the app. Typing fields still work as normal.",
+        "QR scanner finds cameras more reliably: it lists every camera Windows reports, and tries each one if the default fails.",
+        "When the camera can't start, it says why (blocked by Windows, busy in another app, or none found), with a button to open Windows camera settings."
+      ]
+    },
     {
       "v": "1.8.4",
       "d": "2026-11-13",
@@ -174,22 +185,6 @@
         "Added column moved between Status and Time.",
         "Launcher finds and opens FL Studio, Ableton, REAPER and other DAWs.",
         "Music Store (Digital and Physical) and an early Marketplace."
-      ]
-    },
-    {
-      "v": "1.3.0",
-      "d": "2026-11-12",
-      "items": [
-        "New menu with Launcher, Music Store and Marketplace (placeholders for now).",
-        "Gapless playback.",
-        "Imports clean up file names (\"01-georgia-peach\" becomes \"georgia peach\") and use the numbers for song order. Artist comes from the files.",
-        "Add from zip replaces Import from Untitled.",
-        "Fixed: 3D CD disappearing when the playlist ends or repeats.",
-        "Audio Editor no longer starts the FL Studio link by itself. Side panel is smaller and scrolls.",
-        "Released projects show only the song count. Download is before Share. Rows show the date added.",
-        "Click to select, double-click to play. Removed version labels, row covers and the phone button.",
-        "Concept player: each artist gets a page with picture, background and album covers.",
-        "Covers fill their squares, bigger lyrics box, settings button next to credits, spinning logo disc."
       ]
     }
   ]

@@ -2,6 +2,14 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.8.5 · 2026-11-13
+
+- Removed the Concept player. Your artist name and verified setting stay in Settings.
+- Launcher: click FL Studio (or Projects) to see your 6 most recent FL projects and open one straight into FL Studio. Open other project… picks any .flp from your files, and you can add the folders where you keep projects.
+- Text no longer highlights when you click or drag around the app. Typing fields still work as normal.
+- QR scanner finds cameras more reliably: it lists every camera Windows reports, and tries each one if the default fails.
+- When the camera can't start, it says why (blocked by Windows, busy in another app, or none found), with a button to open Windows camera settings.
+
 ## 1.8.4 · 2026-11-13
 
 - CD Creator: Update tracklist rewrites the tracklist text on the tray card and booklet from the project's current songs, with disc headings for multi-disc projects. Fonts, colours and positions stay; credits and © lines are kept. Undo works.
