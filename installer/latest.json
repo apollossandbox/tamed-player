@@ -1,11 +1,18 @@
 {
-  "version": "1.8.0",
+  "version": "1.8.1",
   "file": "Compass-Setup.exe",
-  "size": 82244048,
-  "sha256": "7a5d75af60e4684b79c60caecf5574e68a648ba4b72e6b3f575e4e5be7d73c9c",
-  "notes": "Make deluxe, discs side by side, menu fixes, Audio Editor removed, faster",
+  "size": 82277482,
+  "sha256": "3320bb0684a2c73f6685fc6b2ce3739aa48c3cc3b7b06665fca3f0ded2218706",
+  "notes": "Scan QR to unlock albums",
   "date": "2026-11-13",
   "changelog": [
+    {
+      "v": "1.8.1",
+      "d": "2026-11-13",
+      "items": [
+        "Scan QR in the Library: scan the code on the back of an album to add it. For now any code unlocks sxteen ways – Movie. Pick which camera to use, or scan from a photo."
+      ]
+    },
     {
       "v": "1.8.0",
       "d": "2026-11-13",
@@ -183,13 +190,6 @@
       "items": [
         "CD viewer and 3D export match the editor colors.",
         "Fixed: late-loading art not showing in the viewer."
-      ]
-    },
-    {
-      "v": "1.2.2",
-      "d": "2026-11-09",
-      "items": [
-        "Credits: sxteen ways, trulytamed and all of KGB."
       ]
     }
   ]

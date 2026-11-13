@@ -9,6 +9,7 @@ body = swap(body, '<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1
 body = swap(body, '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>', '<script src="lib/three.min.js"></script>');
 body = swap(body, "'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/exporters/GLTFExporter.js'", "'lib/GLTFExporter.js'");
 body = swap(body, "'https://cdn.jsdelivr.net/npm/mp4-muxer@5.1.3/build/mp4-muxer.js'", "'lib/mp4-muxer.js'");
+body = swap(body, "'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js'", "'lib/jsQR.js'");
 const bridge = `<script>
 /* Desktop bridge: the web page asks for a "downloads" helper; here it hands files to the Windows save dialog. */
 window.claude = { use: async name => name === 'downloads' ? { save: async ({ filename, data }) => {

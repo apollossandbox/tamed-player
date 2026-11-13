@@ -128,8 +128,8 @@ app.whenReady().then(() => {
   ipcMain.handle('tp-daw-open', async (e, file) => { if (typeof file !== 'string' || !fs.existsSync(file) || !/\.(exe|app|lnk)$/i.test(file)) return { ok: false, error: 'That program was not found' }; const err = await shell.openPath(file); return err ? { ok: false, error: err } : { ok: true }; });
   ipcMain.handle('tp-daw-locate', async (e, name) => { const r = await dialog.showOpenDialog(win, { title: 'Find ' + (name || 'your DAW'), properties: process.platform === 'darwin' ? ['openFile', 'treatPackageAsDirectory'] : ['openFile'], filters: process.platform === 'win32' ? [{ name: 'Programs', extensions: ['exe', 'lnk'] }] : [] }); return r.canceled ? null : r.filePaths[0]; });
   // Web MIDI (with SysEx) is how the app talks to the FL Studio script
-  session.defaultSession.setPermissionRequestHandler((wc, perm, cb) => cb(['midi', 'midiSysex', 'clipboard-sanitized-write', 'local-fonts'].includes(perm)));
-  session.defaultSession.setPermissionCheckHandler((wc, perm) => ['midi', 'midiSysex', 'clipboard-sanitized-write', 'local-fonts'].includes(perm));
+  session.defaultSession.setPermissionRequestHandler((wc, perm, cb, details) => cb(perm === 'media' ? (details.mediaTypes || []).every(t => t === 'video') : ['midi', 'midiSysex', 'clipboard-sanitized-write', 'local-fonts'].includes(perm))); // camera only (QR scanner), never the microphone
+  session.defaultSession.setPermissionCheckHandler((wc, perm) => ['midi', 'midiSysex', 'clipboard-sanitized-write', 'local-fonts', 'media'].includes(perm));
   ipcMain.handle('tp-fl-install', () => installFlScript().catch(e => ({ ok: false, error: e.message })));
   ipcMain.handle('tp-fl-status', () => { const f = path.join(flUserDir(), 'Settings', 'Hardware', 'Compass', 'device_Compass.py'); return { flFound: fs.existsSync(flUserDir()), installed: fs.existsSync(f) }; });
   ipcMain.handle('tp-fl-save', (e, name, data) => {

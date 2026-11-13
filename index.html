@@ -776,6 +776,18 @@ body.cx-on .bar { transform: none; }
 .pcard, .lcard, .acard, .cdcard, .cdf, .scard { animation-duration: .3s !important; animation-delay: calc(min(var(--n, 0), 10) * 18ms) !important; }
 .list > .row, .discol > .row { content-visibility: auto; contain-intrinsic-size: auto 52px; }
 .pgrid > * { content-visibility: auto; contain-intrinsic-size: auto 260px; }
+
+/* QR scanner */
+.qrbox { position: relative; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden; background: #0d0d0d; margin: 12px 0 10px; }
+.qrbox video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.qr-frame { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.qr-frame::before { content: ''; width: 56%; aspect-ratio: 1; border-radius: 18px; box-shadow: 0 0 0 999px rgba(0,0,0,.38); outline: 2px solid rgba(255,255,255,.9); outline-offset: -2px; }
+.qr-frame i { position: absolute; width: 50%; height: 2px; background: #ff3b30; box-shadow: 0 0 12px #ff3b30; animation: qrline 2.2s ease-in-out infinite alternate; }
+@keyframes qrline { from { transform: translateY(-120px); } to { transform: translateY(120px); } }
+.qr-msg { position: absolute; left: 0; right: 0; bottom: 12px; margin: 0; text-align: center; color: #fff; font-size: 13px; font-weight: 700; text-shadow: 0 1px 4px rgba(0,0,0,.6); }
+.qr-won { display: flex; gap: 14px; align-items: center; margin-top: 12px; padding: 12px; border-radius: 14px; background: var(--panel2); border: 1px solid var(--line); animation: pop .35s var(--ease) both; }
+.qr-won > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; } .qr-won b { font-size: 15px; }
+.qr-cov { width: 84px; height: 84px; flex: none; border-radius: 8px; box-shadow: 0 8px 20px -8px var(--shadow); }
 /* discs side by side */
 .list.discs-on { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr)); gap: 8px 28px; align-items: start; }
 .list.discs-on > .disc-add, .list.discs-on > .pfoot { grid-column: 1 / -1; }
@@ -1084,6 +1096,7 @@ const VIZ = { off: 'Off', bars: 'Bars', wave: 'Wave', orb: 'Orb', pulse: 'Pulse'
 const EQF = [60, 230, 910, 3600, 14000], EQL = ['60', '230', '910', '3.6k', '14k'];
 const EQP = { flat: ['Flat', [0, 0, 0, 0, 0]], bass: ['Bass boost', [6, 3, 0, 0, 1]], vocal: ['Vocal', [-2, -1, 3, 4, 1]], bright: ['Bright', [-1, 0, 1, 3, 5]], night: ['Late night', [3, 1, -1, -3, -4]], car: ['Car', [5, 2, -1, 2, 3]] };
 const IC = {
+  qr: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2.5v2.5H14zM17.5 17.5H20V20h-2.5zM14 20h.01M20 14h.01',
   play: 'M8 5v14l11-7z', pause: 'M7 5h4v14H7zM13 5h4v14h-4z', next: 'M6 5l9 7-9 7zM17 5h2v14h-2z', prev: 'M18 5l-9 7 9 7zM5 5h2v14H5z',
   shuffle: 'M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5', repeat: 'M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3',
   plus: 'M12 5v14M5 12h14', minus: 'M5 12h14', upload: 'M12 16V4M7 9l5-5 5 5M4 20h16', search: 'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.3-4.3',
@@ -1572,7 +1585,7 @@ function renderLibrary(m) {
   const projects = S.libTab === 'projects';
   m.innerHTML = `<header class="head">
     <div><h1>Library</h1><p class="faint">${libSummary()}</p></div>
-    <div class="hact"><button class="btn" data-act="zip-add">${ico('import', 16)} Add from zip</button><button class="btn primary" data-act="add">${ico('upload', 16)} Add music</button></div>
+    <div class="hact"><button class="btn" data-act="qr-scan">${ico('qr', 16)} Scan QR</button><button class="btn" data-act="zip-add">${ico('import', 16)} Add from zip</button><button class="btn primary" data-act="add">${ico('upload', 16)} Add music</button></div>
   </header>
   <div class="tools">${seg('libtab', [['projects', 'Projects'], ['mine', 'Digital albums'], ['tracks', 'All songs'], ...LIBTABS_EXTRA], S.libTab === 'archived' ? 'projects' : S.libTab, 'libtab')}
   ${S.libTab !== 'tracks' ? '' : `<label class="search box">${ico('search', 16)}<input id="q" type="search" placeholder="Search songs" value="${esc(S.q)}" autocomplete="off"></label>
@@ -1736,6 +1749,11 @@ function openModal(kind, id, x = {}) {
   } else if (kind === 'changelog') {
     const C = UI.clog || { list: CHANGELOG };
     h = `<h2>What's new</h2><p class="faint small" style="margin:0">Version ${esc(APP_VERSION)}</p><div class="clog">${changelogHTML(C.list, C.since)}</div>`;
+  } else if (kind === 'qr') {
+    h = `<h2>Scan a QR code</h2><p class="faint small" style="margin:0">Point the camera at the QR code on the back of an album.</p>
+    <div class="qrbox"><video id="qr-video" playsinline muted></video><div class="qr-frame"><i></i></div><p class="qr-msg" id="qr-msg">Starting camera…</p></div>
+    <div class="crow"><div class="sel box wide" style="flex:1;min-width:0"><select id="qr-cam" aria-label="Camera"><option value="">Default camera</option></select></div><button class="btn sm" data-act="qr-photo">${ico('image', 14)} Use a photo</button></div>
+    <div id="qr-result"></div>`;
   } else if (kind === 'import') {
     h = `<h2>Import from Untitled</h2>
     <p class="faint">Browsers can't read untitled.stream pages directly, so this takes two steps. The link is saved on the project.</p>
@@ -1745,12 +1763,13 @@ function openModal(kind, id, x = {}) {
     <div class="dropzone" id="m-drop">${ico('import', 26)}<b>Drop the .zip here</b><span class="faint small">or loose audio and image files</span><button class="btn sm primary" data-act="zip-pick">Choose files</button></div>
     <p class="faint small" id="m-status" role="status"></p>`;
   }
-  md.innerHTML = h + `<div class="crow" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-act="close-modal">${kind === 'import' || kind === 'changelog' ? 'Close' : 'Cancel'}</button>${kind === 'name' ? '<button class="btn primary" data-act="name-ok">Import</button>' : ''}${kind === 'lstyle' ? '<button class="btn primary" data-act="ls-ok">OK</button>' : ''}${kind === 'release' ? `${(col(id) || {}).release ? '<button class="btn" data-act="rel-pull">Remove from Store</button>' : ''}<button class="btn primary" data-act="rel-ok">${(col(id) || {}).release ? 'Save' : 'Release'}</button>` : ''}${kind === 'proj' || kind === 'meta' ? `<button class="btn primary" data-act="modal-save">${x.isNew ? 'Create project' : 'Save'}</button>` : ''}</div>`;
-  md.classList.toggle('wide', kind === 'meta' || kind === 'lstyle'); md.classList.toggle('clogm', kind === 'changelog');
+  md.innerHTML = h + `<div class="crow" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-act="close-modal">${kind === 'import' || kind === 'changelog' || kind === 'qr' ? 'Close' : 'Cancel'}</button>${kind === 'name' ? '<button class="btn primary" data-act="name-ok">Import</button>' : ''}${kind === 'lstyle' ? '<button class="btn primary" data-act="ls-ok">OK</button>' : ''}${kind === 'release' ? `${(col(id) || {}).release ? '<button class="btn" data-act="rel-pull">Remove from Store</button>' : ''}<button class="btn primary" data-act="rel-ok">${(col(id) || {}).release ? 'Save' : 'Release'}</button>` : ''}${kind === 'proj' || kind === 'meta' ? `<button class="btn primary" data-act="modal-save">${x.isNew ? 'Create project' : 'Save'}</button>` : ''}</div>`;
+  md.classList.toggle('wide', kind === 'meta' || kind === 'lstyle'); md.classList.toggle('clogm', kind === 'changelog' || kind === 'qr');
+  if (kind === 'qr') qrStart();
   md.inert = false; $('#scrim').classList.add('open'); requestAnimationFrame(() => { md.classList.add('open'); applySlides(); const f = $('input,select', md); if (f) { f.focus(); if (f.select) f.select(); } });
 }
 const askName = (def, count, from, coverBlob, dtype) => new Promise(res => { UI.mCover = null; UI.mCoverDef = coverBlob ? URL.createObjectURL(coverBlob) : ''; UI.mCoverHint = coverBlob ? 'From the download.' : 'No cover in the download.'; UI.nameResolve = res; openModal('name', null, { def, count, from, dtype }); });
-function closeModal(v) { if (UI.modal && UI.modal.kind === 'lstyle' && UI.lsSnap && !UI.lsKeep) { const f = findLayer(UI.modal.id); if (f) { Object.keys(f.L).forEach(k => delete f.L[k]); Object.assign(f.L, JSON.parse(UI.lsSnap)); cdDirty(); renderCdPanel(); } } UI.lsSnap = null; UI.lsKeep = false; const r = UI.nameResolve; UI.nameResolve = null; if (r) r(v ?? null); setTimeout(() => { UI.mCover = null; UI.mCoverDef = ''; }, 0); UI.modal = null; $('#modal').classList.remove('open'); $('#modal').inert = true; $('#scrim').classList.remove('open'); }
+function closeModal(v) { qrStop(); if (UI.modal && UI.modal.kind === 'lstyle' && UI.lsSnap && !UI.lsKeep) { const f = findLayer(UI.modal.id); if (f) { Object.keys(f.L).forEach(k => delete f.L[k]); Object.assign(f.L, JSON.parse(UI.lsSnap)); cdDirty(); renderCdPanel(); } } UI.lsSnap = null; UI.lsKeep = false; const r = UI.nameResolve; UI.nameResolve = null; if (r) r(v ?? null); setTimeout(() => { UI.mCover = null; UI.mCoverDef = ''; }, 0); UI.modal = null; $('#modal').classList.remove('open'); $('#modal').inert = true; $('#scrim').classList.remove('open'); }
 
 /* ---------- CD creator: procedural clear jewel case + art compiler ---------- */
 const BLEED = 3, TEXMM = 6, PRINTMM = 300 / 25.4;
@@ -3324,6 +3343,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.8.1', d: '2026-11-13', items: ['Scan QR in the Library: scan the code on the back of an album to add it. For now any code unlocks sxteen ways – Movie. Pick which camera to use, or scan from a photo.'] },
   { v: '1.8.0', d: '2026-11-13', items: ['Make deluxe: copies a project and adds a Deluxe disc. It sits above New sequel.', 'Discs now sit side by side. Drag songs between discs, onto a song or anywhere in a disc.', 'Selected songs no longer squash their rows.', 'Menus fit on screen and scroll when long. Icons line up.', 'Removed the Audio Editor. Tempo and key are still read in the background and shown on songs.', 'Digital albums can be deleted (they go to Recently deleted).', 'Projects you turned into digital albums or put in the Store stay in the CD Creator.', 'Faster page switches: smaller cover images in grids and quicker animations.'] },
   { v: '1.7.8', d: '2026-11-12', items: ['Click a CD in the Store to see it spinning in 3D, preview any song for 30 seconds, and find the Buy button.', 'Repeat now cycles: off, repeat album, repeat one song. The CD Player plays the whole album instead of looping one song.', 'Audio Editor leaves out songs from digital albums until you make your own version of the album.'] },
   { v: '1.7.7', d: '2026-11-12', items: ['Logo: only the record turns now, slowly. No more spinning or speeding up on hover.'] },
@@ -3751,6 +3771,57 @@ function makeSequel(id) {
   S.cols.splice(S.cols.indexOf(src) + 1, 0, c); closeDrawer(); S.view = 'collection'; S.colId = c.id; refresh();
   UI.mCover = null; openModal('proj', c.id, { isNew: true, seqName: name });
 }
+/* ---------- QR scanner (mock): any code unlocks sxteen ways' Movie for now.
+   Later each printed code will point at one Store release and the server will check it. ---------- */
+const JSQR_URL = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js';
+const QR = { stream: null, timer: 0, busy: false, done: false };
+function loadJsQR() { if (window.jsQR) return Promise.resolve(true); return new Promise(res => { const sc = document.createElement('script'); sc.src = JSQR_URL; sc.onload = () => res(!!window.jsQR); sc.onerror = () => res(false); document.head.appendChild(sc); }); }
+const qrMsg = t => { const m = $('#qr-msg'); if (m) { m.textContent = t; m.hidden = !t; } };
+function qrStop() { clearInterval(QR.timer); QR.timer = 0; if (QR.stream) QR.stream.getTracks().forEach(t => t.stop()); QR.stream = null; const v = $('#qr-video'); if (v) v.srcObject = null; }
+async function qrStart(deviceId) {
+  qrStop(); QR.done = false; $('#qr-result') && ($('#qr-result').innerHTML = ''); const qb = $('.qrbox'); if (qb) qb.hidden = false; loadJsQR();
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return qrMsg('No camera access here. Use a photo instead.');
+  qrMsg('Starting camera…');
+  try { QR.stream = await navigator.mediaDevices.getUserMedia({ video: deviceId ? { deviceId: { exact: deviceId } } : true, audio: false }); }
+  catch (e) { return qrMsg(e && e.name === 'NotAllowedError' ? 'Camera access was blocked. Allow it, or use a photo.' : 'No camera found. Use a photo instead.'); }
+  if (!UI.modal || UI.modal.kind !== 'qr') return qrStop();
+  const v = $('#qr-video'); v.srcObject = QR.stream; try { await v.play(); } catch (e) {}
+  qrMsg('Looking for a QR code…');
+  const cur = QR.stream.getVideoTracks()[0], curId = cur && cur.getSettings ? cur.getSettings().deviceId : '';
+  try { const cams = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput'), sel = $('#qr-cam');
+    if (sel) sel.innerHTML = `<option value="">Default camera</option>` + cams.map((d, i) => `<option value="${esc(d.deviceId)}" ${deviceId && d.deviceId === deviceId ? 'selected' : ''}>${esc(d.label || 'Camera ' + (i + 1))}</option>`).join(''); } catch (e) {}
+  QR.timer = setInterval(() => { if (!QR.busy && v.videoWidth) qrRead(v, v.videoWidth, v.videoHeight); }, 220);
+}
+async function qrDecode(src, w, h) {
+  if ('BarcodeDetector' in window) { try { const r = await new BarcodeDetector({ formats: ['qr_code'] }).detect(src); if (r.length) return r[0].rawValue || '(code)'; } catch (e) {} }
+  if (!(await loadJsQR())) return null;
+  const k = Math.min(1, 800 / Math.max(w, h)), cv = document.createElement('canvas'); cv.width = Math.round(w * k); cv.height = Math.round(h * k);
+  const g = cv.getContext('2d', { willReadFrequently: true }); g.drawImage(src, 0, 0, cv.width, cv.height);
+  const r = jsQR(g.getImageData(0, 0, cv.width, cv.height).data, cv.width, cv.height, { inversionAttempts: 'attemptBoth' }); return r ? r.data || '(code)' : null;
+}
+async function qrRead(src, w, h) { QR.busy = true; let code = null; try { code = await qrDecode(src, w, h); } catch (e) {} QR.busy = false; if (code && !QR.done) { QR.done = true; qrStop(); qrUnlock(code); } return code; }
+async function qrPhoto(f) {
+  if (!f) return; qrStop(); qrMsg('Reading the photo…');
+  try { const bm = await createImageBitmap(f); const code = await qrRead(bm, bm.width, bm.height); if (!code) qrMsg('No QR code found in that photo. Try a sharper one.'); }
+  catch (e) { qrMsg("Couldn't open that image."); }
+}
+const QR_AWARD = 'sxteen-ways-movie';
+async function qrUnlock(code) {
+  let c = S.cols.find(x => x.qrAward === QR_AWARD);
+  const had = !!c;
+  if (!c) {
+    const src = S.cols.find(x => !isMine(x) && !isFolder(x) && /^movie$/i.test((x.name || '').trim()) && projArtists(x).some(a => /sxteen\s*ways/i.test(a)));
+    if (src) { await duplicateProject(src.id, true); c = S.cols[S.cols.indexOf(src) + 1]; delete c.release; delete c.deluxeOf; delete c.sequelOf; delete c.parent; c.archived = false; }
+    else { c = newProject('Movie'); S.cols.push(c); }
+    Object.assign(c, { name: 'Movie', artists: ['sxteen ways'], type: 'album', mine: true, fromProject: false, released: true, qrAward: QR_AWARD, unlockedAt: Date.now() });
+    save(); refresh();
+  }
+  const box = $('#qr-result'); qrMsg(''); const qb = $('.qrbox'); if (qb) qb.hidden = true;
+  if (box) box.innerHTML = `<div class="qr-won"><span class="qr-cov" style="${pcovFull(c)}"></span><div><b>${had ? 'Already in your library' : 'sxteen ways Movie album unlocked'}</b>
+    <span class="faint small">${had ? 'You unlocked this album before.' : 'Added to Digital albums with its cover art.'}</span>
+    <div class="crow" style="margin-top:8px"><button class="btn sm primary" data-act="qr-open" data-id="${c.id}">Open album</button><button class="btn sm" data-act="qr-again">Scan another</button></div></div></div>`;
+  if (!had) toast('sxteen ways Movie album unlocked');
+}
 function newProject(name) {
   const h = Math.floor(Math.random() * 360);
   const me = S.concept && S.concept.artist && S.concept.artist !== 'Artist Name' ? S.concept.artist.trim() : '';
@@ -4011,6 +4082,10 @@ function act(a, el, e) {
     case 'trash-purge': if (!confirmBtn(el, 'Click again')) break; purgeTrash(+k); break;
     case 'trash-empty': if (!confirmBtn(el, 'Click again to empty')) break; while (S.trash.length) purgeTrash(0); break;
     case 'm-dest': $$('[data-act="m-dest"]', el.parentElement).forEach(b => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el); }); { const bx = $('#m-dtypebox'); if (bx) bx.classList.toggle('hide-folder', k !== 'mine'); } applySlides(); break;
+    case 'qr-scan': openModal('qr'); break;
+    case 'qr-again': qrStart($('#qr-cam') && $('#qr-cam').value); break;
+    case 'qr-open': closeModal(); S.view = 'collection'; S.colId = id; refresh(); break;
+    case 'qr-photo': { const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*'; inp.onchange = () => qrPhoto(inp.files[0]); inp.click(); break; }
     case 'zip-add': UI.importMine = S.view === 'library' && S.libTab === 'mine'; $('#zipfile').click(); break;
     case 'changelog': openChangelog(); break;
     case 'changelog-new': $('#toast').classList.remove('show', 'act'); openChangelog(null, k); break;
@@ -4128,6 +4203,7 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => {
   const t = e.target;
+  if (t.id === 'qr-cam') { qrStart(t.value); return; }
   if (t.id === 'sort') { S.sort = t.value; renderList(); save(); }
   else if (t.id === 'file') { handleFiles(t.files); t.value = ''; }
   else if (t.id === 'zipfile') { importFiles(t.files); t.value = ''; }

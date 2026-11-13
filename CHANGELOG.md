@@ -2,6 +2,10 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.8.1 · 2026-11-13
+
+- Scan QR in the Library: scan the code on the back of an album to add it. For now any code unlocks sxteen ways – Movie. Pick which camera to use, or scan from a photo.
+
 ## 1.8.0 · 2026-11-13
 
 - Make deluxe: copies a project and adds a Deluxe disc. It sits above New sequel.
