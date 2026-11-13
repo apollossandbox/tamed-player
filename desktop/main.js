@@ -35,7 +35,7 @@ async function checkForUpdates(manual) {
   if (checking) return; checking = true;
   try {
     const r = await net.fetch(FEED + '?t=' + Date.now(), { cache: 'no-store' });
-    if (!r.ok) throw new Error(r.status === 404 ? 'The update file was not found. The tamed-player repository on GitHub has to be public for updates to work.' : 'GitHub answered ' + r.status + '.');
+    if (!r.ok) throw new Error(r.status === 404 ? 'Update file not found. The tamed-player repository on GitHub must be public.' : 'GitHub returned error ' + r.status + '.');
     const info = await r.json();
     const showLog = () => { if (win) win.webContents.send('tp-changelog', { changelog: Array.isArray(info.changelog) ? info.changelog : [], since: app.getVersion() }); };
     if (!info.version || !newer(info.version, app.getVersion())) {
@@ -45,14 +45,14 @@ async function checkForUpdates(manual) {
     const { response } = await dialog.showMessageBox(win, {
       type: 'info', buttons: ['Download and install', "What's new", 'Later'], defaultId: 0, cancelId: 2,
       message: `Compass ${info.version} is available`,
-      detail: `You have ${app.getVersion()}.${info.notes ? '\n\n' + info.notes : ''}\n\nThe new version installs over this one. Your projects are kept.`
+      detail: `You have ${app.getVersion()}.${info.notes ? '\n\n' + info.notes : ''}\n\nYour projects are kept.`
     });
     if (response === 1) { showLog(); return; }
     if (response !== 0) return;
     const url = new URL(info.file || 'Compass-Setup.exe', FEED).toString();
     const dest = path.join(app.getPath('temp'), `Compass-Setup-${info.version}.exe`);
     const res = await net.fetch(url, { cache: 'no-store' });
-    if (!res.ok) throw new Error('The installer could not be downloaded (' + res.status + ').');
+    if (!res.ok) throw new Error('Download failed (' + res.status + ').');
     const total = +res.headers.get('content-length') || 0, reader = res.body.getReader(), chunks = []; let got = 0;
     for (;;) { const { done, value } = await reader.read(); if (done) break; chunks.push(Buffer.from(value)); got += value.length; if (total && win) win.setProgressBar(got / total); }
     if (win) win.setProgressBar(-1);
@@ -74,7 +74,7 @@ const cleanName = n => String(n || 'track.wav').replace(/[<>:"/\\|?*\x00-\x1f]/g
 async function installFlScript() {
   let base = flUserDir();
   if (!fs.existsSync(base)) {
-    const r = await dialog.showOpenDialog(win, { title: 'Find your FL Studio user data folder', message: 'Choose the "FL Studio" folder inside Documents\\Image-Line (FL Studio shows it under Options > File settings > User data folder).', properties: ['openDirectory'] });
+    const r = await dialog.showOpenDialog(win, { title: 'Select your FL Studio user data folder', message: 'Usually Documents\\Image-Line\\FL Studio. Check Options > File settings in FL Studio.', properties: ['openDirectory'] });
     if (r.canceled || !r.filePaths[0]) return { ok: false, canceled: true };
     base = r.filePaths[0]; if (path.basename(base).toLowerCase() === 'image-line') base = path.join(base, 'FL Studio');
   }
