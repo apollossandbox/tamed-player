@@ -1,11 +1,18 @@
 {
-  "version": "1.8.6",
+  "version": "1.8.7",
   "file": "Compass-Setup.exe",
-  "size": 82278822,
-  "sha256": "127c58f974bfb583e43ab43e6c5f1e42d723a2f7e4367e36bcccde79d4dffcc4",
-  "notes": "FL Studio: all projects with pages, search, sort, filters",
+  "size": 82279196,
+  "sha256": "4f7b40499b312a36909ed4250c40ca21de25075ffaf1f2c6789e1f50beb3d249",
+  "notes": "Real .flp icons on FL project cards",
   "date": "2026-11-13",
   "changelog": [
+    {
+      "v": "1.8.7",
+      "d": "2026-11-13",
+      "items": [
+        "FL Studio project cards use the real Windows icon for FL project files."
+      ]
+    },
     {
       "v": "1.8.6",
       "d": "2026-11-13",
@@ -162,21 +169,6 @@
         "Smart guides snap to panel edges, centers and other layers (hold Ctrl to skip). Grid: Ctrl+'. Snapping: Ctrl+;.",
         "Launcher shows real program icons.",
         "Verified badge only shows next to your own artist name and updates right away."
-      ]
-    },
-    {
-      "v": "1.5.0",
-      "d": "2026-11-12",
-      "items": [
-        "Multi-disc projects: add discs, drag songs between them, reorder discs, and number per disc or across the project. Dropping a zip on a project adds a disc.",
-        "Label, copyright, sound recording, UPC and catalog number in Edit Details.",
-        "CD viewer shows the project logo instead of the name.",
-        "Library › CD Player: all your CDs in a grid. Click to view, right-click to play.",
-        "CD viewer: playback controls, next and previous CD, spin speed, hide controls. Press ? for shortcuts.",
-        "Export an 8-second MP4 of the case opening, saved to Downloads.",
-        "Library › Stats: plays and listening time per song and project.",
-        "Convert a project to a digital album and sell it in the Store. Imported albums can be played, not sold.",
-        "Green badge on verified releases."
       ]
     }
   ]

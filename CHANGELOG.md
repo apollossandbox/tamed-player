@@ -2,6 +2,10 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.8.7 · 2026-11-13
+
+- FL Studio project cards use the real Windows icon for FL project files.
+
 ## 1.8.6 · 2026-11-13
 
 - FL Studio screen: All projects lists every project in your project folders, 12 per page with numbered pages. Search by name or folder, sort (recently saved, oldest, A–Z, Z–A, largest) and filter by folder or when it was saved.
