@@ -2,6 +2,11 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.9.3 · 2026-11-14
+
+- Export button on every project and digital album, next to Share.
+- Digital albums: no more Read-only bar, and no Status or Added columns.
+
 ## 1.9.2 · 2026-11-14
 
 - The update button is back in the bottom-left corner, next to the version number.

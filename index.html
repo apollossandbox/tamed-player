@@ -699,6 +699,10 @@ h1 { font-weight: 800; font-size: 34px; letter-spacing: -.02em; }
 .fx-empty { margin: 4px 0; }
 .ver-x { width: 22px; height: 22px; opacity: .6; } .ver-x:hover { opacity: 1; }
 .btn.danger { background: #c62828; color: #fff; border-color: #c62828; }
+/* digital albums: songs can't be edited, so no Status or Added columns */
+.colhead.ro, .list.ro .row { grid-template-columns: 36px minmax(0, 1fr) 128px 50px 36px; }
+.colhead.ro > span:nth-child(4), .colhead.ro > span:nth-child(5), .list.ro .row .pill, .list.ro .row .c-add { display: none; }
+.list.ro .discol .row { grid-template-columns: 36px minmax(0, 1fr) 46px 32px; }
 /* song panel: three fields on one row */
 .three { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 10px; } .three .lab { margin-top: 10px; } .three .picker, .three .sel { width: 100%; }
 /* FL Studio projects screen */
@@ -1566,6 +1570,7 @@ function renderProject(m) {
       <div class="pact">
         <button class="playbig" data-act="play-col" data-id="${c.id}" aria-label="${playing ? 'Pause' : 'Play'}" title="${playing ? 'Pause' : 'Play'}">${ico(playing ? 'pause' : 'play', 22)}</button>
         ${isMine(c) ? '' : `<button class="ico pa" data-act="add" title="Add songs" aria-label="Add songs">${ico('plus', 20)}</button>`}
+        ${isFolder(c) ? '' : `<button class="ico pa" data-act="ctx-dlproj" data-id="${c.id}" title="Export" aria-label="Export">${ico('update', 20)}</button>`}
         <span class="pa-share"><button class="ico pa" data-act="share" aria-label="Share" title="Share">${ico('share', 20)}</button>
         <div class="pop glass share-pop" id="sharepop"><b>Share & export</b>
           ${seg('vis', [['private', 'Private'], ['link', 'Link only'], ['public', 'Public']], c.vis, 'vis', 'full')}
@@ -1577,8 +1582,7 @@ function renderProject(m) {
       </div>
     </div></section>
     ${fol ? `<section class="fkids"><h3>Projects</h3>${kidsOf(c).length ? `<div class="pgrid">${kidsOf(c).map(projCard).join('')}</div>` : '<p class="faint small">Empty. Drag projects onto this folder in the Library.</p>'}</section>` : ''}
-    ${isMine(c) ? `<div class="mine-note">${ico('lock', 15)}<span>Read-only.</span><button class="btn sm" data-act="ctx-myver" data-id="${c.id}">Make My Version</button></div>` : ''}
-    ${colhead}<div id="list" class="list"></div>`;
+    ${isMine(c) ? colhead.replace('class="colhead"', 'class="colhead ro"') : colhead}<div id="list" class="list${isMine(c) ? ' ro' : ''}"></div>`;
   S.projTab = 'tracks';
 }
 
@@ -3332,6 +3336,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.9.3', d: '2026-11-14', items: ['Export button on every project and digital album, next to Share.', 'Digital albums: no more Read-only bar, and no Status or Added columns.'] },
   { v: '1.9.2', d: '2026-11-14', items: ['The update button is back in the bottom-left corner, next to the version number.'] },
   { v: '1.9.1', d: '2026-11-14', items: ['Launcher shows your 9 most recent FL Studio projects under the DAWs. Click one to open it; See all opens the FL Studio screen.', 'The Projects button is back on the FL Studio tile.'] },
   { v: '1.9.0', d: '2026-11-14', items: ['Mods: put mods in Documents › Compass › Mods and turn them on in Settings › Mods. A mod can restyle the app and add song or project menu items, react to what is playing, and control the player. It runs in a sandbox and can never touch the Music Store or Marketplace. Open the folder once to get an example mod.', 'Launcher: right-click a DAW to pick which installed version to open (for example FL Studio 21 or 2024). Open remembers the one you picked.', 'FL Studio screen redesigned: one row of tabs (Recent, All projects, Zipped loops, Backups), one toolbar (search, sort, and a folder filter only when you have more than one folder), and a compact one-line list. Folders and the backup folder are managed from one Folders button. Right-click a project to show it in its folder.', 'Backups tab: FL Studio\'s own autosaves (Projects › Backup), or a backup folder you choose.', 'Features: a small button next to Details & credits. Type @ and a name to tag an artist. Each one can be in the title (feat.), under the title, or not named. Their info (legal name, role, PRO, IPI, publisher, publishing email) is saved once and fills in on every song you feature them on. Nothing is required.', 'Deleting a version asks first.', 'Previous restarts the song when you are more than 3 seconds in. On the first song it restarts that song instead of jumping to the end (unless Repeat all is on).', 'Song panel is shorter: tags, features, the preview and the project checklist are gone (features live in Details & credits; Add to / Move to are in the song menu). Status, BPM and key sit on one row.', 'Export song info: one song from its panel (Export info), or every song in a project from Share & export (Export song info). Saves a .txt with credits, BPM, key, ISRC, lyrics and more.', 'Cleaner, less cluttered app. Buttons that did the same thing are merged:', 'Library: one Add music button (it takes .zip downloads too). Scan QR is a small icon. The sidebar footer is just credits and the version (click it to check for updates).', "Project page: the header is Play, Add songs, Share and ⋯. Rename and Edit details are one item. A song's ⋯ opens the same menu as right-click, starting with Edit song.", 'CD Creator: one Export menu (print files, 3D model, picture). One Viewer button. Opacity, fill and text options each live in one place instead of two or three.', 'Settings: Desktop app and About are one row. The EQ lives in the player bar only. CD Creator shortcuts are tucked under their own heading.', 'Menus use the same capitalisation everywhere, and the nav icons are all different.'] },

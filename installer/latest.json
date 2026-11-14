@@ -1,11 +1,19 @@
 {
-  "version": "1.9.2",
+  "version": "1.9.3",
   "file": "Compass-Setup.exe",
-  "size": 82288181,
-  "sha256": "c94e1d213e3567367961435a810084e6576ae1f2934bae21192e219abe363678",
-  "notes": "Update button back",
+  "size": 82288234,
+  "sha256": "ad20e6e064dde60da5b907902f54a18059a84c1f12927ccb3f522028161fdb31",
+  "notes": "Export button everywhere; cleaner digital albums",
   "date": "2026-11-14",
   "changelog": [
+    {
+      "v": "1.9.3",
+      "d": "2026-11-14",
+      "items": [
+        "Export button on every project and digital album, next to Share.",
+        "Digital albums: no more Read-only bar, and no Status or Added columns."
+      ]
+    },
     {
       "v": "1.9.2",
       "d": "2026-11-14",
@@ -169,13 +177,6 @@
         "Library counts match the tab you are on.",
         "Folders, digital albums and archived projects no longer count as projects.",
         "The Library badge shows your project count."
-      ]
-    },
-    {
-      "v": "1.7.1",
-      "d": "2026-11-12",
-      "items": [
-        "Right-clicking a digital album shows only Make My Version and Put in the Store, plus Make Sequel when the album is by your own artist name (Settings › Profile)."
       ]
     }
   ]
