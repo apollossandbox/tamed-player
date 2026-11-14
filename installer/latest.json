@@ -1,11 +1,19 @@
 {
-  "version": "1.9.0",
+  "version": "1.9.1",
   "file": "Compass-Setup.exe",
-  "size": 82287783,
-  "sha256": "b20a4dcb78fea5dcbf95098e52eedcf6365a40c106466b815cf7bda6ee93388a",
-  "notes": "Cleaner app, features and artist database, FL Studio screen redesign, mods, version picker",
+  "size": 82288067,
+  "sha256": "554b3965e7b59b75f6dff884f4c99222d61cee724f47883d421e78ae12907892",
+  "notes": "Recent projects in the Launcher; Projects button back",
   "date": "2026-11-14",
   "changelog": [
+    {
+      "v": "1.9.1",
+      "d": "2026-11-14",
+      "items": [
+        "Launcher shows your 9 most recent FL Studio projects under the DAWs. Click one to open it; See all opens the FL Studio screen.",
+        "The Projects button is back on the FL Studio tile."
+      ]
+    },
     {
       "v": "1.9.0",
       "d": "2026-11-14",
@@ -170,13 +178,6 @@
         "Importing a zip asks: project or digital product (album, mixtape, EP or single). Digital products only show in Library › Digital Albums.",
         "Release… in the right-click menu sells a project or album in the Music Store as digital, CD or both. Edit it with Release Settings, remove it with Take out of Store.",
         "Sample items removed from the Store and Marketplace."
-      ]
-    },
-    {
-      "v": "1.6.2",
-      "d": "2026-11-12",
-      "items": [
-        "CD Creator opens on a start screen: New CD, Open, your CDs sorted by when you last changed them (grid or list, with a filter), and View models to look at finished CDs without editing. The grid button in the editor tabs brings you back."
       ]
     }
   ]

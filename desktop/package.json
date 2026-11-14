@@ -1,7 +1,7 @@
 {
   "name": "tamed-player",
   "productName": "Compass",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "Compass: music library, CD creator, audio tools and DAW launcher.",
   "author": "trulytamed",
   "main": "main.js",

@@ -2,6 +2,11 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.9.1 · 2026-11-14
+
+- Launcher shows your 9 most recent FL Studio projects under the DAWs. Click one to open it; See all opens the FL Studio screen.
+- The Projects button is back on the FL Studio tile.
+
 ## 1.9.0 · 2026-11-14
 
 - Mods: put mods in Documents › Compass › Mods and turn them on in Settings › Mods. A mod can restyle the app and add song or project menu items, react to what is playing, and control the player. It runs in a sandbox and can never touch the Music Store or Marketplace. Open the folder once to get an example mod.

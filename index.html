@@ -666,6 +666,8 @@ h1 { font-weight: 800; font-size: 34px; letter-spacing: -.02em; }
 
 
 /* FL Studio screen */
+.daw .crow { flex-wrap: nowrap; } .daw .crow [data-act="daw-forget"] { padding: 0; width: 30px; height: 30px; align-self: center; justify-content: center; flex: none; margin-left: auto; }
+.l-recent { margin-top: 28px; } .l-recent-h { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; } .l-recent-h h2 { font-size: 17px; margin: 0; }
 .fl-head { display: flex; flex-direction: column; gap: 6px; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin-bottom: 14px; }
 .fl-back { align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px 2px 0; border: 0; background: none; color: var(--ink2); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; } .fl-back:hover { color: var(--ink); }
 .fl-titlerow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; } .fl-titlerow h1 { margin: 0; }
@@ -1480,7 +1482,7 @@ function renderMain() {
   const m = $('#main'); m.dataset.cd = S.view === 'cd' ? 'page' : '';
   const vkey = S.view + ':' + (S.view === 'collection' ? S.colId : S.view === 'library' ? S.libTab : '');
   const enter = renderMain.last !== vkey; renderMain.last = vkey;
-  if (S.view !== 'launcher') UI.flScreen = false; // leaving the Launcher closes the FL Studio screen
+  if (S.view !== 'launcher') { UI.flScreen = false; UI.lRecent = null; } // leaving the Launcher closes the FL Studio screen; recent list reloads on return
   modGate(); modTick();
   m.classList.toggle('enter', enter);
   if (S.view === 'library') renderLibrary(m);
@@ -3329,6 +3331,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.9.1', d: '2026-11-14', items: ['Launcher shows your 9 most recent FL Studio projects under the DAWs. Click one to open it; See all opens the FL Studio screen.', 'The Projects button is back on the FL Studio tile.'] },
   { v: '1.9.0', d: '2026-11-14', items: ['Mods: put mods in Documents › Compass › Mods and turn them on in Settings › Mods. A mod can restyle the app and add song or project menu items, react to what is playing, and control the player. It runs in a sandbox and can never touch the Music Store or Marketplace. Open the folder once to get an example mod.', 'Launcher: right-click a DAW to pick which installed version to open (for example FL Studio 21 or 2024). Open remembers the one you picked.', 'FL Studio screen redesigned: one row of tabs (Recent, All projects, Zipped loops, Backups), one toolbar (search, sort, and a folder filter only when you have more than one folder), and a compact one-line list. Folders and the backup folder are managed from one Folders button. Right-click a project to show it in its folder.', 'Backups tab: FL Studio\'s own autosaves (Projects › Backup), or a backup folder you choose.', 'Features: a small button next to Details & credits. Type @ and a name to tag an artist. Each one can be in the title (feat.), under the title, or not named. Their info (legal name, role, PRO, IPI, publisher, publishing email) is saved once and fills in on every song you feature them on. Nothing is required.', 'Deleting a version asks first.', 'Previous restarts the song when you are more than 3 seconds in. On the first song it restarts that song instead of jumping to the end (unless Repeat all is on).', 'Song panel is shorter: tags, features, the preview and the project checklist are gone (features live in Details & credits; Add to / Move to are in the song menu). Status, BPM and key sit on one row.', 'Export song info: one song from its panel (Export info), or every song in a project from Share & export (Export song info). Saves a .txt with credits, BPM, key, ISRC, lyrics and more.', 'Cleaner, less cluttered app. Buttons that did the same thing are merged:', 'Library: one Add music button (it takes .zip downloads too). Scan QR is a small icon. The sidebar footer is just credits and the version (click it to check for updates).', "Project page: the header is Play, Add songs, Share and ⋯. Rename and Edit details are one item. A song's ⋯ opens the same menu as right-click, starting with Edit song.", 'CD Creator: one Export menu (print files, 3D model, picture). One Viewer button. Opacity, fill and text options each live in one place instead of two or three.', 'Settings: Desktop app and About are one row. The EQ lives in the player bar only. CD Creator shortcuts are tucked under their own heading.', 'Menus use the same capitalisation everywhere, and the nav icons are all different.'] },
   { v: '1.8.9', d: '2026-11-14', items: ['FL Studio screen: a separate Zipped loop projects tab lists FL zipped loop packages (.zip files with a project inside) from your project folders and Downloads. Click one to open it in FL Studio. Open other project… accepts them too.'] },
   { v: '1.8.8', d: '2026-11-13', items: ['More space between songs in disc lists. Each song is still one line.'] },
@@ -3429,7 +3432,7 @@ async function flOpen(file) {
   if (!file || !(window.tpDesktop && tpDesktop.flp)) return; const r = await tpDesktop.flp.open(file, flExe());
   if (!r || !r.ok) return toast((r && r.error) || "Couldn't open that project");
   if (/\.flp$/i.test(file)) { S.flOpened = [{ path: file, time: Date.now() }, ...(S.flOpened || []).filter(x => x.path !== file)].slice(0, 20); save(); }
-  toast('Opening ' + file.split(/[\\/]/).pop().replace(/\.(flp|zip)$/i, '') + ' in FL Studio'); flLoad();
+  toast('Opening ' + file.split(/[\\/]/).pop().replace(/\.(flp|zip)$/i, '') + ' in FL Studio'); UI.lRecent = null; if (UI.flScreen) flLoad(); else if (S.view === 'launcher') renderMain();
 }
 /* FL Studio screen: tabs (Recent, All projects, Zipped loops, Backups), one toolbar, a compact list, 12 per page */
 const FL_TABS = [['recent', 'Recent'], ['flp', 'All projects'], ['zip', 'Zipped loops'], ['backup', 'Backups']];
@@ -3516,8 +3519,20 @@ async function renderLauncher(m) {
   m.innerHTML = `<header class="head"><div><h1>Launcher</h1><p class="faint">${desk ? (UI.dawScan === 'busy' ? 'Scanning for DAWs…' : (list.length ? `${list.length} found on this computer` : 'No DAWs found. Use Add DAW to find yours.')) : 'Opening DAWs needs the Compass app for Windows.'}</p></div>
     ${desk ? `<div class="hact"><button class="btn" data-act="daw-rescan">${ico('repeat', 15)} Scan again</button></div>` : ''}</header>
     <div class="dawgrid">${list.map(d => `<div class="daw ${d.path ? 'ok' : ''} ${d.id === 'fl' && d.path && desk && tpDesktop.flp ? 'daw-fl' : ''}" data-daw="${d.id}" ${d.id === 'fl' && d.path && desk && tpDesktop.flp ? 'data-act="fl-screen" role="button" tabindex="0" title="Recent FL Studio projects"' : ''}>${dawTile(d.id, d.path)}<b>${esc(d.n)}</b><small title="${esc((S.dawPick || {})[d.id] || d.path || '')}">${d.path ? esc((((UI.dawScan || {}).versions || {})[d.id] || []).length > 1 ? (((S.dawPick || {})[d.id] || d.path).split(/[\\/]/).slice(-2, -1)[0] + ' · right-click for others') : d.path.split(/[\\/]/).pop()) : 'Not found'}</small>
-      <div class="crow">${d.path ? `<button class="btn sm primary" data-act="daw-open" data-k="${d.id}" ${desk ? '' : 'disabled'}>${ico('play', 13)} Open</button>` : ''}${desk ? `<button class="btn sm" data-act="daw-forget" data-k="${d.id}" title="Remove from Launcher" aria-label="Remove from Launcher">${ico('x', 13)}</button>` : ''}</div></div>`).join('')}
-      ${desk && missing.length ? `<button class="daw daw-add" data-act="daw-add">${ico('plus', 26)}<b>Add DAW</b><small>Not listed? Find it</small></button>` : ''}</div>`;
+      <div class="crow">${d.path ? `<button class="btn sm primary" data-act="daw-open" data-k="${d.id}" ${desk ? '' : 'disabled'}>${ico('play', 13)} Open</button>` : ''}${d.id === 'fl' && d.path && desk && tpDesktop.flp ? `<button class="btn sm" data-act="fl-screen">${ico('folder', 13)} Projects</button>` : ''}${desk ? `<button class="btn sm" data-act="daw-forget" data-k="${d.id}" title="Remove from Launcher" aria-label="Remove from Launcher">${ico('x', 13)}</button>` : ''}</div></div>`).join('')}
+      ${desk && missing.length ? `<button class="daw daw-add" data-act="daw-add">${ico('plus', 26)}<b>Add DAW</b><small>Not listed? Find it</small></button>` : ''}</div>
+    ${launcherRecentHTML(found('fl'))}`;
+}
+/* Launcher: the 9 most recent FL Studio projects, in the same compact rows as the FL Studio screen */
+function launcherRecentHTML(flPath) {
+  if (!flPath || !(window.tpDesktop && tpDesktop.flp)) return '';
+  if (!UI.lRecent) { UI.lRecent = 'busy'; tpDesktop.flp.recent(S.flDirs || [], S.flOpened || [], 9).then(r => { UI.lRecent = r || []; if (S.view === 'launcher' && !UI.flScreen) renderMain(); }).catch(() => { UI.lRecent = []; }); }
+  const R = UI.lRecent, icon = UI.dawIcons[flPath];
+  const rows = R === 'busy' ? '<p class="faint fl-note">Looking for projects…</p>' : !R.length ? '<p class="faint fl-note">No recent FL Studio projects yet.</p>'
+    : `<div class="flrows" role="list">${R.map(p => `<button class="flr" role="listitem" data-act="fl-proj" data-k="${esc(p.path)}" title="${esc(p.path)}">
+      <span class="flr-ic">${icon ? `<img src="${icon}" alt="" draggable="false">` : ico('disc', 18)}</span><span class="flr-n">${esc(p.name)}</span><span class="flr-f">${esc(flWhere(p))}</span>
+      <span class="flr-t">${p.how === 'opened' ? 'Opened' : 'Saved'} ${flAgo(p.time)}</span><span class="flr-s"></span><span class="flr-go">${ico('play', 12)}</span></button>`).join('')}</div>`;
+  return `<section class="l-recent"><div class="l-recent-h"><h2>Recent projects</h2><button class="linkbtn" data-act="fl-screen">See all</button></div>${rows}</section>`;
 }
 
 /* ---------- settings ---------- */
