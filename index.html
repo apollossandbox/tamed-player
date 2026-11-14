@@ -686,6 +686,21 @@ h1 { font-weight: 800; font-size: 34px; letter-spacing: -.02em; }
 .flpg-n:disabled { opacity: .35; cursor: default; }
 .fl-note { padding: 18px 2px; }
 @media (max-width: 900px) { .flr { grid-template-columns: 30px minmax(0, 1fr) 110px 28px; } .flr-f, .flr-s { display: none; } }
+
+/* Compass tokens */
+.obadge { display: inline-flex; align-items: center; gap: 5px; max-width: 100%; margin-left: 8px; padding: 3px 9px; border-radius: 99px; border: 1px solid var(--line); background: var(--panel2); color: var(--ink); font: inherit; font-size: 11.5px; font-weight: 700; letter-spacing: 0; text-transform: none; cursor: pointer; vertical-align: middle; }
+.obadge span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .obadge i { font-style: normal; }
+.obadge.ok { border-color: color-mix(in srgb, #2e9b5f 55%, transparent); color: #3fbf77; } .obadge.ok .ic { color: #3fbf77; }
+.obadge.lock { border-color: color-mix(in srgb, #d08a1e 60%, transparent); color: #e3a33a; } .obadge.borrow { border-color: color-mix(in srgb, #4b8bd8 60%, transparent); color: #6fa6ea; }
+.obadge.local { color: var(--ink3); cursor: default; } .obadge.sm { font-size: 10.5px; padding: 1px 7px; margin-left: 0; margin-top: 3px; } .acard .obadge.sm { margin-top: 5px; max-width: 100%; align-self: flex-start; }
+.now .meta .obadge.sm { align-self: flex-start; }
+.own-strip { display: flex; flex-direction: column; gap: 4px; margin: 0 0 12px; } .own-row { display: flex; align-items: center; gap: 10px; font-size: 13px; } .own-row .obadge { margin: 0; }
+.prov-top { margin: 2px 0 10px; } .prov-top .obadge { margin-left: 0; font-size: 12px; }
+.prov-dl { display: grid; grid-template-columns: 110px 1fr; gap: 4px 12px; margin: 0; font-size: 13px; } .prov-dl dt { color: var(--ink2); } .prov-dl dd { margin: 0; font-weight: 600; }
+.prov-tl { list-style: none; margin: 6px 0 0; padding: 0 0 0 14px; border-left: 2px solid var(--line); display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; }
+.prov-tl li { position: relative; display: flex; justify-content: space-between; gap: 12px; font-size: 12.5px; } .prov-tl li::before { content: ''; position: absolute; left: -20px; top: 5px; width: 8px; height: 8px; border-radius: 50%; background: var(--ink2); }
+.prov-tl time { color: var(--ink3); white-space: nowrap; }
+.rcard { display: flex; flex-direction: column; gap: 4px; min-width: 0; } .rcard .obadge { align-self: flex-start; } .rprice { font-size: 15px; margin-right: auto; }
 /* Features window */
 .fx-add { position: relative; margin-top: 10px; }
 .fx-sug { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; } .fx-sug:empty { display: none; }
@@ -1211,7 +1226,12 @@ const Engine = {
   vol(v) { audio.volume = v; }
 };
 function playTrack(id, queue) {
-  const t = trk(id); if (!t) return; UI.playSeq = (UI.playSeq || 0) + 1; STAT.got = 0;
+  const t = trk(id); if (!t) return;
+  // which album this play belongs to: the album page you're on, or the album the queue came from
+  const ctx = S.view === 'collection' && col(S.colId) && col(S.colId).tracks.includes(id) ? col(S.colId) : UI.playColId && col(UI.playColId) && col(UI.playColId).tracks.includes(id) ? col(UI.playColId) : null;
+  if (ctx && S.ledger && !Ledger.canPlay(ctx)) { toast(lockMsg(ctx)); return; }
+  UI.playColId = ctx ? ctx.id : null;
+  UI.playSeq = (UI.playSeq || 0) + 1; STAT.got = 0;
   if (!verSrc(t)) { toast('This song has no audio yet'); }
   if (queue) S.queue = queue;
   const changed = S.cur !== id; S.cur = id; Engine.load(t); Engine.play(); S.playing = true; refresh(); if (changed) swapAnim();
@@ -1223,6 +1243,7 @@ function playQueue(ids, shuffleIt) {
 }
 function toggle() {
   if (!S.cur) { const ids = listIds(); if (ids.length) playQueue(ids); return; }
+  if (!S.playing && S.ledger && UI.playColId && col(UI.playColId) && !Ledger.canPlay(col(UI.playColId))) { toast(lockMsg(col(UI.playColId))); return; }
   if (S.playing) { Engine.pause(); S.playing = false; } else { Engine.play(); S.playing = true; }
   refresh();
 }
@@ -1475,7 +1496,7 @@ function projCard(c, n, all) {
   return `<div class="acard ${isFolder(c) ? 'is-folder' : ''}" role="button" tabindex="0" draggable="true" data-act="col" data-id="${c.id}" style="--n:${n};--glow:${k[0]}" aria-label="Open ${esc(c.name)}">
     <div class="acard-art">${albumArt(c)}<button class="acard-play" data-act="play-col" data-id="${c.id}" aria-label="Play ${esc(c.name)}" title="Play">${ico(S.playing && c.tracks.includes(S.cur) ? 'pause' : 'play', 20)}</button></div>
     <div class="acard-t" title="${esc(c.name)}">${esc(c.name)}</div>
-    <div class="acard-s">${(isFolder(c) ? [isMine(c) ? 'Folder' : 'Folder', kidsOf(c).length ? kidsOf(c).length + ' ' + (kidsOf(c).length === 1 ? 'project' : 'projects') : '', ts.length ? ts.length + (ts.length === 1 ? ' song' : ' songs') : ''] : [isMine(c) ? (S.libTab === 'mine' ? '' : 'Digital album') : KINDS[c.type], same ? '' : projArtist(c), ts.length + ' ' + (ts.length === 1 ? 'song' : 'songs'), c.archived ? 'Archived' : year]).filter(Boolean).map(esc).join(' · ')}</div>
+    <div class="acard-s">${(isFolder(c) ? [isMine(c) ? 'Folder' : 'Folder', kidsOf(c).length ? kidsOf(c).length + ' ' + (kidsOf(c).length === 1 ? 'project' : 'projects') : '', ts.length ? ts.length + (ts.length === 1 ? ' song' : ' songs') : ''] : [isMine(c) ? (S.libTab === 'mine' ? '' : 'Digital album') : KINDS[c.type], same ? '' : projArtist(c), ts.length + ' ' + (ts.length === 1 ? 'song' : 'songs'), c.archived ? 'Archived' : year]).filter(Boolean).map(esc).join(' · ')}</div>${S.ledger && isMine(c) && !isFolder(c) ? ownBadge(c, 'card') : ''}
   </div>`;
 }
 
@@ -1564,7 +1585,7 @@ function renderProject(m) {
   m.innerHTML = `<section class="chero">
     <div class="covcol"><div class="covwrap" id="covwrap"><div class="bigcov" style="${pcovFull(c)}"></div></div></div>
     <div class="cinfo">
-      <div class="eyebrow">${isMine(c) ? '<span class="eb-ro">Digital album</span>' : picker('ctype', '', KINDS, c.type, 'ctype')}</div>
+      <div class="eyebrow">${isMine(c) ? `<span class="eb-ro">Digital album</span>${S.ledger ? ownBadge(c) : ''}` : picker('ctype', '', KINDS, c.type, 'ctype')}</div>
       <div class="trow"><input class="title-in" id="p-name" data-cf="name" value="${esc(c.name)}" aria-label="Project name" ${isMine(c) ? 'readonly' : ''}></div>
       <p class="pmeta">${projArtist(c) ? `<button class="pm-art" data-act="proj-edit" data-id="${c.id}" title="Edit artists">${esc(projArtist(c))}</button>` : `<button class="pm-art faint" data-act="proj-edit" data-id="${c.id}">Add artist</button>`}<span>${ts.length} ${ts.length === 1 ? 'song' : 'songs'}${ts.length ? ', ' + total(ts) : ''}${c.verified ? `<button class="vbadge" data-act="verified-info" title="This album is verified by its distributors and is an official release. Your digital token is irreplicable and you retain sole ownership of this copy of this release." aria-label="Verified release">${ico('check', 11)}</button>` : ''}</span>${!fol && c.targetDate ? `<span>${esc(relText(c))}</span>` : ''}${c.sequelOf && col(c.sequelOf) ? `<span>Sequel to <button data-act="col" data-id="${c.sequelOf}">${esc(col(c.sequelOf).name)}</button></span>` : ''}</p>
       ${ts.length && !fol && !c.released && !isMine(c) ? `<p class="stat"><span><i class="pill st-final"></i>${nF} final</span><span><i class="pill st-demo"></i>${nD} ${nD === 1 ? 'demo' : 'demos'}</span>${nU ? `<span><i class="pill st-unmixed"></i>${nU} unmixed</span>` : ''}</p>` : ''}
@@ -1702,12 +1723,31 @@ function openModal(kind, id, x = {}) {
     <div class="two"><div id="rel-dig" class="${fmt === 'cd' ? 'hide-folder' : ''}"><label class="lab" for="rel-pd">Digital price (USD)</label><input class="field" id="rel-pd" type="number" min="0" step=".01" value="${R.digital ?? (n <= 1 ? .99 : n <= 6 ? 4.99 : 9.99)}"></div>
       <div id="rel-cd" class="${fmt === 'digital' ? 'hide-folder' : ''}"><label class="lab" for="rel-pc">CD price (USD)</label><input class="field" id="rel-pc" type="number" min="0" step=".01" value="${R.cd ?? 14.99}"></div></div>
     ${!isMine(c) && !(S.cd.designs && S.cd.designs[c.id]) ? `<p class="faint small" id="rel-cdnote">No CD design yet, so the CD uses the cover.</p>` : ''}
+    <label class="lab">Edition</label>${seg('reled', [['open', 'Open (unlimited)'], ['collector', 'Collector (numbered)']], R.edition || 'open', 'rel-ed', 'full')}
+    <div id="rel-colbox" class="${R.edition === 'collector' ? '' : 'hide-folder'}"><div class="two"><div><label class="lab" for="rel-size">How many</label><input class="field" id="rel-size" type="number" min="1" step="1" value="${R.size || 500}"></div>
+      <div><label class="lab">Owners can</label><label class="check"><input type="checkbox" id="rel-trade" ${R.tradable !== false ? 'checked' : ''}><span>Resell it (5% to you)</span></label></div></div></div>
+    <label class="check"><input type="checkbox" id="rel-lend" ${R.lend !== false ? 'checked' : ''}><span>Owners can lend it to friends</span></label>
+    ${c.release ? `<label class="check"><input type="checkbox" id="rel-delist" ${R.delisted ? 'checked' : ''}><span>Stop selling it (people who bought it keep it)</span></label>` : ''}
     <label class="check" style="margin-top:10px"><input type="checkbox" id="rel-own" ${R.at ? 'checked' : ''}><span>I own the rights to this music.</span></label>`;
   } else if (kind === 'changelog') {
     const C = UI.clog || { list: CHANGELOG };
     h = `<h2>What's new</h2><p class="faint small" style="margin:0">Version ${esc(APP_VERSION)}</p><div class="clog">${changelogHTML(C.list, C.since)}</div>`;
   } else if (kind === 'ask') {
     h = `<h2>${esc(x.title)}</h2><input class="field" id="m-ask" value="${esc(x.value || '')}" maxlength="60" autocomplete="off">`;
+  } else if (kind === 'prov') {
+    const c = col(id); h = `<h2>${esc(c.name)}</h2>${provHTML(c)}`;
+  } else if (kind === 'lend') {
+    const c = col(id);
+    h = `<h2>Lend ${esc(c.name)}</h2><p class="faint small" style="margin:0">They can play it until it comes back. You can't play it while it's out.</p>
+    <label class="lab" for="ln-who">Lend to</label><input class="field" id="ln-who" placeholder="@name" autocomplete="off">
+    <label class="lab">For</label>${seg('lnfor', LOAN_TIMES, '604800000', 'ln-for', 'full')}
+    <label class="lab" for="ln-price">Charge (optional, USD)</label><input class="field" id="ln-price" type="number" min="0" step=".01" placeholder="Free">
+    <p class="faint small" id="ln-split" style="margin:6px 0 0"></p>`;
+  } else if (kind === 'sell') {
+    const c = col(id), a = Ledger.access(c);
+    h = `<h2>Sell ${esc(c.name)}</h2><p class="faint small" style="margin:0">${edLabel(a.tk, a.r)}. Ownership moves to the buyer when they pay.</p>
+    <label class="lab" for="sl-price">Price (USD)</label><input class="field" id="sl-price" type="number" min="1" step=".01" value="20">
+    <p class="faint small" id="sl-split" style="margin:6px 0 0"></p>`;
   } else if (kind === 'feat') {
     const t = trk(id);
     h = `<h2>Features</h2><p class="faint small" style="margin:0">${esc(t ? t.title : '')}</p>
@@ -1729,9 +1769,10 @@ function openModal(kind, id, x = {}) {
     <div class="dropzone" id="m-drop">${ico('import', 26)}<b>Drop the .zip here</b><span class="faint small">or loose audio and image files</span><button class="btn sm primary" data-act="zip-pick">Choose files</button></div>
     <p class="faint small" id="m-status" role="status"></p>`;
   }
-  md.innerHTML = h + `<div class="crow" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-act="close-modal">${kind === 'import' || kind === 'changelog' || kind === 'qr' ? 'Close' : 'Cancel'}</button>${kind === 'name' ? '<button class="btn primary" data-act="name-ok">Import</button>' : ''}${kind === 'ask' ? '<button class="btn primary" data-act="ask-ok">Save</button>' : ''}${kind === 'feat' ? '<button class="btn primary" data-act="fx-ok">Save</button>' : ''}${kind === 'confirm' ? `<button class="btn primary danger" data-act="confirm-ok">${esc(x.ok || 'Delete')}</button>` : ''}${kind === 'lstyle' ? '<button class="btn primary" data-act="ls-ok">OK</button>' : ''}${kind === 'release' ? `${(col(id) || {}).release ? '<button class="btn" data-act="rel-pull">Remove from Store</button>' : ''}<button class="btn primary" data-act="rel-ok">${(col(id) || {}).release ? 'Save' : 'Release'}</button>` : ''}${kind === 'proj' || kind === 'meta' ? `<button class="btn primary" data-act="modal-save">${x.isNew ? 'Create project' : 'Save'}</button>` : ''}</div>`;
+  md.innerHTML = h + `<div class="crow" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-act="close-modal">${kind === 'import' || kind === 'changelog' || kind === 'qr' || kind === 'prov' ? 'Close' : 'Cancel'}</button>${kind === 'name' ? '<button class="btn primary" data-act="name-ok">Import</button>' : ''}${kind === 'ask' ? '<button class="btn primary" data-act="ask-ok">Save</button>' : ''}${kind === 'feat' ? '<button class="btn primary" data-act="fx-ok">Save</button>' : ''}${kind === 'lend' ? '<button class="btn primary" data-act="ln-ok">Lend</button>' : ''}${kind === 'sell' ? '<button class="btn primary" data-act="sl-ok">List for sale</button>' : ''}${kind === 'prov' ? provActions(col(id)) : ''}${kind === 'confirm' ? `<button class="btn primary danger" data-act="confirm-ok">${esc(x.ok || 'Delete')}</button>` : ''}${kind === 'lstyle' ? '<button class="btn primary" data-act="ls-ok">OK</button>' : ''}${kind === 'release' ? `${(col(id) || {}).release ? '<button class="btn" data-act="rel-pull">Remove from Store</button>' : ''}<button class="btn primary" data-act="rel-ok">${(col(id) || {}).release ? 'Save' : 'Release'}</button>` : ''}${kind === 'proj' || kind === 'meta' ? `<button class="btn primary" data-act="modal-save">${x.isNew ? 'Create project' : 'Save'}</button>` : ''}</div>`;
   md.classList.toggle('wide', kind === 'meta' || kind === 'lstyle'); md.classList.toggle('clogm', kind === 'changelog' || kind === 'qr');
   if (kind === 'qr') qrStart();
+  if (kind === 'lend' || kind === 'sell') splitPreview();
   if (kind === 'feat') { fxPaint(); setTimeout(() => { const i = $('#fx-in'); if (i) i.focus(); }, 60); }
   md.inert = false; $('#scrim').classList.add('open'); requestAnimationFrame(() => { md.classList.add('open'); applySlides(); const f = $('input,select', md); if (f) { f.focus(); if (f.select) f.select(); } });
 }
@@ -1919,7 +1960,9 @@ function releaseSave() {
   const c = col(UI.modal && UI.modal.id); if (!c) return; const on = $('#modal [data-act="rel-fmt"].on'), fmt = on ? on.dataset.k : 'digital';
   if (!$('#rel-own').checked) return toast('Confirm you own the rights first');
   const price = id => { const v = Math.round(Math.max(0, +($('#' + id) || {}).value || 0) * 100) / 100; return v; };
-  c.release = { digital: fmt !== 'cd' ? price('rel-pd') : null, cd: fmt !== 'digital' ? price('rel-pc') : null, at: (c.release && c.release.at) || Date.now() };
+  const ed = ($('#modal [data-act="rel-ed"].on') || { dataset: { k: 'open' } }).dataset.k;
+  c.release = { digital: fmt !== 'cd' ? price('rel-pd') : null, cd: fmt !== 'digital' ? price('rel-pc') : null, at: (c.release && c.release.at) || Date.now(),
+    edition: ed, size: ed === 'collector' ? Math.max(1, Math.round(+($('#rel-size') || {}).value || 500)) : null, tradable: ed === 'collector' && !!($('#rel-trade') || {}).checked, resale: ed === 'collector' && !!($('#rel-trade') || {}).checked, lend: !!($('#rel-lend') || { checked: true }).checked, delisted: !!($('#rel-delist') || {}).checked };
   if (!c.released && !isMine(c)) { c.released = true; c.targetDate = c.targetDate || today(); }
   save(); closeModal(); refresh(); toast(`Released ${c.name}: ${[c.release.digital != null ? 'digital $' + c.release.digital.toFixed(2) : '', c.release.cd != null ? 'CD $' + c.release.cd.toFixed(2) : ''].filter(Boolean).join(', ')}`);
 }
@@ -3337,6 +3380,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
+  { v: '1.10.0', d: '2026-11-15', items: ['Compass tokens (preview): albums you own show a Verified badge with their edition (open, or numbered like #014/500). Click it for the full ownership history.', 'Lend an album to someone for 24 hours, 7 days or 30 days (free or paid). While it is out, you can\'t play it; it comes back on its own when time runs out, or they can return it early.', 'Sell tradable collector editions in the Store\'s new Resale tab. Every sale pays the artist 5% and Compass 2.5%; the seller gets 92.5%. No $0 transfers.', 'Release settings: open or numbered collector editions, whether owners can lend or resell, and Stop selling (people who bought it keep it).', 'Settings › Ownership › Load sample tokens to try it all. Runs on this computer for now; the server version comes next.'] },
   { v: '1.9.3', d: '2026-11-14', items: ['Export button on every project and digital album, next to Share.', 'Digital albums: no more Read-only bar, and no Status or Added columns.'] },
   { v: '1.9.2', d: '2026-11-14', items: ['The update button is back in the bottom-left corner, next to the version number.'] },
   { v: '1.9.1', d: '2026-11-14', items: ['Launcher shows your 9 most recent FL Studio projects under the DAWs. Click one to open it; See all opens the FL Studio screen.', 'The Projects button is back on the FL Studio tile.'] },
@@ -3401,14 +3445,24 @@ if (window.tpDesktop && tpDesktop.onChangelog) tpDesktop.onChangelog(d => openCh
 
 /* ---------- Music Store: a storefront for music, digital and physical ---------- */
 function renderStore(m) {
-  const tab = UI.storeTab || 'digital', rel = S.cols.filter(c => c.release && !c.archived && (tab === 'physical' ? c.release.cd != null : c.release.digital != null)).sort((a, b) => (b.release.at || 0) - (a.release.at || 0));
+  const tab = UI.storeTab || 'digital'; if (tab === 'resale') return renderResale(m); const rel = S.cols.filter(c => c.release && !c.release.delisted && !c.archived && (tab === 'physical' ? c.release.cd != null : c.release.digital != null)).sort((a, b) => (b.release.at || 0) - (a.release.at || 0));
   const price = c => tab === 'physical' ? c.release.cd : c.release.digital, money = v => v ? '$' + v.toFixed(2) : 'Free';
   const card = (c, n) => `<div class="scard" style="--n:${n}" data-act="${tab === 'physical' ? 'store-cd' : 'col'}" data-id="${c.id}" role="button" tabindex="0"><div class="acard-art">${tab === 'physical' ? `<span class="scd" style="${pcov(c)}"><i></i></span>` : albumArt(c)}</div><b>${esc(c.name)}</b><span>${esc(projArtist(c) || 'Unknown artist')}</span><em>${tab === 'physical' ? 'CD · Jewel case' : (KINDS[c.type] || 'Album') + ' · ' + colTracks(c).length + (colTracks(c).length === 1 ? ' song' : ' songs')}</em><button class="btn sm buy" data-act="store-buy" data-id="${c.id}" title="Checkout coming soon">${money(price(c))}</button></div>`;
   const hero = rel[0];
   m.innerHTML = `<header class="head"><div><h1>Music Store</h1><p class="faint">Your releases as buyers see them. Checkout coming soon.</p></div></header>
-    <div class="tools">${seg('storetab', [['digital', 'Digital'], ['physical', 'Physical']], tab, 'store-tab')}</div>
+    <div class="tools">${seg('storetab', [['digital', 'Digital'], ['physical', 'Physical'], ...(S.ledger ? [['resale', 'Resale']] : [])], tab, 'store-tab')}</div>
     ${hero ? `<section class="shero" style="${pcovFull(hero)}"><div><small>New ${tab === 'physical' ? 'on CD' : 'release'}</small><h2>${esc(hero.name)}</h2><p>${esc(projArtist(hero) || '')}</p><div class="crow"><button class="btn primary" data-act="play-col" data-id="${hero.id}">${ico('play', 15)} Listen</button><button class="btn buy" data-act="store-buy" data-id="${hero.id}">${money(price(hero))}</button></div></div></section>` : ''}
     ${rel.length ? `<h3 class="srow-h">${tab === 'physical' ? 'CDs' : 'Releases'}</h3><div class="sgrid">${rel.map(card).join('')}</div>` : `<div class="empty"><p><b>Nothing ${tab === 'physical' ? 'on CD' : 'released'} yet</b></p><p class="faint">Right-click a project or album and choose <b>Release…</b></p></div>`}`;
+}
+/* Store › Resale: collector editions people are selling. Every sale pays the artist 5% and Compass 2.5%. */
+function renderResale(m) {
+  const L = Object.values(LG().listings).filter(l => l.status === 'ACTIVE').map(l => { const tk = LG().tokens[l.token], r = tk && LG().releases[tk.rel]; return tk && r && !r.delisted ? { l, tk, r } : null; }).filter(Boolean);
+  const card = ({ l, tk, r }) => { const src = col(r.colId) || col(r.srcId); return `<div class="rcard"><div class="acard-art">${src ? albumArt(src) : '<span class="acard-ph"></span>'}</div>
+      <b>${esc(r.title)}</b><span class="obadge sm ok">${ico('check', 11)}<span>${edLabel(tk, r)}</span></span><span class="faint small">Sold by ${esc(handleOf(l.seller))}</span>
+      <div class="crow"><b class="rprice">${money(l.price)}</b>${l.seller === ME() ? `<button class="btn sm" data-act="res-unlist" data-k="${l.id}">Remove</button>` : `<button class="btn sm primary" data-act="res-buy" data-k="${l.id}">Buy</button>`}</div></div>`; };
+  m.innerHTML = `<header class="head"><div><h1>Music Store</h1><p class="faint">Collector editions people are reselling. Every sale pays the artist 5%.</p></div></header>
+    <div class="tools">${seg('storetab', [['digital', 'Digital'], ['physical', 'Physical'], ['resale', 'Resale']], 'resale', 'store-tab')}</div>
+    ${L.length ? `<div class="sgrid">${L.map(card).join('')}</div>` : '<div class="empty"><p><b>Nothing for resale right now</b></p><p class="faint">Owners of tradable collector editions can sell them from the album menu.</p></div>'}`;
 }
 /* ---------- Marketplace (in progress): beats, kits and loops, laid out like a beat store ---------- */
 function renderMarket(m) {
@@ -3652,6 +3706,9 @@ function renderSettings(m) {
       <dt>${MOD}J</dt><dd>Duplicate layer</dd><dt>${MOD}C / X / V</dt><dd>Copy, cut, paste layer</dd><dt>${MOD}] / ${MOD}[</dt><dd>Bring forward / send backward (add Shift for front / back)</dd>
       <dt>${MOD}/</dt><dd>Lock or unlock layer</dd><dt>${MOD},</dt><dd>Hide or show layer</dd><dt>Arrows</dt><dd>Nudge layer (Shift for 5 mm)</dd><dt>${MOD}0 / = / -</dt><dd>Fit, zoom in, zoom out</dd></dl></details>
     </section>
+    <section class="set-card box"><h2>Ownership</h2>
+      ${setRow('Compass tokens (preview)', 'Verified ownership, lending and resale, running on this computer for now. Load samples to try it: they are made from your own projects and come off in one click.', S.cols.some(c => c.sample) ? `<button class="btn sm" data-act="tok-samples-rm">Remove sample tokens</button>` : `<button class="btn sm" data-act="tok-samples">Load sample tokens</button>`)}
+    </section>
     ${modsSettingsHTML()}
     <section class="set-card box"><h2>About</h2>
       ${setRow('Compass ' + esc(APP_VERSION), 'Made by sxteen ways, trulytamed and all of KGB.', `<div class="crow">${window.tpDesktop ? `<button class="btn sm" data-act="desk-update" title="Updates install over this version. Your projects are kept.">${ico('repeat', 14)} Check for updates</button>` : ''}<button class="btn sm" data-act="changelog">${ico('list', 14)} What's new</button><button class="btn sm" data-act="credits">${ico('star', 14)} Credits</button></div>`)}
@@ -3698,7 +3755,7 @@ const vbadge = sz => S.concept.verified ? `<i class="vf" style="width:${sz}px;he
 function renderBar() {
   const t = trk(S.cur), b = $('#bar');
   b.innerHTML = `
-  <div class="now">${t ? `<span class="cov" style="${tcov(t)}"></span><span class="meta"><b>${esc(dispTitle(t))}</b><span>${esc(dispArtist(t))}</span></span>` : `<span class="cov ghost"></span><span class="meta"><b>Nothing playing</b><span></span></span>`}</div>
+  <div class="now">${t ? `<span class="cov" style="${tcov(t)}"></span><span class="meta"><b>${esc(dispTitle(t))}</b><span>${esc(dispArtist(t))}</span>${S.ledger && UI.playColId && col(UI.playColId) && isMine(col(UI.playColId)) ? ownBadge(col(UI.playColId), true) : ''}</span>` : `<span class="cov ghost"></span><span class="meta"><b>Nothing playing</b><span></span></span>`}</div>
   <div class="ctr">
     <div class="btns">
       <button class="ico rep ${S.rep ? 'lit' : ''}" data-act="rep" aria-label="${S.rep === 'one' ? 'Repeat this song' : S.rep === 'all' ? 'Repeat album' : 'Repeat off'}" title="${S.rep === 'one' ? 'Repeat this song' : S.rep === 'all' ? 'Repeat album' : 'Repeat off'}" aria-pressed="${!!S.rep}">${ico('repeat', 18)}${S.rep === 'one' ? '<i class="rep1">1</i>' : ''}</button>
@@ -4233,7 +4290,7 @@ function act(a, el, e) {
     case 'daw-open': { const p = (S.dawPick || {})[k] || (S.daws || {})[k] || (UI.dawScan || {})[k]; if (p && window.tpDesktop) tpDesktop.daw.open(p).then(r => toast(r && r.ok ? 'Opening ' + (DAWS.find(d => d[0] === k) || [, k])[1] + '…' : 'Could not open: ' + ((r && r.error) || 'unknown error'))); break; }
     case 'daw-locate': if (window.tpDesktop) tpDesktop.daw.locate((DAWS.find(d => d[0] === k) || [, k])[1]).then(p => { if (p) { (S.daws = S.daws || {})[k] = p; save(); renderMain(); toast('Added'); } }); break;
     case 'bulk-play': { const ids = k.split(','); playTrack(ids[0], ids); break; }
-    case 'bulk-export': exportTracks(k.split(',')); break;
+    case 'bulk-export': { const pc = S.view === 'collection' && col(S.colId); if (pc && S.ledger && !Ledger.canExport(pc)) { toast(lockMsg(pc)); break; } exportTracks(k.split(',')); break; }
     case 'bulk-dup': dupTracks(k.split(',')); break;
     case 'bulk-move': sendTracks(k.split(','), id, true); break;
     case 'bulk-copy': sendTracks(k.split(','), id, false); break;
@@ -4244,7 +4301,7 @@ function act(a, el, e) {
     case 'side-sort': S.side.sort = k; save(); renderSide(); applySlides(); break;
     case 'side-type': S.side.type = k; save(); renderSide(); applySlides(); break;
     case 'side-rel': S.side.rel = k; save(); renderSide(); applySlides(); break;
-    case 'ctx-myver': myVersion(id); break;
+    case 'ctx-myver': if (S.ledger && col(id) && !Ledger.canExport(col(id))) { toast(lockMsg(col(id))); break; } myVersion(id); break;
     case 'ctx-unfold': outOfFolder(id); break;
     case 'ctx-tofold': intoFolder(id, k); break;
     case 'ctx-arch': { const c = col(id); if (c) { c.archived = !c.archived; toast((c.archived ? 'Archived ' : 'Unarchived ') + c.name); if (c.archived && S.view === 'collection' && S.colId === c.id) S.view = 'library'; save(); refresh(); } break; }
@@ -4278,7 +4335,7 @@ function act(a, el, e) {
     case 'ctx-viewcd': S.colId = id; S.cd.colId = id; openViewer('case'); break;
     case 'ctx-editcd': closeDrawer(); S.cd.colId = id; S.cd.home = false; cdTabs(col(id)); S.view = 'cd'; UI.cdSel = null; refresh(); break;
     case 'ctx-export3d': exportCD3D(id); break;
-    case 'ctx-dlproj': { const c = col(id); if (c) downloadProject(c); break; }
+    case 'ctx-dlproj': { const c = col(id); if (!c) break; if (S.ledger && !Ledger.canExport(c)) { toast(lockMsg(c)); break; } downloadProject(c); break; }
     case 'ctx-delcol': trashProject(col(id)); break;
     case 'nav': closeDrawer(); if (el.dataset.view === 'cd') S.cd.home = true; S.view = el.dataset.view; refresh(); break;
     case 'col': closeDrawer(); S.view = 'collection'; S.colId = id; refresh(); break;
@@ -4326,6 +4383,23 @@ function act(a, el, e) {
     case 'credits': openCredits(); break;
     case 'credits-close': closeCredits(); break;
     case 'close-modal': closeModal(); break;
+    case 'prov': openModal('prov', id); break;
+    case 'tok-lend': { const c = col(id); if (S.playing && UI.playColId === id) { Engine.pause(); S.playing = false; } openModal('lend', id); break; }
+    case 'tok-sell': openModal('sell', id); break;
+    case 'tok-unlist': { const a = Ledger.access(col(id)); if (a.tk) { Ledger.unlist(a.tk.id); toast('Removed from sale'); refresh(); if (UI.modal && UI.modal.kind === 'prov') openModal('prov', id); } break; }
+    case 'ln-for': { $$('#modal [data-act="ln-for"]').forEach(b => b.classList.toggle('on', b === el)); applySlides(); break; }
+    case 'ln-ok': { const c = col(UI.modal.id), a = Ledger.access(c), on = $('#modal [data-act="ln-for"].on');
+      try { const l = Ledger.lend(a.tk.id, $('#ln-who').value, on ? on.dataset.k : '604800000', Math.round((+$('#ln-price').value || 0) * 100));
+        if (UI.playColId === c.id && S.playing) { Engine.pause(); S.playing = false; } closeModal(); refresh(); toast(`Lent to ${handleOf(l.to)} until ${new Date(l.until).toLocaleString()}`); } catch (e) { toast(e.message); } break; }
+    case 'sl-ok': { const c = col(UI.modal.id), a = Ledger.access(c); try { const l = Ledger.list(a.tk.id, Math.round((+$('#sl-price').value || 0) * 100)); closeModal(); refresh(); toast(`Listed for ${money(l.price)} in the Store's Resale tab`); } catch (e) { toast(e.message); } break; }
+    case 'loan-return': { const a = Ledger.access(col(id)); if (a.state === 'borrowed') { try { Ledger.endLoan(a.loan.id, 'returned'); if (UI.playColId === id && S.playing) { Engine.pause(); S.playing = false; } closeModal(); refresh(); toast('Returned to ' + handleOf(a.tk.owner)); } catch (e) { toast(e.message); } } break; }
+    case 'res-buy': { const l = LG().listings[k], tk = l && LG().tokens[l.token], r = tk && LG().releases[tk.rel]; if (!l) break; const sp = splitOf(l.price);
+      askSure(`Buy ${r.title} ${edLabel(tk, r)} for ${money(l.price)}?`, `Test purchase: no money moves until payments are connected. The split would be: seller ${money(sp.seller)} · artist ${money(sp.artist)} · Compass ${money(sp.compass)}.`, 'Buy').then(ok => { if (!ok) return;
+        try { const res = Ledger.buy(k); refresh(); toast('You own ' + r.title + ' ' + edLabel(res.token, r)); } catch (e) { toast(e.message); } }); break; }
+    case 'res-unlist': { const l = LG().listings[k]; if (l) { Ledger.unlist(l.token); refresh(); } break; }
+    case 'tok-samples': tokenSamples(true); break;
+    case 'tok-samples-rm': askSure('Remove the sample tokens?', 'The sample albums and their history are removed. Your own projects are not touched.', 'Remove').then(ok => { if (ok) tokenSamples(false); }); break;
+    case 'rel-ed': { $$('#modal [data-act="rel-ed"]').forEach(b => b.classList.toggle('on', b === el)); applySlides(); const box = $('#rel-colbox'); if (box) box.classList.toggle('hide-folder', k !== 'collector'); break; }
     case 'feat-open': openFeatures(id || S.editId); break;
     case 'fx-pick': fxAdd(k); break;
     case 'fx-rm': fxRead(); UI.fx.list.splice(+el.closest('.fx-row').dataset.fx, 1); fxPaint(); break;
@@ -4360,6 +4434,7 @@ document.addEventListener('click', e => {
   act(el.dataset.act, el, e);
 });
 document.addEventListener('input', e => {
+  if (e.target.id === 'ln-price' || e.target.id === 'sl-price') { splitPreview(); return; }
   if (e.target.id === 'fx-in') { fxSuggest(e.target.value); return; }
   if (e.target.id === 'fl-q') { UI.flQ = e.target.value; UI.flPage = 1; flAllPaint(); return; }
   const t = e.target;
@@ -4707,7 +4782,192 @@ function trackMenuBase(t, inCol) {
    should be limited to the album's owner, and the owner gets store display options here too. */
 const STORE_OPEN_TO_ALL = true;
 const isMyArtist = c => { const me = (S.concept && S.concept.artist || '').trim().toLowerCase(); return !!me && me !== 'artist name' && projArtists(c).some(a => a.trim().toLowerCase() === me); };
+/* ---------- Compass tokens, Phase A ----------
+   A token is the right to stream, download and lend an album (and resell it when the artist allows).
+   Phase A keeps the ledger on this computer, behind the same calls the server ledger will answer in Phase B
+   (Cloudflare Worker + D1). Every change below happens inside one synchronous function, so nothing can
+   interleave halfway (JavaScript runs one thing at a time); Phase B moves the same rules into one database
+   transaction on the server, where they can't be edited locally. */
+const SPLIT = { artist: 0.05, compass: 0.025 }; // seller gets the rest (92.5%)
+const MIN_RESALE = 100; // cents: no $0 transfers of tradable tokens
+const LOAN_TIMES = [['86400000', '24 hours'], ['604800000', '7 days'], ['2592000000', '30 days']];
+const ORIGINS = { store: 'Store purchase', card: 'Physical card (QR claim)', gift: 'Artist gift' };
+function LG() { return S.ledger = S.ledger || { releases: {}, tokens: {}, loans: {}, listings: {}, payouts: [], users: {} }; }
+const lgId = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const ME = () => 'me';
+const meHandle = () => '@' + ((myArtist() || 'me').toLowerCase().replace(/[^a-z0-9_.]+/g, '') || 'me');
+const handleOf = uid => uid === ME() ? meHandle() : ((LG().users[uid] || {}).handle || '@' + uid);
+const uidOfHandle = h => { h = '@' + String(h || '').replace(/^@+/, '').trim().toLowerCase(); if (!h || h === '@') return null; if (h === meHandle()) return ME(); const U = LG().users, f = Object.keys(U).find(k => U[k].handle === h); if (f) return f; const id = lgId('u'); U[id] = { handle: h }; return id; };
+const money = c => '$' + (c / 100).toFixed(2);
+const splitOf = cents => { const artist = Math.round(cents * SPLIT.artist), compass = Math.round(cents * SPLIT.compass); return { artist, compass, seller: cents - artist - compass }; };
+const leftTxt = until => { const ms = Math.max(0, until - Date.now()), d = Math.floor(ms / 864e5), h = Math.floor(ms % 864e5 / 36e5), m = Math.floor(ms % 36e5 / 6e4); return d ? `${d}d ${h}h` : h ? `${h}h ${m}m` : `${Math.max(1, m)}m`; };
+const edLabel = (tk, r) => r.edition === 'collector' ? `Edition #${String(tk.no).padStart(3, '0')}/${r.size}` : 'Open edition';
+const Ledger = {
+  releaseOf: colId => Object.values(LG().releases).find(r => r.colId === colId) || null,
+  tokenFor(colId) { const r = Ledger.releaseOf(colId); if (!r) return null; const T = Object.values(LG().tokens).filter(t => t.rel === r.id);
+    return T.find(t => t.custody.holder === ME()) || T.find(t => t.owner === ME()) || null; },
+  // what this computer may do with an album: owned | onloan | borrowed | ended | local | project
+  access(c) {
+    if (!c || !isMine(c)) return { state: 'project' };
+    const r = Ledger.releaseOf(c.id); if (!r) return { state: 'local' };
+    const tk = Ledger.tokenFor(c.id);
+    if (!tk) { const ended = Object.values(LG().loans).filter(l => l.to === ME() && LG().tokens[l.token] && LG().tokens[l.token].rel === r.id).sort((a, b) => b.at - a.at)[0]; return { state: ended ? 'ended' : 'local', r, loan: ended }; }
+    const loan = tk.custody.loan ? LG().loans[tk.custody.loan] : null;
+    if (tk.owner === ME()) return loan ? { state: 'onloan', tk, r, loan } : { state: 'owned', tk, r };
+    return { state: 'borrowed', tk, r, loan };
+  },
+  canPlay: c => ['owned', 'borrowed', 'local', 'project'].includes(Ledger.access(c).state),
+  canExport: c => ['owned', 'local', 'project'].includes(Ledger.access(c).state),
+  // ---- custody changes: each one checks everything first, then changes everything at once ----
+  lend(tokenId, handle, ms, priceCents = 0) {
+    const tk = LG().tokens[tokenId], r = tk && LG().releases[tk.rel];
+    if (!tk || tk.owner !== ME()) throw new Error("You don't own this token");
+    if (tk.custody.holder !== ME() || tk.custody.loan) throw new Error('This token is already on loan');
+    if (r.lend === false) throw new Error("The artist doesn't allow lending this album");
+    if (Object.values(LG().listings).some(x => x.token === tokenId && x.status === 'ACTIVE')) throw new Error('Remove it from sale before lending it');
+    const to = uidOfHandle(handle); if (!to) throw new Error('Type who to lend it to, like @name'); if (to === ME()) throw new Error("You can't lend it to yourself");
+    if (![864e5, 6048e5, 2592e6].includes(+ms)) throw new Error('Pick 24 hours, 7 days or 30 days');
+    priceCents = Math.max(0, Math.round(+priceCents || 0)); if (priceCents && priceCents < MIN_RESALE) throw new Error('Paid loans start at $1.00');
+    const now = Date.now(), loan = { id: lgId('loan'), token: tokenId, from: ME(), to, at: now, until: now + +ms, price: priceCents, status: 'ACTIVE' };
+    LG().loans[loan.id] = loan; tk.custody = { holder: to, loan: loan.id };
+    tk.chain.push({ event: 'loan_start', from: ME(), to, at: now, until: loan.until, price: priceCents });
+    if (priceCents) LG().payouts.push({ at: now, kind: 'rental', token: tokenId, gross: priceCents, ...splitOf(priceCents), artistUid: r.artistUid, seller: ME() });
+    save(); return loan;
+  },
+  endLoan(loanId, why) {
+    const loan = LG().loans[loanId]; if (!loan || loan.status !== 'ACTIVE') return false; const tk = LG().tokens[loan.token];
+    if (why === 'returned' && loan.to !== ME()) throw new Error('Only the borrower can return it early');
+    loan.status = why === 'returned' ? 'RETURNED' : 'EXPIRED'; loan.ended = Date.now(); tk.custody = { holder: tk.owner, loan: null };
+    tk.chain.push({ event: 'loan_end', from: loan.to, to: tk.owner, at: loan.ended, why }); save(); return true;
+  },
+  sweep() { let n = 0; Object.values(LG().loans).forEach(l => { if (l.status === 'ACTIVE' && Date.now() >= l.until) { Ledger.endLoan(l.id, 'expired'); n++; } }); return n; },
+  list(tokenId, priceCents) {
+    const tk = LG().tokens[tokenId], r = tk && LG().releases[tk.rel]; priceCents = Math.round(+priceCents || 0);
+    if (!tk || tk.owner !== ME()) throw new Error("You don't own this token");
+    if (r.edition !== 'collector') throw new Error("Open editions can't be resold. Only numbered collector editions can.");
+    if (!tk.tradable) throw new Error('This edition is soulbound: it stays with its first owner');
+    if (!r.resale) throw new Error("The artist doesn't allow resale of this album");
+    if (tk.custody.loan) throw new Error("It's on loan. Wait until it comes back");
+    if (priceCents < MIN_RESALE) throw new Error('Resale starts at $1.00 so the artist always gets paid');
+    Object.values(LG().listings).forEach(x => { if (x.token === tokenId && x.status === 'ACTIVE') x.status = 'CANCELLED'; });
+    const l = { id: lgId('lst'), token: tokenId, seller: ME(), price: priceCents, at: Date.now(), status: 'ACTIVE' }; LG().listings[l.id] = l; save(); return l;
+  },
+  unlist(tokenId) { Object.values(LG().listings).forEach(x => { if (x.token === tokenId && x.status === 'ACTIVE' && x.seller === ME()) x.status = 'CANCELLED'; }); save(); },
+  buy(listingId) {
+    const l = LG().listings[listingId], tk = l && LG().tokens[l.token], r = tk && LG().releases[tk.rel];
+    if (!l || l.status !== 'ACTIVE') throw new Error('This listing is gone');
+    if (l.seller === ME()) throw new Error("That's your own listing");
+    if (!tk.tradable || !r.resale) throw new Error("This token can't be resold");
+    if (tk.custody.loan) throw new Error("It's out on loan right now");
+    if (tk.owner !== l.seller) throw new Error('The seller no longer owns it');
+    if (l.price < MIN_RESALE) throw new Error('Price is below the minimum');
+    const now = Date.now(), pay = splitOf(l.price), seller = tk.owner, c = albumForRelease(r);
+    if (!c) throw new Error("This album's files aren't on this computer yet (they download from the server in Phase B)");
+    l.status = 'SOLD'; l.buyer = ME(); l.soldAt = now; tk.owner = ME(); tk.custody = { holder: ME(), loan: null };
+    tk.chain.push({ event: 'sale', from: seller, to: ME(), at: now, price: l.price, split: pay });
+    LG().payouts.push({ at: now, kind: 'resale', token: tk.id, gross: l.price, ...pay, artistUid: r.artistUid, seller });
+    save(); return { token: tk, col: c, split: pay };
+  }
+};
+/* the album a release plays from: its digital album here, or a copy made from the source project */
+function albumForRelease(r) { let c = col(r.colId); if (c) return c; const src = col(r.srcId); if (!src) return null;
+  const nc = { ...JSON.parse(JSON.stringify(src)), id: uid(), name: r.title, mine: true, fromProject: false, released: true, created: Date.now(), parent: undefined, kids: [], sample: !!r.sample };
+  delete nc.release; S.cols.push(nc); r.colId = nc.id; return nc; }
+/* badge shown on the album page, the player bar and library cards */
+function ownBadge(c, small) {
+  const a = Ledger.access(c), act = `data-act="prov" data-id="${c.id}"`, cls = 'obadge' + (small ? ' sm' : '');
+  if (small === 'card') { // short form for album cards; the full wording is in the tooltip and the ownership window
+    const full = (ownBadge(c, true).match(/<span>(.*)<\/span><\/button>/) || [, ''])[1].replace(/<[^>]+>/g, '');
+    if (a.state === 'owned') return `<button class="${cls} ok" ${act} title="${esc(full)}">${ico('check', 11)}<span>Verified${a.r.edition === 'collector' ? ' · #' + String(a.tk.no).padStart(3, '0') : ''}</span></button>`;
+    if (a.state === 'onloan') return `<button class="${cls} lock" ${act} title="${esc(full)}">${ico('lock', 11)}<span>On loan · <i data-until="${a.loan.until}">${leftTxt(a.loan.until)}</i></span></button>`;
+    if (a.state === 'borrowed') return `<button class="${cls} borrow" ${act} title="${esc(full)}">${ico('user', 11)}<span>Borrowed · <i data-until="${a.loan.until}">${leftTxt(a.loan.until)}</i></span></button>`;
+  }
+  if (a.state === 'owned') return `<button class="${cls} ok" ${act} title="Ownership and history">${ico('check', 11)}<span>Verified · ${edLabel(a.tk, a.r)}${a.r.delisted ? ' · No longer sold' : ''}</span></button>`;
+  if (a.state === 'onloan') return `<button class="${cls} lock" ${act} title="Ownership and history">${ico('lock', 11)}<span>On loan to ${esc(handleOf(a.loan.to))} — returns in <i data-until="${a.loan.until}">${leftTxt(a.loan.until)}</i></span></button>`;
+  if (a.state === 'borrowed') return `<button class="${cls} borrow" ${act} title="Ownership and history">${ico('user', 11)}<span>Borrowed from ${esc(handleOf(a.tk.owner))} — ${edLabel(a.tk, a.r)} · returns in <i data-until="${a.loan.until}">${leftTxt(a.loan.until)}</i></span></button>`;
+  if (a.state === 'ended') return `<span class="${cls} lock">${ico('lock', 11)}<span>Loan ended</span></span>`;
+  if (a.state === 'local') return `<span class="${cls} local" title="Imported file, not linked to a Compass token">Local file</span>`;
+  return '';
+}
+const lockMsg = c => { const a = Ledger.access(c); return a.state === 'onloan' ? `On loan to ${handleOf(a.loan.to)}. It comes back in ${leftTxt(a.loan.until)}.` : a.state === 'ended' ? 'That loan has ended.' : "You can't do that with a borrowed album."; };
+/* every 20 s: hand back loans that ran out, and keep the countdowns current */
+function tokenTick() {
+  if (!S.ledger) return; const n = Ledger.sweep();
+  $$('[data-until]').forEach(el => { el.textContent = leftTxt(+el.dataset.until); });
+  if (n) { const pc = UI.playColId && col(UI.playColId); if (S.playing && pc && !Ledger.canPlay(pc)) { Engine.pause(); S.playing = false; toast(lockMsg(pc)); } refresh(); }
+}
+function provHTML(c) {
+  const a = Ledger.access(c); if (!a.tk && !a.r) return '<p class="faint">No token for this album.</p>'; const tk = a.tk || LG().tokens[a.loan && a.loan.token], r = a.r;
+  const ev = e => {
+    if (e.event === 'mint') return `Minted · ${ORIGINS[e.origin] || 'Store purchase'}${e.price ? ' · ' + money(e.price) : ''} → ${esc(handleOf(e.to))}`;
+    if (e.event === 'sale') return `Sold ${esc(handleOf(e.from))} → ${esc(handleOf(e.to))} · ${money(e.price)}${e.split ? ` <small class="faint">(artist ${money(e.split.artist)} · Compass ${money(e.split.compass)} · seller ${money(e.split.seller)})</small>` : ''}`;
+    if (e.event === 'loan_start') return `Lent ${esc(handleOf(e.from))} → ${esc(handleOf(e.to))} until ${new Date(e.until).toLocaleDateString()}${e.price ? ' · ' + money(e.price) : ''}`;
+    if (e.event === 'loan_end') return `Back with ${esc(handleOf(e.to))} · ${e.why === 'returned' ? 'returned early' : 'loan ran out'}`;
+    if (e.event === 'gift') return `Gift → ${esc(handleOf(e.to))}`;
+    return esc(e.event);
+  };
+  return `<div class="prov-top">${ownBadge(c)}</div>
+    <dl class="prov-dl"><dt>Edition</dt><dd>${tk ? edLabel(tk, r) : '—'}</dd><dt>Owner</dt><dd>${tk ? esc(handleOf(tk.owner)) : '—'}</dd>
+      <dt>Transfers</dt><dd>${tk && tk.tradable ? 'Tradable' : 'Soulbound (never transfers)'}</dd><dt>Artist allows</dt><dd>${[r.lend !== false && 'lending', r.resale && 'resale'].filter(Boolean).join(' and ') || 'neither lending nor resale'}</dd>
+      ${r.delisted ? '<dt>Store</dt><dd>No longer sold. You keep it.</dd>' : ''}</dl>
+    <h3 class="mh">History</h3><ol class="prov-tl">${tk ? tk.chain.slice().reverse().map(e => `<li><span>${ev(e)}</span><time>${new Date(e.at).toLocaleDateString()}</time></li>`).join('') : ''}</ol>
+    <p class="faint small" style="margin:8px 0 0">Phase A: this history is kept on this computer. Once the Compass server is live it is signed there and can't be edited.</p>`;
+}
+/* sample tokens (Settings › Ownership): built from your own projects, removable in one click */
+function tokenSamples(load) {
+  if (!load) { const ids = new Set(S.cols.filter(c => c.sample).map(c => c.id)); S.cols = S.cols.filter(c => !ids.has(c.id)); S.tracks.filter(t => t.sample).forEach(t => { DB.del(t.id); delete srcs[t.id]; }); S.tracks = S.tracks.filter(t => !t.sample); delete S.ledger; save(); refresh(); return toast('Sample tokens removed'); }
+  if (S.cols.some(c => c.sample)) return toast('Sample tokens are already loaded');
+  const srcs0 = S.cols.filter(c => !isMine(c) && !isFolder(c) && !c.archived && c.tracks.length), pick = (names, i) => srcs0.find(c => names.includes(c.name.toLowerCase())) || srcs0[i % Math.max(1, srcs0.length)];
+  if (!srcs0.length) return toast('Make a project with songs first, then load the samples');
+  const D = 864e5, now = Date.now(), G = LG(); Object.assign(G.users, { kidhazel: { handle: '@kidhazel' }, vvscruz: { handle: '@vvscruz' }, mayaroze: { handle: '@mayaroze' }, studio: { handle: '@compass' } });
+  const mk = (key, names, i, rel, tokenOwner, chain, extra = {}) => { const src = pick(names, i); const r = { id: 'rel_' + key, title: src.name, srcId: src.id, artistUid: 'studio', sample: true, lend: true, resale: false, delisted: false, edition: 'open', size: null, ...rel };
+    G.releases[r.id] = r; const c = tokenOwner === ME() || extra.borrowed ? albumForRelease(r) : null; if (c) c.sample = true;
+    const tk = { id: 'tok_' + key, rel: r.id, no: rel.no || null, owner: tokenOwner, tradable: !!rel.tradable, custody: { holder: tokenOwner, loan: null }, chain }; G.tokens[tk.id] = tk; return { r, tk, c }; };
+  // 1. Open Edition, owned
+  mk('movie', ['movie'], 0, { edition: 'open' }, ME(), [{ event: 'mint', origin: 'store', to: ME(), at: now - 34 * D, price: 999 }]);
+  // 2. Collector #014/500, tradable, bought second-hand, now on a 7-day loan to @vvscruz (1 day in)
+  const rk = mk('rookie', ['rookie of the year'], 1, { edition: 'collector', size: 500, no: 14, tradable: true, resale: true }, ME(), [
+    { event: 'mint', origin: 'card', to: 'kidhazel', at: now - 120 * D }, { event: 'sale', from: 'kidhazel', to: ME(), at: now - 60 * D, price: 2200, split: splitOf(2200) }]);
+  const loan = { id: 'loan_rookie', token: rk.tk.id, from: ME(), to: 'vvscruz', at: now - D, until: now + 6 * D, price: 0, status: 'ACTIVE' }; G.loans[loan.id] = loan;
+  rk.tk.custody = { holder: 'vvscruz', loan: loan.id }; rk.tk.chain.push({ event: 'loan_start', from: ME(), to: 'vvscruz', at: loan.at, until: loan.until, price: 0 });
+  // 3. Delisted, still owned and playable
+  mk('tdk', ['the dark knight'], 2, { edition: 'open', delisted: true }, ME(), [{ event: 'mint', origin: 'store', to: ME(), at: now - 200 * D, price: 799 }]);
+  // 4. Borrowed from @kidhazel for 30 days (2 days in) — soulbound collector edition
+  const bw = mk('smm', ['sex, money, music.'], 3, { edition: 'collector', size: 250, no: 3, tradable: false }, 'kidhazel', [{ event: 'mint', origin: 'store', to: 'kidhazel', at: now - 90 * D, price: 1500 }], { borrowed: true });
+  const bl = { id: 'loan_smm', token: bw.tk.id, from: 'kidhazel', to: ME(), at: now - 2 * D, until: now + 28 * D, price: 0, status: 'ACTIVE' }; G.loans[bl.id] = bl;
+  bw.tk.custody = { holder: ME(), loan: bl.id }; bw.tk.chain.push({ event: 'loan_start', from: 'kidhazel', to: ME(), at: bl.at, until: bl.until, price: 0 });
+  // 5. For sale by @mayaroze in the Store's Resale tab — buying it settles the 5% / 2.5% / 92.5% split
+  const ls = mk('inmtw', ['if not me, then who?'], 4, { edition: 'collector', size: 100, no: 31, tradable: true, resale: true }, 'mayaroze', [{ event: 'mint', origin: 'store', to: 'mayaroze', at: now - 15 * D, price: 1200 }]);
+  G.listings.lst_inmtw = { id: 'lst_inmtw', token: ls.tk.id, seller: 'mayaroze', price: 1800, at: now - D, status: 'ACTIVE' };
+  // 6. A loose imported file with no token: plays with "Local file"
+  const sr = 22050, n = sr * 8, b = new ArrayBuffer(44 + n * 2), v = new DataView(b), wr = (o, str) => [...str].forEach((ch, i) => v.setUint8(o + i, ch.charCodeAt(0)));
+  wr(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); wr(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); wr(36, 'data'); v.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.sin(i / sr * 2 * Math.PI * 220) * 6000 * Math.min(1, (n - i) / sr), true);
+  const wav = new Blob([b], { type: 'audio/wav' }), t = { id: uid(), title: 'loose import', artist: 'Unknown', features: [], status: 'final', dur: 8, added: now, versions: [], file: true, sample: true, ext: 'wav' };
+  t.ver = t.id; S.tracks.push(t); DB.put(t.id, wav); srcs[t.id] = URL.createObjectURL(wav);
+  const lc = newProject('loose import.mp3'); Object.assign(lc, { type: 'single', mine: true, fromProject: false, sample: true, tracks: [t.id], artists: ['Unknown'] }); S.cols.push(lc);
+  save(); refresh(); toast('Sample tokens loaded. Look in Library › Digital albums and the Store › Resale tab.');
+}
 function digitalMenu(c) {
+  const a = Ledger.access(c);
+  if (a.state === 'borrowed' || a.state === 'ended') return [{ head: c.name }, { label: 'Ownership & history…', act: 'prov', id: c.id, icon: 'list' }, ...(a.state === 'borrowed' ? [{ label: 'Return early', act: 'loan-return', id: c.id, icon: 'back' }] : []), { sep: 1 }, { label: 'Remove from library', act: 'ctx-delcol', id: c.id, icon: 'trash', danger: 1 }];
+  if (a.state === 'onloan') return [{ head: c.name }, { label: 'Ownership & history…', act: 'prov', id: c.id, icon: 'list' }];
+  const own = a.state === 'owned', listed = own && Object.values(LG().listings).some(x => x.token === a.tk.id && x.status === 'ACTIVE');
+  const base = digitalMenuBase(c).filter(x => !(a.r && a.r.artistUid !== ME() && ['ctx-release', 'ctx-deluxe', 'ctx-sequel'].includes(x.act))); // a bought album isn't yours to release
+  return [...base, ...(own ? [{ sep: 1 }, { label: 'Ownership & history…', act: 'prov', id: c.id, icon: 'list' }, ...(a.r.lend !== false && !listed ? [{ label: 'Lend…', act: 'tok-lend', id: c.id, icon: 'user' }] : []),
+    ...(a.tk.tradable && a.r.resale ? [listed ? { label: 'Remove from sale', act: 'tok-unlist', id: c.id, icon: 'x' } : { label: 'Sell…', act: 'tok-sell', id: c.id, icon: 'upload' }] : [])] : [])];
+}
+function provActions(c) {
+  const a = Ledger.access(c); if (a.state === 'borrowed') return '<button class="btn" data-act="loan-return" data-id="' + c.id + '">Return early</button>';
+  if (a.state !== 'owned') return ''; const listed = Object.values(LG().listings).some(x => x.token === a.tk.id && x.status === 'ACTIVE');
+  return (a.r.lend !== false && !listed ? `<button class="btn" data-act="tok-lend" data-id="${c.id}">Lend…</button>` : '') + (a.tk.tradable && a.r.resale ? (listed ? `<button class="btn" data-act="tok-unlist" data-id="${c.id}">Remove from sale</button>` : `<button class="btn" data-act="tok-sell" data-id="${c.id}">Sell…</button>`) : '');
+}
+function splitPreview() {
+  const f = (inp, out, label) => { const i = $(inp), o = $(out); if (!i || !o) return; const cents = Math.round((+i.value || 0) * 100);
+    o.innerHTML = cents ? (cents < MIN_RESALE ? 'Minimum $1.00.' : (() => { const sp = splitOf(cents); return `${label}: you get <b>${money(sp.seller)}</b> · artist ${money(sp.artist)} (5%) · Compass ${money(sp.compass)} (2.5%)`; })()) : (inp === '#ln-price' ? 'Free loan.' : ''); };
+  f('#ln-price', '#ln-split', 'Rental'); f('#sl-price', '#sl-split', 'If it sells');
+}
+function digitalMenuBase(c) {
   return [{ head: c.name + (projArtist(c) ? ' · ' + projArtist(c) : '') }, { label: 'Make My Version', act: 'ctx-myver', id: c.id, icon: 'copy' },
     ...(isMyArtist(c) ? [{ label: 'Make deluxe', act: 'ctx-deluxe', id: c.id, icon: 'disc' }, { label: 'New sequel…', act: 'ctx-sequel', id: c.id, icon: 'plus' }] : []),
     ...(STORE_OPEN_TO_ALL || isMyArtist(c) ? [{ label: c.release ? 'Store Settings…' : 'Put in the Store…', act: 'ctx-release', id: c.id, icon: 'upload' }] : []),
@@ -4774,7 +5034,7 @@ addEventListener('blur', closeCtx); addEventListener('resize', closeCtx);
   if (S.cur) Engine.load(trk(S.cur));
   if (S.view === 'collection' && !col(S.colId)) S.view = 'library';
   applyPrefs(); refresh(); renderEq();
-  setInterval(tick, 250); setInterval(modTick, 500);
+  setInterval(tick, 250); setInterval(modTick, 500); setInterval(tokenTick, 20000); setTimeout(tokenTick, 1500);
   modsLoad(); acctLoad();
   setTimeout(checkWhatsNew, 1200);
   setTimeout(async () => { let n = 0; for (const c of S.cols) for (const cv of c.covers) { if (srcs['thumb:' + cv.id] || cv.noThumb) continue; const b = await DB.get('art:' + cv.id); if (!b) continue; await makeThumb(cv.id, b); if (srcs['thumb:' + cv.id]) n++; else cv.noThumb = true; } if (n) refresh(); }, 1500);

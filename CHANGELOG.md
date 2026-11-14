@@ -2,6 +2,14 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.10.0 · 2026-11-15
+
+- Compass tokens (preview): albums you own show a Verified badge with their edition (open, or numbered like #014/500). Click it for the full ownership history.
+- Lend an album to someone for 24 hours, 7 days or 30 days (free or paid). While it is out, you can't play it; it comes back on its own when time runs out, or they can return it early.
+- Sell tradable collector editions in the Store's new Resale tab. Every sale pays the artist 5% and Compass 2.5%; the seller gets 92.5%. No $0 transfers.
+- Release settings: open or numbered collector editions, whether owners can lend or resell, and Stop selling (people who bought it keep it).
+- Settings › Ownership › Load sample tokens to try it all. Runs on this computer for now; the server version comes next.
+
 ## 1.9.3 · 2026-11-14
 
 - Export button on every project and digital album, next to Share.
