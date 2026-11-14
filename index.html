@@ -703,6 +703,7 @@ h1 { font-weight: 800; font-size: 34px; letter-spacing: -.02em; }
 .colhead.ro, .list.ro .row { grid-template-columns: 36px minmax(0, 1fr) 128px 50px 36px; }
 .colhead.ro > span:nth-child(4), .colhead.ro > span:nth-child(5), .list.ro .row .pill, .list.ro .row .c-add { display: none; }
 .list.ro .discol .row { grid-template-columns: 36px minmax(0, 1fr) 46px 32px; }
+.acct-pic { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
 /* song panel: three fields on one row */
 .three { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 10px; } .three .lab { margin-top: 10px; } .three .picker, .three .sel { width: 100%; }
 /* FL Studio projects screen */
@@ -3602,12 +3603,32 @@ function modsSettingsHTML() {
       ${setRow('Mods folder', 'Put each mod in its own folder. Mods are off until you turn them on. They can change how Compass looks and add menu items, but never the Music Store or Marketplace. Only turn on mods you trust.', `<div class="crow"><button class="btn sm" data-act="mods-folder">${ico('folder', 14)} Open folder</button><button class="btn sm" data-act="mods-reload">${ico('repeat', 14)} Reload</button></div>`)}
       ${rows || '<p class="faint small" style="margin:6px 0 0">No mods yet. Open the folder to get an example mod.</p>'}</section>`;
 }
+/* ---------- account (online phase 1): Google sign-in, profile synced to the cloud ---------- */
+UI.acct = null;
+async function acctLoad() { if (!(window.tpDesktop && tpDesktop.account)) return; try { UI.acct = await tpDesktop.account.status(); } catch (e) { UI.acct = null; } if (S.view === 'settings') renderMain(); }
+const myArtist = () => (S.concept.artist && S.concept.artist !== 'Artist Name' ? S.concept.artist.trim() : '');
+async function acctSignIn() {
+  toast('Finish signing in in your browser…'); UI.acctBusy = true; if (S.view === 'settings') renderMain();
+  const r = await tpDesktop.account.signIn(); UI.acctBusy = false;
+  if (!r || !r.ok) { toast("Couldn't sign in: " + ((r && r.error) || 'unknown error')); return acctLoad(); }
+  const remote = r.profile && r.profile.artist;
+  if (remote && !myArtist()) { S.concept.artist = remote; save(); } else if (myArtist() && myArtist() !== remote) acctPush();
+  toast('Signed in as ' + (r.name || r.email)); acctLoad();
+}
+let acctT = 0;
+function acctPush() { clearTimeout(acctT); acctT = setTimeout(async () => { if (!(UI.acct && UI.acct.signedIn)) return; const r = await tpDesktop.account.save({ artist: myArtist() }); if (r && !r.ok) toast("Couldn't save your profile online: " + r.error); }, 900); }
+function acctRowHTML() {
+  const A = UI.acct; if (!A || !A.available) return '';
+  if (!A.signedIn) return setRow('Account', 'Sign in to keep your profile in the cloud. More online features build on this.', `<button class="btn sm" data-act="acct-in" ${UI.acctBusy ? 'disabled' : ''}>${UI.acctBusy ? 'Waiting for the browser…' : 'Sign in with Google'}</button>`);
+  return setRow('Account', `${esc(A.name || '')}${A.name && A.email ? ' · ' : ''}${esc(A.email || '')}`, `<div class="crow">${A.photo ? `<img class="acct-pic" src="${esc(A.photo)}" alt="" referrerpolicy="no-referrer">` : ''}<button class="btn sm" data-act="acct-out">Sign out</button></div>`);
+}
 const setRow = (title, desc, control) => `<div class="set-row"><div class="set-txt"><b>${title}</b>${desc ? `<span>${desc}</span>` : ''}</div><div class="set-ctl">${control}</div></div>`;
 function renderSettings(m) {
   const P = S.prefs;
   m.innerHTML = `<header class="head"><div><h1>Settings</h1></div></header>
   <div class="settings">
     <section class="set-card box"><h2>Profile</h2>
+      ${acctRowHTML()}
       ${setRow('Main artist name', 'Used when a project has no artist.', `<input class="field" id="set-artist" data-cc="artist" value="${esc(S.concept.artist === 'Artist Name' ? '' : S.concept.artist || '')}" placeholder="${esc(artistOf())}" autocomplete="off">`)}
       ${setRow('Verified badge', 'Check mark next to your name.', `<label class="check"><input type="checkbox" data-cc="verified" ${S.concept.verified ? 'checked' : ''}><span>Verified artist</span></label>`)}
     </section>
@@ -4311,6 +4332,8 @@ function act(a, el, e) {
     case 'fx-more': { const d = $('.fx-det', el.closest('.fx-row')); d.hidden = !d.hidden; break; }
     case 'fx-ok': fxSave(); break;
     case 'confirm-ok': closeModal(true); break;
+    case 'acct-in': if (window.tpDesktop && tpDesktop.account) acctSignIn(); break;
+    case 'acct-out': if (window.tpDesktop && tpDesktop.account) tpDesktop.account.signOut().then(() => { toast('Signed out'); acctLoad(); }); break;
     case 'mods-folder': if (window.tpDesktop && tpDesktop.mods) tpDesktop.mods.folder().then(() => setTimeout(() => modsLoad().then(() => { if (S.view === 'settings') renderMain(); }), 800)); break;
     case 'mods-reload': MODS.list.forEach(m => modStop(m.id)); modsLoad().then(() => { renderMain(); toast(MODS.list.length ? 'Mods reloaded' : 'No mods found'); }); break;
     case 'mod-menu': { const [mid, iid] = String(k).split(':'), f = MODS.frames[mid]; if (!f) break; const t = trk(id), c = col(id);
@@ -4351,7 +4374,7 @@ document.addEventListener('input', e => {
   else if (t.dataset.f) { const tr = trk(S.editId); if (t.dataset.f === 'bpm') tr.bpmAuto = false; if (t.dataset.f === 'key') tr.keyAuto = false; if (t.dataset.f === 'features') tr.features = t.value.split(',').map(s => s.trim()).filter(Boolean); else tr[t.dataset.f] = t.dataset.f === 'bpm' ? +t.value : t.value; updPreview(tr); renderList(); renderBar(); save(); }
   else if (t.dataset.vname) { const tr = trk(S.editId), v = tr.versions.find(x => x.id === t.dataset.vname); v.name = t.value || 'Untitled version'; renderList(); save(); }
   else if (t.dataset.cf) { const c = col(S.colId); c[t.dataset.cf] = t.value; if (t.dataset.cf === 'name') renderSide(); save(); }
-  else if (t.dataset.cc && t.type !== 'checkbox') { S.concept[t.dataset.cc] = t.value; save(); renderBar(); }
+  else if (t.dataset.cc && t.type !== 'checkbox') { S.concept[t.dataset.cc] = t.value; save(); renderBar(); if (t.dataset.cc === 'artist') acctPush(); }
   else if (t.dataset.cdl && t.tagName !== 'SELECT' && t.type !== 'checkbox') { const L = selLayer(); if (!L || L.locked) return; const kk = t.dataset.cdl; const val = ['text', 'color'].includes(kk) ? t.value : +t.value; if (['x', 'y', 'w', 'text'].includes(kk)) L[kk] = val; else sameKind(L, l => { l[kk] = val; }); if (kk === 'text' && !L.name) { const b = $('#pslayers .psl.on .nm'); if (b) b.textContent = layerName(L); } syncProps(); cdDirty(); save(); }
   else if (t.id === 'cd-bg') { const c = cdCol(); design(c)[S.cd.sheet].bg = t.value; cdDirty(); save(); }
   else if (t.id === 'm-link') { UI.importLink = t.value.trim(); const a = $('#m-open'); if (a) a.href = /^https?:\/\//.test(UI.importLink) ? UI.importLink : 'https://untitled.stream'; }
@@ -4752,7 +4775,7 @@ addEventListener('blur', closeCtx); addEventListener('resize', closeCtx);
   if (S.view === 'collection' && !col(S.colId)) S.view = 'library';
   applyPrefs(); refresh(); renderEq();
   setInterval(tick, 250); setInterval(modTick, 500);
-  modsLoad();
+  modsLoad(); acctLoad();
   setTimeout(checkWhatsNew, 1200);
   setTimeout(async () => { let n = 0; for (const c of S.cols) for (const cv of c.covers) { if (srcs['thumb:' + cv.id] || cv.noThumb) continue; const b = await DB.get('art:' + cv.id); if (!b) continue; await makeThumb(cv.id, b); if (srcs['thumb:' + cv.id]) n++; else cv.noThumb = true; } if (n) refresh(); }, 1500);
   setTimeout(() => queueAnalysis(S.tracks.map(keyOf)), 2500);

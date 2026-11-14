@@ -201,6 +201,7 @@ function modsList() {
 }
 
 app.whenReady().then(() => {
+  require('./online').register(ipcMain); // Google sign-in + online profile (hidden until online.json exists)
   ipcMain.handle('tp-mods-list', () => modsList());
   ipcMain.handle('tp-mods-folder', async () => { const dir = modsDir(); fs.mkdirSync(dir, { recursive: true });
     if (!fs.readdirSync(dir).length) { const ex = path.join(dir, 'example-now-playing'); fs.mkdirSync(ex, { recursive: true }); for (const [f, c] of Object.entries(EXAMPLE_MOD)) fs.writeFileSync(path.join(ex, f), c); }
