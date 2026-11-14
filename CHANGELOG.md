@@ -2,6 +2,10 @@
 
 Every Compass release, newest first. The app shows the same list under Settings › Changelog.
 
+## 1.9.2 · 2026-11-14
+
+- The update button is back in the bottom-left corner, next to the version number.
+
 ## 1.9.1 · 2026-11-14
 
 - Launcher shows your 9 most recent FL Studio projects under the DAWs. Click one to open it; See all opens the FL Studio screen.

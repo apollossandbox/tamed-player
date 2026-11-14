@@ -1,11 +1,18 @@
 {
-  "version": "1.9.1",
+  "version": "1.9.2",
   "file": "Compass-Setup.exe",
-  "size": 82288067,
-  "sha256": "554b3965e7b59b75f6dff884f4c99222d61cee724f47883d421e78ae12907892",
-  "notes": "Recent projects in the Launcher; Projects button back",
+  "size": 82288181,
+  "sha256": "c94e1d213e3567367961435a810084e6576ae1f2934bae21192e219abe363678",
+  "notes": "Update button back",
   "date": "2026-11-14",
   "changelog": [
+    {
+      "v": "1.9.2",
+      "d": "2026-11-14",
+      "items": [
+        "The update button is back in the bottom-left corner, next to the version number."
+      ]
+    },
     {
       "v": "1.9.1",
       "d": "2026-11-14",
@@ -169,15 +176,6 @@
       "d": "2026-11-12",
       "items": [
         "Right-clicking a digital album shows only Make My Version and Put in the Store, plus Make Sequel when the album is by your own artist name (Settings › Profile)."
-      ]
-    },
-    {
-      "v": "1.7.0",
-      "d": "2026-11-12",
-      "items": [
-        "Importing a zip asks: project or digital product (album, mixtape, EP or single). Digital products only show in Library › Digital Albums.",
-        "Release… in the right-click menu sells a project or album in the Music Store as digital, CD or both. Edit it with Release Settings, remove it with Take out of Store.",
-        "Sample items removed from the Store and Marketplace."
       ]
     }
   ]
