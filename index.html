@@ -214,7 +214,7 @@ button.pill:hover { background: var(--hover); color: var(--ink); } button.pill:a
   transform: translateX(calc(100% + 40px)); opacity: 0; visibility: hidden; transition: transform .55s var(--ease2), opacity .3s, visibility 0s .55s; }
 .drawer.open { transform: none; opacity: 1; visibility: visible; transition: transform .6s var(--ease), opacity .3s, visibility 0s; }
 .dh { display: flex; align-items: center; justify-content: space-between; font-size: 18px; font-weight: 700; }
-.dcov { height: 100px; border-radius: 18px; margin: 8px 0; flex: none; background-color: var(--field); }
+.dcov { height: 72px; border-radius: 18px; margin: 8px 0; flex: none; background-color: var(--field); }
 .drawer .lab { margin-top: 10px; }
 .field { width: 100%; padding: 10px 14px; border-radius: 14px; background: var(--field); border: 1px solid var(--lo); outline: 0; }
 textarea.field { resize: vertical; }
@@ -663,6 +663,42 @@ h1 { font-weight: 800; font-size: 34px; letter-spacing: -.02em; }
 .qr-won > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; } .qr-won b { font-size: 15px; }
 .qr-cov { width: 84px; height: 84px; flex: none; border-radius: 8px; box-shadow: 0 8px 20px -8px var(--shadow); }
 
+
+
+/* FL Studio screen */
+.fl-head { display: flex; flex-direction: column; gap: 6px; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin-bottom: 14px; }
+.fl-back { align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px 2px 0; border: 0; background: none; color: var(--ink2); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; } .fl-back:hover { color: var(--ink); }
+.fl-titlerow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; } .fl-titlerow h1 { margin: 0; }
+.fl-logo { width: 40px; height: 40px; display: grid; place-items: center; } .fl-logo img { width: 40px; height: 40px; object-fit: contain; }
+.fl-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.fl-titlerow .grow, .fl-bar .grow { flex: 1; } .fl-bar .sel { width: auto; min-width: 0; flex: none; } .fl-bar .sel select { max-width: 220px; }
+.fl-bar .fl-tools { display: flex; gap: 8px; align-items: center; } .fl-bar .fl-search { height: 36px; min-width: 200px; } .fl-bar .sel select { padding-top: 7px; padding-bottom: 7px; }
+.flrows { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.flr { display: grid; grid-template-columns: 30px minmax(0, 2fr) minmax(0, 1.3fr) 130px 70px 28px; align-items: center; gap: 12px; padding: 8px 12px; border: 0; border-bottom: 1px solid var(--line); background: none; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.flr:last-child { border-bottom: 0; } .flr:hover { background: var(--hover); }
+.flr-ic { position: relative; width: 28px; height: 28px; display: grid; place-items: center; } .flr-ic img { width: 26px; height: 26px; object-fit: contain; } .flr-ic .flp-zip { right: -6px; bottom: -4px; }
+.flr-n { font-weight: 700; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.flr-f, .flr-t, .flr-s { font-size: 12.5px; color: var(--ink2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .flr-s { text-align: right; }
+.flr-go { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; opacity: 0; background: var(--ink); color: var(--onink); } .flr:hover .flr-go { opacity: 1; }
+.fl-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; } .fl-foot .flpg { margin: 0; }
+.flpg-n:disabled { opacity: .35; cursor: default; }
+.fl-note { padding: 18px 2px; }
+@media (max-width: 900px) { .flr { grid-template-columns: 30px minmax(0, 1fr) 110px 28px; } .flr-f, .flr-s { display: none; } }
+/* Features window */
+.fx-add { position: relative; margin-top: 10px; }
+.fx-sug { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; } .fx-sug:empty { display: none; }
+.fx-sug button { display: flex; justify-content: space-between; gap: 10px; padding: 7px 10px; border-radius: 8px; border: 0; background: var(--panel2); color: var(--ink); font: inherit; font-weight: 700; text-align: left; cursor: pointer; } .fx-sug button:hover { background: var(--hover); } .fx-sug small { color: var(--ink3); font-weight: 500; }
+#fx-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; max-height: 52vh; overflow-y: auto; }
+.fx-row { border: 1px solid var(--line); border-radius: 10px; padding: 6px 6px 6px 10px; }
+.fx-top { display: flex; align-items: center; gap: 8px; } .fx-top b { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13.5px; }
+.fx-place select { padding-top: 5px; padding-bottom: 5px; font-size: 12.5px; } .fx-mini { width: 26px; height: 26px; }
+.fx-det { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; padding: 8px 4px 4px 0; } .fx-det[hidden] { display: none; }
+.fx-f { display: flex; flex-direction: column; gap: 3px; font-size: 11.5px; color: var(--ink2); font-weight: 700; } .fx-f .field, .fx-f select { padding-top: 6px; padding-bottom: 6px; font-size: 12.5px; }
+.fx-empty { margin: 4px 0; }
+.ver-x { width: 22px; height: 22px; opacity: .6; } .ver-x:hover { opacity: 1; }
+.btn.danger { background: #c62828; color: #fff; border-color: #c62828; }
+/* song panel: three fields on one row */
+.three { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 10px; } .three .lab { margin-top: 10px; } .three .picker, .three .sel { width: 100%; }
 /* FL Studio projects screen */
 .fl-h, .fl-all h2 { font-size: 17px; margin: 6px 0 10px; }
 .fl-all { margin-top: 30px; }
@@ -1061,7 +1097,9 @@ const tcov = t => { const p = ownerCol(t); return p ? pcov(p) : cover(t.h1, t.h2
 const pcolors = c => { const cv = coverObj(c); return cv && cv.colors && artOf(c) ? cv.colors : gray(c.h1, c.h2); };
 const pgrad = c => { const k = pcolors(c); return `linear-gradient(135deg, ${k.join(', ')})`; };
 const feats = t => (t.features || []).map(s => s.trim()).filter(Boolean);
-const dispTitle = t => t.title + (t.featInTitle && feats(t).length ? ` (feat. ${andList(feats(t))})` : '');
+const featPlace = (t, n) => (t.featPlace && t.featPlace[n]) || (t.featInTitle ? 'title' : 'artist');
+const featsIn = (t, where) => feats(t).filter(n => featPlace(t, n) === where);
+const dispTitle = t => t.title + (featsIn(t, 'title').length ? ` (feat. ${andList(featsIn(t, 'title'))})` : '');
 const artistOf = () => {
   const typed = (S.concept.artist || '').trim(); if (typed && typed !== 'Artist Name') return typed;
   const tally = {}; S.cols.forEach(c => (c.artists || []).filter(Boolean).forEach((a, i) => { tally[a] = (tally[a] || 0) + (i === 0 ? 2 : 1); }));
@@ -1076,7 +1114,7 @@ function cdRenameArtist(cid, from, to) {
 const projOf = t => S.cols.find(c => c.tracks.includes(t.id));
 const projArtists = c => (c && Array.isArray(c.artists) && c.artists.filter(Boolean).length ? c.artists.filter(Boolean) : []);
 const projArtist = c => projArtists(c).join(', ');
-const dispArtist = t => [t.artist || projArtist(projOf(t)), ...feats(t)].filter(Boolean).join(', ');
+const dispArtist = t => [t.artist || projArtist(projOf(t)), ...featsIn(t, 'artist')].filter(Boolean).join(', ');
 const ROLES = ['Producer', 'Co-producer', 'Executive producer', 'Songwriter', 'Composer', 'Lyricist', 'Vocals', 'Background vocals', 'Mixing engineer', 'Mastering engineer', 'Recording engineer', 'Guitar', 'Bass', 'Keys', 'Drums', 'Programming', 'Arranger', 'Artwork', 'Label', 'Publisher'];
 const creditLine = t => { const g = {}; (t.credits || []).forEach(c => { if (c.role && c.name) (g[c.role] = g[c.role] || []).push(c.name); }); return Object.entries(g).map(([r, n]) => `${r}: ${n.join(', ')}`).join(' · '); };
 function stampAdds() { const now = Date.now(); for (const c of S.cols) { c.addedAt = c.addedAt || {}; for (const id of c.tracks) if (!c.addedAt[id]) { const t = trk(id); c.addedAt[id] = (t && t.added) || now; } } }
@@ -1183,6 +1221,7 @@ function toggle() {
 function step(d) {
   const q = S.queue.length ? S.queue : S.tracks.map(t => t.id);
   let i = q.indexOf(S.cur); if (i < 0) i = 0;
+  if (d < 0 && S.cur && ((Engine.pos && Engine.pos() > 3) || (i === 0 && S.rep !== 'all'))) { Engine.seek(0); renderBar(); return; }
   playTrack(q[(i + d + q.length) % q.length]);
 }
 function onEnd() {
@@ -1391,7 +1430,7 @@ function rowHTML(t, i, inCol) {
   const v = nv ? t.versions.find(x => x.id === t.ver) : null;
   return `<div class="row ${on ? 'playing' : ''} ${UI.sel && UI.sel.has(t.id) ? 'picked' : ''}" draggable="true" data-id="${t.id}" data-row="${inCol ? 'col' : 'lib'}">
     <button class="rowplay ${inCol ? '' : 'nonum'}" data-act="play" data-id="${t.id}" aria-label="${on && S.playing ? 'Pause' : 'Play'} ${esc(t.title)}">${inCol ? `<span class="num">${i + 1}</span>` : ''}${ico(on && S.playing ? 'pause' : 'play', 16)}</button>
-    <span class="meta"><b>${esc(dispTitle(t))}</b><span>${esc(dispArtist(t))}${t.tags ? ' · ' + esc(t.tags) : ''}</span></span>
+    <span class="meta"><b>${esc(dispTitle(t))}</b><span>${esc([inCol && col(S.colId) && dispArtist(t) === projArtist(col(S.colId)) ? '' : dispArtist(t), t.tags].filter(Boolean).join(' · '))}</span></span>
     <span class="mono hov">${[t.bpm ? t.bpm + ' BPM' : '', t.key ? esc(t.key) : ''].filter(Boolean).join(' · ')}</span>
     <button class="pill st-${t.status}" data-act="cycle-st" data-id="${t.id}" title="Change status">${ST[t.status]}</button>
     <span class="c-add mono" title="${inCol ? 'Added to this project' : 'Added'}">${addedOn(t)}</span>
@@ -1428,7 +1467,7 @@ function projCard(c, n, all) {
   return `<div class="acard ${isFolder(c) ? 'is-folder' : ''}" role="button" tabindex="0" draggable="true" data-act="col" data-id="${c.id}" style="--n:${n};--glow:${k[0]}" aria-label="Open ${esc(c.name)}">
     <div class="acard-art">${albumArt(c)}<button class="acard-play" data-act="play-col" data-id="${c.id}" aria-label="Play ${esc(c.name)}" title="Play">${ico(S.playing && c.tracks.includes(S.cur) ? 'pause' : 'play', 20)}</button></div>
     <div class="acard-t" title="${esc(c.name)}">${esc(c.name)}</div>
-    <div class="acard-s">${(isFolder(c) ? [isMine(c) ? 'Folder' : 'Folder', kidsOf(c).length ? kidsOf(c).length + ' ' + (kidsOf(c).length === 1 ? 'project' : 'projects') : '', ts.length ? ts.length + (ts.length === 1 ? ' song' : ' songs') : ''] : [isMine(c) ? 'Digital album' : KINDS[c.type], same ? '' : projArtist(c), ts.length + ' ' + (ts.length === 1 ? 'song' : 'songs'), c.archived ? 'Archived' : year]).filter(Boolean).map(esc).join(' · ')}</div>
+    <div class="acard-s">${(isFolder(c) ? [isMine(c) ? 'Folder' : 'Folder', kidsOf(c).length ? kidsOf(c).length + ' ' + (kidsOf(c).length === 1 ? 'project' : 'projects') : '', ts.length ? ts.length + (ts.length === 1 ? ' song' : ' songs') : ''] : [isMine(c) ? (S.libTab === 'mine' ? '' : 'Digital album') : KINDS[c.type], same ? '' : projArtist(c), ts.length + ' ' + (ts.length === 1 ? 'song' : 'songs'), c.archived ? 'Archived' : year]).filter(Boolean).map(esc).join(' · ')}</div>
   </div>`;
 }
 
@@ -1442,6 +1481,7 @@ function renderMain() {
   const vkey = S.view + ':' + (S.view === 'collection' ? S.colId : S.view === 'library' ? S.libTab : '');
   const enter = renderMain.last !== vkey; renderMain.last = vkey;
   if (S.view !== 'launcher') UI.flScreen = false; // leaving the Launcher closes the FL Studio screen
+  modGate(); modTick();
   m.classList.toggle('enter', enter);
   if (S.view === 'library') renderLibrary(m);
   else if (S.view === 'collection') renderProject(m);
@@ -1524,11 +1564,12 @@ function renderProject(m) {
         <button class="playbig" data-act="play-col" data-id="${c.id}" aria-label="${playing ? 'Pause' : 'Play'}" title="${playing ? 'Pause' : 'Play'}">${ico(playing ? 'pause' : 'play', 22)}</button>
         ${isMine(c) ? '' : `<button class="ico pa" data-act="add" title="Add songs" aria-label="Add songs">${ico('plus', 20)}</button>`}
         <span class="pa-share"><button class="ico pa" data-act="share" aria-label="Share" title="Share">${ico('share', 20)}</button>
-        <div class="pop glass share-pop" id="sharepop"><b>Share</b>
+        <div class="pop glass share-pop" id="sharepop"><b>Share & export</b>
           ${seg('vis', [['private', 'Private'], ['link', 'Link only'], ['public', 'Public']], c.vis, 'vis', 'full')}
           <div class="link box ${c.vis === 'private' ? 'off' : ''}">${ico('link', 16)}<code>${esc(link)}</code><button class="btn sm" data-act="copy" data-link="${esc(link)}" ${c.vis === 'private' ? 'disabled' : ''}>${c.vis === 'private' ? 'Private' : 'Copy'}</button></div>
           ${c.source ? `<a class="btn sm" href="${esc(c.source)}" target="_blank" rel="noopener">${ico('link', 14)} Open on Untitled</a>` : ''}
-          <p class="faint small">Preview only. Nothing is published.</p></div></span>
+          <p class="faint small">Link sharing is a preview. Nothing is published.</p>
+          <button class="btn sm" data-act="meta-export-all" data-id="${c.id}">${ico('save', 14)} Export song info (.txt)</button></div></span>
         <button class="ico pa" data-act="proj-more" data-id="${c.id}" title="More" aria-label="More options">${ico('dots', 22)}</button>
       </div>
     </div></section>
@@ -1577,7 +1618,7 @@ function saveDetails() {
     toast('Saved ' + c.name);
   } else if (M.kind === 'meta') {
     const t = trk(M.id); if (!t) return closeModal();
-    t.title = v('m-ttitle') || t.title; t.artist = list('artist').join(', '); t.features = list('feat'); t.featInTitle = $('#m-featin').checked;
+    t.title = v('m-ttitle') || t.title; t.artist = list('artist').join(', ');
     const roles = $$('#modal [data-m="role"]'), whos = $$('#modal [data-m="who"]');
     t.credits = roles.map((r, i) => ({ role: r.value.trim(), name: (whos[i].value || '').trim() })).filter(c => c.role && c.name);
     t.bpm = +v('m-bpm') || 0; t.key = v('m-key');
@@ -1614,16 +1655,13 @@ function openModal(kind, id, x = {}) {
       <button class="mlogo-pv" data-act="m-logo" style="${UI.mLogo ? `background-image:url(${UI.mLogo.url})` : c.logo && srcs[c.logo] ? `background-image:url(${srcs[c.logo]})` : ''}">${UI.mLogo || (c.logo && srcs[c.logo]) ? '' : ico('image', 20)}</button>${c.logo || UI.mLogo ? `<button class="btn sm" data-act="m-logo-clear">${ico('x', 13)} Remove</button>` : ''}</div>`;
   } else if (kind === 'meta') {
     const t = trk(id), m = t.meta || {}, arts = (t.artist || '').split(',').map(x => x.trim()).filter(Boolean);
-    h = `<h2>Song details</h2>
+    h = `<h2>Details & credits</h2>
     <label class="lab" for="m-ttitle">Title</label><input class="field" id="m-ttitle" value="${esc(t.title)}" autocomplete="off">
     <div class="mgrid">
       <section><h3 class="mh">Artists</h3><p class="faint small" style="margin:0">Defaults to ${esc(projArtist(projOf(t)))}.</p>
         <table class="mtable"><tbody data-list="artist">${(arts.length ? arts : ['']).map(a => metaRow('artist', a)).join('')}</tbody></table>
         <button class="btn sm" data-act="meta-add" data-k="artist">${ico('plus', 13)} Add artist</button></section>
-      <section><h3 class="mh">Featured artists</h3>
-        <table class="mtable"><tbody data-list="feat">${(t.features.length ? t.features : ['']).map(a => metaRow('feat', a)).join('')}</tbody></table>
-        <button class="btn sm" data-act="meta-add" data-k="feat">${ico('plus', 13)} Add feature</button>
-        <label class="check"><input type="checkbox" id="m-featin" ${t.featInTitle ? 'checked' : ''}><span>Show “feat.” in the title</span></label></section>
+      
     </div>
     <h3 class="mh">Credits</h3>
     <table class="mtable mcredits"><thead><tr><th>Role</th><th>Name</th><th></th></tr></thead><tbody data-list="credit">${((t.credits || []).length ? t.credits : [{ role: 'Producer', name: '' }]).map(c => metaRow('credit', c.role, c.name)).join('')}</tbody></table>
@@ -1635,7 +1673,7 @@ function openModal(kind, id, x = {}) {
       <tr><th>Tempo</th><td><input class="field" id="m-bpm" type="number" min="0" max="300" value="${t.bpm || ''}" placeholder="BPM"></td><th>Key</th><td><input class="field" id="m-key" value="${esc(t.key || '')}"></td></tr>
       <tr><th>ISRC</th><td><input class="field" id="m-isrc" value="${esc(m.isrc || '')}" placeholder="US-XXX-26-00001"></td><th>Label</th><td><input class="field" id="m-label" value="${esc(m.label || '')}"></td></tr>
       <tr><th>Copyright</th><td colspan="3"><input class="field" id="m-copy" value="${esc(m.copyright || '')}" placeholder="© ${new Date().getFullYear()} ${esc(projArtist(projOf(t)))}"></td></tr>
-      <tr><th>Explicit</th><td colspan="3"><label class="check"><input type="checkbox" id="m-explicit" ${m.explicit ? 'checked' : ''}><span>Explicit lyrics</span></label></td></tr>
+      <tr><th>Explicit</th><td colspan="3"><label class="check"><input type="checkbox" id="m-explicit" ${m.explicit ? 'checked' : ''}><span>Yes</span></label></td></tr>
     </tbody></table>`;
   } else if (kind === 'lstyle') {
     const f = findLayer(id); if (!f) return; const L = f.L, F = L.fx || {}, sec = UI.lsSec || 'blend', on = k => F[k] && F[k].on;
@@ -1662,6 +1700,13 @@ function openModal(kind, id, x = {}) {
     h = `<h2>What's new</h2><p class="faint small" style="margin:0">Version ${esc(APP_VERSION)}</p><div class="clog">${changelogHTML(C.list, C.since)}</div>`;
   } else if (kind === 'ask') {
     h = `<h2>${esc(x.title)}</h2><input class="field" id="m-ask" value="${esc(x.value || '')}" maxlength="60" autocomplete="off">`;
+  } else if (kind === 'feat') {
+    const t = trk(id);
+    h = `<h2>Features</h2><p class="faint small" style="margin:0">${esc(t ? t.title : '')}</p>
+    <div class="fx-add"><input class="field" id="fx-in" placeholder="Type @ and a name" autocomplete="off" aria-label="Add a featured artist"><div class="fx-sug" id="fx-sug"></div></div>
+    <div id="fx-list"></div>`;
+  } else if (kind === 'confirm') {
+    h = `<h2>${esc(x.title)}</h2>${x.text ? `<p class="faint small" style="margin:0">${esc(x.text)}</p>` : ''}`;
   } else if (kind === 'qr') {
     h = `<h2>Scan a QR code</h2><p class="faint small" style="margin:0">Point the camera at the QR code on the back of an album.</p>
     <div class="qrbox"><video id="qr-video" playsinline muted></video><div class="qr-frame"><i></i></div><p class="qr-msg" id="qr-msg">Starting camera…</p></div>
@@ -1676,9 +1721,10 @@ function openModal(kind, id, x = {}) {
     <div class="dropzone" id="m-drop">${ico('import', 26)}<b>Drop the .zip here</b><span class="faint small">or loose audio and image files</span><button class="btn sm primary" data-act="zip-pick">Choose files</button></div>
     <p class="faint small" id="m-status" role="status"></p>`;
   }
-  md.innerHTML = h + `<div class="crow" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-act="close-modal">${kind === 'import' || kind === 'changelog' || kind === 'qr' ? 'Close' : 'Cancel'}</button>${kind === 'name' ? '<button class="btn primary" data-act="name-ok">Import</button>' : ''}${kind === 'ask' ? '<button class="btn primary" data-act="ask-ok">Save</button>' : ''}${kind === 'lstyle' ? '<button class="btn primary" data-act="ls-ok">OK</button>' : ''}${kind === 'release' ? `${(col(id) || {}).release ? '<button class="btn" data-act="rel-pull">Remove from Store</button>' : ''}<button class="btn primary" data-act="rel-ok">${(col(id) || {}).release ? 'Save' : 'Release'}</button>` : ''}${kind === 'proj' || kind === 'meta' ? `<button class="btn primary" data-act="modal-save">${x.isNew ? 'Create project' : 'Save'}</button>` : ''}</div>`;
+  md.innerHTML = h + `<div class="crow" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-act="close-modal">${kind === 'import' || kind === 'changelog' || kind === 'qr' ? 'Close' : 'Cancel'}</button>${kind === 'name' ? '<button class="btn primary" data-act="name-ok">Import</button>' : ''}${kind === 'ask' ? '<button class="btn primary" data-act="ask-ok">Save</button>' : ''}${kind === 'feat' ? '<button class="btn primary" data-act="fx-ok">Save</button>' : ''}${kind === 'confirm' ? `<button class="btn primary danger" data-act="confirm-ok">${esc(x.ok || 'Delete')}</button>` : ''}${kind === 'lstyle' ? '<button class="btn primary" data-act="ls-ok">OK</button>' : ''}${kind === 'release' ? `${(col(id) || {}).release ? '<button class="btn" data-act="rel-pull">Remove from Store</button>' : ''}<button class="btn primary" data-act="rel-ok">${(col(id) || {}).release ? 'Save' : 'Release'}</button>` : ''}${kind === 'proj' || kind === 'meta' ? `<button class="btn primary" data-act="modal-save">${x.isNew ? 'Create project' : 'Save'}</button>` : ''}</div>`;
   md.classList.toggle('wide', kind === 'meta' || kind === 'lstyle'); md.classList.toggle('clogm', kind === 'changelog' || kind === 'qr');
   if (kind === 'qr') qrStart();
+  if (kind === 'feat') { fxPaint(); setTimeout(() => { const i = $('#fx-in'); if (i) i.focus(); }, 60); }
   md.inert = false; $('#scrim').classList.add('open'); requestAnimationFrame(() => { md.classList.add('open'); applySlides(); const f = $('input,select', md); if (f) { f.focus(); if (f.select) f.select(); } });
 }
 const askName = (def, count, from, coverBlob, dtype) => new Promise(res => { UI.mCover = null; UI.mCoverDef = coverBlob ? URL.createObjectURL(coverBlob) : ''; UI.mCoverHint = coverBlob ? 'From the download.' : 'No cover in the download.'; UI.nameResolve = res; openModal('name', null, { def, count, from, dtype }); });
@@ -1805,7 +1851,7 @@ function design(c) {
   return D;
 }
 function tracklistText(c, credits) {
-  const line = (t, n) => credits ? (() => { const cl = creditLine(t); return `${String(n).padStart(2, '0')}  ${dispTitle(t)}${feats(t).length && !t.featInTitle ? ' (feat. ' + andList(feats(t)) + ')' : ''}${cl ? '\n      ' + cl : ''}`; })() : `${String(n).padStart(2, '0')}  ${dispTitle(t)}  ${fmt(verDur(t))}`;
+  const line = (t, n) => credits ? (() => { const cl = creditLine(t); return `${String(n).padStart(2, '0')}  ${dispTitle(t)}${featsIn(t, 'artist').length ? ' (feat. ' + andList(featsIn(t, 'artist')) + ')' : ''}${cl ? '\n      ' + cl : ''}`; })() : `${String(n).padStart(2, '0')}  ${dispTitle(t)}  ${fmt(verDur(t))}`;
   if (!hasDiscs(c)) return colTracks(c).map((t, i) => line(t, i + 1)).join('\n') || 'Tracklist';
   let n = 0; return discGroups(c).filter(g => g.tracks.length).map(g => { if (c.discNum !== 'all') n = 0; return discLabel(c, g.disc).toUpperCase() + '\n' + g.tracks.map(t => line(t, ++n)).join('\n'); }).join('\n\n') || 'Tracklist';
 }
@@ -2337,12 +2383,12 @@ function cdHomeHTML() {
   const ago = t => { if (!t) return 'Not started'; const d = (Date.now() - t) / 1000; return d < 90 ? 'Just now' : d < 3600 ? Math.round(d / 60) + ' minutes ago' : d < 86400 ? Math.round(d / 3600) + ' hours ago' : d < 86400 * 45 ? Math.round(d / 86400) + ' days ago' : Math.round(d / 86400 / 30) + ' months ago'; };
   const models = H.tab === 'models', started = c => !!(S.cd.designs && S.cd.designs[c.id]);
   const card = (c, n) => `<div class="cdf" role="button" tabindex="0" data-act="${models ? 'cdh-view' : 'cdh-open'}" data-id="${c.id}" style="--n:${n}"><div class="cdf-th">${models ? `<div class="cdjewel"><span class="cdj-art">${albumArt(c)}</span><i class="cdj-hinge"></i><i class="cdj-gloss"></i></div>` : `<span class="cdf-art">${albumArt(c)}</span>`}${started(c) ? `<i class="cdf-ok" title="CD started">${ico('check', 11)}</i>` : ''}</div>
-      <div class="cdf-m"><span><b title="${esc(c.name)}">${esc(c.name)}</b><small>${models ? esc(projArtist(c) || 'Jewel case') : 'CD · ' + ago(when(c))}</small></span><button class="ico" data-act="cdh-more" data-id="${c.id}" aria-label="More">${ico('dots', 16)}</button></div></div>`;
+      <div class="cdf-m"><span><b title="${esc(c.name)}">${esc(c.name)}</b><small>${models ? esc(projArtist(c) || 'Jewel case') : ago(when(c))}</small></span><button class="ico" data-act="cdh-more" data-id="${c.id}" aria-label="More">${ico('dots', 16)}</button></div></div>`;
   const row = c => `<div class="cdr" role="button" tabindex="0" data-act="${models ? 'cdh-view' : 'cdh-open'}" data-id="${c.id}"><span class="cdr-art">${albumArt(c)}</span><b>${esc(c.name)}</b><span>${esc(projArtist(c))}</span><span>${ago(when(c))}</span><button class="ico" data-act="cdh-more" data-id="${c.id}" aria-label="More">${ico('dots', 16)}</button></div>`;
   return `<div class="cdh">
     <aside class="cdh-side"><button class="btn primary" data-act="cdh-new">New CD</button><button class="btn" data-act="cdh-openmenu">Open…</button><hr>
       <button class="cdh-nav ${!models ? 'on' : ''}" data-act="cdh-tab" data-k="files">${ico('disc', 16)} Your CDs</button><button class="cdh-nav ${models ? 'on' : ''}" data-act="cdh-tab" data-k="models">${ico('cube', 16)} View models</button>
-      <button class="cdh-nav" data-act="libtab-cds">${ico('play', 16)} CD Player</button>${(S.cd.tabs || []).length ? `<p class="cdh-lab">Open</p>${S.cd.tabs.map(col).filter(Boolean).map(c => `<button class="cdh-nav" data-act="cdh-open" data-id="${c.id}">${ico('edit', 14)} <span>${esc(c.name)}</span></button>`).join('')}` : ''}</aside>
+      <button class="cdh-nav" data-act="libtab-cds">${ico('play', 16)} CD player</button>${(S.cd.tabs || []).length ? `<p class="cdh-lab">Open</p>${S.cd.tabs.map(col).filter(Boolean).map(c => `<button class="cdh-nav" data-act="cdh-open" data-id="${c.id}">${ico('edit', 14)} <span>${esc(c.name)}</span></button>`).join('')}` : ''}</aside>
     <section class="cdh-main"><header class="cdh-top"><h2>${models ? 'View models' : 'Your CDs'}</h2><span class="grow"></span>
       <label class="sel box"><span class="faint">Sort by</span><select id="cdh-sort"><option value="mod" ${H.sort === 'mod' ? 'selected' : ''}>Date modified</option><option value="name" ${H.sort === 'name' ? 'selected' : ''}>Name</option><option value="artist" ${H.sort === 'artist' ? 'selected' : ''}>Artist</option></select></label>
       <div class="seg cdh-vw"><button class="${H.view === 'list' ? 'on' : ''}" data-act="cdh-vw" data-k="list" aria-label="List">${ico('list', 15)}</button><button class="${H.view !== 'list' ? 'on' : ''}" data-act="cdh-vw" data-k="grid" aria-label="Grid">${ico('grid', 15)}</button></div>
@@ -2389,7 +2435,7 @@ function renderPsOpts() {
   } else if (L) {
     mid = `${n('w', 'W', .5, 'mm')}${n('x', 'X', .5, 'mm')}${n('y', 'Y', .5, 'mm')}${n('rot', 'Angle', 1, '°', 50)}${L.type === 'shape' ? `${sep}<label class="pso-swatch" style="--c:${toHex(L.color)}" title="Fill color"><input type="color" data-cdl="color" value="${toHex(L.color)}" aria-label="Fill color"></label>${n('radius', 'Corner', .5, 'mm', 50)}` : ''}`;
   } else if (three) {
-    mid = `<span class="pso-hint">${t === 'orbit' ? 'Drag to rotate. Scroll to zoom.' : t === 'text' ? 'Click a panel to add text.' : 'Drag art to move it. Drag empty space to turn the case. Right-click to open the case or reset the view.'}</span>`;
+    mid = `<span class="pso-hint">${t === 'orbit' ? 'Drag to rotate. Scroll to zoom.' : t === 'text' ? 'Click a panel to add text.' : 'Drag art to move it. Drag empty space to turn the case. Right-click to open the case, take out the disc or reset the view.'}</span>`;
   } else {
     mid = `<span class="pso-label">${sh.name}</span>${t === 'text' ? '<span class="pso-hint">Click to add text.</span>' : ''}`;
   }
@@ -2463,7 +2509,7 @@ function renderPsStatus() {
   const three = S.cd.view === '3d', sh = SHEETS[S.cd.sheet], ts = colTracks(c), sec = totalSec(ts) + Math.max(0, ts.length - 1) * 2;
   const z = three ? Math.round(44 / ((C3 && C3.tz) || 44) * 100) : Math.round((S.cd.zoom || 1) * 100);
   el.innerHTML = `${three ? '' : `<button class="pss-b txt ${S.cd.grid ? 'on' : ''}" data-act="cd-grid" title="Grid (${MOD}')">Grid</button><button class="pss-b txt ${S.cd.snap === false ? '' : 'on'}" data-act="cd-snapt" title="Snap to guides (${MOD};). Hold ${MOD} while dragging to ignore.">Snap</button><span class="pso-sep"></span>`}<span class="pss-z">${z}%</span><button class="pss-b" data-act="cd-zoom" data-k="out" aria-label="Zoom out">${ico('minus', 12)}</button><button class="pss-b" data-act="cd-zoom" data-k="in" aria-label="Zoom in">${ico('plus', 12)}</button><button class="pss-b txt" data-act="cd-zoom" data-k="fit">Fit</button>
-    <span class="pso-sep"></span><span>${three ? `${S.cd.caseType === 'slim' ? 'Slim jewel case' : 'Jewel case'}, ${S.cd.tray} tray · editing ${sh.name}` : `${sh.name} · ${sh.size} trim + 3 mm bleed · 300 dpi`}</span><span class="grow"></span><span>Disc ${fmt(sec)} / 80:00</span>`;
+    <span class="pso-sep"></span><span>${three ? `${S.cd.caseType === 'slim' ? 'Slim jewel case' : 'Jewel case'}, ${S.cd.tray} tray · editing ${sh.name}` : `${sh.size} trim + 3 mm bleed · 300 dpi`}</span><span class="grow"></span><span>Disc ${fmt(sec)} / 80:00</span>`;
 }
 function renderFontDrop() {
   let box = $('#psfontdrop'); const ps = $('#ps');
@@ -2765,7 +2811,7 @@ async function cdSnap() {
 
 /* ---------- Audio Doctor: read tempo, key and levels; MP3 to WAV; beat-aligned exports for DAWs ---------- */
 Object.assign(IC, { hand: 'M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 11V4.5a1.5 1.5 0 0 1 3 0V11M14 11V5.5a1.5 1.5 0 0 1 3 0V12M17 12V8.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-1a7 7 0 0 1-6-3.4L3.6 14a1.5 1.5 0 0 1 2.6-1.5L8 15', rect: 'M4 6h16v12H4z', ellipse: 'M5 12a7 6 0 1 0 14 0a7 6 0 1 0-14 0', picker: 'M14.5 4.5l5 5M18 3.5a2.1 2.1 0 0 1 3 3L17.5 10l-4-4zM13.5 6l-9 9L4 20l5-.5 9-9' });
-Object.assign(IC, { send: 'M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z', pulse: 'M3 12h4l3-8 4 16 3-8h4', wave: 'M2 12h2M6 8v8M10 4v16M14 7v10M18 10v4M22 12h0' });
+Object.assign(IC, { archive: 'M3 4h18v4H3zM5 8v12h14V8M10 12h4', send: 'M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z', pulse: 'M3 12h4l3-8 4 16 3-8h4', wave: 'M2 12h2M6 8v8M10 4v16M14 7v10M18 10v4M22 12h0' });
 const PCN = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 const CAMELOT = { maj: ['8B', '3B', '10B', '5B', '12B', '7B', '2B', '9B', '4B', '11B', '6B', '1B'], min: ['5A', '12A', '7A', '2A', '9A', '4A', '11A', '6A', '1A', '8A', '3A', '10A'] };
 const KS_MAJ = [6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88], KS_MIN = [6.33, 2.68, 3.52, 5.38, 2.60, 3.53, 2.54, 4.75, 3.98, 2.69, 3.34, 3.17];
@@ -3283,7 +3329,7 @@ document.addEventListener('dragstart', e => { const el = e.target && e.target.cl
 
 /* ---------- changelog: newest first. Add an entry for every release; the Windows build copies it into CHANGELOG.md and the update file ---------- */
 const CHANGELOG = [
-  { v: '1.9.0', d: '2026-11-14', items: ['Cleaner, less cluttered app. Buttons that did the same thing are merged:', 'Library: one Add music button (it takes .zip downloads too). Scan QR is a small icon. The sidebar footer is just credits and the version (click it to check for updates).', "Project page: the header is Play, Add songs, Share and ⋯. Rename and Edit details are one item. A song's ⋯ opens the same menu as right-click, starting with Edit song.", 'CD Creator: one Export menu (print files, 3D model, picture). One Viewer button. Opacity, fill and text options each live in one place instead of two or three.', 'Settings: Desktop app and About are one row. The EQ lives in the player bar only. CD Creator shortcuts are tucked under their own heading.', 'Menus use the same capitalisation everywhere, and the nav icons are all different.'] },
+  { v: '1.9.0', d: '2026-11-14', items: ['Mods: put mods in Documents › Compass › Mods and turn them on in Settings › Mods. A mod can restyle the app and add song or project menu items, react to what is playing, and control the player. It runs in a sandbox and can never touch the Music Store or Marketplace. Open the folder once to get an example mod.', 'Launcher: right-click a DAW to pick which installed version to open (for example FL Studio 21 or 2024). Open remembers the one you picked.', 'FL Studio screen redesigned: one row of tabs (Recent, All projects, Zipped loops, Backups), one toolbar (search, sort, and a folder filter only when you have more than one folder), and a compact one-line list. Folders and the backup folder are managed from one Folders button. Right-click a project to show it in its folder.', 'Backups tab: FL Studio\'s own autosaves (Projects › Backup), or a backup folder you choose.', 'Features: a small button next to Details & credits. Type @ and a name to tag an artist. Each one can be in the title (feat.), under the title, or not named. Their info (legal name, role, PRO, IPI, publisher, publishing email) is saved once and fills in on every song you feature them on. Nothing is required.', 'Deleting a version asks first.', 'Previous restarts the song when you are more than 3 seconds in. On the first song it restarts that song instead of jumping to the end (unless Repeat all is on).', 'Song panel is shorter: tags, features, the preview and the project checklist are gone (features live in Details & credits; Add to / Move to are in the song menu). Status, BPM and key sit on one row.', 'Export song info: one song from its panel (Export info), or every song in a project from Share & export (Export song info). Saves a .txt with credits, BPM, key, ISRC, lyrics and more.', 'Cleaner, less cluttered app. Buttons that did the same thing are merged:', 'Library: one Add music button (it takes .zip downloads too). Scan QR is a small icon. The sidebar footer is just credits and the version (click it to check for updates).', "Project page: the header is Play, Add songs, Share and ⋯. Rename and Edit details are one item. A song's ⋯ opens the same menu as right-click, starting with Edit song.", 'CD Creator: one Export menu (print files, 3D model, picture). One Viewer button. Opacity, fill and text options each live in one place instead of two or three.', 'Settings: Desktop app and About are one row. The EQ lives in the player bar only. CD Creator shortcuts are tucked under their own heading.', 'Menus use the same capitalisation everywhere, and the nav icons are all different.'] },
   { v: '1.8.9', d: '2026-11-14', items: ['FL Studio screen: a separate Zipped loop projects tab lists FL zipped loop packages (.zip files with a project inside) from your project folders and Downloads. Click one to open it in FL Studio. Open other project… accepts them too.'] },
   { v: '1.8.8', d: '2026-11-13', items: ['More space between songs in disc lists. Each song is still one line.'] },
   { v: '1.8.6', d: '2026-11-13', items: ['FL Studio screen: All projects lists every project in your project folders, 12 per page with numbered pages. Search by name or folder, sort (recently saved, oldest, A–Z, Z–A, largest) and filter by folder or when it was saved.'] },
@@ -3375,8 +3421,9 @@ const flAgo = t => { const d = (Date.now() - t) / 864e5; return d < 1 / 24 ? 'ju
 function flLoad() {
   if (!(window.tpDesktop && tpDesktop.flp)) return; UI.flRecent = 'busy';
   if (tpDesktop.flp.all) { UI.flAll = UI.flAll && UI.flAll !== 'busy' ? UI.flAll : 'busy'; tpDesktop.flp.all(S.flDirs || []).then(r => { UI.flAll = r || []; flAllPaint(); }).catch(() => { UI.flAll = []; flAllPaint(); });
-    UI.flZip = UI.flZip && UI.flZip !== 'busy' ? UI.flZip : 'busy'; tpDesktop.flp.all(S.flDirs || [], 'zip').then(r => { UI.flZip = r || []; flAllPaint(); }).catch(() => { UI.flZip = []; flAllPaint(); }); }
-  tpDesktop.flp.recent(S.flDirs || [], S.flOpened || [], 6).then(r => { UI.flRecent = r || []; if (S.view === 'launcher' && UI.flScreen) renderMain(); }).catch(() => { UI.flRecent = []; if (S.view === 'launcher' && UI.flScreen) renderMain(); });
+    UI.flZip = UI.flZip && UI.flZip !== 'busy' ? UI.flZip : 'busy'; tpDesktop.flp.all(S.flDirs || [], 'zip').then(r => { UI.flZip = r || []; flAllPaint(); }).catch(() => { UI.flZip = []; flAllPaint(); });
+    UI.flBak = UI.flBak && UI.flBak !== 'busy' ? UI.flBak : 'busy'; tpDesktop.flp.all([], 'backup', S.flBackupDir || '').then(r => { UI.flBak = r || []; flAllPaint(); }).catch(() => { UI.flBak = []; flAllPaint(); }); }
+  tpDesktop.flp.recent(S.flDirs || [], S.flOpened || [], 6).then(r => { UI.flRecent = r || []; flAllPaint(); }).catch(() => { UI.flRecent = []; flAllPaint(); });
 }
 async function flOpen(file) {
   if (!file || !(window.tpDesktop && tpDesktop.flp)) return; const r = await tpDesktop.flp.open(file, flExe());
@@ -3384,18 +3431,20 @@ async function flOpen(file) {
   if (/\.flp$/i.test(file)) { S.flOpened = [{ path: file, time: Date.now() }, ...(S.flOpened || []).filter(x => x.path !== file)].slice(0, 20); save(); }
   toast('Opening ' + file.split(/[\\/]/).pop().replace(/\.(flp|zip)$/i, '') + ' in FL Studio'); flLoad();
 }
-/* All projects: 12 per page, with search, sort and filters */
+/* FL Studio screen: tabs (Recent, All projects, Zipped loops, Backups), one toolbar, a compact list, 12 per page */
+const FL_TABS = [['recent', 'Recent'], ['flp', 'All projects'], ['zip', 'Zipped loops'], ['backup', 'Backups']];
+const flTab = () => { const k = (S.flView || {}).kind; return FL_TABS.some(t => t[0] === k) ? k : 'recent'; };
+const flZipTab = () => flTab() === 'zip';
+const flList = () => ({ recent: UI.flRecent, flp: UI.flAll, zip: UI.flZip, backup: UI.flBak })[flTab()];
 const FL_PER = 12;
 const FL_SORTS = [['new', 'Recently saved'], ['old', 'Oldest first'], ['az', 'Name A–Z'], ['za', 'Name Z–A'], ['big', 'Largest first']];
-const FL_WHEN = [['any', 'Any time'], ['7', 'Last 7 days'], ['30', 'Last 30 days'], ['365', 'Last 12 months'], ['older', 'Older than a year']];
-const flSize = b => b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
-const flZipTab = () => (S.flView || {}).kind === 'zip';
-const flList = () => flZipTab() ? UI.flZip : UI.flAll;
+const flSize = b => !b ? '' : b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
+// folder shown under a project, without repeating the project's own name or the default "Projects" root
+const flWhere = p => { const segs = String(p.folder || p.dir || '').split(' › ').filter(Boolean); if (segs.length && segs[segs.length - 1].toLowerCase() === p.name.toLowerCase()) segs.pop(); if (segs[0] === 'Projects') segs.shift(); return segs.join(' › '); };
 function flFiltered() {
-  const A = Array.isArray(flList()) ? flList() : [], F = S.flView = S.flView || {}, q = (UI.flQ || '').trim().toLowerCase(), day = 864e5, now = Date.now();
-  let r = A.filter(p => (!q || p.name.toLowerCase().includes(q) || p.folder.toLowerCase().includes(q))
-    && (!F.folder || p.folder === F.folder)
-    && (!F.when || F.when === 'any' || (F.when === 'older' ? now - p.time > 365 * day : now - p.time <= +F.when * day)));
+  const L = flList(), A = Array.isArray(L) ? L : [], F = S.flView = S.flView || {}, q = (UI.flQ || '').trim().toLowerCase();
+  if (flTab() === 'recent') return A.filter(p => !q || p.name.toLowerCase().includes(q));
+  const r = A.filter(p => (!q || p.name.toLowerCase().includes(q) || (p.folder || '').toLowerCase().includes(q)) && (!F.folder || p.folder === F.folder));
   const by = { new: (a, b) => b.time - a.time, old: (a, b) => a.time - b.time, az: (a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }), za: (a, b) => b.name.localeCompare(a.name, undefined, { numeric: true, sensitivity: 'base' }), big: (a, b) => b.size - a.size };
   return r.sort(by[F.sort] || by.new);
 }
@@ -3403,51 +3452,58 @@ function flPager(page, pages) {
   if (pages <= 1) return '';
   const nums = new Set([1, pages, page - 1, page, page + 1].filter(n => n >= 1 && n <= pages)), list = [...nums].sort((a, b) => a - b); let out = '', prev = 0;
   for (const n of list) { if (n - prev > 1) out += '<span class="flpg-gap">…</span>'; out += `<button class="flpg-n ${n === page ? 'on' : ''}" data-act="fl-page" data-k="${n}" ${n === page ? 'aria-current="page"' : ''}>${n}</button>`; prev = n; }
-  return `<nav class="flpg" aria-label="Pages"><button class="btn sm" data-act="fl-page" data-k="${page - 1}" ${page <= 1 ? 'disabled' : ''}>${ico('prev', 12)} Prev</button>${out}<button class="btn sm" data-act="fl-page" data-k="${page + 1}" ${page >= pages ? 'disabled' : ''}>Next ${ico('next', 12)}</button></nav>`;
+  return `<nav class="flpg" aria-label="Pages"><button class="flpg-n" data-act="fl-page" data-k="${page - 1}" ${page <= 1 ? 'disabled' : ''} aria-label="Previous page">${ico('chevL', 14)}</button>${out}<button class="flpg-n" data-act="fl-page" data-k="${page + 1}" ${page >= pages ? 'disabled' : ''} aria-label="Next page">${ico('chevR', 14)}</button></nav>`;
 }
+const FL_EMPTY = {
+  recent: 'No recent projects yet. Open one from All projects and it shows up here.',
+  flp: 'No .flp files in your project folders yet. Use Folders to add the one you save to.',
+  zip: 'No zipped loop packages yet. FL Studio makes them with File › Export › Project data files. Compass looks in your project folders and Downloads.',
+  backup: 'No backups found. FL Studio saves them in Projects › Backup. Use Folders › Set backup folder if yours are somewhere else.'
+};
 function flAllListHTML() {
-  const A = flList(); if (A === 'busy' || !A) return '<p class="faint">Looking through your project folders…</p>';
-  if (!A.length) return flZipTab() ? '<p class="faint">No zipped loop projects yet. FL Studio makes them with File › Export › Project data files. Compass looks in your project folders and Downloads.</p>' : '<p class="faint">No .flp files in your project folders yet.</p>';
+  const A = flList(), tab = flTab(); if (A === 'busy' || !A) return '<p class="faint fl-note">Looking through your folders…</p>';
+  if (!A.length) return `<p class="faint fl-note">${FL_EMPTY[tab]}</p>`;
   const r = flFiltered(), pages = Math.max(1, Math.ceil(r.length / FL_PER)); UI.flPage = Math.min(Math.max(1, UI.flPage || 1), pages);
+  if (!r.length) return `<p class="faint fl-note">Nothing matches. <button class="linkbtn" data-act="fl-clear">Clear the search</button></p>`;
   const from = (UI.flPage - 1) * FL_PER, part = r.slice(from, from + FL_PER), exe = flExe(), icon = exe && UI.dawIcons[exe];
-  if (!r.length) return `<p class="faint">No projects match. <button class="linkbtn" data-act="fl-clear">Clear search and filters</button></p>`;
-  return `<p class="faint small fl-count">${from + 1}–${from + part.length} of ${r.length} project${r.length === 1 ? '' : 's'}${r.length !== A.length ? ` (filtered from ${A.length})` : ''}</p>
-    <div class="flgrid">${part.map((p, i) => `<button class="flp" data-act="fl-proj" data-k="${esc(p.path)}" title="${esc(p.path)}" style="--n:${i}">
-      <span class="flp-ic">${icon ? `<img src="${icon}" alt="" draggable="false">` : ico('disc', 26)}${/\.zip$/i.test(p.path) ? '<i class="flp-zip">ZIP</i>' : ''}</span>
-      <span class="flp-t"><b>${esc(p.name)}</b><small>${esc(p.folder)}</small><small class="faint">Saved ${flAgo(p.time)} · ${flSize(p.size)}</small></span>
-      <span class="flp-go">${ico('play', 14)}</span></button>`).join('')}</div>${flPager(UI.flPage, pages)}`;
+  return `<div class="flrows" role="list">${part.map(p => `<button class="flr" role="listitem" data-act="fl-proj" data-k="${esc(p.path)}" title="${esc(p.path)}">
+      <span class="flr-ic">${icon ? `<img src="${icon}" alt="" draggable="false">` : ico('disc', 18)}${/\.zip$/i.test(p.path) ? '<i class="flp-zip">ZIP</i>' : ''}</span>
+      <span class="flr-n">${esc(p.name)}</span><span class="flr-f">${esc(flWhere(p))}</span>
+      <span class="flr-t">${p.how === 'opened' ? 'Opened' : 'Saved'} ${flAgo(p.time)}</span><span class="flr-s">${flSize(p.size)}</span>
+      <span class="flr-go">${ico('play', 12)}</span></button>`).join('')}</div>
+    ${pages > 1 || r.length !== A.length ? `<div class="fl-foot"><span class="faint small">${from + 1}–${from + part.length} of ${r.length}${r.length !== A.length ? ` (of ${A.length})` : ''}</span>${flPager(UI.flPage, pages)}</div>` : ''}`;
 }
-function flAllPaint() { const el = $('#fl-all-list'); if (el) { el.innerHTML = flAllListHTML(); const f = $('#fl-folder'); if (f && Array.isArray(flList())) f.outerHTML = flFolderSel(); const k = $('#fl-kinds'); if (k) k.outerHTML = flKindsHTML(); } }
-function flKindsHTML() {
-  const n = a => Array.isArray(a) ? ` <small>${a.length}</small>` : '', z = flZipTab();
-  return `<div class="fl-kinds" id="fl-kinds" role="tablist"><button role="tab" class="${z ? '' : 'on'}" aria-selected="${!z}" data-act="fl-kind" data-k="flp">Projects${n(UI.flAll)}</button><button role="tab" class="${z ? 'on' : ''}" aria-selected="${z}" data-act="fl-kind" data-k="zip">Zipped loop projects${n(UI.flZip)}</button></div>`;
+function flToolsHTML() {
+  const F = S.flView || {}, tab = flTab(), L = flList(), folders = Array.isArray(L) && tab !== 'recent' ? [...new Set(L.map(p => p.folder))].sort((a, b) => a.localeCompare(b)) : [];
+  return `<div class="fl-tools" id="fl-tools"><label class="search box fl-search">${ico('search', 15)}<input id="fl-q" type="search" placeholder="Search" value="${esc(UI.flQ || '')}" autocomplete="off" aria-label="Search projects"></label>
+    ${tab === 'recent' ? '' : `<div class="sel box"><select data-flv="sort" aria-label="Sort">${FL_SORTS.map(([k, l]) => `<option value="${k}" ${(F.sort || 'new') === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div>`}
+    ${folders.length > 1 ? `<div class="sel box"><select data-flv="folder" aria-label="Folder"><option value="">All folders</option>${folders.map(f => `<option value="${esc(f)}" ${F.folder === f ? 'selected' : ''}>${esc(f)}</option>`).join('')}</select></div>` : ''}</div>`;
 }
-function flFolderSel() {
-  const F = S.flView || {}, folders = Array.isArray(flList()) ? [...new Set(flList().map(p => p.folder))].sort((a, b) => a.localeCompare(b)) : [];
-  return `<div class="sel box" id="fl-folder"><select data-flv="folder" aria-label="Folder"><option value="">All folders</option>${folders.map(f => `<option value="${esc(f)}" ${F.folder === f ? 'selected' : ''}>${esc(f)}</option>`).join('')}</select></div>`;
+function flTabsHTML() {
+  const n = a => Array.isArray(a) && a.length ? ` <small>${a.length}</small>` : '', cur = flTab(), lists = { recent: null, flp: UI.flAll, zip: UI.flZip, backup: UI.flBak };
+  return `<div class="fl-kinds" id="fl-kinds" role="tablist">${FL_TABS.map(([k, l]) => `<button role="tab" class="${cur === k ? 'on' : ''}" aria-selected="${cur === k}" data-act="fl-kind" data-k="${k}">${l}${n(lists[k])}</button>`).join('')}</div>`;
 }
-function flAllHTML() {
-  const F = S.flView || {};
-  return `<section class="fl-all"><div class="fl-allhead">${flKindsHTML()}
-      <div class="fl-tools"><label class="search box fl-search">${ico('search', 15)}<input id="fl-q" type="search" placeholder="Search projects" value="${esc(UI.flQ || '')}" autocomplete="off" aria-label="Search projects"></label>
-        <div class="sel box"><select data-flv="sort" aria-label="Sort">${FL_SORTS.map(([k, l]) => `<option value="${k}" ${(F.sort || 'new') === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
-        ${flFolderSel()}
-        <div class="sel box"><select data-flv="when" aria-label="Saved">${FL_WHEN.map(([k, l]) => `<option value="${k}" ${(F.when || 'any') === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div></div></div>
-    <div id="fl-all-list">${flAllListHTML()}</div></section>`;
+function flAllPaint() {
+  if (!(S.view === 'launcher' && UI.flScreen)) return;
+  const el = $('#fl-all-list'); if (!el) return; el.innerHTML = flAllListHTML();
+  const k = $('#fl-kinds'); if (k) k.outerHTML = flTabsHTML();
+  const t = $('#fl-tools'); if (t && document.activeElement && document.activeElement.id !== 'fl-q') t.outerHTML = flToolsHTML();
+}
+function flFoldersMenu(el) {
+  const r = el.getBoundingClientRect(), dirs = S.flDirs || [];
+  ctxMenu(r.left, r.bottom + 4, [{ head: 'Project folders' }, { label: "FL Studio's Projects folder", disabled: true, icon: 'check' },
+    ...dirs.map((d, i) => ({ label: 'Stop using ' + (d.split(/[\\/]/).pop() || d), act: 'fl-dir-rm', k: String(i), icon: 'x' })),
+    { label: 'Add a folder…', act: 'fl-dir-add', icon: 'plus' }, { sep: 1 }, { head: 'Backups' },
+    { label: S.flBackupDir ? 'Backup folder: ' + (S.flBackupDir.split(/[\\/]/).pop() || S.flBackupDir) : 'Backup folder: FL Studio default', disabled: true, icon: 'folder' },
+    { label: 'Set backup folder…', act: 'fl-bak-set', icon: 'folder' }, ...(S.flBackupDir ? [{ label: 'Use FL Studio default', act: 'fl-bak-reset', icon: 'repeat' }] : [])]);
 }
 function renderFlScreen(m) {
-  if (!UI.flRecent) flLoad(); const R = UI.flRecent, exe = flExe(), icon = exe && UI.dawIcons[exe];
-  const card = (p, i) => `<button class="flp" data-act="fl-proj" data-k="${esc(p.path)}" title="${esc(p.path)}" style="--n:${i}">
-      <span class="flp-ic">${icon ? `<img src="${icon}" alt="" draggable="false">` : ico('disc', 26)}</span>
-      <span class="flp-t"><b>${esc(p.name)}</b><small>${esc(p.dir)}</small><small class="faint">${p.how === 'opened' ? 'Opened' : 'Saved'} ${flAgo(p.time)}</small></span>
-      <span class="flp-go">${ico('play', 14)}</span></button>`;
-  m.innerHTML = `<header class="head"><div><button class="btn sm ghost fl-back" data-act="fl-back">${ico('back', 14)} Launcher</button><h1>FL Studio</h1><p class="faint">Click a project to open it in FL Studio.</p></div>
-    <div class="hact"><button class="btn" data-act="fl-pick">${ico('folder', 15)} Open other project…</button><button class="btn primary" data-act="daw-open" data-k="fl">${ico('play', 14)} Open FL Studio</button></div></header>
-    <h2 class="fl-h">Recent</h2>
-    ${R === 'busy' ? '<p class="faint">Looking for projects…</p>' : R && R.length ? `<div class="flgrid">${R.map(card).join('')}</div>` : `<div class="fl-empty"><p><b>No recent projects found</b></p><p class="faint small">Compass looks in Windows' recent files and in Documents › Image-Line › FL Studio › Projects. Open a project with the button above, or add the folder where you keep them.</p></div>`}
-    <div class="fl-dirs"><p class="faint small">Also looking in: ${(S.flDirs || []).length ? S.flDirs.map((d, i) => `<span class="tag">${esc(d.split(/[\\/]/).pop() || d)}<button class="ico" data-act="fl-dir-rm" data-k="${i}" aria-label="Stop looking in ${esc(d)}">${ico('x', 11)}</button></span>`).join(' ') : 'FL\'s Projects folder' + (flZipTab() ? ' and Downloads' : '')}</p>
-      <button class="btn sm" data-act="fl-dir-add">${ico('plus', 13)} Add a project folder</button></div>`;
-  const dirs = $('.fl-dirs', m); if (dirs) dirs.insertAdjacentHTML('beforebegin', flAllHTML());
+  if (!UI.flRecent) flLoad(); const exe = flExe(), icon = exe && UI.dawIcons[exe];
+  m.innerHTML = `<header class="fl-head"><button class="fl-back" data-act="fl-back">${ico('chevL', 14)} Launcher</button>
+      <div class="fl-titlerow"><span class="fl-logo">${icon ? `<img src="${icon}" alt="" draggable="false">` : ico('disc', 24)}</span><h1>FL Studio</h1>
+        <span class="grow"></span><button class="btn" data-act="fl-pick" title="Open any .flp or zipped loop package">${ico('folder', 15)} Open file…</button><button class="btn primary" data-act="daw-open" data-k="fl">${ico('play', 14)} Open FL Studio</button></div></header>
+    <div class="fl-bar">${flTabsHTML()}<span class="grow"></span>${flToolsHTML()}<button class="btn sm" data-act="fl-folders" title="Where Compass looks for projects and backups">${ico('folder', 14)} Folders</button></div>
+    <div id="fl-all-list">${flAllListHTML()}</div>`;
 }
 async function renderLauncher(m) {
   const desk = window.tpDesktop && tpDesktop.daw; S.daws = S.daws || {};
@@ -3459,7 +3515,7 @@ async function renderLauncher(m) {
   if (desk && tpDesktop.daw.icon) list.filter(d => d.path && !(d.path in UI.dawIcons)).forEach(d => { UI.dawIcons[d.path] = null; tpDesktop.daw.icon(d.path).then(u => { if (u) { UI.dawIcons[d.path] = u; if (S.view === 'launcher') renderMain(); } }); });
   m.innerHTML = `<header class="head"><div><h1>Launcher</h1><p class="faint">${desk ? (UI.dawScan === 'busy' ? 'Scanning for DAWs…' : (list.length ? `${list.length} found on this computer` : 'No DAWs found. Use Add DAW to find yours.')) : 'Opening DAWs needs the Compass app for Windows.'}</p></div>
     ${desk ? `<div class="hact"><button class="btn" data-act="daw-rescan">${ico('repeat', 15)} Scan again</button></div>` : ''}</header>
-    <div class="dawgrid">${list.map(d => `<div class="daw ${d.path ? 'ok' : ''} ${d.id === 'fl' && d.path && desk && tpDesktop.flp ? 'daw-fl' : ''}" ${d.id === 'fl' && d.path && desk && tpDesktop.flp ? 'data-act="fl-screen" role="button" tabindex="0" title="Recent FL Studio projects"' : ''}>${dawTile(d.id, d.path)}<b>${esc(d.n)}</b><small title="${esc(d.path || '')}">${d.path ? esc(d.path.split(/[\\/]/).pop()) : 'Not found'}</small>
+    <div class="dawgrid">${list.map(d => `<div class="daw ${d.path ? 'ok' : ''} ${d.id === 'fl' && d.path && desk && tpDesktop.flp ? 'daw-fl' : ''}" data-daw="${d.id}" ${d.id === 'fl' && d.path && desk && tpDesktop.flp ? 'data-act="fl-screen" role="button" tabindex="0" title="Recent FL Studio projects"' : ''}>${dawTile(d.id, d.path)}<b>${esc(d.n)}</b><small title="${esc((S.dawPick || {})[d.id] || d.path || '')}">${d.path ? esc((((UI.dawScan || {}).versions || {})[d.id] || []).length > 1 ? (((S.dawPick || {})[d.id] || d.path).split(/[\\/]/).slice(-2, -1)[0] + ' · right-click for others') : d.path.split(/[\\/]/).pop()) : 'Not found'}</small>
       <div class="crow">${d.path ? `<button class="btn sm primary" data-act="daw-open" data-k="${d.id}" ${desk ? '' : 'disabled'}>${ico('play', 13)} Open</button>` : ''}${desk ? `<button class="btn sm" data-act="daw-forget" data-k="${d.id}" title="Remove from Launcher" aria-label="Remove from Launcher">${ico('x', 13)}</button>` : ''}</div></div>`).join('')}
       ${desk && missing.length ? `<button class="daw daw-add" data-act="daw-add">${ico('plus', 26)}<b>Add DAW</b><small>Not listed? Find it</small></button>` : ''}</div>`;
 }
@@ -3472,6 +3528,58 @@ function applyPrefs() {
   document.body.classList.toggle('reduce-motion', !!P.reduceMotion);
 }
 const sw = (k, on, label) => `<button class="switch" role="switch" aria-checked="${!!on}" aria-label="${esc(label)}" data-act="pref-tog" data-k="${k}"></button>`;
+/* ---------- mods ----------
+   Each mod's style.css is added to the page but switched off on the Music Store and Marketplace.
+   Each mod's main.js runs in a sandboxed iframe (scripts only, no access to this page), and talks to Compass
+   through a small message API. Store and Marketplace data are never sent to mods. */
+const MODS = { list: [], frames: {}, menu: [], last: {} };
+const MOD_BRIDGE = `(() => { const H = {}, F = {}; let n = 0; const send = (type, data) => parent.postMessage({ __mod: 1, type, data }, '*');
+  window.compass = { on: (ev, fn) => { (H[ev] = H[ev] || []).push(fn); }, toast: t => send('toast', String(t).slice(0, 140)),
+    addMenuItem: (where, label, fn) => { const id = 'm' + (n++); F[id] = fn; send('menu', { id, where: where === 'project' ? 'project' : 'song', label: String(label).slice(0, 60) }); },
+    player: { play: () => send('player', 'play'), pause: () => send('player', 'pause'), next: () => send('player', 'next'), prev: () => send('player', 'prev') },
+    library: () => new Promise(r => { const id = 'q' + (n++); F[id] = r; send('library', { id }); }) };
+  addEventListener('message', e => { const d = e.data || {}; if (e.source !== parent || d.__compass !== 1) return;
+    if (d.type === 'event') (H[d.name] || []).forEach(f => { try { f(d.data); } catch (x) { console.error(x); } });
+    if (d.type === 'call' && F[d.id]) { try { F[d.id](d.data); } catch (x) { console.error(x); } } }); })();`;
+const modOn = id => !!(S.mods && S.mods[id]);
+function modStop(id) { const st = document.getElementById('modcss-' + id); if (st) st.remove(); const f = MODS.frames[id]; if (f) f.remove(); delete MODS.frames[id]; MODS.menu = MODS.menu.filter(x => x.mod !== id); }
+function modStart(m) {
+  modStop(m.id); if (!modOn(m.id) || m.error) return;
+  if (m.css) { const st = document.createElement('style'); st.id = 'modcss-' + m.id; st.dataset.mod = m.id; st.textContent = m.css; document.head.appendChild(st); }
+  if (m.js) { const f = document.createElement('iframe'); f.setAttribute('sandbox', 'allow-scripts'); f.hidden = true; f.title = 'Mod: ' + m.name;
+    f.srcdoc = '<!doctype html><meta charset="utf-8"><script>' + MOD_BRIDGE + '<\/script><script>' + m.js.replace(/<\/script/gi, '<\\/script') + '<\/script>';
+    f.onload = () => { const cw = f.contentWindow, send = (name, data) => { try { cw.postMessage({ __compass: 1, type: 'event', name, data }, '*'); } catch (e) {} }; // catch the mod up on what is already happening
+      send('view', { view: S.view }); if (S.cur) { send('track', modTrackInfo(trk(S.cur))); if (S.playing) send('play', modTrackInfo(trk(S.cur))); } };
+    MODS.frames[m.id] = f; document.body.appendChild(f); }
+  modGate();
+}
+async function modsLoad() { if (!(window.tpDesktop && tpDesktop.mods)) return; try { MODS.list = await tpDesktop.mods.list(); } catch (e) { MODS.list = []; } MODS.list.forEach(modStart); }
+function modGate() { const off = S.view === 'store' || S.view === 'market'; $$('style[data-mod]').forEach(st => { st.disabled = off; }); }
+function modEmit(name, data) { Object.values(MODS.frames).forEach(f => { try { f.contentWindow.postMessage({ __compass: 1, type: 'event', name, data }, '*'); } catch (e) {} }); }
+function modTrackInfo(t) { const c = t && projOf(t); return t ? { id: t.id, title: dispTitle(t), artist: dispArtist(t), project: c ? c.name : '', bpm: t.bpm || null, key: t.key || '', length: verDur(t) || null } : null; }
+function modTick() { // tell mods about player and page changes
+  if (!Object.keys(MODS.frames).length) return; const L = MODS.last;
+  if (S.cur !== L.cur) { L.cur = S.cur; if (S.cur) modEmit('track', modTrackInfo(trk(S.cur))); }
+  if (S.playing !== L.playing) { L.playing = S.playing; modEmit(S.playing ? 'play' : 'pause', modTrackInfo(trk(S.cur))); }
+  if (S.view !== L.view) { L.view = S.view; modEmit('view', { view: S.view }); }
+}
+const modItems = (where, id) => MODS.menu.filter(x => x.where === where).map((x, i) => ({ ...(i ? {} : { sep: 0 }), label: x.label, act: 'mod-menu', k: x.mod + ':' + x.id, id, icon: 'cube' }));
+addEventListener('message', e => {
+  const d = e.data || {}; if (d.__mod !== 1) return; const id = Object.keys(MODS.frames).find(k => MODS.frames[k].contentWindow === e.source); if (!id) return;
+  const m = MODS.list.find(x => x.id === id) || { name: id }, reply = (cid, data) => e.source.postMessage({ __compass: 1, type: 'call', id: cid, data }, '*');
+  if (d.type === 'toast') toast(m.name + ': ' + String(d.data || '').slice(0, 140));
+  else if (d.type === 'menu' && d.data && MODS.menu.filter(x => x.mod === id).length < 10) MODS.menu.push({ mod: id, id: String(d.data.id), where: d.data.where, label: String(d.data.label || 'Mod item') });
+  else if (d.type === 'player') { if (d.data === 'play' && !S.playing && S.cur) toggle(); else if (d.data === 'pause' && S.playing) toggle(); else if (d.data === 'next') step(1); else if (d.data === 'prev') step(-1); }
+  else if (d.type === 'library' && d.data) reply(d.data.id, S.cols.filter(c => !isFolder(c) && !c.archived).map(c => ({ id: c.id, name: c.name, type: KINDS[c.type] || c.type, artist: projArtist(c), digitalAlbum: isMine(c), songs: colTracks(c).map(modTrackInfo) })));
+});
+function modsSettingsHTML() {
+  if (!(window.tpDesktop && tpDesktop.mods)) return '';
+  const rows = MODS.list.map(m => setRow(esc(m.name) + (m.version ? ` <small class="faint">${esc(m.version)}</small>` : ''), m.error ? esc(m.error) : esc([m.description, m.author && 'by ' + m.author].filter(Boolean).join(' · ')),
+    `<label class="check"><input type="checkbox" data-modtoggle="${esc(m.id)}" ${modOn(m.id) ? 'checked' : ''} ${m.error ? 'disabled' : ''}><span>On</span></label>`)).join('');
+  return `<section class="set-card box"><h2>Mods</h2>
+      ${setRow('Mods folder', 'Put each mod in its own folder. Mods are off until you turn them on. They can change how Compass looks and add menu items, but never the Music Store or Marketplace. Only turn on mods you trust.', `<div class="crow"><button class="btn sm" data-act="mods-folder">${ico('folder', 14)} Open folder</button><button class="btn sm" data-act="mods-reload">${ico('repeat', 14)} Reload</button></div>`)}
+      ${rows || '<p class="faint small" style="margin:6px 0 0">No mods yet. Open the folder to get an example mod.</p>'}</section>`;
+}
 const setRow = (title, desc, control) => `<div class="set-row"><div class="set-txt"><b>${title}</b>${desc ? `<span>${desc}</span>` : ''}</div><div class="set-ctl">${control}</div></div>`;
 function renderSettings(m) {
   const P = S.prefs;
@@ -3501,6 +3609,7 @@ function renderSettings(m) {
       <dt>${MOD}J</dt><dd>Duplicate layer</dd><dt>${MOD}C / X / V</dt><dd>Copy, cut, paste layer</dd><dt>${MOD}] / ${MOD}[</dt><dd>Bring forward / send backward (add Shift for front / back)</dd>
       <dt>${MOD}/</dt><dd>Lock or unlock layer</dd><dt>${MOD},</dt><dd>Hide or show layer</dd><dt>Arrows</dt><dd>Nudge layer (Shift for 5 mm)</dd><dt>${MOD}0 / = / -</dt><dd>Fit, zoom in, zoom out</dd></dl></details>
     </section>
+    ${modsSettingsHTML()}
     <section class="set-card box"><h2>About</h2>
       ${setRow('Compass ' + esc(APP_VERSION), 'Made by sxteen ways, trulytamed and all of KGB.', `<div class="crow">${window.tpDesktop ? `<button class="btn sm" data-act="desk-update" title="Updates install over this version. Your projects are kept.">${ico('repeat', 14)} Check for updates</button>` : ''}<button class="btn sm" data-act="changelog">${ico('list', 14)} What's new</button><button class="btn sm" data-act="credits">${ico('star', 14)} Credits</button></div>`)}
     </section>
@@ -3571,6 +3680,77 @@ function renderEq() {
 }
 
 /* ---------- drawer ---------- */
+/* ---------- featured artists: a small database shared by every song ----------
+   S.people[key] = { stage, legal, role, pro, ipi, publisher, email }. Nothing is required. */
+const PRO_LIST = ['', 'ASCAP', 'BMI', 'SESAC', 'GMR', 'SOCAN', 'PRS', 'APRA AMCOS', 'GEMA', 'SACEM', 'Other'];
+const FEAT_ROLES = ['', 'Vocals', 'Rap', 'Producer', 'Co-producer', 'Writer', 'Instrument', 'Other'];
+const FEAT_PLACES = [['title', 'In the title (feat.)'], ['artist', 'Under the title'], ['none', 'Not named']];
+const pKey = n => String(n || '').trim().toLowerCase();
+const person = n => (S.people || {})[pKey(n)] || null;
+function personLine(n) { const p = person(n); if (!p) return ''; return [p.legal, p.role, p.pro && p.pro + (p.ipi ? ' ' + p.ipi : ''), p.publisher, p.email].filter(Boolean).join(' · '); }
+function featRowHTML(f, i) {
+  const p = f.p || {}, sel = (k, opts, v, lab) => `<label class="fx-f"><span>${lab}</span><div class="sel box"><select data-fxk="${k}">${opts.map(o => Array.isArray(o) ? o : [o, o || '—']).map(([val, l]) => `<option value="${esc(val)}" ${val === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div></label>`;
+  const inp = (k, lab, ph, type = 'text') => `<label class="fx-f"><span>${lab}</span><input class="field" data-fxk="${k}" type="${type}" value="${esc(p[k] || '')}" placeholder="${ph}"></label>`;
+  return `<div class="fx-row" data-fx="${i}"><div class="fx-top"><b>@${esc(f.name)}</b>
+      <div class="sel box fx-place"><select data-fxk="place" aria-label="Where ${esc(f.name)} is named">${FEAT_PLACES.map(([k, l]) => `<option value="${k}" ${f.place === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+      <button class="ico fx-mini" data-act="fx-more" title="Their info" aria-label="Info for ${esc(f.name)}">${ico('chevD', 13)}</button><button class="ico fx-mini" data-act="fx-rm" title="Remove" aria-label="Remove ${esc(f.name)}">${ico('x', 12)}</button></div>
+    <div class="fx-det" ${f.open ? '' : 'hidden'}>${inp('legal', 'Legal name', 'As on contracts')}${sel('role', FEAT_ROLES, p.role || '', 'Role')}${sel('pro', PRO_LIST, p.pro || '', 'PRO')}${inp('ipi', 'IPI / CAE', '')}${inp('publisher', 'Publisher', '')}${inp('email', 'Publishing email', '', 'email')}</div></div>`;
+}
+function fxRead() { // keep what was typed in the open window
+  if (!UI.fx) return; $$('#fx-list .fx-row').forEach(r => { const f = UI.fx.list[+r.dataset.fx]; if (!f) return; f.open = !$('.fx-det', r).hidden;
+    $$('[data-fxk]', r).forEach(x => { if (x.dataset.fxk === 'place') f.place = x.value; else f.p[x.dataset.fxk] = x.value.trim(); }); });
+}
+function fxPaint() { const el = $('#fx-list'); if (el) el.innerHTML = UI.fx.list.length ? UI.fx.list.map(featRowHTML).join('') : '<p class="faint small fx-empty">No features yet.</p>'; }
+function fxAdd(name) {
+  name = String(name || '').replace(/^@+/, '').trim(); if (!name) return; fxRead();
+  if (UI.fx.list.some(f => pKey(f.name) === pKey(name))) return;
+  const known = person(name); UI.fx.list.push({ name: known ? known.stage : name, place: 'artist', p: { ...(known || {}) }, open: !known });
+  fxPaint(); const i = $('#fx-in'); if (i) { i.value = ''; i.focus(); } fxSuggest('');
+}
+function fxSuggest(v) {
+  const box = $('#fx-sug'); if (!box) return; const q = String(v || '').replace(/^.*@/, '').trim().toLowerCase();
+  if (!q && !/@$/.test(v || '')) { box.innerHTML = ''; return; }
+  const have = new Set(UI.fx.list.map(f => pKey(f.name))), hits = Object.values(S.people || {}).filter(p => !have.has(pKey(p.stage)) && (!q || p.stage.toLowerCase().includes(q))).slice(0, 6);
+  box.innerHTML = hits.map(p => `<button data-act="fx-pick" data-k="${esc(p.stage)}">@${esc(p.stage)}${p.legal ? `<small>${esc(p.legal)}</small>` : ''}</button>`).join('')
+    + (q && !hits.some(p => p.stage.toLowerCase() === q) ? `<button data-act="fx-pick" data-k="${esc(String(v).replace(/^.*@/, '').trim())}">Add “${esc(String(v).replace(/^.*@/, '').trim())}” as a new artist</button>` : '');
+}
+function fxSave() {
+  fxRead(); const t = trk(UI.fx.id); if (!t) return closeModal(); S.people = S.people || {};
+  t.features = UI.fx.list.map(f => f.name); t.featPlace = Object.fromEntries(UI.fx.list.map(f => [f.name, f.place])); t.featInTitle = false;
+  UI.fx.list.forEach(f => { const k = pKey(f.name), clean = Object.fromEntries(Object.entries(f.p).filter(([a, b]) => b && a !== 'stage')); S.people[k] = { ...(S.people[k] || {}), ...clean, stage: f.name }; });
+  UI.fx = null; closeModal(); save(); renderList(); renderBar(); if (S.editId === t.id) openDrawer(t.id); toast(t.features.length ? 'Features saved' : 'Features cleared');
+}
+function openFeatures(id) {
+  const t = trk(id); if (!t) return;
+  UI.fx = { id, list: feats(t).map(n => ({ name: n, place: featPlace(t, n), p: { ...(person(n) || {}) }, open: false })) };
+  openModal('feat', id);
+}
+/* ---------- song info export (.txt) ---------- */
+function songInfoText(t, n) {
+  const c = projOf(t), m = t.meta || {}, L = [], add = (k, v) => { if (v != null && String(v).trim()) L.push(`${k}: ${v}`); };
+  L.push((n ? String(n).padStart(2, '0') + '. ' : '') + dispTitle(t));
+  add('Artist', (t.artist || '').trim() || (c ? projArtist(c) : ''));
+  feats(t).forEach(n => add('Featuring', n + (personLine(n) ? ' (' + personLine(n) + ')' : '')));
+  const g = {}; (t.credits || []).forEach(x => { if (x.role && x.name) (g[x.role] = g[x.role] || []).push(x.name); }); Object.entries(g).forEach(([r, ns]) => add(r, ns.join(', ')));
+  add('Length', fmt(verDur(t))); add('BPM', t.bpm); add('Key', t.key); add('Status', ST[t.status]);
+  const v = t.ver && t.versions.find(x => x.id === t.ver); add('Version', v ? v.name : '');
+  add('ISRC', m.isrc); add('Genre', m.genre); add('Year', m.year); add('Label', m.label); add('Copyright', m.copyright); if (m.explicit) add('Explicit', 'Yes');
+  if ((t.lyrics || '').trim()) L.push('', 'Lyrics:', t.lyrics.trim());
+  return L.join('\n');
+}
+function projectInfoText(c) {
+  const m = c.meta || {}, L = [c.name], add = (k, v) => { if (v != null && String(v).trim()) L.push(`${k}: ${v}`); }, ts = colTracks(c);
+  add('Artist', projArtist(c)); add('Type', KINDS[c.type]); add(c.released ? 'Released' : 'Target date', c.targetDate);
+  add('Label', m.label); add('Genre', m.genre); add('©', m.copyright); add('℗', m.phono); add('UPC / EAN', m.upc); add('Catalog number', m.cat);
+  add('Songs', `${ts.length} · ${total(ts)}`);
+  if (hasDiscs(c)) { let n = 0; discGroups(c).forEach(gp => { if (c.discNum !== 'all') n = 0; L.push('', '', '== ' + discLabel(c, gp.disc).toUpperCase() + ' =='); gp.tracks.forEach(t => L.push('', songInfoText(t, ++n))); }); }
+  else ts.forEach((t, i) => L.push('', songInfoText(t, i + 1)));
+  L.push('', '', 'Exported from Compass, ' + new Date().toLocaleDateString());
+  return L.join('\n') + '\n';
+}
+const infoName = x => String(x || 'Untitled').replace(/[\\/:*?"<>|]+/g, '').trim() || 'Untitled';
+function exportSongInfo(id) { const t = trk(id); if (t) saveBlob(infoName(dispTitle(t)) + ' - info.txt', new Blob([songInfoText(t) + '\n'], { type: 'text/plain' })); }
+function exportProjectInfo(id) { const c = col(id); if (c) saveBlob(infoName(c.name) + ' - song info.txt', new Blob([projectInfoText(c)], { type: 'text/plain' })); }
 function openDrawer(id) {
   const t = trk(id); if (!t) return; S.editId = id;
   const d = $('#drawer');
@@ -3578,24 +3758,17 @@ function openDrawer(id) {
   <div class="dcov" style="${tcov(t)}"></div>
   <label class="lab" for="d-title">Title</label><input class="field" id="d-title" data-f="title" value="${esc(t.title)}">
   <label class="lab" for="d-artist">Main artist</label><input class="field" id="d-artist" data-f="artist" value="${esc(t.artist)}" placeholder="${esc(artistOf())} (project artist)">
-  <button class="btn sm" data-act="meta-open" data-id="${t.id}" style="align-self:flex-start;margin-top:8px">${ico('list', 14)} Details & credits</button>
-  <label class="lab" for="d-feat">Features</label><input class="field" id="d-feat" data-f="features" value="${esc(t.features.join(', '))}" placeholder="Separate artists with commas">
-  <label class="check"><input type="checkbox" id="d-featin" ${t.featInTitle ? 'checked' : ''}><span>Add “feat. Artist” to the end of the title</span></label>
-  <div class="preview" id="d-prev"><b>${esc(dispTitle(t))}</b><span>${esc(dispArtist(t))}</span></div>
-  <label class="lab">Status</label>${picker('tstatus', 'Status', ST, t.status, 'status')}
-  <div class="two"><div><label class="lab" for="d-bpm">Tempo (BPM)</label><input class="field" id="d-bpm" data-f="bpm" type="number" min="0" max="300" value="${t.bpm || ''}"></div><div><label class="lab" for="d-key">Key</label><input class="field" id="d-key" data-f="key" value="${esc(t.key)}"></div></div>
-  <label class="lab" for="d-tags">Tags</label><input class="field" id="d-tags" data-f="tags" value="${esc(t.tags)}" placeholder="synth, late night">
+  <div class="crow" style="margin-top:8px"><button class="btn sm" data-act="meta-open" data-id="${t.id}">${ico('list', 14)} Details & credits</button><button class="btn sm" data-act="feat-open" data-id="${t.id}" title="${esc(feats(t).join(', ') || 'Add featured artists')}">${ico('user', 14)} Features${feats(t).length ? ' · ' + feats(t).length : ''}</button><button class="btn sm" data-act="meta-export" data-id="${t.id}" title="Save this song's info as a text file">${ico('save', 14)} Export info</button></div>
+  <div class="three"><div><label class="lab">Status</label>${picker('tstatus', '', ST, t.status, 'status')}</div><div><label class="lab" for="d-bpm">BPM</label><input class="field" id="d-bpm" data-f="bpm" type="number" min="0" max="300" value="${t.bpm || ''}"></div><div><label class="lab" for="d-key">Key</label><input class="field" id="d-key" data-f="key" value="${esc(t.key)}"></div></div>
   <label class="lab">Versions</label><div class="vers" id="d-vers">${versHTML(t)}</div>
   <div class="crow" style="margin-top:6px"><button class="btn sm" data-act="ver-add">${ico('plus', 14)} Add a version</button></div>
-  <label class="lab" for="d-lyr">Lyrics</label><textarea class="field" id="d-lyr" data-f="lyrics" rows="9" style="resize:vertical;min-height:160px" placeholder="One line per row. Shown in the concept player.">${esc(t.lyrics || '')}</textarea>
-  <label class="lab">In projects</label>
-  <div class="chk-list">${S.cols.map(c => `<label class="check"><input type="checkbox" data-incol="${c.id}" ${c.tracks.includes(id) ? 'checked' : ''}><span>${esc(c.name)}</span></label>`).join('') || '<p class="faint small">Create a project first.</p>'}</div>
-  <div class="crow"><button class="btn sm" data-act="deltrack">${ico('trash', 14)} Delete track</button></div>`;
+  <label class="lab" for="d-lyr">Lyrics</label><textarea class="field" id="d-lyr" data-f="lyrics" rows="5" style="resize:vertical;min-height:96px" placeholder="One line per row.">${esc(t.lyrics || '')}</textarea>
+  <div class="crow"><button class="btn sm" data-act="deltrack">${ico('trash', 14)} Delete song</button></div>`;
   d.inert = false; d.classList.add('open');
 }
 function versHTML(t) {
   const all = [{ id: t.id, name: 'Original', dur: t.dur, orig: true }, ...t.versions];
-  return all.map(v => `<div class="ver ${t.ver === v.id ? 'on' : ''}"><button class="radio" data-act="ver-set" data-id="${v.id}" aria-label="Use ${esc(v.name)}"></button>${v.orig ? `<b>Original</b>` : `<input type="text" data-vname="${v.id}" value="${esc(v.name)}" aria-label="Version name">`}<span class="mono">${fmt(v.dur)}</span>${v.orig ? '<span></span>' : `<button class="ico" data-act="ver-rm" data-id="${v.id}" aria-label="Delete version">${ico('x', 14)}</button>`}</div>`).join('');
+  return all.map(v => `<div class="ver ${t.ver === v.id ? 'on' : ''}"><button class="radio" data-act="ver-set" data-id="${v.id}" aria-label="Use ${esc(v.name)}"></button>${v.orig ? `<b>Original</b>` : `<input type="text" data-vname="${v.id}" value="${esc(v.name)}" aria-label="Version name">`}<span class="mono">${fmt(v.dur)}</span>${v.orig ? '<span></span>' : `<button class="ico ver-x" data-act="ver-rm" data-id="${v.id}" aria-label="Delete version" title="Delete version">${ico('x', 11)}</button>`}</div>`).join('');
 }
 function closeDrawer() { S.editId = null; const d = $('#drawer'); d.classList.remove('open'); d.inert = true; }
 const updPreview = t => { const p = $('#d-prev'); if (p) p.innerHTML = `<b>${esc(dispTitle(t))}</b><span>${esc(dispArtist(t))}</span>`; };
@@ -3998,18 +4171,23 @@ function act(a, el, e) {
     case 'store-buy': toast('Checkout coming soon'); break;
     case 'store-cd': viewerFor(id, { store: true, list: S.cols.filter(c => c.release && c.release.cd != null && !c.archived).map(c => c.id) }); break;
     case 'daw-rescan': UI.dawScan = null; S.dawHidden = []; save(); renderMain(); break;
-    case 'fl-screen': UI.flScreen = true; UI.flRecent = null; UI.flAll = null; UI.flZip = null; UI.flPage = 1; renderMain(); break;
+    case 'fl-screen': UI.flScreen = true; UI.flRecent = null; UI.flAll = null; UI.flZip = null; UI.flBak = null; UI.flPage = 1; UI.flQ = ''; renderMain(); break;
     case 'fl-back': UI.flScreen = false; renderMain(); break;
     case 'fl-proj': flOpen(k); break;
-    case 'fl-kind': S.flView = { ...(S.flView || {}), kind: k === 'zip' ? 'zip' : 'flp', folder: '' }; UI.flPage = 1; save(); renderMain(); break;
+    case 'fl-kind': S.flView = { ...(S.flView || {}), kind: FL_TABS.some(x => x[0] === k) ? k : 'recent', folder: '' }; UI.flPage = 1; save(); renderMain(); break;
+    case 'fl-folders': flFoldersMenu(el); break;
+    case 'fl-bak-set': if (window.tpDesktop && tpDesktop.flp) tpDesktop.flp.pick('folder').then(d => { if (d) { S.flBackupDir = d; S.flView = { ...(S.flView || {}), kind: 'backup' }; save(); UI.flBak = null; flLoad(); renderMain(); } }); break;
+    case 'fl-bak-reset': S.flBackupDir = ''; save(); UI.flBak = null; flLoad(); renderMain(); break;
+    case 'fl-reveal': if (window.tpDesktop && tpDesktop.flp && tpDesktop.flp.reveal) tpDesktop.flp.reveal(k); break;
     case 'fl-page': { UI.flPage = +k; flAllPaint(); const h = $('.fl-all'); if (h) h.scrollIntoView({ block: 'start', behavior: 'smooth' }); break; }
     case 'fl-clear': UI.flQ = ''; S.flView = { sort: (S.flView || {}).sort }; UI.flPage = 1; save(); renderMain(); break;
     case 'fl-pick': if (window.tpDesktop && tpDesktop.flp) tpDesktop.flp.pick('file').then(f => { if (f) flOpen(f); }); break;
     case 'fl-dir-add': if (window.tpDesktop && tpDesktop.flp) tpDesktop.flp.pick('folder').then(d => { if (d && !(S.flDirs || []).includes(d)) { S.flDirs = [...(S.flDirs || []), d]; save(); flLoad(); renderMain(); } }); break;
     case 'fl-dir-rm': { S.flDirs = (S.flDirs || []).filter((x, i) => i !== +k); save(); flLoad(); renderMain(); break; }
+    case 'daw-open-ver': { S.dawPick = { ...(S.dawPick || {}), [k]: id }; save(); if (window.tpDesktop) tpDesktop.daw.open(id).then(r => toast(r && r.ok ? 'Opening ' + id.split(/[\\/]/).slice(-2, -1)[0] + '…' : 'Could not open: ' + ((r && r.error) || 'unknown error'))); renderMain(); break; }
     case 'daw-add': { const r = el.getBoundingClientRect(), onMac = /Mac/i.test(navigator.platform || navigator.userAgent), have = id => (S.daws || {})[id] || (UI.dawScan && UI.dawScan[id]); ctxMenu(r.left, r.top + 40, [{ head: 'Which DAW?' }, ...DAWS.filter(([id]) => (onMac || !['logic', 'garageband'].includes(id)) && !have(id)).map(([id, n]) => ({ label: n + '…', act: 'daw-locate', k: id }))]); break; }
-    case 'daw-forget': { if (S.daws) delete S.daws[k]; if (UI.dawScan && UI.dawScan !== 'busy') delete UI.dawScan[k]; save(); renderMain(); break; }
-    case 'daw-open': { const p = (S.daws || {})[k] || (UI.dawScan || {})[k]; if (p && window.tpDesktop) tpDesktop.daw.open(p).then(r => toast(r && r.ok ? 'Opening ' + (DAWS.find(d => d[0] === k) || [, k])[1] + '…' : 'Could not open: ' + ((r && r.error) || 'unknown error'))); break; }
+    case 'daw-forget': { if (S.daws) delete S.daws[k]; if (S.dawPick) delete S.dawPick[k]; if (UI.dawScan && UI.dawScan !== 'busy') delete UI.dawScan[k]; save(); renderMain(); break; }
+    case 'daw-open': { const p = (S.dawPick || {})[k] || (S.daws || {})[k] || (UI.dawScan || {})[k]; if (p && window.tpDesktop) tpDesktop.daw.open(p).then(r => toast(r && r.ok ? 'Opening ' + (DAWS.find(d => d[0] === k) || [, k])[1] + '…' : 'Could not open: ' + ((r && r.error) || 'unknown error'))); break; }
     case 'daw-locate': if (window.tpDesktop) tpDesktop.daw.locate((DAWS.find(d => d[0] === k) || [, k])[1]).then(p => { if (p) { (S.daws = S.daws || {})[k] = p; save(); renderMain(); toast('Added'); } }); break;
     case 'bulk-play': { const ids = k.split(','); playTrack(ids[0], ids); break; }
     case 'bulk-export': exportTracks(k.split(',')); break;
@@ -4084,9 +4262,12 @@ function act(a, el, e) {
     case 'deltrack': { if (!confirmBtn(el, 'Click again to delete')) break; const t = trk(S.editId); if (!t) break; if (S.cur === t.id) { Engine.pause(); S.cur = null; S.playing = false; } S.tracks = S.tracks.filter(x => x !== t); S.cols.forEach(c => c.tracks = c.tracks.filter(x => x !== t.id)); DB.del(t.id); t.versions.forEach(v => DB.del(v.id)); closeDrawer(); toast('Song deleted'); refresh(); break; }
     case 'ver-add': $('#verfile').click(); break;
     case 'ver-set': { const t = trk(S.editId); t.ver = id; const wasCur = S.cur === t.id; if (wasCur) { const p = Engine.pos(); Engine.load(t); if (S.playing) Engine.play(); audio.addEventListener('loadedmetadata', () => { try { audio.currentTime = Math.min(p, audio.duration - .5); } catch (e) { } }, { once: true }); } $('#d-vers').innerHTML = versHTML(t); renderList(); renderBar(); save(); toast('Now using ' + (id === t.id ? 'Original' : t.versions.find(v => v.id === id).name)); break; }
-    case 'ver-rm': { if (!confirmBtn(el, 'Delete?')) break; const t = trk(S.editId); t.versions = t.versions.filter(v => v.id !== id); DB.del(id); delete srcs[id]; if (t.ver === id) { t.ver = t.id; if (S.cur === t.id) { Engine.load(t); if (S.playing) Engine.play(); } } $('#d-vers').innerHTML = versHTML(t); renderList(); save(); break; }
+    case 'ver-rm': { const t0 = trk(S.editId), v0 = t0 && t0.versions.find(v => v.id === id); if (!v0) break; askSure(`Delete “${v0.name}”?`, 'This version and its audio file are removed. The other versions stay.', 'Delete version').then(ok => { if (ok) act('ver-rm-yes', { dataset: { id } }); }); break; }
+    case 'ver-rm-yes': { const t = trk(S.editId); t.versions = t.versions.filter(v => v.id !== id); DB.del(id); delete srcs[id]; if (t.ver === id) { t.ver = t.id; if (S.cur === t.id) { Engine.load(t); if (S.playing) Engine.play(); } } $('#d-vers').innerHTML = versHTML(t); renderList(); save(); break; }
     case 'play-col': { const c = col(id); const ids = c.tracks.filter(trk); if (S.playing && ids.includes(S.cur)) toggle(); else playQueue(ids, false); break; }
     case 'proj-more': { const c = col(id), r = el.getBoundingClientRect(); if (c) ctxMenu(r.left, r.bottom + 6, projectMenu(c)); break; }
+    case 'meta-export': exportSongInfo(id || S.editId); break;
+    case 'meta-export-all': exportProjectInfo(id || S.colId); break;
     case 'share': { const p = $('#sharepop'); p.classList.toggle('open'); if (p.classList.contains('open')) applySlides(); break; }
     case 'vis': { col(S.colId).vis = k; refresh(); $('#sharepop').classList.add('open'); applySlides(); break; }
     case 'copy': if (navigator.clipboard) navigator.clipboard.writeText('https://' + el.dataset.link).then(() => toast('Link copied'), () => toast('Select the link and copy it')); else toast('Select the link and copy it'); break;
@@ -4102,6 +4283,16 @@ function act(a, el, e) {
     case 'credits': openCredits(); break;
     case 'credits-close': closeCredits(); break;
     case 'close-modal': closeModal(); break;
+    case 'feat-open': openFeatures(id || S.editId); break;
+    case 'fx-pick': fxAdd(k); break;
+    case 'fx-rm': fxRead(); UI.fx.list.splice(+el.closest('.fx-row').dataset.fx, 1); fxPaint(); break;
+    case 'fx-more': { const d = $('.fx-det', el.closest('.fx-row')); d.hidden = !d.hidden; break; }
+    case 'fx-ok': fxSave(); break;
+    case 'confirm-ok': closeModal(true); break;
+    case 'mods-folder': if (window.tpDesktop && tpDesktop.mods) tpDesktop.mods.folder().then(() => setTimeout(() => modsLoad().then(() => { if (S.view === 'settings') renderMain(); }), 800)); break;
+    case 'mods-reload': MODS.list.forEach(m => modStop(m.id)); modsLoad().then(() => { renderMain(); toast(MODS.list.length ? 'Mods reloaded' : 'No mods found'); }); break;
+    case 'mod-menu': { const [mid, iid] = String(k).split(':'), f = MODS.frames[mid]; if (!f) break; const t = trk(id), c = col(id);
+      f.contentWindow.postMessage({ __compass: 1, type: 'call', id: iid, data: t ? modTrackInfo(t) : c ? { id: c.id, name: c.name, artist: projArtist(c), songs: colTracks(c).map(modTrackInfo) } : { id } }, '*'); break; }
     case 'ask-ok': closeModal($('#m-ask').value); break;
     case 'name-ok': { const i = $('#m-name'), d = $('#modal [data-act="m-dest"].on'); closeModal({ name: i.value.trim() || i.placeholder, cover: UI.mCover, mine: !!(d && d.dataset.k === 'mine'), dtype: ($('#m-dtype') || {}).value }); break; }
     case 'target-clear': col(S.colId).targetDate = null; refresh(); break;
@@ -4124,6 +4315,7 @@ document.addEventListener('click', e => {
   act(el.dataset.act, el, e);
 });
 document.addEventListener('input', e => {
+  if (e.target.id === 'fx-in') { fxSuggest(e.target.value); return; }
   if (e.target.id === 'fl-q') { UI.flQ = e.target.value; UI.flPage = 1; flAllPaint(); return; }
   const t = e.target;
   if (t.id === 'q') { S.q = t.value; renderList(); }
@@ -4144,6 +4336,7 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => {
   const t = e.target;
+  if (t.dataset.modtoggle) { const id = t.dataset.modtoggle; S.mods = { ...(S.mods || {}), [id]: t.checked }; save(); const m = MODS.list.find(x => x.id === id); if (m) { if (t.checked) modStart(m); else modStop(id); } toast(t.checked ? 'Mod on' : 'Mod off'); return; }
   if (t.dataset.flv) { S.flView = { ...(S.flView || {}), [t.dataset.flv]: t.value }; UI.flPage = 1; save(); flAllPaint(); return; }
   if (t.id === 'qr-cam') { qrStart(t.value); return; }
   if (t.id === 'sort') { S.sort = t.value; renderList(); save(); }
@@ -4187,6 +4380,7 @@ document.addEventListener('change', e => {
 });
 function saveNow() { save(); toast('Saved'); const b = $('[data-act="save-now"]'); if (b) { b.classList.add('saved'); setTimeout(() => b.classList.remove('saved'), 900); } }
 document.addEventListener('keydown', e => {
+  if (e.target.id === 'fx-in' && (e.key === 'Enter' || e.key === ',')) { e.preventDefault(); const b = $('#fx-sug button'); fxAdd(e.target.value.includes('@') && b && e.key === 'Enter' ? b.dataset.k : e.target.value); return; }
   if (e.key === 'Enter' && e.target.id === 'm-ask') { e.preventDefault(); closeModal(e.target.value); return; }
   if (UI.vw && !e.ctrlKey && !e.metaKey && !e.altKey && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) {
     const V = UI.vw, k = e.key, go = a => { e.preventDefault(); act(a, { dataset: {} }, e); };
@@ -4386,6 +4580,7 @@ function renameDisc(id) {
   const b = $(`[data-discname="${id}"]`); if (!b) return;
   inlineEdit(b, discLabel(c, d), n => { if (n != null) { d.name = !n || n === 'Disc ' + (c.discs.indexOf(d) + 1) ? '' : n; save(); } renderList(); });
 }
+function askSure(title, text, ok) { return new Promise(res => { openModal('confirm', null, { title, text, ok }); UI.nameResolve = res; }); }
 function askText(title, value) { return new Promise(res => { openModal('ask', null, { title, value }); UI.nameResolve = res; }); }
 function startRename(id) {
   const n = $(`[data-rename="${id}"]`); if (!n) return; const f = findLayer(id); if (!f) return;
@@ -4452,7 +4647,8 @@ function viewOnlyMenu() {
   const three = S.cd.view === '3d';
   return [{ head: 'View only' }, ...(three ? [{ label: S.cd.open ? 'Close case' : 'Open case', act: 'cd-open', icon: 'cube' }, { label: S.cd.discOut ? 'Put disc back' : 'Remove disc', act: 'cd-disc', icon: 'disc' }, { label: 'Reset view', act: 'cd-resetview', icon: 'repeat' }, { label: 'Open viewer', act: 'vw-open-case', icon: 'cube' }] : [{ label: 'Fit on screen', act: 'cd-zoom', k: 'fit', icon: 'expand' }]), { sep: 1 }, { label: 'Turn editing on', act: 'cd-lock', icon: 'unlock' }];
 }
-function trackMenu(t, inCol) {
+function trackMenu(t, inCol) { const base = trackMenuBase(t, inCol), mi = modItems('song', t.id); return mi.length ? [...base, { sep: 1 }, ...mi] : base; }
+function trackMenuBase(t, inCol) {
   const on = S.cur === t.id && S.playing;
   return [{ head: dispTitle(t) }, { label: on ? 'Pause' : 'Play', act: 'play', id: t.id, icon: on ? 'pause' : 'play' }, { sep: 1 },
     { label: 'Edit song', act: 'edit', id: t.id, icon: 'edit' }, { label: 'Details & credits…', act: 'meta-open', id: t.id, icon: 'list' }, { sep: 1 },
@@ -4473,26 +4669,32 @@ function digitalMenu(c) {
     ...(cdOk(c) ? [{ sep: 1 }, { label: 'View CD', act: 'ctx-viewcd', id: c.id, icon: 'disc' }, { label: 'Edit CD', act: 'ctx-editcd', id: c.id, icon: 'edit' }] : []),
     { sep: 1 }, { label: 'Download', act: 'ctx-dlproj', id: c.id, icon: 'save' }, { label: 'Delete', act: 'ctx-delcol', id: c.id, icon: 'trash', danger: 1 }];
 }
-function projectMenu(c) {
+function projectMenu(c) { const base = projectMenuBase(c), mi = isFolder(c) ? [] : modItems('project', c.id); return mi.length ? [...base, { sep: 1 }, ...mi] : base; }
+function projectMenuBase(c) {
   if (isMine(c) && !isFolder(c)) return digitalMenu(c);
   return [{ head: c.name + (projArtist(c) ? ' · ' + projArtist(c) : '') }, ...(S.view === 'collection' && S.colId === c.id ? [] : [{ label: 'Open', act: 'col', id: c.id, icon: 'grid' }, { label: 'Play', act: 'play-col', id: c.id, icon: 'play' }, { sep: 1 }]),
     { label: 'Edit details…', act: 'proj-edit', id: c.id, icon: 'edit' }, { sep: 1 },
     { label: 'Duplicate', act: 'ctx-dupcol', id: c.id, icon: 'copy' }, ...(isFolder(c) ? [] : [{ label: 'Make deluxe', act: 'ctx-deluxe', id: c.id, icon: 'disc' }]), { label: 'New sequel…', act: 'ctx-sequel', id: c.id, icon: 'plus' }, { sep: 1 },
-    { label: c.cover ? 'Change cover…' : 'Add cover…', act: 'ctx-cover', id: c.id, icon: 'image' },
     ...(c.covers.length > 1 ? c.covers.map((cv, i) => ({ label: (cv.id === c.cover ? 'Using cover ' : 'Use cover ') + (i + 1), act: 'ctx-usecover', id: c.id, k: cv.id, icon: cv.id === c.cover ? 'check' : null, disabled: cv.id === c.cover })) : []),
-    ...(c.cover ? [{ label: 'Remove cover', act: 'ctx-rmcover', id: c.id, icon: 'x' }] : []), { sep: 1 },
+    ...(c.covers.length > 1 ? [{ sep: 1 }] : []),
     ...(isFolder(c) || isMine(c) ? [] : [{ label: 'View CD', act: 'ctx-viewcd', id: c.id, icon: 'disc' }, { label: 'Edit CD', act: 'ctx-editcd', id: c.id, icon: 'edit' }]),
     { label: isFolder(c) ? 'Export folder' : 'Export CD package', act: 'ctx-disc', id: c.id, icon: 'save' }, { label: 'Download', act: 'ctx-dlproj', id: c.id, icon: 'save' }, { sep: 1 },
     ...(isMine(c) ? [{ label: 'Make My Version', act: 'ctx-myver', id: c.id, icon: 'copy' }] : []),
     ...(isFolder(c) ? [] : [{ label: c.release ? 'Release settings…' : 'Release…', act: 'ctx-release', id: c.id, icon: 'upload' }, { label: 'Convert to Digital Album', act: 'ctx-todigital', id: c.id, icon: 'disc', confirm: 'Click again: it becomes read-only' }]),
     ...(c.parent ? [{ label: 'Remove from folder', act: 'ctx-unfold', id: c.id, icon: 'back' }] : []),
-    { label: c.archived ? 'Unarchive' : 'Archive', act: 'ctx-arch', id: c.id, icon: 'save' },
+    { label: c.archived ? 'Unarchive' : 'Archive', act: 'ctx-arch', id: c.id, icon: 'archive' },
     ...(fs => fs.length ? [{ head: 'Move to folder' }, ...fs.map(f => ({ label: f.name, act: 'ctx-tofold', id: c.id, k: f.id, icon: 'folder' }))] : [])(S.cols.filter(f => isFolder(f) && f.id !== c.id && f.id !== c.parent && !f.archived).slice(0, 8)), { sep: 1 },
     { label: 'Delete', act: 'ctx-delcol', id: c.id, icon: 'trash', danger: 1 }];
 }
 function onContext(e) {
   if (e.target.closest('input, textarea, select, [contenteditable]')) return;
   const t = e.target; let menu = null;
+  { const tile = t.closest('.daw[data-daw]'); if (tile && window.tpDesktop) { e.preventDefault(); const id = tile.dataset.daw, name = (DAWS.find(d => d[0] === id) || [, id])[1];
+      const vers = [...(((UI.dawScan || {}).versions || {})[id] || [])], custom = (S.daws || {})[id]; if (custom && !vers.some(v => v.path === custom)) vers.unshift({ label: name + ' (added by you)', path: custom });
+      const cur = (S.dawPick || {})[id] || custom || (UI.dawScan || {})[id];
+      ctxMenu(e.clientX, e.clientY, [{ head: vers.length > 1 ? 'Open which version?' : name }, ...vers.map(v => ({ label: v.label, act: 'daw-open-ver', k: id, id: v.path, icon: v.path === cur ? 'check' : null })),
+        ...(id === 'fl' && tpDesktop.flp ? [{ sep: 1 }, { label: 'FL Studio projects', act: 'fl-screen', icon: 'folder' }] : []), { sep: 1 }, { label: 'Remove from Launcher', act: 'daw-forget', k: id, icon: 'x' }]); return; } }
+  { const r = t.closest('.flr'); if (r) { e.preventDefault(); const f = r.dataset.k; ctxMenu(e.clientX, e.clientY, [{ head: f.split(/[\\/]/).pop() }, { label: 'Open in FL Studio', act: 'fl-proj', k: f, icon: 'play' }, { label: 'Show in folder', act: 'fl-reveal', k: f, icon: 'folder' }]); return; } }
   if (t.id === 'cd2d') {
     const r = t.getBoundingClientRect(), p = UI.p2d, key = S.cd.sheet, mx = (e.clientX - r.left) / p - BLEED, my = (e.clientY - r.top) / p - BLEED;
     if (S.cd.lock) menu = viewOnlyMenu(); else { const L = hitLayer(design(cdCol())[key], mx, my); if (L) { UI.cdSel = { sheet: key, id: L.id }; renderCdPanel(); draw2D(); menu = layerMenu(L); } else menu = panelMenu(key, { x: mx, y: my }); }
@@ -4527,7 +4729,8 @@ addEventListener('blur', closeCtx); addEventListener('resize', closeCtx);
   if (S.cur) Engine.load(trk(S.cur));
   if (S.view === 'collection' && !col(S.colId)) S.view = 'library';
   applyPrefs(); refresh(); renderEq();
-  setInterval(tick, 250);
+  setInterval(tick, 250); setInterval(modTick, 500);
+  modsLoad();
   setTimeout(checkWhatsNew, 1200);
   setTimeout(async () => { let n = 0; for (const c of S.cols) for (const cv of c.covers) { if (srcs['thumb:' + cv.id] || cv.noThumb) continue; const b = await DB.get('art:' + cv.id); if (!b) continue; await makeThumb(cv.id, b); if (srcs['thumb:' + cv.id]) n++; else cv.noThumb = true; } if (n) refresh(); }, 1500);
   setTimeout(() => queueAnalysis(S.tracks.map(keyOf)), 2500);

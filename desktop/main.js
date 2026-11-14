@@ -100,22 +100,25 @@ function dawScan() {
     protools: [['Avid', /^Pro Tools/i, ['ProTools.exe']]],
     reason: [['Propellerhead', /^Reason/i, null], ['Reason Studios', /^Reason/i, null]]
   };
-  const out = {};
+  const out = {}, versions = {}, addVer = (id, label, p) => { const v = versions[id] = versions[id] || []; if (!v.some(x => x.path.toLowerCase() === p.toLowerCase())) v.push({ label, path: p }); };
   if (process.platform === 'darwin') {
-    const apps = ls('/Applications'), pick = re => { const a = apps.filter(n => re.test(n)).sort().pop(); return a ? path.join('/Applications', a) : null; };
+    const apps = ls('/Applications'), MAC = { fl: /^FL Studio/i, ableton: /^Ableton Live/i, logic: /^Logic Pro/i, studioone: /^Studio One/i, reaper: /^REAPER/i, cubase: /^Cubase/i, bitwig: /^Bitwig/i, protools: /^Pro Tools/i, reason: /^Reason/i, garageband: /^GarageBand/i };
+    for (const [id, re] of Object.entries(MAC)) apps.filter(n => re.test(n)).sort().reverse().forEach(a => addVer(id, a.replace(/\.app$/i, ''), path.join('/Applications', a)));
+    const pick = re => { const a = apps.filter(n => re.test(n)).sort().pop(); return a ? path.join('/Applications', a) : null; };
     Object.assign(out, { fl: pick(/^FL Studio/i), ableton: pick(/^Ableton Live/i), logic: pick(/^Logic Pro/i), studioone: pick(/^Studio One/i), reaper: pick(/^REAPER/i), cubase: pick(/^Cubase/i), bitwig: pick(/^Bitwig/i), protools: pick(/^Pro Tools/i), reason: pick(/^Reason/i), garageband: pick(/^GarageBand/i) });
   } else {
     for (const [id, rs] of Object.entries(rules)) {
       for (const root of PF) for (const [base, re, exes] of rs) {
-        if (out[id]) break; const b = path.join(root, base);
+        const b = path.join(root, base);
         for (const dir of ls(b).filter(n => re.test(n)).sort((x, y) => y.localeCompare(x, undefined, { numeric: true }))) {
           const full = path.join(b, dir), cands = exes ? exes.map(e => path.join(full, e)) : [...ls(full), ...ls(path.join(full, 'Program')).map(n => path.join('Program', n))].filter(n => /\.exe$/i.test(n) && !/unins|crash|helper|setup/i.test(n)).map(n => path.join(full, n));
-          const hit = cands.find(ex); if (hit) { out[id] = hit; break; }
+          const hit = cands.find(ex); if (hit) { if (!out[id]) out[id] = hit; addVer(id, dir + (/\(x86\)/i.test(root) ? ' (32-bit)' : ''), hit); }
         }
       }
     }
   }
   Object.keys(out).forEach(k => { if (!out[k]) delete out[k]; });
+  out.versions = versions; // every install found, newest first, for the Launcher's right-click menu
   return out;
 }
 
@@ -141,7 +144,8 @@ function zipHasFlp(file) {
     return false;
   } catch (err) { return false; } finally { if (fd !== undefined) try { fs.closeSync(fd); } catch (e) {} }
 }
-function flAll(extraDirs, kind) {
+function flAll(extraDirs, kind, backupDir) {
+  if (kind === 'backup') return flBackups(backupDir);
   const zip = kind === 'zip', extra = Array.isArray(extraDirs) ? extraDirs.filter(d => typeof d === 'string') : [];
   // loop packages from other people usually land in Downloads, so zipped ones are looked for there too
   const roots = [path.join(flUserDir(), 'Projects'), ...extra, ...(zip ? [app.getPath('downloads')] : [])], seen = new Set(), out = [];
@@ -150,6 +154,13 @@ function flAll(extraDirs, kind) {
       let size = 0; try { size = fs.statSync(x.path).size; } catch (e) {}
       const rel = path.relative(root, path.dirname(x.path)); out.push({ path: x.path, name: path.basename(x.path, path.extname(x.path)), folder: [path.basename(root), ...(rel ? rel.split(/[\\/]+/) : [])].join(' › '), time: x.time, size }); } }
   return out;
+}
+/* FL Studio's own autosaves live in Projects\Backup; a different backup folder can be chosen in Compass */
+function flBackups(dir) {
+  const root = typeof dir === 'string' && dir && fs.existsSync(dir) ? dir : path.join(flUserDir(), 'Projects', 'Backup'), found = [];
+  flpWalk(root, 2, found);
+  return found.slice(0, 5000).map(x => { let size = 0; try { size = fs.statSync(x.path).size; } catch (e) {} const rel = path.relative(root, path.dirname(x.path));
+    return { path: x.path, name: path.basename(x.path, path.extname(x.path)), folder: [path.basename(root), ...(rel ? rel.split(/[\\/]+/) : [])].join(' › '), time: x.time, size }; });
 }
 function flRecent(extraDirs, opened, n) {
   const seen = new Map(), add = x => { const k = x.path.toLowerCase(); const o = seen.get(k); if (!o || x.time > o.time) seen.set(k, o && o.how === 'opened' && x.how !== 'opened' ? { ...x, how: 'opened', time: Math.max(x.time, o.time) } : x); };
@@ -161,10 +172,43 @@ function flRecent(extraDirs, opened, n) {
   return [...seen.values()].sort((a, b) => b.time - a.time).slice(0, n || 6).map(x => ({ ...x, name: path.basename(x.path, path.extname(x.path)), dir: path.basename(path.dirname(x.path)) }));
 }
 
+/* ---------- mods: Documents\Compass\Mods\<mod>\ with mod.json, and optional style.css and main.js ---------- */
+const modsDir = () => path.join(app.getPath('documents'), 'Compass', 'Mods');
+const EXAMPLE_MOD = {
+  'mod.json': JSON.stringify({ name: 'Example: now playing toast', version: '1.0', author: 'Compass', description: 'Shows a small message when a new song starts, and adds "Copy title" to the song menu. Read main.js to see how mods work.' }, null, 2) + '\n',
+  'main.js': `// Mods run in a sandbox. They can't touch the page directly; they use the "compass" object:
+//   compass.on('track', t => ...)        a new song started: { id, title, artist, project }
+//   compass.on('play' | 'pause' | 'view', fn)
+//   compass.toast('text')                small message at the top
+//   compass.addMenuItem('song' | 'project', 'Label', info => ...)
+//   compass.player.play() / pause() / next() / prev()
+//   compass.library().then(projects => ...)   read-only list of projects and songs
+// The Music Store and Marketplace are not reachable from mods.
+compass.on('track', t => compass.toast('Now playing: ' + t.title));
+compass.addMenuItem('song', 'Copy title (example mod)', s => { navigator.clipboard && navigator.clipboard.writeText(s.title); compass.toast('Copied ' + s.title); });
+`,
+  'style.css': `/* Mod styles apply everywhere except the Music Store and Marketplace. Example: */
+/* .row b { letter-spacing: .01em; } */
+`
+};
+function modsList() {
+  const dir = modsDir(), out = []; let ents = []; try { ents = fs.readdirSync(dir, { withFileTypes: true }); } catch (e) { return out; }
+  const read = f => { try { const st = fs.statSync(f); return st.isFile() && st.size < 1048576 ? fs.readFileSync(f, 'utf8') : ''; } catch (e) { return ''; } };
+  for (const d of ents) { if (!d.isDirectory() || d.name.startsWith('.')) continue; const base = path.join(dir, d.name); let meta = {};
+    try { meta = JSON.parse(read(path.join(base, 'mod.json')) || '{}'); } catch (e) { meta = { error: 'mod.json is not valid JSON' }; }
+    out.push({ id: d.name, name: String(meta.name || d.name).slice(0, 80), version: String(meta.version || '').slice(0, 20), author: String(meta.author || '').slice(0, 60), description: String(meta.description || '').slice(0, 240), error: meta.error || '', css: read(path.join(base, 'style.css')), js: read(path.join(base, 'main.js')) }); }
+  return out.sort((a, b) => a.name.localeCompare(b.name));
+}
+
 app.whenReady().then(() => {
+  ipcMain.handle('tp-mods-list', () => modsList());
+  ipcMain.handle('tp-mods-folder', async () => { const dir = modsDir(); fs.mkdirSync(dir, { recursive: true });
+    if (!fs.readdirSync(dir).length) { const ex = path.join(dir, 'example-now-playing'); fs.mkdirSync(ex, { recursive: true }); for (const [f, c] of Object.entries(EXAMPLE_MOD)) fs.writeFileSync(path.join(ex, f), c); }
+    await shell.openPath(dir); return dir; });
   ipcMain.handle('tp-daw-scan', () => dawScan());
   ipcMain.handle('tp-fl-recent', (e, dirs, opened, n) => flRecent(dirs, opened, n));
-  ipcMain.handle('tp-fl-all', (e, dirs, kind) => flAll(dirs, kind));
+  ipcMain.handle('tp-fl-all', (e, dirs, kind, bdir) => flAll(dirs, kind, bdir));
+  ipcMain.handle('tp-fl-reveal', (e, file) => { if (typeof file === 'string' && /\.(flp|zip)$/i.test(file) && fs.existsSync(file)) { shell.showItemInFolder(file); return true; } return false; });
   // open a project in FL Studio: with the FL program Compass found when there is one, otherwise whatever opens .flp files
   ipcMain.handle('tp-fl-open', async (e, file, exe) => {
     if (typeof file !== 'string' || !/\.(flp|zip)$/i.test(file) || !fs.existsSync(file)) return { ok: false, error: 'That project file is gone' };

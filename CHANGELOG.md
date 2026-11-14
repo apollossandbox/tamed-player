@@ -4,6 +4,15 @@ Every Compass release, newest first. The app shows the same list under Settings 
 
 ## 1.9.0 · 2026-11-14
 
+- Mods: put mods in Documents › Compass › Mods and turn them on in Settings › Mods. A mod can restyle the app and add song or project menu items, react to what is playing, and control the player. It runs in a sandbox and can never touch the Music Store or Marketplace. Open the folder once to get an example mod.
+- Launcher: right-click a DAW to pick which installed version to open (for example FL Studio 21 or 2024). Open remembers the one you picked.
+- FL Studio screen redesigned: one row of tabs (Recent, All projects, Zipped loops, Backups), one toolbar (search, sort, and a folder filter only when you have more than one folder), and a compact one-line list. Folders and the backup folder are managed from one Folders button. Right-click a project to show it in its folder.
+- Backups tab: FL Studio's own autosaves (Projects › Backup), or a backup folder you choose.
+- Features: a small button next to Details & credits. Type @ and a name to tag an artist. Each one can be in the title (feat.), under the title, or not named. Their info (legal name, role, PRO, IPI, publisher, publishing email) is saved once and fills in on every song you feature them on. Nothing is required.
+- Deleting a version asks first.
+- Previous restarts the song when you are more than 3 seconds in. On the first song it restarts that song instead of jumping to the end (unless Repeat all is on).
+- Song panel is shorter: tags, features, the preview and the project checklist are gone (features live in Details & credits; Add to / Move to are in the song menu). Status, BPM and key sit on one row.
+- Export song info: one song from its panel (Export info), or every song in a project from Share & export (Export song info). Saves a .txt with credits, BPM, key, ISRC, lyrics and more.
 - Cleaner, less cluttered app. Buttons that did the same thing are merged:
 - Library: one Add music button (it takes .zip downloads too). Scan QR is a small icon. The sidebar footer is just credits and the version (click it to check for updates).
 - Project page: the header is Play, Add songs, Share and ⋯. Rename and Edit details are one item. A song's ⋯ opens the same menu as right-click, starting with Edit song.
